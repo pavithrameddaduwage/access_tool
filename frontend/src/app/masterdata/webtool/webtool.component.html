@@ -1,0 +1,11 @@
+<div class="pl-7">
+    <app-custom-table
+    [headers]="toolHeaders"
+    [data]="filteredTableData"
+    [showActionColumn]="true"
+    [stickyActionColumn]="true"
+    (saveItem)="onSave($event)"
+    (deleteItem)="onDelete($event)"
+    [header]="toolHeaders"
+  ></app-custom-table>
+  </div>

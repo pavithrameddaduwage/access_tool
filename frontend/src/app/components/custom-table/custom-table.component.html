@@ -1,0 +1,616 @@
+<div>
+  <div>
+    <div
+    *ngIf="showPaginationHeader" 
+    class="flex justify-left mx-auto ms-0 leading-tight border border-gray-200 bg-gray-50 py-2 rounded-md px-4 space-x-4 max-w-[60%]"
+  >
+  <div class="inline-block rounded-sm p-1 w-13"> 
+    <app-select
+      [data]="pageSize"
+      [label]="'Page Size'"
+      [textsize]="'text-[9px]'"
+      [value]="rowsperpage.toString()"
+      [disabled]="false"
+      [blankline]="false"
+      (setSelectValue)="setSelectValue($event)"
+    ></app-select>
+
+
+  
+    
+    </div>
+    <nav aria-label="Page navigation example" class="my-auto block">
+      <ul class="inline-flex -space-x-px text-[9px]">
+        <li>
+          <button
+            (click)="setSelectedPage(selectedPage - 1)"
+            class="items-center justify-center px-3 h-6 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+            [disabled]="selectedPage <= 0"
+          >
+            Previous
+          </button>
+        </li>
+        <li>
+          <input
+            type="text"
+            class="text-center border border-gray-300 h-6"
+            [value]="selectedPage + 1 + ' / ' + defaultpagecount.length"
+          />
+        </li>
+        <li>
+          <button
+            (click)="setSelectedPage(selectedPage + 1)"
+            class="items-center justify-center px-3 h-6 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+            [disabled]="selectedPage + 1 >= defaultpagecount.length"
+          >
+            Next
+          </button>
+        </li>
+      </ul>
+    </nav>
+    <div class="block mx-2 min-w-32 my-auto">
+      <button
+        *ngIf="showActionColumn"
+        class="flex items-center text-[9px] justify-center px-3 h-6 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
+        (click)="showNewRow()"
+      >
+        Add New
+        <div
+          class="text-left text-[9px] text-green-500 inline-block align-middle ml-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
+            />
+          </svg>
+        </div>
+      </button>
+    </div>
+    <div class="my-auto">
+      <div class="flex align-middle mx-auto h-6 my-auto">
+        <input
+          id="search"
+          type="text"
+          placeholder="Search Item"
+          [(ngModel)]="searchtext"
+          class="py-1 px-2 rounded-l-full border border-gray-300 text-[9px]"
+          (keydown.enter)="handleSearch()"
+        />
+        <button
+          type="button"
+          name="#search"
+          (click)="handleSearch()"
+          class="inline-flex items-center py-1.5 px-3 text-[9px] font-medium rounded-r-full border-slate-300 border bg-blue-500 text-white bg-primary"
+        >
+          <svg
+            class="w-4 h-4 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+            /></svg>Search
+        </button>
+      </div>
+    </div>
+
+
+
+
+    <div class="pt-1 pl-6">
+      <button
+        (click)="updateFilterColumn()"
+        class="text-slate-700 hover:text-red-400 focus:text-red-400 hover:delay-150 duration-300"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-4"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="w-full h-auto overflow-visible">
+    <table class="mt-2 table-auto border-collapse overflow-visible " id="myTable" >
+      <thead>
+        <tr class="">
+          <th
+            *ngIf="showActionColumn"
+            [style.width]="'100px'"
+            [ngClass]="{ 'sticky-action': stickyActionColumn }"
+            class="px-4 py-2 text-[9px] border border-gray-300 font-medium bg-gray-200"
+          >
+            Action
+          </th>
+
+          <th
+            *ngFor="let header of headers"  [style.width]="header.width"
+            class="py-2 px-1 text-[9px] border bg-gray-200 border-gray-300 font-medium"
+          >
+            <div class="flex items-center justify-between">
+              <span class="flex-1 text-center">{{ header.display_name }}</span>
+              <button
+                *ngIf="header.type !== 'checkbox'"
+                class="ml-2 pr-0 text-black align-middle hover:bg-slate-300 focus:text-red-400 hover:rounded hover:delay-150 duration-300 focus:rounded focus:ring-1 focus:ring-red-300"
+                (click)="sortDataset(header.name)"
+              >
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              [ngClass]="{
+                'rotate-180': sortColumn === header.name && sortDirection === 'asc',
+                'rotate-0': sortColumn === header.name && sortDirection === 'desc'
+              }"
+              class="w-3 h-3 transition-transform duration-300 ease-in-out text-gray-400"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+            
+            
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="showFilterColumn">
+          <td class="text-center border border-gray-200"></td>
+          <td
+            *ngFor="let header of headers"
+            [style.width]="header.width"
+            class="text-center border border-gray-200 bg-gray-50 truncate"
+            [ngSwitch]="header.type || 'text'"
+          >
+<!-- Dropdown for Custom Table Column -->
+<div *ngIf="header.type === 'combobox'">
+  <app-search-select
+    [data]="header.options" 
+    [label]="header.name" 
+    [textsize]="'text-[9px]'" 
+    [value]="header.filters?.value || ''" 
+    (setSelectValue)="onFilterChange($event, header.name)"
+    (onCategoryChange)="onColumnChange($event, header.name)"
+  ></app-search-select>
+</div>
+
+<!-- For all other input types, show the corresponding input field -->
+<div *ngIf="header.name !== 'category'">
+  <!-- Text Input -->
+  <div class="relative" *ngSwitchCase="'text'">
+    <input
+      type="text"
+      class="p-1 bg-gray-50 w-full text-[9px] text-center"
+      [name]="header.name"
+      (input)="handleFilter($event)"
+    />
+  </div>
+  
+
+  <!-- Number Input -->
+<div class="relative" *ngSwitchCase="'number'">
+  <input
+    type="number"
+    class="p-1 bg-gray-50 w-full text-[9px] text-center"
+    [name]="header.name"
+    (input)="handleFilter($event)"
+  />
+</div>
+  <!-- Date Input -->
+  <div class="relative" *ngSwitchCase="'date'">
+    <input
+      type="date"
+      class="p-1 bg-gray-50 w-full text-[9px] text-center"
+      [name]="header.name"
+      (input)="handleFilter($event)"
+    />
+  </div>
+
+  <!-- Checkbox Input -->
+  <div class="relative" *ngSwitchCase="'checkbox'">
+    <select
+      [name]="header.name"
+      class="custom-dropdown w-full bg-gray-100 text-[9px] pl-2 focus:outline-none focus:ring-1 focus:ring-black rounded-sm"
+      (change)="handleFilter($event)"
+    >
+      <option value="" disabled selected>Select</option>
+      <option value="~Blank~" class="text-blue-700">~Blank~</option>
+      <option value="true">True</option>
+      <option value="false">False</option>
+    </select>
+  </div>
+</div>
+
+          </td>
+        </tr>
+        
+
+        <tr *ngIf="isnewrow" class="">
+          <td
+            *ngIf="showActionColumn"
+            class="px-4 text-[9px] border border-gray-300 font-light whitespace-nowrap"
+          >
+<!-- Button to Save New Row (only when adding a new row) -->
+<button *ngIf="isnewrow" (click)="saveNewRow()">Add</button>
+
+<!-- Buttons to Save Existing Rows (for each row when not in add-new mode) -->
+<ng-container *ngIf="!isnewrow">
+  <button *ngFor="let row of displaydata; let i = index" (click)="saveRow(i)">
+    Save
+  </button>
+</ng-container>
+            <button
+              class="hover:bg-gray-300 text-[9px] text-gray-700 font-medium px-2 rounded"
+              (click)="closeNewRow()"
+            >
+              Cancel
+            </button>
+          </td>
+
+          <td
+            *ngFor="let column of columns"
+            class="text-center text-[9px] border border-gray-300 text-gray-600 truncate py-0.5"
+          >
+            <div *ngIf="isnewrow">
+              <ng-container [ngSwitch]="column.type || 'text'">
+
+                <ng-container *ngSwitchCase="'webtool'">
+                  <select 
+                    [(ngModel)]="newrow[column.name]"
+                    (ngModelChange)="onWebtoolSelect($event, newrow)"
+                    class="w-full bg-gray-100 text-[9px] px-2 py-0 m-0 font-light"
+                  >
+                    <option [ngValue]="null">Select Web Tool</option>
+                    <option *ngFor="let option of getColumnData(column)" 
+                            [ngValue]="option">
+                      {{option.webtool}}
+                    </option>
+                  </select>
+                </ng-container>
+                
+               <!-- Custom dropdown for 'combobox' type -->
+        <div *ngSwitchCase="'combobox'">
+          <app-search-select
+          [(ngModel)]="newrow[column.name]"
+          [data]="column.options"          
+          [label]="column.name"           
+          [textsize]="'text-[9px]'"        
+          [value]="newrow[column.name]"   
+          (setSelectValue)="onFilterChange($event, column.name)" 
+        ></app-search-select>
+        </div>
+
+                <input
+                  *ngSwitchCase="'number'"
+                  type="number"
+                  [(ngModel)]="newrow[column.name]"
+                  class="w-full bg-gray-100 text-[9px] px-1 py-0 m-0 font-light focus:outline-none focus:ring-1 focus:ring-black rounded-sm"
+                />
+
+                <input
+                  *ngSwitchCase="'checkbox'"
+                  type="checkbox"
+                  [(ngModel)]="newrow[column.name]"
+                  class="w-full bg-gray-100 text-[9px] px-1 py-0 my-1 font-light focus:outline-none rounded-sm"
+                />
+
+                <input
+                  *ngSwitchCase="'date'"
+                  type="date"
+                  [(ngModel)]="newrow[column.name]"
+                  class="w-full bg-gray-100 text-[8px] px-1 py-0 m-0 font-normal focus:outline-none focus:ring-1 focus:ring-black rounded-sm"
+                />
+
+                <div *ngSwitchCase="'none'"></div>
+
+                <input
+                  *ngSwitchDefault
+                  type="text"
+                  [(ngModel)]="newrow[column.name]"
+                  class="w-full bg-gray-100 text-[9px] px-1 py-0 m-0 font-light focus:outline-none focus:ring-1 focus:ring-black rounded-sm"
+                />
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="let row of displaydata; let i = index"
+          [class.editing]="row.editing"
+        >
+          <td
+            *ngIf="showActionColumn"
+            [ngClass]="{ 'sticky-action': stickyActionColumn }"
+            class="px-4 text-[9px] border border-gray-300 font-light truncate"
+          >
+            <button
+              *ngIf="!row.editing"
+              class="hover:text-green-700 text-white font-bold py-1 px-2 rounded"
+              (click)="editRow(i)"
+            >
+              <svg
+                class="h-4 w-4 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                />
+              </svg>
+            </button>
+            <button
+              *ngIf="row.editing"
+              class="hover:bg-gray-300 text-[9px] text-gray-700 font-medium px-2 rounded"
+              (click)="saveRow(i)"
+            >
+              Save
+            </button>
+            <button
+              *ngIf="row.editing"
+              class="hover:bg-gray-300 text-[9px] text-gray-700 font-medium px-2 rounded"
+              (click)="saveRow(i)"
+            >
+              Cancel
+            </button>
+
+            <button
+              *ngIf="!row.editing"
+              class="hover:text-red-700 text-white text-[9px] font-bold py-1 px-2 rounded"
+              (click)="confirmDelete(i)"
+            >
+              <svg
+                class="h-4 w-4 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            <!-- Modal for delete confirmation -->
+
+            <div
+              class=""
+              aria-labelledby="modal-title"
+              role="dialog"
+              aria-modal="true"
+              [ngClass]="
+                isModalOpen
+                  ? 'opacity-100'
+                  : 'opacity-0 pointer-events-none relative z-400 duration-300 ease-in-out'
+              "
+            >
+              <!-- Background backdrop -->
+              <div
+                class="fixed inset-0 bg-slate-300 z-400 bg-opacity-5"
+                (click)="closeModal()"
+              ></div>
+
+              <!-- Modal wrapper -->
+              <div
+                class="fixed inset-0 z-400 w-screen overflow-y-auto"
+                (click)="closeModal()"
+              >
+                <div
+                  class="flex min-h-full items-center justify-center z-400 p-4 text-center sm:p-0 transition-transform duration-300 ease-in-out"
+                  [ngClass]="isModalOpen ? 'scale-100' : 'scale-95'"
+                >
+                  <!-- Modal panel -->
+                  <div
+                    #modalPanel
+                    class="relative h-44 w-96 flex z-500 flex-col justify-between bg-white text-left rounded-lg transition-all duration-300 ease-in-out"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <!-- ############################################  warning  ########################################### -->
+                    <div
+                      class="h-full flex z-500 flex-col bg-white rounded-lg justify-between"
+                    >
+                      <!-- Modal header -->
+                      <div
+                        class="modal-header flex items-center bg-white pt-3 px-2 rounded-lg cursor-move"
+                      >
+                        <div
+                          class="mx-0 flex h-10 w-10 items-center justify-center rounded-full border-2 border-amber-500 bg-white"
+                        >
+                          <svg
+                            class="h-6 w-6 text-amber-500 stroke-amber-500 stroke-2"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                            />
+                          </svg>
+                        </div>
+                        <div class="text-center ml-4">
+                          <h3
+                            class="text-lg font-semibold leading-6 text-gray-900"
+                            id="modal-title"
+                          >
+                            Delete Confirmation
+                          </h3>
+                        </div>
+                      </div>
+
+                      <div class="mx-4">
+                        <p class="text-base text-gray-500">
+                          Are you sure you want to delete this item?
+                        </p>
+                      </div>
+
+                      <div
+                        class="px-4 bg-white pb-4 flex flex-row-reverse rounded-lg"
+                      >
+                        <button
+                          type="button"
+                          class="inline-flex w-20 h-8 ml-2 justify-center rounded-md bg-amber-400 text-xs items-center font-bold text-white hover:bg-amber-500 shadow-sm transition delay-100"
+                          (click)="deleteConfirmed()"
+                        >
+                          YES
+                        </button>
+
+                        <button
+                          type="button"
+                          class="inline-flex w-20 h-8 justify-center rounded-md bg-slate-100 items-center text-xs font-semibold text-slate-700 transition delay-200 shadow-sm hover:bg-slate-200"
+                          (click)="closeModal()"
+                        >
+                          NO
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td
+          *ngFor="let column of columns"
+          class="text-center text-[9px] border border-gray-300 text-gray-600 px-1 truncate"
+        >
+          <div *ngIf="row.editing" class="grid justify-items-center">
+            <ng-container [ngSwitch]="column.type">
+             <!-- Webtool dropdown -->
+      <ng-container *ngSwitchCase="'webtool'">
+        <select 
+          [(ngModel)]="row[column.name]"
+          (ngModelChange)="onWebtoolSelect($event, row)"
+          class="w-full bg-gray-100 text-[9px] px-2 py-0 m-0 font-light"
+        >
+          <option [ngValue]="null">Select Web Tool</option>
+          <option *ngFor="let option of getColumnData(column)" 
+                  [ngValue]="option">
+            {{option.webtool}}
+          </option>
+        </select>
+      </ng-container>
+        
+              <!-- Dropdown for category column -->
+              <ng-container *ngSwitchCase="'category'">
+                <app-search-select
+                  [data]="header.options"  
+                  [(ngModel)]="row[column.name]"  
+                  [label]="'Select Category'"
+                  [textsize]="'text-[9px]'"
+                  [disabled]="!row.editing"  
+                  class="w-full bg-gray-100"
+                  (setSelectValue)="onCategorySelect($event, row)"  
+                ></app-search-select>
+              </ng-container>
+        
+              <!-- Number Input Type -->
+              <ng-container *ngSwitchCase="'number'">
+                <input
+                  type="number"
+                  [(ngModel)]="row[column.name]"
+                  [disabled]="!row.editing"
+                  class="w-full bg-gray-100 text-[9px] px-2 py-0 m-0 font-light"
+                />
+              </ng-container>
+        
+              <!-- Date Input Type -->
+              <ng-container *ngSwitchCase="'date'">
+                <input
+                  type="date"
+                  [(ngModel)]="row[column.name]"
+                  [disabled]="!row.editing"
+                  class="w-full bg-gray-100 text-[9px] px-2 py-0 m-0 font-light"
+                />
+              </ng-container>
+        
+              <!-- Checkbox Input Type -->
+              <ng-container *ngSwitchCase="'checkbox'">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="row[column.name]"
+                  [disabled]="!row.editing"
+                  class="w-full bg-gray-100 text-[9px] px-1 py-0 my-1 font-light focus:outline-none rounded-sm"
+                />
+              </ng-container>
+        
+              <!-- Default Text Input Type -->
+              <ng-container *ngSwitchDefault>
+                <input
+                  type="text"
+                  [(ngModel)]="row[column.name]"
+                  [value]="row[column.name]"
+                  [disabled]="!row.editing"
+                  class="w-full bg-gray-100 text-[9px] px-2 py-0 m-0 font-light"
+                />
+              </ng-container>
+            </ng-container>
+          </div>
+        
+          <div *ngIf="!row.editing" class="w-full flex justify-center">
+            <ng-container *ngIf="column.type === 'checkbox'; else defaultView">
+              <input
+                type="checkbox"
+                [(ngModel)]="row[column.name]"
+                (ngModelChange)="saveRow(i)"
+                class="w-full bg-gray-100 text-[9px] px-1 py-0 my-1 font-light focus:outline-none rounded-sm"
+              />
+            </ng-container>
+            <ng-template #defaultView>
+              <ng-container *ngIf="row[column.name]?.webtool; else regularView">
+                {{ row[column.name]?.webtool }}
+              </ng-container>
+              <ng-template #regularView>
+                {{ row[column.name] }}
+              </ng-template>
+            </ng-template>
+          </div>
+
+          
+        </td>
+        
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

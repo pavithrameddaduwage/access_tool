@@ -1,0 +1,66 @@
+/* app-role-table.component.css */
+:host ::ng-deep {
+    select[disabled], 
+    select[readonly] {
+      background-color: #f3f4f6;
+      cursor: not-allowed;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  
+    .webtool-disabled {
+      background-color: #f3f4f6;
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+  
+  /* Ensure dropdowns are visible */
+  td { 
+    overflow: visible !important;
+  }
+  
+  .table-container { 
+    overflow: visible !important;
+  }
+  
+  /* Ensure proper z-index for dropdowns */
+  .modal {
+    z-index: 1000;
+  }
+  
+  /* Additional custom table styles */
+  :host ::ng-deep table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* Ensure dropdowns are visible */
+td { 
+  overflow: visible !important;
+}
+
+.table-container { 
+  overflow: visible !important;
+}
+
+/* Make action header consistently gray */
+th:first-child,
+th.sticky-action {
+  background-color: #e5e7eb !important;
+}
+
+/* Override any dynamic styles for sticky action column */
+#sticky-action-column {
+  background-color: #e5e7eb !important;
+}
+
+[id^="sticky-column-"] th:first-child {
+  background-color: #e5e7eb !important;
+}
+
+/* Ensure consistency during scroll */
+th[style*="position: sticky"] {
+  background-color: #e5e7eb !important;
+}

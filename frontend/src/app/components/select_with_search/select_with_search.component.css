@@ -1,0 +1,5 @@
+
+
+.relative .absolute > * {
+  overflow: visible !important; /* Ensure dropdown contents are visible */
+}

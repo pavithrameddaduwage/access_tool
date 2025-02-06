@@ -1,0 +1,234 @@
+<!-- Main container with left alignment -->
+<div class="px-4">
+  <!-- Accordion -->
+  <div class="mb-4">
+    <button
+      (click)="toggleForm()"
+      class="w-96 bg-white p-4 flex items-center justify-between shadow-md rounded-lg hover:bg-gray-50"
+    >
+      <span class="font-bold text-gray-700">Add Dashboard</span>
+      <span class="text-xl">{{ isFormOpen ? '▼' : '▶' }}</span>
+    </button>
+    
+    <!-- Form with reduced width -->
+    <div *ngIf="isFormOpen" class="mt-2 bg-white shadow-md rounded-lg p-6" style="width: 24rem;">
+      <form class="space-y-4">
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="dashboard">
+            Dashboard
+          </label>
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="dashboard"
+            type="text"
+            [(ngModel)]="editForm.dashboard"
+            name="dashboard"
+            placeholder="Enter dashboard name"
+          />
+        </div>
+
+        <!-- Type Section -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="type">
+            Type
+          </label>
+          <app-search-select
+            [data]="typeOptions"
+            [label]="'Type'"
+            [textsize]="'text-xs'"
+            [(ngModel)]="editForm.type"
+            name="type"
+            (setSelectValue)="onTypeChange($event)"
+            class="w-full text-sm px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black"
+          ></app-search-select>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <div *ngFor="let type of selectedTypes; let i = index" 
+                 class="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
+              {{ type }}
+              <button
+                type="button"
+                class="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+                (click)="removeType(i)"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Value Type Section -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="valueType">
+            Value Type
+          </label>
+          <app-search-select
+            [data]="valueTypeOptions"
+            [label]="'Value Type'"
+            [textsize]="'text-xs'"
+            [(ngModel)]="editForm.valueType"
+            name="valueType"
+            (setSelectValue)="onValueTypeChange($event)"
+            class="w-full text-sm px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black"
+          ></app-search-select>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <div *ngFor="let valueType of selectedValueTypes; let i = index" 
+                 class="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
+              {{ valueType }}
+              <button
+                type="button"
+                class="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+                (click)="removeValueType(i)"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workspace Section - Single selection -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="workspace">
+            Workspace
+          </label>
+          <app-search-select
+            [data]="workspaceOptions"
+            [label]="'Workspace'"
+            [textsize]="'text-xs'"
+            [(ngModel)]="editForm.workspace"
+            name="workspace"
+            (setSelectValue)="onWorkspaceChange($event)"
+            class="w-full text-sm px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black"
+          ></app-search-select>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <div *ngIf="selectedWorkspace" 
+                 class="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
+              {{ selectedWorkspace }}
+              <button
+                type="button"
+                class="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+                (click)="removeWorkspace()"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group Section - Single selection -->
+<div>
+  <label class="block text-gray-700 text-sm font-bold mb-2" for="group">
+    Group
+  </label>
+  <app-search-select
+    [data]="groupOptions"
+    [label]="'Group'"
+    [textsize]="'text-xs'"
+    [(ngModel)]="editForm.group"
+    name="group"
+    (setSelectValue)="onGroupChange($event)"
+    class="w-full text-sm px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black"
+  ></app-search-select>
+  <div class="flex flex-wrap gap-2 mt-2">
+    <div *ngIf="selectedGroup" 
+         class="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
+      {{ selectedGroup }}
+      <button
+        type="button"
+        class="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+        (click)="removeGroup()"
+      >
+        ×
+      </button>
+    </div>
+  </div>
+</div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end pt-4">
+          <button
+            *ngIf="selectedRowIndex !== null; else addButton"
+            type="button"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+            (click)="saveEditedRow()"
+          >
+            Save
+          </button>
+          <ng-template #addButton>
+            <button
+              type="button"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+              (click)="onAddNewDashboard()"
+            >
+              Add Dashboard
+            </button>
+          </ng-template>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="bg-white rounded-lg shadow-md">
+    <!-- Search Bar -->
+    <div class="p-4">
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+          </svg>
+        </div>
+        <input
+          type="text"
+          class="block w-80 pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Search dashboards..."
+        />
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-700 ">
+        <thead class="text-xs text-gray-700 uppercase  ">
+          <tr>
+            <th *ngFor="let header of dashboardHeaders" 
+                [style.width]="header.width" 
+                class="px-4 py-3 border-r bg-gray-100 border-gray-300 text-gray-700">
+              {{ header.display_name }}
+            </th>
+            <th class="px-4 py-3 bg-gray-100 text-gray-700">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of filteredTableData; let i = index" 
+              class="border-b hover:bg-gray-50">
+            <td *ngFor="let header of dashboardHeaders" 
+                class="px-4 py-3 border-r border-gray-300">
+              <ng-container *ngIf="header.name === 'type' || header.name === 'valuetype'">
+                <div class="flex flex-wrap gap-1">
+                  <span *ngFor="let tag of row[header.name]?.split(', ')" 
+                        class="bg-gray-100 rounded-full px-2 py-1 text-xs">
+                    {{ tag }}
+                  </span>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="header.name === 'workspace'">
+                {{ row[header.name] }}
+              </ng-container>
+              <ng-container *ngIf="header.name !== 'type' && header.name !== 'valuetype' && header.name !== 'workspace'">
+                {{ row[header.name] }}
+              </ng-container>
+            </td>
+            <td class="px-4 py-3">
+              <button class="text-blue-600 hover:underline mr-4" (click)="onEdit(row, i)">
+                Edit
+              </button>
+              <button class="text-red-600 hover:underline" (click)="onDelete(row, i)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

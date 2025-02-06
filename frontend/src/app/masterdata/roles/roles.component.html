@@ -1,0 +1,10 @@
+<div class="pl-7">
+  <app-role-table
+      [headers]="roleHeaders"
+      [data]="filteredTableData"
+      [showActionColumn]="true"
+      [stickyActionColumn]="true"
+      (saveItem)="onSave($event)"
+      (deleteItem)="onDelete($event)"
+    ></app-role-table>
+  </div>

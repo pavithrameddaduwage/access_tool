@@ -1,0 +1,159 @@
+<div class="py-6 px-4">
+  <div>
+    <h2 class="text-2xl font-bold mb-4">User Management</h2>
+    
+    <!-- Add User Button -->
+    <div class="mb-4 flex justify-end">
+      <button
+        (click)="openForm('add')"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Add User
+      </button>
+    </div>
+  <!-- User Table -->
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border table-fixed">
+        <thead class="bg-gray-100">
+          <tr>
+            <!-- Adjusted column widths and all left aligned -->
+            <th class="border p-2 table-header text-left w-1/4">Email</th>
+            <th class="border p-2 text-left w-1/4">User Name</th>
+            <th class="border p-2 text-left w-1/3">User Roles</th>
+            <th class="border p-2 text-left w-24">Is Active</th>  <!-- Increased width -->
+            <th class="border p-2 text-left w-24">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td class="border p-2">{{user?.email}}</td>
+            <td class="border p-2">{{user?.name}}</td>
+            <td class="border p-2">
+              <div class="flex flex-wrap gap-1">
+                <span *ngFor="let userRole of user.user_roles" 
+                      class="px-2 py-1 rounded-full text-sm" 
+                      [ngClass]="userRole.role.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'">
+                  {{userRole.role.role}}
+                </span>
+              </div>
+            </td>
+            <td class="border p-2">  <!-- Removed text-center -->
+              <input type="checkbox" 
+                     [checked]="user?.is_active"
+                     (change)="updateStatus(user?.id || 0, $event)"
+                     class="h-4 w-4">
+            </td>
+            <td class="border p-2">  <!-- Removed justify-center -->
+              <div class="flex items-center space-x-2">
+                <button (click)="editUser(user)" 
+                        class="text-blue-600 hover:text-blue-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button (click)="deleteUser(user.id)"
+                        class="text-red-600 hover:text-red-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+<!-- Modal Form -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-8 w-full max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold">{{editMode ? 'Edit User' : 'Add New User'}}</h2>
+      <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700">×</button>
+    </div>
+
+    <form class="space-y-4">
+      <!-- AD Search Input - Show only in Add mode -->
+      <div class="relative" *ngIf="!editMode">
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Search User
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+          type="text"
+          placeholder="Search AD users..."
+          (input)="onUserSearch($event)"
+          [readonly]="editMode"
+        >
+        
+        <!-- Loading Indicator -->
+        <div *ngIf="isSearching" class="absolute right-3 top-9">
+          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+        </div>
+
+        <!-- Search Results -->
+        <div *ngIf="adUsers.length > 0" 
+             class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto">
+          <ul class="py-1">
+            <li *ngFor="let user of adUsers"
+                class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                (click)="selectADUser(user)">
+              <div class="text-sm">{{user.name}}</div>
+              <div class="text-xs text-gray-500">{{user.email}}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Read-only fields -->
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+        <input type="email" [value]="selectedUser?.email" readonly 
+               class="w-full p-2 border rounded bg-gray-50">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+        <input type="text" [value]="selectedUser?.name" readonly 
+               class="w-full p-2 border rounded bg-gray-50">
+      </div>
+
+      <!-- Role Selection -->
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">Roles</label>
+        <div class="space-y-2">
+          <div *ngFor="let role of roles" class="flex items-center gap-2">
+            <input type="checkbox"
+                   [checked]="isRoleSelected(role.id)"
+                   (change)="toggleRole(role.id)"
+                   class="h-4 w-4">
+            <label>{{role.role}}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Roles Pills -->
+      <div class="flex flex-wrap gap-2">
+        <span *ngFor="let roleId of selectedRoles" 
+              class="px-2 py-1 rounded-full text-sm flex items-center gap-1"
+              [ngClass]="getRoleById(roleId)?.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'">
+          {{getRoleById(roleId)?.role}}
+          <button (click)="toggleRole(roleId)" class="hover:text-gray-700">×</button>
+        </span>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" (click)="closeModal()"
+                class="px-4 py-2 border rounded hover:bg-gray-100">
+          Cancel
+        </button>
+        <button type="button" (click)="saveUser()"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          {{editMode ? 'Update' : 'Add'}} User
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

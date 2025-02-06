@@ -1,0 +1,11 @@
+<div class="pl-7">
+  <app-custom-table
+        [headers]="groupHeaders"
+        [data]="filteredTableData"
+        [showActionColumn]="true"
+        [stickyActionColumn]="true"
+        (saveItem)="onSave($event)"
+        (deleteItem)="onDelete($event)"
+        [header]="groupHeaders"
+      ></app-custom-table>
+    </div>

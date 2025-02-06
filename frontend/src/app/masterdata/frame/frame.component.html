@@ -1,0 +1,74 @@
+<div class="flex flex-col h-[calc(100vh-60px)]"> <!-- Adjust 60px to match navbar height -->
+  <!-- Sticky header container -->
+  <div class="sticky top-0 bg-white z-50 border-b border-gray-200 shadow-sm">
+    <div class="max-w-8xl mx-auto px-4">
+      <ul class="flex mb-0 list-none pt-4 pb-4 flex-row gap-1">
+        <li class="flex-auto">
+          <a routerLink="type" 
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 rounded-l-lg transition-all duration-200 text-center hover:bg-gray-100">
+            Type
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="valuetype"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 transition-all duration-200 text-center hover:bg-gray-100">
+            Value Type
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="webtool"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 transition-all duration-200 text-center hover:bg-gray-100">
+            Web Tool
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="userroles"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 transition-all duration-200 text-center hover:bg-gray-100">
+            User Roles
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="workspace"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 transition-all duration-200 text-center hover:bg-gray-100">
+            Workspace
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="dashboard"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 transition-all duration-200 text-center hover:bg-gray-100">
+            Dashboard
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="users"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 transition-all duration-200 text-center hover:bg-gray-100">
+            User
+          </a>
+        </li>
+        <li class="flex-auto">
+          <a routerLink="group"
+             routerLinkActive="text-gray-700 bg-gray-200 border-gray-300"
+             class="text-xs font-medium tracking-wide uppercase px-3 py-2 block leading-normal border border-gray-300 rounded-r-lg transition-all duration-200 text-center hover:bg-gray-100">
+            Group
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Router outlet for nested routes -->
+  <div class="flex-1 overflow-y-auto bg-gray-50">
+    <div class="min-h-full">
+      <div class="py-6">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<div class="tab-content tab-space">
+  <div class="w-full overflow-x-auto">
+    <app-custom-table
+      [headers]="departmentHeaders"
+      [data]="filteredTableData"
+      [showActionColumn]="true"
+      [stickyActionColumn]="true"
+      (saveItem)="onSave($event)"
+      (deleteItem)="onDelete($event)"
+      [header]="departmentHeaders"
+    ></app-custom-table>
+  </div>
+</div>

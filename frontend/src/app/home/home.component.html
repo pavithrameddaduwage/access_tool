@@ -1,0 +1,205 @@
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  <!-- Add Button -->
+  <div class="mb-4 flex justify-end">
+    <button
+      (click)="openForm('add')"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Add New Record
+    </button>
+  </div>
+
+  <!-- Records Table -->
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white text-gray-900">
+    <table class="w-full text-sm text-left text-gray-700">
+      <thead class="text-xs uppercase">
+        <tr>
+          <th 
+            *ngFor="let header of tableHeaders" 
+            [style.width]="header.width" 
+            [style.backgroundColor]="'#e5e7eb'"
+            class="px-6 py-3 border-r border-gray-300 text-gray-700"
+          >
+            {{ header.display_name }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let record of records; let i = index">
+          <!-- Main Row -->
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="px-6 py-4 border-r border-gray-300">
+              <div class="flex items-center space-x-3">
+                <button 
+                  (click)="openForm('edit', record, i)"
+                  class="text-blue-600 hover:text-blue-800"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button 
+                  (click)="toggleRowExpansion(i)"
+                  class="text-gray-600 hover:text-gray-800 transform transition-transform duration-200"
+                  [class.rotate-180]="record.isExpanded"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+            <td class="px-6 py-4 border-r border-gray-300">{{ record.userName }}</td>
+            <td class="px-6 py-4 border-r border-gray-300">{{ record.department }}</td>
+            <td class="px-6 py-4 border-r border-gray-300">{{ record.email }}</td>
+            <td class="px-6 py-4 border-r border-gray-300">
+              <div class="flex flex-wrap gap-1">
+                <ng-container *ngIf="!record.isExpanded">
+                  <span 
+                    *ngFor="let dashboard of record.dashboards.slice(0, 3)"
+                    class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                  >
+                    {{ dashboard }}
+                  </span>
+                  <span 
+                    *ngIf="record.dashboards.length > 3"
+                    class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full cursor-pointer"
+                    (click)="toggleRowExpansion(i)"
+                  >
+                    +{{ record.dashboards.length - 3 }} more
+                  </span>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Expanded Row -->
+          <tr *ngIf="record.isExpanded" class="bg-gray-50">
+            <td class="px-6 py-4 border-r border-gray-300">
+              <!-- Empty Actions column -->
+            </td>
+            <td colspan="4" class="px-6 py-4">
+              <div class="flex flex-wrap gap-2">
+                <span 
+                  *ngFor="let dashboard of record.dashboards"
+                  class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                >
+                  {{ dashboard }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal/Popup Form -->
+  <div *ngIf="showForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-8 w-full max-w-md">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">{{ isEditMode ? 'Edit Record' : 'Add New Record' }}</h2>
+        <button 
+          (click)="closeForm()"
+          class="text-gray-500 hover:text-gray-700"
+        >
+          ×
+        </button>
+      </div>
+
+      <form class="space-y-4">
+        <!-- User Selection -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="user">
+            User
+          </label>
+          <app-search-select
+  [data]="userOptions"
+  [label]="'User'"
+  [textsize]="'text-xs'"
+  (setSelectValue)="onUserChange($event)"
+></app-search-select>
+        </div>
+
+        <!-- Email Display -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+          <div class="w-full py-2 px-3 text-gray-700 bg-gray-100 rounded">
+            {{ editForm.email }}
+          </div>
+        </div>
+
+        <!-- Department Display -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>
+          <div class="w-full py-2 px-3 text-gray-700 bg-gray-100 rounded">
+            {{ editForm.department }}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="workspace">
+            Workspace
+          </label>
+          <app-search-select
+            [data]="workspaceOptions"
+            [label]="'Workspace'"
+            [textsize]="'text-xs'"
+            (setSelectValue)="onWorkspaceChange($event)"
+            class="w-full"
+          ></app-search-select>
+        </div>
+      
+        <!-- Dashboard Selection - Updated -->
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="dashboard">
+            Dashboards
+          </label>
+          <app-search-select
+            [data]="dashboardOptions"
+            [label]="'Dashboard'"
+            [textsize]="'text-xs'"
+            (setSelectValue)="onDashboardChange($event)"
+            [disabled]="!selectedWorkspace"
+            class="w-full"
+          ></app-search-select>
+
+          <!-- Selected Dashboards Pills -->
+          <div class="flex flex-wrap gap-2 mt-2">
+            <div 
+              *ngFor="let dashboard of selectedDashboards; let i = index"
+              class="flex items-center bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+            >
+              {{ dashboard }}
+              <button
+                type="button"
+                class="ml-1 text-blue-600 hover:text-blue-800 focus:outline-none"
+                (click)="removeDashboard(i)"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 mt-6">
+          <button
+            type="button"
+            (click)="closeForm()"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            (click)="onSave()"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {{ isEditMode ? 'Save Changes' : 'Add Record' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

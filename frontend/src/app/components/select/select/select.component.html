@@ -1,0 +1,34 @@
+<div >
+
+    <!-- <h6 class="font-medium text-sm mb-1"> {{label}} </h6> -->
+    <div class="relative w-full">
+      <select
+        (change)="setValue($event, label)"
+        [(ngModel)]="selectedvalue"
+        class="block w-full bg-white border text-center border-gray-300 hover:border-gray-500 py-1 rounded focus:outline-none focus:shadow-outline-blue focus:border-blue-300 px-2 pr-6 appearance-none"
+        [disabled]="disabled"
+        [ngClass]="textSizeClass(textsize)"
+        style="padding-left: 0.8rem; background: none; position: relative; z-index: 10;"
+      >
+        <option [ngClass]="blankline ? '' : 'hidden'" [value]="">Blank</option>
+        <option class="whitespace-nowrap px-4 py-2" *ngFor="let item of items" [value]="item.value">
+          {{ item.label }}
+        </option>
+      </select>
+    
+      <!-- External Dropdown Icon (SVG) -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-3 h-3 transition-transform duration-300 ease-in-out text-gray-400 absolute right-1 top-1/2 transform -translate-y-1/2 z-0"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
+    
+    
+    
+  </div>

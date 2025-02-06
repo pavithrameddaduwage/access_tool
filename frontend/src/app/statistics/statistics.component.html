@@ -1,0 +1,391 @@
+<div class="container mx-auto px-6 py-12">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Overview</h1>
+    <p class="text-gray-600 mt-2">Overview of dashboard and webtool usage and metrics</p>
+  </div>
+
+  <!-- Key Metrics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Dashboards -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Dashboards</p>
+          <p class="text-2xl font-bold text-gray-900">{{ statistics.totalDashboards }}</p>
+        </div>
+        <div class="p-3 bg-blue-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Users -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Users</p>
+          <p class="text-2xl font-bold text-gray-900">{{ statistics.totalUsers }}</p>
+        </div>
+        <div class="p-3 bg-green-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Average Users per Dashboard -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Avg. Users/Dashboard</p>
+          <p class="text-2xl font-bold text-gray-900">{{ statistics.averageUsersPerDashboard | number:'1.0-1' }}</p>
+        </div>
+        <div class="p-3 bg-purple-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Used Dashboard -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Top Dashboard</p>
+          <p class="text-lg font-bold text-gray-900 truncate" [title]="statistics.mostUsedDashboard.name">
+            {{ statistics.mostUsedDashboard.name }}
+          </p>
+          <p class="text-sm text-gray-500">{{ statistics.mostUsedDashboard.users }} users</p>
+        </div>
+        <div class="p-3 bg-yellow-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <!-- Total Webtools -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Webtools</p>
+          <p class="text-2xl font-bold text-gray-900">{{ statistics.totalWebtools }}</p>
+        </div>
+        <div class="p-3 bg-indigo-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Average Users per Webtool -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Avg. Users/Webtool</p>
+          <p class="text-2xl font-bold text-gray-900">{{ statistics.averageUsersPerWebtool | number:'1.0-1' }}</p>
+        </div>
+        <div class="p-3 bg-teal-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Most Common Role -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Most Common Role</p>
+          <p class="text-lg font-bold text-gray-900 truncate" [title]="statistics.mostCommonRole.name">
+            {{ statistics.mostCommonRole.name }}
+          </p>
+          <p class="text-sm text-gray-500">{{ statistics.mostCommonRole.count }} users</p>
+        </div>
+        <div class="p-3 bg-rose-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Charts Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Value Types Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Value Types Distribution</h2>
+      <div class="h-96">
+        <apx-chart
+          #valueTypeChart
+          [series]="valueTypeChartOptions.series!"
+          [chart]="valueTypeChartOptions.chart!"
+          [labels]="valueTypeChartOptions.labels!"
+          [colors]="valueTypeChartOptions.colors!"
+          [legend]="valueTypeChartOptions.legend!"
+          [title]="valueTypeChartOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- Workspace Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Dashboards by Workspace</h2>
+      <div class="h-96">
+        <apx-chart
+          #workspaceChart
+          [series]="workspaceChartOptions.series!"
+          [chart]="workspaceChartOptions.chart!"
+          [xaxis]="workspaceChartOptions.xaxis!"
+          [dataLabels]="workspaceChartOptions.dataLabels!"
+          [plotOptions]="workspaceChartOptions.plotOptions!"
+          [colors]="workspaceChartOptions.colors!"
+          [title]="workspaceChartOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- Group Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Dashboards by Group</h2>
+      <div class="h-96">
+        <apx-chart
+          #groupDistributionChart
+          [series]="groupChartOptions.series!"
+          [chart]="groupChartOptions.chart!"
+          [labels]="groupChartOptions.labels!"
+          [colors]="groupChartOptions.colors!"
+          [legend]="groupChartOptions.legend!"
+          [title]="groupChartOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- Department Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Users by Department</h2>
+      <div class="h-96">
+        <apx-chart
+          #departmentChart
+          [series]="departmentChartOptions.series!"
+          [chart]="departmentChartOptions.chart!"
+          [xaxis]="departmentChartOptions.xaxis!"
+          [dataLabels]="departmentChartOptions.dataLabels!"
+          [plotOptions]="departmentChartOptions.plotOptions!"
+          [colors]="departmentChartOptions.colors!"
+          [title]="departmentChartOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Charts Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <!-- Type-Value Combinations -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Type & Value Type Combinations</h2>
+      <div class="h-96">
+        <apx-chart
+          #typeValueComboChart
+          [series]="typeValueComboOptions.series!"
+          [chart]="typeValueComboOptions.chart!"
+          [dataLabels]="typeValueComboOptions.dataLabels!"
+          [xaxis]="typeValueComboOptions.xaxis!"
+          [title]="typeValueComboOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- Multi-Workspace Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Multi-Workspace Distribution</h2>
+      <div class="h-96">
+        <apx-chart
+          #multiWorkspaceChart
+          [series]="multiWorkspaceChartOptions.series!"
+          [chart]="multiWorkspaceChartOptions.chart!"
+          [xaxis]="multiWorkspaceChartOptions.xaxis!"
+          [dataLabels]="multiWorkspaceChartOptions.dataLabels!"
+          [plotOptions]="multiWorkspaceChartOptions.plotOptions!"
+          [colors]="multiWorkspaceChartOptions.colors!"
+          [title]="multiWorkspaceChartOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- Department Dashboard Access -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Department Dashboard Access</h2>
+      <div class="h-96">
+        <apx-chart
+          #deptAccessChart
+          [series]="deptAccessChartOptions.series!"
+          [chart]="deptAccessChartOptions.chart!"
+          [xaxis]="deptAccessChartOptions.xaxis!"
+          [title]="deptAccessChartOptions.title!"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+
+
+
+  
+  <!-- Webtool Charts Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <!-- Webtool Users Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Users per Webtool</h2>
+      <div class="h-96">
+        <apx-chart
+          [series]="webtoolUserChartOptions.series!"
+          [chart]="webtoolUserChartOptions.chart!"
+          [xaxis]="webtoolUserChartOptions.xaxis!"
+          [dataLabels]="webtoolUserChartOptions.dataLabels!"
+          [plotOptions]="webtoolUserChartOptions.plotOptions!"
+          [colors]="webtoolUserChartOptions.colors!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+      <!-- Users per Webtool -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Users per Webtool</h2>
+        <div class="h-96">
+          <apx-chart
+            [series]="webtoolUserChartOptions.series!"
+            [chart]="webtoolUserChartOptions.chart!"
+            [xaxis]="webtoolUserChartOptions.xaxis!"
+            [dataLabels]="webtoolUserChartOptions.dataLabels!"
+            [plotOptions]="webtoolUserChartOptions.plotOptions!"
+            [colors]="webtoolUserChartOptions.colors!"
+          ></apx-chart>
+        </div>
+      </div>
+    
+      <!-- Role Distribution -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Role Distribution</h2>
+        <div class="h-96">
+          <apx-chart
+            [series]="roleDistributionChartOptions.series!"
+            [chart]="roleDistributionChartOptions.chart!"
+            [labels]="roleDistributionChartOptions.labels!"
+            [colors]="roleDistributionChartOptions.colors!"
+            [legend]="roleDistributionChartOptions.legend!"
+          ></apx-chart>
+        </div>
+      </div>
+    
+      <!-- Access Comparison -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Dashboard vs Webtool Access</h2>
+        <div class="h-96">
+          <apx-chart
+            [series]="accessComparisonChartOptions.series!"
+            [chart]="accessComparisonChartOptions.chart!"
+            [xaxis]="accessComparisonChartOptions.xaxis!"
+            [stroke]="accessComparisonChartOptions.stroke!"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<!-- New Advanced Analytics Section -->
+<div class="mt-12">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6">Advanced Analytics</h2>
+  
+  <!-- User Access Patterns -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">User Access Patterns by Department</h3>
+      <div class="h-96">
+        <apx-chart
+          #userAccessPatternChart
+          [series]="userAccessPatternOptions.series!"
+          [chart]="userAccessPatternOptions.chart!"
+          [xaxis]="userAccessPatternOptions.xaxis!"
+          [colors]="userAccessPatternOptions.colors!"
+          [plotOptions]="userAccessPatternOptions.plotOptions!"
+          [title]="userAccessPatternOptions.title!"
+        ></apx-chart>
+      </div>
+      <div class="mt-4 text-sm text-gray-600">
+        Distribution of users with access to different tools across departments
+      </div>
+    </div>
+
+    <!-- Role Metrics -->
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Role Usage Analysis</h3>
+      <div class="h-96">
+        <apx-chart
+          #roleMetricsChart
+          [series]="roleMetricsOptions.series!"
+          [chart]="roleMetricsOptions.chart!"
+          [xaxis]="roleMetricsOptions.xaxis!"
+          [yaxis]="roleMetricsOptions.yaxis!"
+          [colors]="roleMetricsOptions.colors!"
+          [stroke]="roleMetricsOptions.stroke!"
+        ></apx-chart>
+      </div>
+      <div class="mt-4 text-sm text-gray-600">
+        Comparison of average tool usage and user count per role
+      </div>
+    </div>
+  </div>
+
+  <!-- Access Trends -->
+  <div class="mt-8">
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">7-Day Access Trends</h3>
+      <div class="h-96">
+        <apx-chart
+          #accessTrendChart
+          [series]="accessTrendOptions.series!"
+          [chart]="accessTrendOptions.chart!"
+          [xaxis]="accessTrendOptions.xaxis!"
+          [colors]="accessTrendOptions.colors!"
+          [stroke]="accessTrendOptions.stroke!"
+          [fill]="accessTrendOptions.fill!"
+        ></apx-chart>
+      </div>
+      <div class="mt-4 text-sm text-gray-600">
+        Daily trends of active users, total accesses, and unique tools used
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <p class="text-sm font-medium text-gray-600">Most Active Time</p>
+      <p class="text-2xl font-bold text-indigo-600 mt-1">10 AM - 2 PM</p>
+      <p class="text-sm text-gray-500">Peak usage period</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <p class="text-sm font-medium text-gray-600">Cross-Tool Usage</p>
+      <p class="text-2xl font-bold text-emerald-600 mt-1">65%</p>
+      <p class="text-sm text-gray-500">Users with both access types</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <p class="text-sm font-medium text-gray-600">Tool Utilization</p>
+      <p class="text-2xl font-bold text-blue-600 mt-1">78%</p>
+      <p class="text-sm text-gray-500">Active tools ratio</p>
+    </div>
+  </div>
+</div>

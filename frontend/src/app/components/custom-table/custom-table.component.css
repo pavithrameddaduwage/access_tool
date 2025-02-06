@@ -1,0 +1,28 @@
+/* Ensure dropdowns are visible */
+td { 
+  overflow: visible !important;
+}
+
+.table-container { 
+  overflow: visible !important;
+}
+
+/* Make action header consistently gray */
+th:first-child,
+th.sticky-action {
+  background-color: #e5e7eb !important;
+}
+
+/* Override any dynamic styles for sticky action column */
+#sticky-action-column {
+  background-color: #e5e7eb !important;
+}
+
+[id^="sticky-column-"] th:first-child {
+  background-color: #e5e7eb !important;
+}
+
+/* Ensure consistency during scroll */
+th[style*="position: sticky"] {
+  background-color: #e5e7eb !important;
+}

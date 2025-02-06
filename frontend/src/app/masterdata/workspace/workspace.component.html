@@ -1,0 +1,11 @@
+<div class="pl-7 ">
+    <app-custom-table
+    [headers]="workspaceHeaders"
+    [data]="filteredTableData"
+    [showActionColumn]="true"
+    [stickyActionColumn]="true"
+    (saveItem)="onSave($event)"
+    (deleteItem)="onDelete($event)"
+    [header]="workspaceHeaders"
+  ></app-custom-table>
+  </div>

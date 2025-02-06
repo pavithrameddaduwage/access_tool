@@ -1,0 +1,24 @@
+<div class="flex-col h-screen bg-gradient-to-t from-cyan-900 to-light-blue-600 -mt-16">
+    <div class="flex-col h-full mx-auto py-48">
+        <div class="my-auto">
+            <h3 class="text-blue-50 text-center font-medium text-2xl mt-5 mx-auto mb-5">User Access Tool</h3>
+            <div class="max-w-xs mx-auto my-auto border border-gray-400 rounded-lg p-5 pb-16 w-96 bg-white shadow-xl">
+                <h1 class="text-primary text-center font-light text-2xl mt-5">
+                    Login
+                </h1>
+                <form [formGroup]="formGroup" class="block max-w-xs mx-auto" (ngSubmit)="handleSubmit()">
+                    <input type="email" placeholder="Email" formControlName="email" required class="text-sm"/>
+                    <input type="password" placeholder="Password" formControlName="password" class="text-sm"/>
+                    <button type="submit" name="login" 
+                        class="btn w-full text-center justify-center my-auto py-auto font-light text-sm">
+                        Login
+                    </button>
+                </form>
+            </div>
+            <!-- Powered by text below form -->
+            <div class="text-center text-blue-100 text-sm mt-4">
+                Powered by MIS Team
+            </div>
+        </div>
+    </div>
+</div>

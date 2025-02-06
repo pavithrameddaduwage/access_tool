@@ -1,0 +1,60 @@
+<div class="relative w-full h-full">
+  <div class="relative">
+    <input
+      type="text"
+      class="inline-block w-full rounded py-1 px-1 focus:outline-none focus:ring-0 focus:ring-gray-500 bg-gray-50 text-center border border-gray-300"
+      placeholder="Select an option"
+      [(ngModel)]="inputValue"
+      (focus)="showDropdown()"
+      (input)="filterDropdown($event)"
+      (blur)="hideDropdown()"
+      [disabled]="disabled"
+      [ngClass]="textSizeClass()"
+    />
+
+    <!-- Dropdown Arrow Icon -->
+    <div
+      class="absolute right-0 pr-1 pointer-events-none"
+      style="top: 50%; transform: translateY(-30%);"
+    >
+      <svg
+        class="w-3 h-3 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Dropdown Menu -->
+  <div
+    class="absolute mt-1 w-full bg-white border border-gray-300 rounded z-50 shadow-lg"
+    *ngIf="dropdownVisible"
+  >
+    <ul
+      class="absolute bg-white border border-gray-300 max-h-48 overflow-y-auto z-50 w-full rounded"
+      [ngClass]="textSizeClass()"
+    >
+      <!-- Clear Selection Option -->
+      <li
+        class="px-2 bg-white font-semibold hover:bg-gray-200 cursor-pointer z-50"
+        (mousedown)="selectOption({ value: '', label: '' })"
+      >
+        Clear Selection
+      </li>
+
+      <!-- List of Filtered Options -->
+      <li
+        class="px-2 bg-white hover:bg-gray-200 cursor-pointer z-50"
+        *ngFor="let option of filteredItems"
+        (mousedown)="selectOption(option)"
+        [ngClass]="textSizeClass()"
+      >
+        {{ option?.label || '' }}
+      </li>
+    </ul>
+  </div>
+</div>
