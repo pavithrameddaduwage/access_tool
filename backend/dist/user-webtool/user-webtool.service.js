@@ -115,6 +115,63 @@ let UserWebtoolService = class UserWebtoolService {
     async remove(email, webtoolId) {
         await this.userWebtoolRepository.delete({ email, webtoolId });
     }
+    async createExternalAssignment(dto) {
+        const webtool = await this.webtoolRepository.findOne({
+            where: { id: dto.webtoolId }
+        });
+        if (!webtool) {
+            throw new common_1.NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+        }
+        const roles = await this.roleRepository.find({
+            where: {
+                id: (0, typeorm_2.In)(dto.roleIds),
+                webtool: { id: dto.webtoolId }
+            },
+            relations: ['webtool']
+        });
+        if (roles.length !== dto.roleIds.length) {
+            throw new common_1.NotFoundException('Some roles were not found or do not belong to this webtool');
+        }
+        await this.userWebtoolRepository.delete({
+            email: dto.email,
+            webtoolId: dto.webtoolId
+        });
+        const userWebtools = dto.roleIds.map(roleId => this.userWebtoolRepository.create({
+            email: dto.email,
+            userName: dto.userName,
+            department: dto.department,
+            webtoolId: dto.webtoolId,
+            roleId: roleId
+        }));
+        const saved = await this.userWebtoolRepository.save(userWebtools);
+        return {
+            success: true,
+            message: 'User assignments created successfully',
+            data: {
+                email: dto.email,
+                userName: dto.userName,
+                webtool: webtool.webtool,
+                roles: roles.map(role => ({
+                    id: role.id,
+                    name: role.roles
+                }))
+            }
+        };
+    }
+    async deleteExternalAssignment(dto) {
+        await this.userWebtoolRepository.delete({
+            email: dto.email,
+            webtoolId: dto.webtoolId
+        });
+        return {
+            success: true,
+            message: 'User assignments deleted successfully',
+            data: {
+                email: dto.email,
+                webtoolId: dto.webtoolId
+            }
+        };
+    }
 };
 exports.UserWebtoolService = UserWebtoolService;
 exports.UserWebtoolService = UserWebtoolService = __decorate([

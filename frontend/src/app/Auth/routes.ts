@@ -18,6 +18,7 @@ import { WebtoolDetailComponent } from '../webtool-detail/webtool-detail.compone
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 import { UserManagementComponent } from '../masterdata/user-management/user-management.component';
+import { PowerBIAnalyticsComponent } from '../powerbi-analytics/powerbi-analytics.component';
 
 const routeConfig: Routes = [
   {
@@ -150,12 +151,17 @@ const routeConfig: Routes = [
     title: 'Statistics',
     pathMatch: 'full'
   },
+  
   {
     path: 'webtool-detail/:id',
     component: WebtoolDetailComponent,
     canActivate: [authGuard],
     title: 'Webtool Detail',
     pathMatch: 'full'
+  },
+  {
+    path: 'powerbi-analytics',
+    component: PowerBIAnalyticsComponent
   }
 ];
 

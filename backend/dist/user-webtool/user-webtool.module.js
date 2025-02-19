@@ -14,14 +14,25 @@ const user_webtool_controller_1 = require("./user-webtool.controller");
 const user_webtool_entity_1 = require("./entities/user-webtool.entity");
 const webtool_entity_1 = require("../webtool/entities/webtool.entity");
 const role_entity_1 = require("../roles/entities/role.entity");
+const external_webtool_guard_1 = require("../auth/guards/external-webtool.guard");
+const jwt_1 = require("@nestjs/jwt");
+const auth_module_1 = require("../auth/auth.module");
+const constants_1 = require("../auth/constants");
 let UserWebtoolModule = class UserWebtoolModule {
 };
 exports.UserWebtoolModule = UserWebtoolModule;
 exports.UserWebtoolModule = UserWebtoolModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([user_webtool_entity_1.UserWebtool, webtool_entity_1.Webtool, role_entity_1.Role])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([user_webtool_entity_1.UserWebtool, webtool_entity_1.Webtool, role_entity_1.Role]),
+            auth_module_1.AuthModule,
+            jwt_1.JwtModule.register({
+                secret: constants_1.jwtConstants.secret,
+                signOptions: { expiresIn: '1h' },
+            }),
+        ],
         controllers: [user_webtool_controller_1.UserWebtoolController],
-        providers: [user_webtool_service_1.UserWebtoolService],
+        providers: [user_webtool_service_1.UserWebtoolService, external_webtool_guard_1.ExternalWebtoolGuard],
         exports: [user_webtool_service_1.UserWebtoolService]
     })
 ], UserWebtoolModule);

@@ -24,10 +24,13 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { HttpExceptionFilter } from './http-exception.filter';
-
+import { PowerBIAnalyticsModule } from './powerbi-analytics/powerbi-analytics.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
+  imports: [ ConfigModule.forRoot({
+    isGlobal: true,
+  }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost', 
@@ -45,7 +48,7 @@ import { HttpExceptionFilter } from './http-exception.filter';
       autoLoadEntities: true, 
       synchronize: true, 
       logging: true, 
-    }),
+    }, ),
     DepartmentModule,
     RolesModule,
     TypeModule,
@@ -59,6 +62,7 @@ import { HttpExceptionFilter } from './http-exception.filter';
     WebtoolUserModule,
     AuthModule,
     UsersModule,
+    PowerBIAnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

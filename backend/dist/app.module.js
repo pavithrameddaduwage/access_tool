@@ -32,12 +32,16 @@ const users_module_1 = require("./users/users.module");
 const auth_guard_1 = require("./auth/guards/auth.guard");
 const core_1 = require("@nestjs/core");
 const http_exception_filter_1 = require("./http-exception.filter");
+const powerbi_analytics_module_1 = require("./powerbi-analytics/powerbi-analytics.module");
+const config_1 = require("@nestjs/config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [
+        imports: [config_1.ConfigModule.forRoot({
+                isGlobal: true,
+            }),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
                 host: 'localhost',
@@ -66,6 +70,7 @@ exports.AppModule = AppModule = __decorate([
             webtool_user_module_1.WebtoolUserModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
+            powerbi_analytics_module_1.PowerBIAnalyticsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

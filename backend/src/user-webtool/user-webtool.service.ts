@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { UserWebtool } from "./entities/user-webtool.entity";
 import { CreateUserWebtoolDto } from "./dto/create-user-webtool.dto";
 import { Webtool } from "../webtool/entities/webtool.entity"; // Add this
 import { Role } from "../roles/entities/role.entity"; // Add this
+import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.dto";
+import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 
 
 @Injectable()
@@ -127,4 +129,84 @@ export class UserWebtoolService {
   async remove(email: string, webtoolId: number) {
     await this.userWebtoolRepository.delete({ email, webtoolId });
   }
+
+
+
+
+  // Only for external webtool use
+  async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
+    // Validate webtool exists
+    const webtool = await this.webtoolRepository.findOne({
+      where: { id: dto.webtoolId }
+    });
+
+    if (!webtool) {
+      throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+    }
+
+    // Validate roles exist and belong to the webtool
+    const roles = await this.roleRepository.find({
+      where: { 
+        id: In(dto.roleIds),
+        webtool: { id: dto.webtoolId } // Changed this line to use the relation
+      },
+      relations: ['webtool'] // Add this to load the webtool relation
+    });
+
+    if (roles.length !== dto.roleIds.length) {
+      throw new NotFoundException('Some roles were not found or do not belong to this webtool');
+    }
+
+    // Delete existing assignments for this user-webtool combination
+    await this.userWebtoolRepository.delete({
+      email: dto.email,
+      webtoolId: dto.webtoolId
+    });
+
+    // Create new assignments
+    const userWebtools = dto.roleIds.map(roleId => 
+      this.userWebtoolRepository.create({
+        email: dto.email,
+        userName: dto.userName,
+        department: dto.department,
+        webtoolId: dto.webtoolId,
+        roleId: roleId
+      })
+    );
+
+    const saved = await this.userWebtoolRepository.save(userWebtools);
+
+    return {
+      success: true,
+      message: 'User assignments created successfully',
+      data: {
+        email: dto.email,
+        userName: dto.userName,
+        webtool: webtool.webtool,
+        roles: roles.map(role => ({
+          id: role.id,
+          name: role.roles
+        }))
+      }
+    };
+  }
+  
+
+  async deleteExternalAssignment(dto: ExternalDeleteAssignmentDto) {
+    // Delete all role assignments for this user in this webtool
+    await this.userWebtoolRepository.delete({
+      email: dto.email,
+      webtoolId: dto.webtoolId
+    });
+  
+    return {
+      success: true,
+      message: 'User assignments deleted successfully',
+      data: {
+        email: dto.email,
+        webtoolId: dto.webtoolId
+      }
+    };
+  }
 }
+

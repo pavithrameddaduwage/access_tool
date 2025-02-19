@@ -3,6 +3,8 @@ import { UserWebtool } from "./entities/user-webtool.entity";
 import { CreateUserWebtoolDto } from "./dto/create-user-webtool.dto";
 import { Webtool } from "../webtool/entities/webtool.entity";
 import { Role } from "../roles/entities/role.entity";
+import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.dto";
+import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 export declare class UserWebtoolService {
     private userWebtoolRepository;
     private webtoolRepository;
@@ -14,4 +16,25 @@ export declare class UserWebtoolService {
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<UserWebtool>;
     remove(email: string, webtoolId: number): Promise<void>;
+    createExternalAssignment(dto: ExternalWebtoolAssignmentDto): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            userName: string;
+            webtool: string;
+            roles: {
+                id: number;
+                name: string;
+            }[];
+        };
+    }>;
+    deleteExternalAssignment(dto: ExternalDeleteAssignmentDto): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            webtoolId: number;
+        };
+    }>;
 }

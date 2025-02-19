@@ -16,6 +16,9 @@ exports.UserWebtoolController = void 0;
 const common_1 = require("@nestjs/common");
 const user_webtool_service_1 = require("./user-webtool.service");
 const create_user_webtool_dto_1 = require("./dto/create-user-webtool.dto");
+const external_webtool_assignment_dto_1 = require("./dto/external-webtool-assignment.dto");
+const external_webtool_guard_1 = require("../auth/guards/external-webtool.guard");
+const external_delete_assignment_dto_1 = require("./dto/external-delete-assignment.dto");
 let UserWebtoolController = class UserWebtoolController {
     constructor(userWebtoolService) {
         this.userWebtoolService = userWebtoolService;
@@ -37,6 +40,12 @@ let UserWebtoolController = class UserWebtoolController {
     }
     async removeRole(email, webtoolId, roleId) {
         return this.userWebtoolService.removeRole(email, +webtoolId, +roleId);
+    }
+    async createExternalAssignment(dto, req) {
+        return this.userWebtoolService.createExternalAssignment(dto);
+    }
+    async deleteExternalAssignment(dto) {
+        return this.userWebtoolService.deleteExternalAssignment(dto);
     }
 };
 exports.UserWebtoolController = UserWebtoolController;
@@ -85,6 +94,24 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "removeRole", null);
+__decorate([
+    (0, common_1.Post)('external-assignment'),
+    (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [external_webtool_assignment_dto_1.ExternalWebtoolAssignmentDto,
+        Request]),
+    __metadata("design:returntype", Promise)
+], UserWebtoolController.prototype, "createExternalAssignment", null);
+__decorate([
+    (0, common_1.Delete)('external-assignment'),
+    (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [external_delete_assignment_dto_1.ExternalDeleteAssignmentDto]),
+    __metadata("design:returntype", Promise)
+], UserWebtoolController.prototype, "deleteExternalAssignment", null);
 exports.UserWebtoolController = UserWebtoolController = __decorate([
     (0, common_1.Controller)('user-webtools'),
     __metadata("design:paramtypes", [user_webtool_service_1.UserWebtoolService])
