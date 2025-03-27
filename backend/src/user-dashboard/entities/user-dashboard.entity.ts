@@ -22,4 +22,10 @@ export class UserDashboard {
 
   @Column()
   dashboardId: number;
+
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column({ nullable: true, type: 'timestamp' })
+  lastActiveAt?: Date;
 }

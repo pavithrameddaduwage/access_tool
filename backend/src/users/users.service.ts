@@ -18,11 +18,55 @@ export class UsersService {
     private userrolesRepository: Repository<UserRoles>
   ) {}
 
+  // async create(createUserDto: CreateUserDto) {
+  //   // Check if user with same email already exists
+  //   const existingUser = await this.userRepository.findOne({
+  //     where: { email: createUserDto.email }
+  //   });
+
+  //   if (existingUser) {
+  //     throw new ConflictException(`User with email "${createUserDto.email}" already exists`);
+  //   }
+
+  //   try {
+  //     const newuser = new User();
+  //     newuser.email = createUserDto.email;
+  //     newuser.name = createUserDto.name;
+  //     newuser.is_active = createUserDto.is_active;
+
+  //     const savedUser = await this.userRepository.save(newuser);
+
+  //     if (createUserDto.user_roles?.length > 0) {
+  //       // Verify all roles exist
+  //       await this.validateRoles(createUserDto.user_roles.map(ur => ur.roleId));
+
+  //       const userRoles = createUserDto.user_roles.map(ur => {
+  //         const userRole = new UserRoles();
+  //         userRole.user = savedUser;
+  //         userRole.role = { id: ur.roleId } as RoleMaster;
+  //         return userRole;
+  //       });
+
+  //       await this.userrolesRepository.save(userRoles);
+  //     }
+
+  //     return this.findUserById(savedUser.id);
+  //   } catch (error) {
+  //     if (error.code === '23505') { // Unique constraint violation
+  //       throw new ConflictException(`User with email "${createUserDto.email}" already exists`);
+  //     }
+  //     throw error;
+  //   }
+  // }
   async create(createUserDto: CreateUserDto) {
-    // Check if user with same email already exists
-    const existingUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email }
-    });
+     // Convert email to lowercase
+  createUserDto.email = createUserDto.email.toLowerCase();
+
+  // Check if user with same email already exists
+  const existingUser = await this.userRepository.findOne({
+    where: { email: createUserDto.email }
+  });
+
 
     if (existingUser) {
       throw new ConflictException(`User with email "${createUserDto.email}" already exists`);
@@ -58,7 +102,6 @@ export class UsersService {
       throw error;
     }
   }
-
   private async validateRoles(roleIds: number[]) {
     const roles = await this.roleRepository.findByIds(roleIds);
     const missingRoles = roleIds.filter(id => !roles.find(r => r.id === id));
@@ -67,7 +110,66 @@ export class UsersService {
       throw new NotFoundException(`Roles with IDs ${missingRoles.join(', ')} not found`);
     }
   }
+  // async update(id: number, updateUserDto: UpdateUserDto) {
+  //   const user = await this.userRepository.findOne({ 
+  //     where: { id },
+  //     relations: ['user_roles']
+  //   });
+    
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+
+  //   // Check email uniqueness if it's being updated
+  //   if (updateUserDto.email && updateUserDto.email !== user.email) {
+  //     const existingUser = await this.userRepository.findOne({
+  //       where: { email: updateUserDto.email }
+  //     });
+
+  //     if (existingUser) {
+  //       throw new ConflictException(`User with email "${updateUserDto.email}" already exists`);
+  //     }
+  //   }
+
+  //   try {
+  //     if (updateUserDto.email) user.email = updateUserDto.email;
+  //     if (updateUserDto.name) user.name = updateUserDto.name;
+  //     if (typeof updateUserDto.is_active === 'boolean') user.is_active = updateUserDto.is_active;
+
+  //     await this.userRepository.save(user);
+
+  //     if (updateUserDto.user_roles) {
+  //       // Verify all roles exist
+  //       await this.validateRoles(updateUserDto.user_roles.map(ur => ur.roleId));
+
+  //       // Delete existing roles
+  //       await this.userrolesRepository.delete({ user: { id } });
+
+  //       // Create new roles
+  //       const newUserRoles = updateUserDto.user_roles.map(ur => {
+  //         const userRole = new UserRoles();
+  //         userRole.user = user;
+  //         userRole.role = { id: ur.roleId } as RoleMaster;
+  //         return userRole;
+  //       });
+
+  //       await this.userrolesRepository.save(newUserRoles);
+  //     }
+
+  //     return this.findUserById(id);
+  //   } catch (error) {
+  //     if (error.code === '23505') {
+  //       throw new ConflictException(`User with email "${updateUserDto.email}" already exists`);
+  //     }
+  //     throw error;
+  //   }
+  // }
   async update(id: number, updateUserDto: UpdateUserDto) {
+      // Convert email to lowercase if it's being updated
+  if (updateUserDto.email) {
+    updateUserDto.email = updateUserDto.email.toLowerCase();
+  }
+
     const user = await this.userRepository.findOne({ 
       where: { id },
       relations: ['user_roles']

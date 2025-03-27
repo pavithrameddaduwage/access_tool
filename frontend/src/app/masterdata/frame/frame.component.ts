@@ -14,7 +14,9 @@ import { DepartmentService } from '../../Services/department.service';
 import { HttpClient, HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { GroupComponent } from '../group/group.component';
 import { UserManagementComponent } from '../user-management/user-management.component';
-import { RouterLink, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { ToastService } from '../../Services/toast.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-frame',
@@ -24,9 +26,16 @@ import { RouterLink, RouterModule } from '@angular/router';
   styleUrl: './frame.component.css'
 })
 export class FrameComponent {
-
-
-
+  constructor(
+    private toastService: ToastService,
+    private router: Router
+  ) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.toastService.clear(); // Clear toasts on route change
+    });
+  }
 
   openTab = 1;
   toggleTabs($tabNumber: number){

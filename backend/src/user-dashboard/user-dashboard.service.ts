@@ -16,6 +16,52 @@ export class UserDashboardService {
    private dashboardRepository: Repository<Dashboard>
  ) {}
 
+ // Update findAll() method
+async findAll() {
+  const results = await this.userDashboardRepository.find({
+    relations: ['dashboard']
+  });
+
+  const groupedResults = results.reduce((acc, curr) => {
+    const { email } = curr;
+    if (!acc[email]) {
+      acc[email] = {
+        userName: curr.userName,
+        email: curr.email,
+        department: curr.department,
+        isActive: curr.isActive,         // Add this
+        lastActiveAt: curr.lastActiveAt, // Add this
+        dashboards: []
+      };
+    }
+    acc[email].dashboards.push(curr.dashboard.dashboard);
+    return acc;
+  }, {});
+
+  return Object.values(groupedResults);
+}
+
+// Update findOne() method
+async findOne(email: string) {
+  const assignments = await this.userDashboardRepository.find({
+    where: { email },
+    relations: ['dashboard']
+  });
+
+  if (!assignments.length) {
+    throw new NotFoundException(`No dashboard assignments found for user ${email}`);
+  }
+
+  return {
+    email: assignments[0].email,
+    userName: assignments[0].userName,
+    department: assignments[0].department,
+    isActive: assignments[0].isActive,      // Add this
+    lastActiveAt: assignments[0].lastActiveAt, // Add this
+    dashboards: assignments.map(a => a.dashboard.dashboard)
+  };
+}
+
  async create(createUserDashboardDto: CreateUserDashboardDto) {
   const { email } = createUserDashboardDto;
 
@@ -43,48 +89,70 @@ export class UserDashboardService {
   return this.findOne(email);
 }
 
- // user-dashboard.service.ts
-async findAll() {
-  const results = await this.userDashboardRepository.find({
-    relations: ['dashboard']
-  });
+//  // user-dashboard.service.ts
+// async findAll() {
+//   const results = await this.userDashboardRepository.find({
+//     relations: ['dashboard']
+//   });
 
-  // Group by email and include all user details
-  const groupedResults = results.reduce((acc, curr) => {
-    const { email } = curr;
-    if (!acc[email]) {
-      acc[email] = {
-        userName: curr.userName,
-        email: curr.email,
-        department: curr.department,
-        dashboards: []
-      };
-    }
-    acc[email].dashboards.push(curr.dashboard.dashboard);
-    return acc;
-  }, {});
+//   // Group by email and include all user details
+//   const groupedResults = results.reduce((acc, curr) => {
+//     const { email } = curr;
+//     if (!acc[email]) {
+//       acc[email] = {
+//         userName: curr.userName,
+//         email: curr.email,
+//         department: curr.department,
+//         dashboards: []
+//       };
+//     }
+//     acc[email].dashboards.push(curr.dashboard.dashboard);
+//     return acc;
+//   }, {});
 
-  return Object.values(groupedResults);
-}
+//   return Object.values(groupedResults);
+// }
 
- async findOne(email: string) {
-   const assignments = await this.userDashboardRepository.find({
-     where: { email },
-     relations: ['dashboard']
-   });
+//  async findOne(email: string) {
+//    const assignments = await this.userDashboardRepository.find({
+//      where: { email },
+//      relations: ['dashboard']
+//    });
  
-   if (!assignments.length) {
-     throw new NotFoundException(`No dashboard assignments found for user ${email}`);
-   }
+//    if (!assignments.length) {
+//      throw new NotFoundException(`No dashboard assignments found for user ${email}`);
+//    }
  
-   return {
-     email: assignments[0].email,
-     dashboards: assignments.map(a => a.dashboard.dashboard)
-   };
- }
+//    return {
+//      email: assignments[0].email,
+//      dashboards: assignments.map(a => a.dashboard.dashboard)
+//    };
+//  }
 
- async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
-  const { dashboardIds, userName, department } = updateUserDashboardDto;
+//  async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
+//   const { dashboardIds, userName, department } = updateUserDashboardDto;
+
+//   // Delete existing assignments
+//   await this.userDashboardRepository.delete({ email });
+
+//   if (dashboardIds && dashboardIds.length > 0) {
+//     const userDashboards = dashboardIds.map(dashboardId => {
+//       return this.userDashboardRepository.create({
+//         email,
+//         userName,
+//         department,
+//         dashboardId
+//       });
+//     });
+
+//     await this.userDashboardRepository.save(userDashboards);
+//   }
+
+//   return this.findOne(email);
+// }
+
+async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
+  const { dashboardIds, userName, department, isActive } = updateUserDashboardDto;
 
   // Delete existing assignments
   await this.userDashboardRepository.delete({ email });
@@ -95,7 +163,9 @@ async findAll() {
         email,
         userName,
         department,
-        dashboardId
+        dashboardId,
+        isActive: isActive ?? true, // Default to true if not specified
+        ...(isActive === false && { lastActiveAt: new Date() }) // Set deactivation timestamp
       });
     });
 
@@ -104,7 +174,6 @@ async findAll() {
 
   return this.findOne(email);
 }
-
  async remove(email: string) {
    await this.userDashboardRepository.delete({ email });
  }

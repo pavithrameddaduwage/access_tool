@@ -508,6 +508,18 @@
               <td class="px-6 py-4 border-r border-gray-300">{{ record.department }}</td>
               <td class="px-6 py-4 border-r border-gray-300">{{ record.email }}</td>
               <td class="px-6 py-4 border-r border-gray-300">
+                <span 
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  [class.bg-green-100]="record.isActive"
+                  [class.text-green-800]="record.isActive"
+                  [class.bg-red-100]="!record.isActive"
+                  [class.text-red-800]="!record.isActive"
+                  [title]="!record.isActive ? 'Last active: ' + (record.lastActiveAt | date:'medium') : ''"
+                >
+                  {{ record.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="px-6 py-4 border-r border-gray-300">
                 <div class="flex flex-wrap gap-1">
                   <ng-container *ngIf="!record.isExpanded">
                     <span 
@@ -667,6 +679,17 @@
             </button>
           </div>
         </div>
+      </div>
+      <div class="mb-4">
+        <label class="flex items-center">
+          <input 
+            type="checkbox" 
+            class="form-checkbox h-5 w-5 text-blue-600"
+            [(ngModel)]="editForm.isActive"
+            name="isActive"
+          >
+          <span class="ml-2 text-gray-700">Active User</span>
+        </label>
       </div>
     
       <!-- Action Buttons -->

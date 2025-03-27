@@ -6,4 +6,6 @@ export declare class UserDashboard {
     department: string;
     dashboard: Dashboard;
     dashboardId: number;
+    isActive: boolean;
+    lastActiveAt?: Date;
 }

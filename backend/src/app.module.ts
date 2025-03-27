@@ -26,6 +26,7 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { PowerBIAnalyticsModule } from './powerbi-analytics/powerbi-analytics.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserMappingsModule } from './user-mappings/user-mappings.module';
 
 @Module({
   imports: [ ConfigModule.forRoot({
@@ -36,7 +37,7 @@ import { ConfigModule } from '@nestjs/config';
       host: 'localhost', 
       port: 5432,
       username: 'postgres', 
-       password: '12345', 
+      password: '12345', 
       //password:"M!SAppsTest",
  
       database: 'user-access',
@@ -63,7 +64,8 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     UsersModule,
     PowerBIAnalyticsModule,
-  ],
+    UserMappingsModule,
+    ],
   controllers: [AppController],
   providers: [
     AppService,

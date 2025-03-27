@@ -19,6 +19,8 @@ import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 import { UserManagementComponent } from '../masterdata/user-management/user-management.component';
 import { PowerBIAnalyticsComponent } from '../powerbi-analytics/powerbi-analytics.component';
+import { PowerBIUsageDashboardComponent } from '../powerbi-usage-dashboard/powerbi-usage-dashboard.component';
+import { WebtoolAnalyticsComponent } from '../webtool-analytics/webtool-analytics.component';
 
 const routeConfig: Routes = [
   {
@@ -132,7 +134,7 @@ const routeConfig: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    component: PowerBIUsageDashboardComponent,
     canActivate: [authGuard],
     title: 'Home',
     pathMatch: 'full'
@@ -162,6 +164,16 @@ const routeConfig: Routes = [
   {
     path: 'powerbi-analytics',
     component: PowerBIAnalyticsComponent
+  },
+  {
+    path: 'powerbi-usage',
+    component: PowerBIUsageDashboardComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'webtool-usage',
+    component: WebtoolAnalyticsComponent,
+    pathMatch: 'full'
   }
 ];
 

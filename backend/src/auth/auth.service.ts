@@ -181,60 +181,114 @@ async getADUserDetails(username: string): Promise<ADUser> {
 //         access_token: await this.jwtService.signAsync(payload)
 //     };
 // }
+// async signIn(username: string, pass: string): Promise<any> {
+//   username = username.toLowerCase().split('@')[0];
+  
+//   let adauthentication = await this.authenticateuser(`${username}@hgusa.com`, pass);
+//   if (!adauthentication) {
+//       console.log('First domain auth failed, trying second domain...');
+//       adauthentication = await this.authenticateuser(`${username}@horizongroupusa.com`, pass);
+//   }
+  
+//   if (!adauthentication) {
+//       console.log('AD Authentication failed for user:', username);
+//       throw new UnauthorizedException('Active Directory authentication failed - Please check your credentials');
+//   }
+
+//   console.log('AD Authentication successful, getting AD user details...');
+//   const aduser = await this.getADUserDetails(username);
+//   if (!aduser || !aduser.mail) {
+//       console.log('AD user details not found for:', username);
+//       throw new UnauthorizedException('User details not found in Active Directory');
+//   }
+
+//   console.log('AD user found, checking local database...');
+//   let dbUser = await this.usersService.findUserByEmail(aduser.mail.toLowerCase());
+  
+//   if (!dbUser) {
+//       console.log('User not found in database, creating new user...');
+//       const createUserDto = {
+//           email: aduser.mail.toLowerCase(),
+//           name: aduser.displayName || aduser.mail,
+//           is_active: true,
+//           user_roles: [{ roleId: 2 }]  
+//       };
+
+//       try {
+//           dbUser = await this.usersService.create(createUserDto);
+//           console.log('New user created successfully');
+//       } catch (error) {
+//           console.error('Failed to create user:', error);
+//           throw new UnauthorizedException('Failed to create user account');
+//       }
+//   }
+
+//   console.log('Creating JWT token...');
+//   const payload = {
+//       email: aduser.mail.toLowerCase(),
+//       name: dbUser.name,
+//       userid: dbUser.id,
+//       roles: dbUser.user_roles.map(role => role.role.role),
+//       department: aduser.department,
+//       location: aduser.location
+//   };
+
+//   return {
+//       access_token: await this.jwtService.signAsync(payload)
+//   };
+// }
 async signIn(username: string, pass: string): Promise<any> {
   username = username.toLowerCase().split('@')[0];
-  
+
+  // First authenticate with AD
   let adauthentication = await this.authenticateuser(`${username}@hgusa.com`, pass);
   if (!adauthentication) {
-      console.log('First domain auth failed, trying second domain...');
-      adauthentication = await this.authenticateuser(`${username}@horizongroupusa.com`, pass);
+    console.log('First domain auth failed, trying second domain...');
+    adauthentication = await this.authenticateuser(`${username}@horizongroupusa.com`, pass);
   }
-  
+
   if (!adauthentication) {
-      console.log('AD Authentication failed for user:', username);
-      throw new UnauthorizedException('Active Directory authentication failed - Please check your credentials');
+    console.log('AD Authentication failed for user:', username);
+    throw new UnauthorizedException('Active Directory authentication failed - Please check your credentials');
   }
 
   console.log('AD Authentication successful, getting AD user details...');
   const aduser = await this.getADUserDetails(username);
   if (!aduser || !aduser.mail) {
-      console.log('AD user details not found for:', username);
-      throw new UnauthorizedException('User details not found in Active Directory');
+    console.log('AD user details not found for:', username);
+    throw new UnauthorizedException('User details not found in Active Directory');
   }
 
-  console.log('AD user found, checking local database...');
-  let dbUser = await this.usersService.findUserByEmail(aduser.mail.toLowerCase());
-  
-  if (!dbUser) {
-      console.log('User not found in database, creating new user...');
-      const createUserDto = {
-          email: aduser.mail.toLowerCase(),
-          name: aduser.displayName || aduser.mail,
-          is_active: true,
-          user_roles: [{ roleId: 2 }]  
-      };
+  // Convert email to lowercase for consistency
+  const email = aduser.mail.toLowerCase();
 
-      try {
-          dbUser = await this.usersService.create(createUserDto);
-          console.log('New user created successfully');
-      } catch (error) {
-          console.error('Failed to create user:', error);
-          throw new UnauthorizedException('Failed to create user account');
-      }
+  console.log('AD user found, checking local database...');
+  const dbUser = await this.usersService.findUserByEmail(email);
+
+  // Only allow login if user exists in database
+  if (!dbUser) {
+    console.log('User not found in database - access denied');
+    throw new UnauthorizedException('You are not authorized to access this application. Please contact your administrator.');
+  }
+
+  // Check if user is active
+  if (!dbUser.is_active) {
+    console.log('User is inactive - access denied');
+    throw new UnauthorizedException('Your account has been deactivated. Please contact your administrator.');
   }
 
   console.log('Creating JWT token...');
   const payload = {
-      email: aduser.mail.toLowerCase(),
-      name: dbUser.name,
-      userid: dbUser.id,
-      roles: dbUser.user_roles.map(role => role.role.role),
-      department: aduser.department,
-      location: aduser.location
+    email: email,
+    name: dbUser.name,
+    userid: dbUser.id,
+    roles: dbUser.user_roles.map(role => role.role.role),
+    department: aduser.department,
+    location: aduser.location
   };
 
   return {
-      access_token: await this.jwtService.signAsync(payload)
+    access_token: await this.jwtService.signAsync(payload)
   };
 }
 

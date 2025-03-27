@@ -26,6 +26,7 @@ let UsersService = class UsersService {
         this.userrolesRepository = userrolesRepository;
     }
     async create(createUserDto) {
+        createUserDto.email = createUserDto.email.toLowerCase();
         const existingUser = await this.userRepository.findOne({
             where: { email: createUserDto.email }
         });
@@ -65,6 +66,9 @@ let UsersService = class UsersService {
         }
     }
     async update(id, updateUserDto) {
+        if (updateUserDto.email) {
+            updateUserDto.email = updateUserDto.email.toLowerCase();
+        }
         const user = await this.userRepository.findOne({
             where: { id },
             relations: ['user_roles']

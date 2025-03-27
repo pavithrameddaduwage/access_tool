@@ -24,10 +24,34 @@ export class LoginComponent {
     private router: Router
   ) {}
 
+  // handleSubmit() {
+  //   if (this.formGroup.valid) {
+  //     this.authService.login({
+  //       email: this.formGroup.value.email,
+  //       password: this.formGroup.value.password
+  //     }).subscribe({
+  //       next: (result) => {
+  //         console.log('Login response:', result);
+  //         if (result.access_token) {
+  //           localStorage.setItem("token", result.access_token);
+  //           this.authService.setIsLogged(true);
+  //           this.router.navigate(['/home']);
+  //         } else {
+  //           console.error("No access token in response");
+  //           alert("Login failed. Please try again.");
+  //         }
+  //       },
+  //       error: (error) => {
+  //         console.error("Login error:", error);
+  //         alert("Invalid credentials. Please try again.");
+  //       }
+  //     });
+  //   }
+  // }
   handleSubmit() {
     if (this.formGroup.valid) {
       this.authService.login({
-        email: this.formGroup.value.email,
+        email: this.formGroup.value.email.toLowerCase(), // Convert to lowercase
         password: this.formGroup.value.password
       }).subscribe({
         next: (result) => {
@@ -43,7 +67,13 @@ export class LoginComponent {
         },
         error: (error) => {
           console.error("Login error:", error);
-          alert("Invalid credentials. Please try again.");
+          if (error.error?.message?.includes('not authorized')) {
+            alert("You are not authorized to access this application. Please contact your administrator.");
+          } else if (error.error?.message?.includes('deactivated')) {
+            alert("Your account has been deactivated. Please contact your administrator.");
+          } else {
+            alert("Invalid credentials. Please try again.");
+          }
         }
       });
     }

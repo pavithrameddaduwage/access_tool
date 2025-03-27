@@ -7,17 +7,29 @@ export declare class UserDashboardService {
     private userDashboardRepository;
     private dashboardRepository;
     constructor(userDashboardRepository: Repository<UserDashboard>, dashboardRepository: Repository<Dashboard>);
-    create(createUserDashboardDto: CreateUserDashboardDto): Promise<{
-        email: string;
-        dashboards: string[];
-    }>;
     findAll(): Promise<unknown[]>;
     findOne(email: string): Promise<{
         email: string;
+        userName: string;
+        department: string;
+        isActive: boolean;
+        lastActiveAt: Date;
+        dashboards: string[];
+    }>;
+    create(createUserDashboardDto: CreateUserDashboardDto): Promise<{
+        email: string;
+        userName: string;
+        department: string;
+        isActive: boolean;
+        lastActiveAt: Date;
         dashboards: string[];
     }>;
     update(email: string, updateUserDashboardDto: UpdateUserDashboardDto): Promise<{
         email: string;
+        userName: string;
+        department: string;
+        isActive: boolean;
+        lastActiveAt: Date;
         dashboards: string[];
     }>;
     remove(email: string): Promise<void>;

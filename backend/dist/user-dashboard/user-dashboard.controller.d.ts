@@ -6,15 +6,27 @@ export declare class UserDashboardController {
     constructor(userDashboardService: UserDashboardService);
     create(createUserDashboardDto: CreateUserDashboardDto): Promise<{
         email: string;
+        userName: string;
+        department: string;
+        isActive: boolean;
+        lastActiveAt: Date;
         dashboards: string[];
     }>;
     findAll(): Promise<unknown[]>;
     findOne(email: string): Promise<{
         email: string;
+        userName: string;
+        department: string;
+        isActive: boolean;
+        lastActiveAt: Date;
         dashboards: string[];
     }>;
     update(email: string, updateUserDashboardDto: UpdateUserDashboardDto): Promise<{
         email: string;
+        userName: string;
+        department: string;
+        isActive: boolean;
+        lastActiveAt: Date;
         dashboards: string[];
     }>;
     remove(email: string): Promise<void>;

@@ -45,7 +45,8 @@ export class DashboardDetailComponent implements OnInit {
     userId: null as number | null,
     userName: '',
     email: '',
-    department: ''
+    department: '',
+    isActive: true // Add this with default value
   };
 
   tableHeaders = [
@@ -129,7 +130,8 @@ export class DashboardDetailComponent implements OnInit {
       userId: null,
       userName: user.name,
       email: user.email,
-      department: user.department
+      department: user.department,
+      isActive: true
     };
     this.adUsers = [];
   }
@@ -182,7 +184,8 @@ export class DashboardDetailComponent implements OnInit {
             userId: selectedUser.id,
             userName: selectedUser.name,
             email: selectedUser.email,
-            department: selectedUser.department?.department || ''
+            department: selectedUser.department?.department || '',
+            isActive: selectedUser.isActive // Add this parameter
           };
         }
       },
@@ -191,67 +194,68 @@ export class DashboardDetailComponent implements OnInit {
   }
 
 
-async addUserToDashboard() {
-  if (!this.formData.email) {
-    this.toastService.show('Please select a user');
-    return;
-  }
-
-  this.dashboardService.getDashboards().subscribe({
-    next: (dashboards) => {
-      const dashboard = dashboards.find(d => d.dashboard === this.dashboardName);
-      if (!dashboard) {
-        this.toastService.show('Dashboard not found');
-        return;
-      }
-
-      this.homeService.getRecords().subscribe({
-        next: (records) => {
-          const userRecord = records.find(record => record.email === this.formData.email);
-          
-          // Check if user already has access to this dashboard
-          if (userRecord?.dashboards.includes(this.dashboardName)) {
-            this.toastService.show('User already has access to this dashboard');
-            return;
-          }
-
-          const existingDashboardIds = userRecord ? 
-            dashboards
-              .filter(d => userRecord.dashboards.includes(d.dashboard))
-              .map(d => d.id) 
-            : [];
-
-          const allDashboardIds = [...existingDashboardIds, dashboard.id];
-          
-          this.homeService.updateRecord(
-            this.formData.email, 
-            this.formData.userName,
-            this.formData.department,
-            allDashboardIds
-          ).subscribe({
-            next: () => {
-              this.loadUsersForDashboard();
-              this.closeForm();
-              this.toastService.show('User added successfully');
-            },
-            error: (error) => {
-              console.error('Error updating user-dashboard:', error);
-              this.toastService.show('Failed to add user');
-            }
-          });
-        },
-        error: (error) => {
-          console.error('Error getting user records:', error);
-          this.toastService.show('Failed to get user records');
-        }
-      });
-    },
-    error: (error) => {
-      console.error('Error getting dashboard:', error);
-      this.toastService.show('Failed to get dashboard details');
+  async addUserToDashboard() {
+    if (!this.formData.email) {
+      this.toastService.show('Please select a user');
+      return;
     }
-  });
-}
+  
+    this.dashboardService.getDashboards().subscribe({
+      next: (dashboards) => {
+        const dashboard = dashboards.find(d => d.dashboard === this.dashboardName);
+        if (!dashboard) {
+          this.toastService.show('Dashboard not found');
+          return;
+        }
+  
+        this.homeService.getRecords().subscribe({
+          next: (records) => {
+            const userRecord = records.find(record => record.email === this.formData.email);
+            
+            // Check if user already has access to this dashboard
+            if (userRecord?.dashboards.includes(this.dashboardName)) {
+              this.toastService.show('User already has access to this dashboard');
+              return;
+            }
+  
+            const existingDashboardIds = userRecord ? 
+              dashboards
+                .filter(d => userRecord.dashboards.includes(d.dashboard))
+                .map(d => d.id) 
+              : [];
+  
+            const allDashboardIds = [...existingDashboardIds, dashboard.id];
+            
+            this.homeService.updateRecord(
+              this.formData.email, 
+              this.formData.userName,
+              this.formData.department,
+              allDashboardIds,
+              this.formData.isActive // Add this parameter
+            ).subscribe({
+              next: () => {
+                this.loadUsersForDashboard();
+                this.closeForm();
+                this.toastService.show('User added successfully');
+              },
+              error: (error) => {
+                console.error('Error updating user-dashboard:', error);
+                this.toastService.show('Failed to add user');
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Error getting user records:', error);
+            this.toastService.show('Failed to get user records');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error getting dashboard:', error);
+        this.toastService.show('Failed to get dashboard details');
+      }
+    });
+  }
 
 
   openForm() {
@@ -260,7 +264,8 @@ async addUserToDashboard() {
       userId: null,
       userName: '',
       email: '',
-      department: ''
+      department: '',
+      isActive: true
     };
   }
 
@@ -275,7 +280,8 @@ deleteUser(email: string) {
       userId: null,
       userName: '',
       email: '',
-      department: ''
+      department: '',
+      isActive: true
     };
   }
 

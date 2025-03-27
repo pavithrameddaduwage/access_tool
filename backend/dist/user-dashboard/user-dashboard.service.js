@@ -23,6 +23,44 @@ let UserDashboardService = class UserDashboardService {
         this.userDashboardRepository = userDashboardRepository;
         this.dashboardRepository = dashboardRepository;
     }
+    async findAll() {
+        const results = await this.userDashboardRepository.find({
+            relations: ['dashboard']
+        });
+        const groupedResults = results.reduce((acc, curr) => {
+            const { email } = curr;
+            if (!acc[email]) {
+                acc[email] = {
+                    userName: curr.userName,
+                    email: curr.email,
+                    department: curr.department,
+                    isActive: curr.isActive,
+                    lastActiveAt: curr.lastActiveAt,
+                    dashboards: []
+                };
+            }
+            acc[email].dashboards.push(curr.dashboard.dashboard);
+            return acc;
+        }, {});
+        return Object.values(groupedResults);
+    }
+    async findOne(email) {
+        const assignments = await this.userDashboardRepository.find({
+            where: { email },
+            relations: ['dashboard']
+        });
+        if (!assignments.length) {
+            throw new common_1.NotFoundException(`No dashboard assignments found for user ${email}`);
+        }
+        return {
+            email: assignments[0].email,
+            userName: assignments[0].userName,
+            department: assignments[0].department,
+            isActive: assignments[0].isActive,
+            lastActiveAt: assignments[0].lastActiveAt,
+            dashboards: assignments.map(a => a.dashboard.dashboard)
+        };
+    }
     async create(createUserDashboardDto) {
         const { email } = createUserDashboardDto;
         const existingUser = await this.userDashboardRepository.findOne({
@@ -43,40 +81,8 @@ let UserDashboardService = class UserDashboardService {
         await this.userDashboardRepository.save(userDashboards);
         return this.findOne(email);
     }
-    async findAll() {
-        const results = await this.userDashboardRepository.find({
-            relations: ['dashboard']
-        });
-        const groupedResults = results.reduce((acc, curr) => {
-            const { email } = curr;
-            if (!acc[email]) {
-                acc[email] = {
-                    userName: curr.userName,
-                    email: curr.email,
-                    department: curr.department,
-                    dashboards: []
-                };
-            }
-            acc[email].dashboards.push(curr.dashboard.dashboard);
-            return acc;
-        }, {});
-        return Object.values(groupedResults);
-    }
-    async findOne(email) {
-        const assignments = await this.userDashboardRepository.find({
-            where: { email },
-            relations: ['dashboard']
-        });
-        if (!assignments.length) {
-            throw new common_1.NotFoundException(`No dashboard assignments found for user ${email}`);
-        }
-        return {
-            email: assignments[0].email,
-            dashboards: assignments.map(a => a.dashboard.dashboard)
-        };
-    }
     async update(email, updateUserDashboardDto) {
-        const { dashboardIds, userName, department } = updateUserDashboardDto;
+        const { dashboardIds, userName, department, isActive } = updateUserDashboardDto;
         await this.userDashboardRepository.delete({ email });
         if (dashboardIds && dashboardIds.length > 0) {
             const userDashboards = dashboardIds.map(dashboardId => {
@@ -84,7 +90,9 @@ let UserDashboardService = class UserDashboardService {
                     email,
                     userName,
                     department,
-                    dashboardId
+                    dashboardId,
+                    isActive: isActive ?? true,
+                    ...(isActive === false && { lastActiveAt: new Date() })
                 });
             });
             await this.userDashboardRepository.save(userDashboards);

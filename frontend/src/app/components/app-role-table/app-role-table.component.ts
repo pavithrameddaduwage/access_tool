@@ -25,6 +25,10 @@ export class RoleTableComponent extends CustomTableComponent {
       return header;
     });
   }
+  override ngOnInit() {
+    super.ngOnInit();
+    this.isModalOpen = false; // Reset modal state on init
+  }
 
   override editRow(index: number) {
     const row = this.displaydata[index];
@@ -33,7 +37,7 @@ export class RoleTableComponent extends CustomTableComponent {
     }
     row.editing = true;
   }
-
+  
   override saveRow(index: number) {
     const row = this.displaydata[index];
     
@@ -65,5 +69,12 @@ export class RoleTableComponent extends CustomTableComponent {
       row.webtool = { ...row._originalWebtool };
     }
     row.editing = false;
+  }
+  override handleSearch() {
+    // Call the parent method first
+    super.handleSearch();
+    
+    // Add any RoleTableComponent-specific search handling here if needed
+    console.log('Search executed in RoleTableComponent');
   }
 }

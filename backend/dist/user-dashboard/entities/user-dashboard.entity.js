@@ -40,6 +40,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], UserDashboard.prototype, "dashboardId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], UserDashboard.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'timestamp' }),
+    __metadata("design:type", Date)
+], UserDashboard.prototype, "lastActiveAt", void 0);
 exports.UserDashboard = UserDashboard = __decorate([
     (0, typeorm_1.Entity)()
 ], UserDashboard);

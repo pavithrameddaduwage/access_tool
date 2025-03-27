@@ -30,4 +30,13 @@ __decorate([
     (0, class_validator_1.IsArray)(),
     __metadata("design:type", Array)
 ], CreateUserDashboardDto.prototype, "dashboardIds", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateUserDashboardDto.prototype, "isActive", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Date)
+], CreateUserDashboardDto.prototype, "lastActiveAt", void 0);
 //# sourceMappingURL=create-user-dashboard.dto.js.map

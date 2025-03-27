@@ -34,6 +34,7 @@ const core_1 = require("@nestjs/core");
 const http_exception_filter_1 = require("./http-exception.filter");
 const powerbi_analytics_module_1 = require("./powerbi-analytics/powerbi-analytics.module");
 const config_1 = require("@nestjs/config");
+const user_mappings_module_1 = require("./user-mappings/user-mappings.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -71,6 +72,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             powerbi_analytics_module_1.PowerBIAnalyticsModule,
+            user_mappings_module_1.UserMappingsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

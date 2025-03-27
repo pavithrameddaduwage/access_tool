@@ -76,6 +76,8 @@ interface UserDashboardRecord {
   department: string;
   dashboards: string[];
   isExpanded?: boolean;
+  isActive: boolean;          // Add this
+  lastActiveAt?: string;      // Add this
 }
 
 @Component({
@@ -133,7 +135,8 @@ toggleDropdown(event: Event) {
     userName: '',
     department: '',
     workspace: '',
-    dashboards: [] as string[]
+    dashboards: [] as string[],
+    isActive: true        // Add this
   };
 
   // Headers
@@ -152,41 +155,48 @@ toggleDropdown(event: Event) {
     { name: 'department', display_name: 'Department', width: '33%' }
   ];
 
- userDashboardHeaders = [
-    { 
-      name: 'actions', 
-      display_name: 'Actions', 
-      width: '10%', 
+  userDashboardHeaders = [
+    {
+      name: 'actions',
+      display_name: 'Actions',
+      width: '10%',
       class: 'bg-gray-100 text-gray-700',
-      sortable: false 
+      sortable: false
     },
-    { 
-      name: 'userName', 
-      display_name: 'User', 
-      width: '25%', 
+    {
+      name: 'userName',
+      display_name: 'User',
+      width: '20%', // Reduced from 25%
       class: 'bg-gray-100 text-gray-700',
-      sortable: true 
+      sortable: true
     },
-    { 
-      name: 'department', 
-      display_name: 'Department', 
-      width: '20%', 
+    {
+      name: 'department',
+      display_name: 'Department',
+      width: '20%',
       class: 'bg-gray-100 text-gray-700',
-      sortable: true 
+      sortable: true
     },
-    { 
-      name: 'email', 
-      display_name: 'Email', 
-      width: '20%', 
+    {
+      name: 'email',
+      display_name: 'Email',
+      width: '20%',
       class: 'bg-gray-100 text-gray-700',
-      sortable: true 
+      sortable: true
     },
-    { 
-      name: 'dashboards', 
-      display_name: 'Dashboards', 
-      width: '25%', 
+    {
+      name: 'isActive',
+      display_name: 'Status',
+      width: '10%',
       class: 'bg-gray-100 text-gray-700',
-      sortable: false 
+      sortable: true
+    },
+    {
+      name: 'dashboards',
+      display_name: 'Dashboards',
+      width: '20%', // Reduced from 25%
+      class: 'bg-gray-100 text-gray-700',
+      sortable: false
     }
   ];
 
@@ -327,7 +337,8 @@ selectADUser(user: any): void {
       ...this.editForm,
       userName: user.name,
       email: user.email,
-      department: user.department
+      department: user.department,
+      isActive: true 
     };
     console.log('Previous form:', prevForm);
     console.log('Updated editForm:', this.editForm);
@@ -503,21 +514,24 @@ selectADUser(user: any): void {
   //     }
   //   });
   // }
-  loadRecords() {
-    this.homeService.getRecords().subscribe({
-      next: (records) => {
-        this.records = records.map(record => ({
-          ...record,
-          isExpanded: false
-        }));
-        this.filteredRecords = [...this.records]; // Initialize filtered records
-      },
-      error: (error) => {
-        console.error('Error loading records:', error);
-        alert('Failed to load records');
-      }
-    });
-  }
+// Update loadRecords() to handle new fields
+loadRecords() {
+  this.homeService.getRecords().subscribe({
+    next: (records) => {
+      this.records = records.map(record => ({
+        ...record,
+        isExpanded: false,
+        // Remove the default value here since backend now provides it
+        isActive: record.isActive 
+      }));
+      this.filteredRecords = [...this.records];
+    },
+    error: (error) => {
+      console.error('Error loading records:', error);
+      alert('Failed to load records');
+    }
+  });
+}
 
   groupDashboardsByWorkspace() {
     const groupsMap = new Map<string, Dashboard[]>();
@@ -591,7 +605,9 @@ openForm(mode: 'add' | 'edit', record?: UserDashboardRecord, index?: number) {
       email: record.email,
       department: record.department,
       workspace: workspace?.value || '',
-      dashboards: [...record.dashboards]
+      dashboards: [...record.dashboards],
+      isActive: record.isActive // Add this
+
     };
     this.selectedWorkspace = workspace?.value || '';
     this.selectedDashboards = [...record.dashboards];
@@ -613,7 +629,9 @@ openForm(mode: 'add' | 'edit', record?: UserDashboardRecord, index?: number) {
       email: '',
       department: '',
       workspace: '',
-      dashboards: []
+      dashboards: [],
+      isActive: true // Add this
+      
     };
     this.selectedDashboards = [];
     this.selectedWorkspace = '';
@@ -739,51 +757,38 @@ openForm(mode: 'add' | 'edit', record?: UserDashboardRecord, index?: number) {
   }
 
   onSave() {
-    const dashboardIds = this.editForm.dashboards
-      .map(dashboardName => {
-        const dashboard = this.allDashboardOptions.find(d => d.value === dashboardName);
-        return dashboard ? dashboard.id : null;
-      })
-      .filter((id): id is number => id !== null);
-  
-    if (!this.editForm.email) {
-      this.toastService.show('Please select a user');
-      return;
-    }
-  
-    if (!dashboardIds.length) {
-      this.toastService.show('Please select at least one dashboard');
-      return;
-    }
-  
-    if (!this.selectedWorkspace) {
-      this.toastService.show('Please select a workspace');
-      return;
-    }
-  
-    if (this.isEditMode) {
-      this.homeService.updateRecord(
-        this.editForm.email,
-        this.editForm.userName,
-        this.editForm.department,
-        dashboardIds
-      ).subscribe({
-        next: () => {
-          this.loadRecords();
-          this.closeForm();
-          this.toastService.show('Record updated successfully');
-        },
-        error: (error) => {
-          console.error('Error updating record:', error);
-          this.toastService.show(error.error?.message || 'Failed to update record');
-        }
-      });
-    } else {
+     const dashboardIds = this.editForm.dashboards
+    .map(dashboardName => {
+      const dashboard = this.allDashboardOptions.find(d => d.value === dashboardName);
+      return dashboard ? dashboard.id : null;
+    })
+    .filter((id): id is number => id !== null);
+
+  if (this.isEditMode) {
+    this.homeService.updateRecord(
+      this.editForm.email,
+      this.editForm.userName,
+      this.editForm.department,
+      dashboardIds,
+      this.editForm.isActive // Make sure this is included
+    ).subscribe({
+      next: () => {
+        this.loadRecords();
+        this.closeForm();
+        this.toastService.show('Record updated successfully');
+      },
+      error: (error) => {
+        console.error('Error updating record:', error);
+        this.toastService.show(error.error?.message || 'Failed to update record');
+      }
+    });
+  } else {
       this.homeService.createRecord(
         this.editForm.email,
         this.editForm.userName,
         this.editForm.department,
-        dashboardIds
+        dashboardIds,
+        this.editForm.isActive // Make sure this is included
       ).subscribe({
         next: () => {
           this.loadRecords();
@@ -856,6 +861,78 @@ openAddUserForm(dashboard: Dashboard) {
   };
 }
 
+// async addUserToDashboard() {
+//   if (!this.formData.email || !this.selectedDashboard) {
+//     this.toastService.show('Please select a user');
+//     return;
+//   }
+
+//   this.dashboardService.getDashboards().subscribe({
+//     next: (dashboards) => {
+//       this.homeService.getRecords().subscribe({
+//         next: (records) => {
+//           const userRecord = records.find(record => record.email === this.formData.email);
+          
+//           // Check if user already has access to this dashboard
+//           if (userRecord?.dashboards.includes(this.selectedDashboard!.dashboard)) {
+//             this.toastService.show('User already has access to this dashboard');
+//             return;
+//           }
+
+//           const existingDashboardIds = userRecord ? 
+//             dashboards
+//               .filter(d => userRecord.dashboards.includes(d.dashboard))
+//               .map(d => d.id) 
+//             : [];
+
+//           const allDashboardIds = [...existingDashboardIds, this.selectedDashboard!.id];
+          
+//           this.homeService.updateRecord(
+//             this.formData.email, 
+//             this.formData.userName,
+//             this.formData.department,
+//             allDashboardIds
+//           ).subscribe({
+//             next: () => {
+//               this.loadUserCounts();
+//               this.closeForm();
+//               this.toastService.show('User added successfully');
+//             },
+//             error: (error) => {
+//               console.error('Error updating user-dashboard:', error);
+//               this.toastService.show(error.error?.message || 'Failed to add user');
+//             }
+//           });
+//         },
+//         error: (error) => {
+//           console.error('Error getting user records:', error);
+//           this.toastService.show('Failed to get user records');
+//         }
+//       });
+//     },
+//     error: (error) => {
+//       console.error('Error getting dashboard:', error);
+//       this.toastService.show('Failed to get dashboard details');
+//     }
+//   });
+// }
+
+
+// deleteUser(email: string) {
+//   if (confirm('Are you sure you want to remove this user?')) {
+//     this.homeService.deleteRecord(email).subscribe({
+//       next: () => {
+//         this.loadUserCounts();
+//         this.loadRecords();
+//         this.toastService.show('User removed successfully');
+//       },
+//       error: (error) => {
+//         console.error('Error deleting user:', error);
+//         this.toastService.show('Failed to remove user');
+//       }
+//     });
+//   }
+// }
 async addUserToDashboard() {
   if (!this.formData.email || !this.selectedDashboard) {
     this.toastService.show('Please select a user');
@@ -868,7 +945,6 @@ async addUserToDashboard() {
         next: (records) => {
           const userRecord = records.find(record => record.email === this.formData.email);
           
-          // Check if user already has access to this dashboard
           if (userRecord?.dashboards.includes(this.selectedDashboard!.dashboard)) {
             this.toastService.show('User already has access to this dashboard');
             return;
@@ -886,7 +962,8 @@ async addUserToDashboard() {
             this.formData.email, 
             this.formData.userName,
             this.formData.department,
-            allDashboardIds
+            allDashboardIds,
+            true // Default to active when adding a user
           ).subscribe({
             next: () => {
               this.loadUserCounts();
@@ -911,24 +988,6 @@ async addUserToDashboard() {
     }
   });
 }
-
-
-// deleteUser(email: string) {
-//   if (confirm('Are you sure you want to remove this user?')) {
-//     this.homeService.deleteRecord(email).subscribe({
-//       next: () => {
-//         this.loadUserCounts();
-//         this.loadRecords();
-//         this.toastService.show('User removed successfully');
-//       },
-//       error: (error) => {
-//         console.error('Error deleting user:', error);
-//         this.toastService.show('Failed to remove user');
-//       }
-//     });
-//   }
-// }
-
 
 deleteUser(email: string) {
   this.confirmationService.show(

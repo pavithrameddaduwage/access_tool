@@ -35,4 +35,9 @@ export class ToastService {
     this.toasts = this.toasts.filter(t => t.id !== id);
     this.toastsSubject.next(this.toasts);
   }
+  
+  clear() {
+    this.toastsSubject.next([]);
+  }
+
 }

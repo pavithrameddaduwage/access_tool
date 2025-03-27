@@ -5,3 +5,11 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+.inactive-user {
+  opacity: 0.7;
+  color: #6b7280;
+}
+
+.inactive-user:hover {
+  opacity: 1;
+}

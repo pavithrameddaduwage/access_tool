@@ -3,4 +3,6 @@ export declare class CreateUserDashboardDto {
     userName: string;
     department: string;
     dashboardIds: number[];
+    isActive?: boolean;
+    lastActiveAt?: Date;
 }

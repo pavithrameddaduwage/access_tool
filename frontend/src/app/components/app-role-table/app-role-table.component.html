@@ -66,9 +66,9 @@
               id="search"
               type="text"
               placeholder="Search Item"
-              [(ngModel)]="searchtext"
+              [(ngModel)]="searchtext" 
               class="py-1 px-2 rounded-l-full border border-gray-300 text-[9px]"
-              (keydown.enter)="handleSearch()"
+              (keydown.enter)="handleSearch()" 
             />
             <button
               type="button"
@@ -76,9 +76,22 @@
               (click)="handleSearch()"
               class="inline-flex items-center py-1.5 px-3 text-[9px] font-medium rounded-r-full border-slate-300 border bg-blue-500 text-white bg-primary"
             >
-              <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-              </svg>Search
+              <svg
+                class="w-4 h-4 me-2"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+              Search
             </button>
           </div>
         </div>

@@ -29,6 +29,9 @@ interface UserDashboardRecord {
   department: string;
   dashboards: string[];
   isExpanded?: boolean;
+  isActive: boolean; // Add this
+  lastActiveAt?: string;
+
 }
 
 interface HeaderOption {
@@ -78,7 +81,8 @@ export class HomeComponent implements OnInit {
     email: '',
     department: '',
     workspace: '',  
-    dashboards: [] as string[]
+    dashboards: [] as string[],
+    isActive: true
   };
 
   tableHeaders = [
@@ -190,7 +194,8 @@ export class HomeComponent implements OnInit {
         email: record.email,
         department: record.department,
         workspace: workspace?.value || '', 
-        dashboards: [...record.dashboards]
+        dashboards: [...record.dashboards],
+        isActive: record.isActive // Add this
       };
       this.selectedWorkspace = workspace?.value || '';
       this.selectedDashboards = [...record.dashboards];
@@ -239,7 +244,8 @@ export class HomeComponent implements OnInit {
         email: selectedUser.email,
         department: selectedUser.department?.department || '',
         workspace: this.selectedWorkspace, 
-        dashboards: [...this.selectedDashboards]
+        dashboards: [...this.selectedDashboards],
+        isActive: true // Default to true when selecting a new user
       };
     }
   }
@@ -270,7 +276,8 @@ export class HomeComponent implements OnInit {
       email: '',
       department: '',
       workspace: '',
-      dashboards: []
+      dashboards: [],
+      isActive: true
     };
     this.selectedDashboards = [];
     this.selectedWorkspace = '';
@@ -290,7 +297,8 @@ export class HomeComponent implements OnInit {
         this.editForm.email,
         this.editForm.userName,
         this.editForm.department,
-        dashboardIds
+        dashboardIds,
+        this.editForm.isActive  // Add this parameter
       ).subscribe({
         next: () => {
           this.loadRecords();
@@ -306,7 +314,8 @@ export class HomeComponent implements OnInit {
         this.editForm.email,
         this.editForm.userName,
         this.editForm.department,
-        dashboardIds
+        dashboardIds,
+        this.editForm.isActive  // Add this parameter
       ).subscribe({
         next: () => {
           this.loadRecords();

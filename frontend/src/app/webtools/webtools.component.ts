@@ -71,6 +71,7 @@ export class WebtoolsComponent implements OnInit {
   viewMode: 'webtool' | 'matrix' | 'users' = 'webtool';
   searchTerm: string = '';
   
+  originalUsers: WebtoolUserDisplay[] = [];
 
 
   userOptions: HeaderOption[] = [];
@@ -80,6 +81,7 @@ export class WebtoolsComponent implements OnInit {
 //New one
   webtoolRoleSelections: WebtoolRoleSelection[] = [];
 
+  expandedWebtoolId: number | null = null;
 
   
   isEditMode = false;
@@ -246,7 +248,6 @@ export class WebtoolsComponent implements OnInit {
   removeSelectedWebtool(webtool: string) {
     this.selectedWebtools = this.selectedWebtools.filter(w => w !== webtool);
   }
-
   openAddRecordForm() {
     this.showForm = true;
     this.isEditMode = false;
@@ -387,6 +388,27 @@ export class WebtoolsComponent implements OnInit {
   //   });
   // }
 
+  // loadUsersView() {
+  //   this.webtoolUserService.getRecords().subscribe({
+  //     next: (users: WebtoolUser[]) => {
+  //       console.log('Loaded users:', users);
+  //       this.users = users.map(user => ({
+  //         userId: user.userId,
+  //         userName: user.userName,
+  //         email: user.email,
+  //         department: user.department,
+  //         roles: Object.values(user.roles).flat(),
+  //         webtools: user.webtools
+  //       }));
+  //       // Force change detection
+  //       this.users = [...this.users];
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading users view:', error);
+  //       this.toastService.show('Failed to load users view', 'error');
+  //     }
+  //   });
+  // }
   loadUsersView() {
     this.webtoolUserService.getRecords().subscribe({
       next: (users: WebtoolUser[]) => {
@@ -399,8 +421,7 @@ export class WebtoolsComponent implements OnInit {
           roles: Object.values(user.roles).flat(),
           webtools: user.webtools
         }));
-        // Force change detection
-        this.users = [...this.users];
+        this.originalUsers = [...this.users]; // Initialize originalUsers
       },
       error: (error) => {
         console.error('Error loading users view:', error);
@@ -408,7 +429,6 @@ export class WebtoolsComponent implements OnInit {
       }
     });
   }
-
   loadWebtoolOptions() {
     this.webtoolService.getWebtools().subscribe({
       next: (webtools) => {
@@ -713,6 +733,9 @@ export class WebtoolsComponent implements OnInit {
   onSave() {
     if (this.viewMode === 'matrix') {
       this.saveMatrixAssignment();
+      if (this.selectedWebtool) {
+        this.expandedWebtoolId = this.selectedWebtool.id;
+      }
     } else {
       // User view save logic
       if (!this.editForm.email || this.webtoolRoleSelections.length === 0) {
@@ -1027,14 +1050,30 @@ export class WebtoolsComponent implements OnInit {
     });
   }
   
+  // private reloadAllViews() {
+  //   this.loadWebTools();
+  //   this.loadUserWebtoolData();
+  //   setTimeout(() => {
+  //     this.webtools = [...this.webtools];
+  //     this.filteredWebtools = [...this.webtools];
+  //   }, 100);
+  // }
+
   private reloadAllViews() {
-    this.loadWebTools();
-    this.loadUserWebtoolData();
-    setTimeout(() => {
-      this.webtools = [...this.webtools];
-      this.filteredWebtools = [...this.webtools];
-    }, 100);
-  }
+  this.loadWebTools();
+  this.loadUserWebtoolData();
+  setTimeout(() => {
+    this.webtools = [...this.webtools];
+    this.filteredWebtools = [...this.webtools];
+    // Maintain the expansion state
+    if (this.expandedWebtoolId) {
+      const tool = this.webtools.find(t => t.id === this.expandedWebtoolId);
+      if (tool) {
+        tool.isExpanded = true;
+      }
+    }
+  }, 100);
+}
   private createNewAssignments() {
     console.log('Creating new assignments with:', {
       editForm: this.editForm,
@@ -1138,22 +1177,71 @@ export class WebtoolsComponent implements OnInit {
 
   toggleView(mode: 'webtool' | 'matrix' | 'users') {
     this.viewMode = mode;
+    this.filteredWebtools = [...this.webtools];
+  }
+
+  // searchWebtools(event: Event) {
+  //   const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+  //   this.filteredWebtools = this.webtools.filter(webtool => {
+  //     const webtoolName = webtool.webtool.toLowerCase();
+  //     const users = (webtool.users || []).map((user: WebtoolUserDisplay) => user.userName.toLowerCase());
+  //     return webtoolName.includes(searchTerm) || 
+  //            users.some((name: string) => name.includes(searchTerm));
+  //   });
+  // }
+
+  searchUsers(event: Event) {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+  
+    if (!searchTerm) {
+      // Reset to all users if search term is empty
+      this.users = [...this.originalUsers];
+      return;
+    }
+  
+    // Filter users based on search term
+    this.users = this.originalUsers.filter(user => {
+      const userName = user.userName.toLowerCase();
+      const email = user.email.toLowerCase();
+      const department = user.department.toLowerCase();
+  
+      return userName.includes(searchTerm) || 
+             email.includes(searchTerm) || 
+             department.includes(searchTerm);
+    });
   }
 
   searchWebtools(event: Event) {
     const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+  
+    if (!searchTerm) {
+      // Reset to all webtools if search term is empty
+      this.filteredWebtools = [...this.webtools];
+      return;
+    }
+  
+    // Filter webtools based on search term
     this.filteredWebtools = this.webtools.filter(webtool => {
       const webtoolName = webtool.webtool.toLowerCase();
       const users = (webtool.users || []).map((user: WebtoolUserDisplay) => user.userName.toLowerCase());
+  
+      // Check if the search term matches either the webtool name or any user name
       return webtoolName.includes(searchTerm) || 
              users.some((name: string) => name.includes(searchTerm));
     });
   }
-
-
+  // toggleRowExpansion(index: number) {
+  //   this.webtools[index].isExpanded = !this.webtools[index].isExpanded;
+  // }
   toggleRowExpansion(index: number) {
-    this.webtools[index].isExpanded = !this.webtools[index].isExpanded;
+    const tool = this.webtools[index];
+    if (this.expandedWebtoolId === tool.id) {
+      this.expandedWebtoolId = null; // Collapse if already expanded
+    } else {
+      this.expandedWebtoolId = tool.id; // Expand the clicked webtool
+    }
   }
+  
 
   //   loadRoles(webtoolId: number) {
   //   this.roleService.getRolesByWebtool(webtoolId).subscribe({

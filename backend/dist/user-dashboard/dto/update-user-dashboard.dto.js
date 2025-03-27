@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUserDashboardDto = void 0;
 const mapped_types_1 = require("@nestjs/mapped-types");
-const create_user_dashboard_dto_1 = require("./create-user-dashboard.dto");
 const class_validator_1 = require("class-validator");
+const create_user_dashboard_dto_1 = require("./create-user-dashboard.dto");
 class UpdateUserDashboardDto extends (0, mapped_types_1.PartialType)(create_user_dashboard_dto_1.CreateUserDashboardDto) {
 }
 exports.UpdateUserDashboardDto = UpdateUserDashboardDto;
@@ -28,4 +28,8 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDashboardDto.prototype, "department", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateUserDashboardDto.prototype, "isActive", void 0);
 //# sourceMappingURL=update-user-dashboard.dto.js.map

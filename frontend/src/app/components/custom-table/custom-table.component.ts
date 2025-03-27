@@ -322,44 +322,96 @@ console.log('Headers:', this.headers);
     this.newrow = {};
   }
   
-  handleSearch() {
-    let dataheaders = Object.keys(this.rows[0]);
+  // handleSearch() {
+  //   let dataheaders = Object.keys(this.rows[0]);
 
-    this.filteredrows = [];
+  //   this.filteredrows = [];
 
-    if (this.searchtext != '') {
-      this.filteredrows = this.rows.filter((f: any) => {
-        let ismatching = false;
-        dataheaders.forEach((header: any) => {
-          if (
-            header !== 'id' &&
-            f[header]
-              .toString()
-              .toLowerCase()
-              .includes(this.searchtext.toLowerCase())
-          ) {
-            ismatching = true;
-          }
-        });
-        console.log(
-          'testing values',
-          this.searchtext.toLowerCase(),
-          f.department,
-          ismatching
-        );
-        return ismatching;
-      });
-      this.displaydata = this.filteredrows.slice(0, this.rowsperpage);
-      this.setPageCount();
-    } else {
-      this.filteredrows = this.data.map((item) => ({
-        ...item,
-        editing: false,
-      }));
-      this.displaydata = this.filteredrows.slice(0, this.rowsperpage);
-      this.setPageCount();
-    }
+  //   if (this.searchtext != '') {
+  //     this.filteredrows = this.rows.filter((f: any) => {
+  //       let ismatching = false;
+  //       dataheaders.forEach((header: any) => {
+  //         if (
+  //           header !== 'id' &&
+  //           f[header]
+  //             .toString()
+  //             .toLowerCase()
+  //             .includes(this.searchtext.toLowerCase())
+  //         ) {
+  //           ismatching = true;
+  //         }
+  //       });
+  //       console.log(
+  //         'testing values',
+  //         this.searchtext.toLowerCase(),
+  //         f.department,
+  //         ismatching
+  //       );
+  //       return ismatching;
+  //     });
+  //     this.displaydata = this.filteredrows.slice(0, this.rowsperpage);
+  //     this.setPageCount();
+  //   } else {
+  //     this.filteredrows = this.data.map((item) => ({
+  //       ...item,
+  //       editing: false,
+  //     }));
+  //     this.displaydata = this.filteredrows.slice(0, this.rowsperpage);
+  //     this.setPageCount();
+  //   }
+  // }
+
+  // In CustomTableComponent class
+handleSearch() {
+  if (!this.rows || this.rows.length === 0) {
+    this.displaydata = [];
+    return;
   }
+
+  if (this.searchtext === '') {
+    // Reset to original data when search is cleared
+    this.filteredrows = this.rows;
+    this.displaydata = this.filteredrows.slice(0, this.rowsperpage);
+    this.setPageCount();
+    return;
+  }
+
+  const dataheaders = Object.keys(this.rows[0]);
+  
+  this.filteredrows = this.rows.filter((row: any) => {
+    let isMatching = false;
+    
+    // Check all properties in the row
+    for (const header of dataheaders) {
+      // Skip non-searchable fields
+      if (header === 'id' || header === 'editing' || header === '_originalWebtool') continue;
+      
+      // Handle special case for nested objects like webtool
+      if (row[header] && typeof row[header] === 'object') {
+        // Check if it's the webtool object
+        if (header === 'webtool' && row[header]?.webtool) {
+          if (row[header].webtool.toString().toLowerCase().includes(this.searchtext.toLowerCase())) {
+            isMatching = true;
+            break;
+          }
+        }
+        // Add other nested object cases here if needed
+        continue;
+      }
+      
+      // Regular property check
+      if (row[header] && row[header].toString().toLowerCase().includes(this.searchtext.toLowerCase())) {
+        isMatching = true;
+        break;
+      }
+    }
+    
+    return isMatching;
+  });
+  
+  this.displaydata = this.filteredrows.slice(0, this.rowsperpage);
+  this.setPageCount();
+}
 
   closeNewRow() {
     this.newrow = {};

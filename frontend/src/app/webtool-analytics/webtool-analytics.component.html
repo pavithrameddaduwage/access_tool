@@ -1,0 +1,163 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Page Header -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 mb-8">
+      <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
+        Webtool Usage Analytics
+      </h1>
+    </div>
+
+    <!-- Loading Indicator -->
+    <ng-container *ngIf="!chartsInitialized">
+      <div class="flex justify-center items-center h-64">
+        <div class="animate-pulse flex flex-col items-center">
+          <div class="w-16 h-16 bg-blue-400 rounded-full mb-4"></div>
+          <p class="text-gray-500 text-lg">Loading dashboard data...</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Dashboard Content -->
+    <ng-container *ngIf="chartsInitialized">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-center">
+          <div class="mb-3">
+            <i class="fas fa-tools text-3xl text-indigo-500"></i>
+          </div>
+          <h3 class="text-sm text-gray-500 mb-2">Total Webtools</h3>
+          <p class="text-3xl font-bold text-indigo-600">{{ metrics.totalWebtools }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-center">
+          <div class="mb-3">
+            <i class="fas fa-users text-3xl text-green-500"></i>
+          </div>
+          <h3 class="text-sm text-gray-500 mb-2">Total Users</h3>
+          <p class="text-3xl font-bold text-green-600">{{ metrics.totalUsers }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-center">
+          <div class="mb-3">
+            <i class="fas fa-user-tag text-3xl text-purple-500"></i>
+          </div>
+          <h3 class="text-sm text-gray-500 mb-2">Total Roles</h3>
+          <p class="text-3xl font-bold text-purple-600">{{ metrics.totalRoles }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-center">
+          <div class="mb-3">
+            <i class="fas fa-chart-line text-3xl text-pink-500"></i>
+          </div>
+          <h3 class="text-sm text-gray-500 mb-2">Avg Webtools/User</h3>
+          <p class="text-3xl font-bold text-pink-600">{{ metrics.avgWebtoolsPerUser | number:'1.1-1' }}</p>
+        </div>
+      </div>
+
+      <!-- Main Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Webtool Usage Chart -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Webtool Usage</h3>
+          <apx-chart
+            *ngIf="webtoolUsageChart?.series?.length"
+            [series]="webtoolUsageChart.series"
+            [chart]="webtoolUsageChart.chart"
+            [xaxis]="webtoolUsageChart.xaxis"
+            [plotOptions]="webtoolUsageChart.plotOptions"
+            [colors]="webtoolUsageChart.colors">
+          </apx-chart>
+        </div>
+
+        <!-- Role Distribution Chart -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Role Distribution</h3>
+          <apx-chart
+            *ngIf="roleDistributionChart?.series?.length"
+            [series]="roleDistributionChart.series"
+            [chart]="roleDistributionChart.chart"
+            [labels]="roleDistributionChart.labels"
+            [colors]="roleDistributionChart.colors">
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Department and User Webtool Sections -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Department Distribution -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Users by Department</h3>
+          <apx-chart
+            *ngIf="departmentDistributionChart"
+            [series]="departmentDistributionChart.series"
+            [chart]="departmentDistributionChart.chart"
+            [labels]="departmentDistributionChart.labels"
+            [colors]="departmentDistributionChart.colors"
+            [responsive]="departmentDistributionChart.responsive"
+            [noData]="departmentDistributionChart.noData">
+          </apx-chart>
+        </div>
+
+        <!-- User-Webtool Matrix -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">User Webtool Access Matrix</h3>
+          <apx-chart
+            *ngIf="userWebtoolMatrix"
+            [series]="userWebtoolMatrix.series"
+            [chart]="userWebtoolMatrix.chart"
+            [dataLabels]="userWebtoolMatrix.dataLabels"
+            [colors]="userWebtoolMatrix.colors"
+            [xaxis]="userWebtoolMatrix.xaxis"
+            [tooltip]="userWebtoolMatrix.tooltip"
+            [noData]="userWebtoolMatrix.noData">
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Additional Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <!-- Roles per Webtool -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Roles per Webtool</h3>
+          <apx-chart
+            [series]="rolesPerWebtoolChart.series"
+            [chart]="rolesPerWebtoolChart.chart"
+            [xaxis]="rolesPerWebtoolChart.xaxis"
+            [colors]="rolesPerWebtoolChart.colors">
+          </apx-chart>
+        </div>
+
+        <!-- Department vs Webtool Usage -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Department Webtool Usage</h3>
+          <apx-chart
+            [series]="departmentUsageChart.series"
+            [chart]="departmentUsageChart.chart"
+            [xaxis]="departmentUsageChart.xaxis"
+            [colors]="departmentUsageChart.colors">
+          </apx-chart>
+        </div>
+         <!-- Top Users -->
+  <div class="bg-white rounded-2xl shadow-lg p-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Top Users by Webtool Access</h3>
+    <apx-chart
+      [series]="topUsersChart.series"
+      [chart]="topUsersChart.chart"
+      [plotOptions]="topUsersChart.plotOptions"
+      [xaxis]="topUsersChart.xaxis"
+      [colors]="topUsersChart.colors"
+      [tooltip]="topUsersChart.tooltip">
+    </apx-chart>
+  </div>
+
+  <!-- Roles per Webtool -->
+  <div class="bg-white rounded-2xl shadow-lg p-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Roles per Webtool</h3>
+    <apx-chart
+      [series]="rolesPerWebtoolChart.series"
+      [chart]="rolesPerWebtoolChart.chart"
+      [xaxis]="rolesPerWebtoolChart.xaxis"
+      [colors]="rolesPerWebtoolChart.colors">
+    </apx-chart>
+  </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { IsNumber, IsArray, IsString } from 'class-validator';
+import { IsNumber, IsArray, IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateUserDashboardDto {
   @IsString()
@@ -12,4 +12,11 @@ export class CreateUserDashboardDto {
 
   @IsArray()
   dashboardIds: number[];
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  lastActiveAt?: Date;
 }

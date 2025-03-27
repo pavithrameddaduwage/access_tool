@@ -198,14 +198,23 @@ export class UserManagementComponent implements OnInit {
     }
   }
 
-  selectADUser(user: any) {
-    this.selectedUser = {
-      email: user.email,
-      name: user.name,
+  // selectADUser(user: any) {
+  //   this.selectedUser = {
+  //     email: user.email,
+  //     name: user.name,
     
-    };
-    this.adUsers = [];
-  }
+  //   };
+  //   this.adUsers = [];
+  // }
+
+  // In user-management.component.ts
+selectADUser(user: any) {
+  this.selectedUser = {
+    email: user.email.toLowerCase(), // Convert to lowercase
+    name: user.name,
+  };
+  this.adUsers = [];
+}
 
   isRoleSelected(roleId: number): boolean {
     return this.selectedRoles.includes(roleId);

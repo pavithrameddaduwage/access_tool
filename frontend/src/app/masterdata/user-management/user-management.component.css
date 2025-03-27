@@ -1,7 +1,5 @@
 /* user-management.component.css */
-.table-header {
-    @apply bg-gray-100 font-medium;
-  }
+
   
   .action-button {
     @apply px-3 py-1 rounded text-white transition-colors duration-200;

@@ -149,6 +149,8 @@ export class DashboardComponent implements OnInit {
   groupOptions: GroupOption[] = [];
 selectedGroup: string = '';
 
+searchTerm: string = '';
+
   typeOptions: TypeOption[] = [];
   valueTypeOptions: ValueTypeOption[] = [];
   workspaceOptions: WorkspaceOption[] = [];
@@ -320,6 +322,13 @@ selectedGroup: string = '';
     if (!this.selectedWorkspace) return null;
     const workspace = this.workspaceOptions.find(opt => opt.value === this.selectedWorkspace);
     return workspace ? workspace.id : null;
+  }
+
+  onSearchChange(searchTerm: string): void {
+    this.searchTerm = searchTerm;
+    this.filteredTableData = this.tableData.filter(row => 
+      row.dashboard.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }
 
   loadDashboards() {

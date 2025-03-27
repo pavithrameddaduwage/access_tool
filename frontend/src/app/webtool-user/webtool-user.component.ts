@@ -56,6 +56,9 @@ export class WebtoolUserComponent implements OnInit {
   userOptions: HeaderOption[] = [];
   roleOptions: HeaderOption[] = [];
 
+
+  filteredRecords: UserRecord[] = [];
+
   editForm = {
     userId: null as number | null,
     userName: '',
@@ -104,6 +107,28 @@ export class WebtoolUserComponent implements OnInit {
     });
   }
 
+  // loadRecords() {
+  //   this.webtoolUserService.getRecords().subscribe({
+  //     next: (records: WebtoolUser[]) => {
+  //       this.records = records.map(record => {
+  //         const rolesArray = Object.values(record.roles).flat();
+  //         return {
+  //           userId: record.userId,
+  //           userName: record.userName,
+  //           email: record.email,
+  //           department: record.department,
+  //           roles: rolesArray,
+  //           webtools: record.webtools,
+  //           isExpanded: false
+  //         };
+  //       });
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading records:', error);
+  //       alert('Failed to load records');
+  //     }
+  //   });
+  // }
   loadRecords() {
     this.webtoolUserService.getRecords().subscribe({
       next: (records: WebtoolUser[]) => {
@@ -119,6 +144,7 @@ export class WebtoolUserComponent implements OnInit {
             isExpanded: false
           };
         });
+        this.filteredRecords = [...this.records]; // Initialize filteredRecords
       },
       error: (error) => {
         console.error('Error loading records:', error);
@@ -126,6 +152,27 @@ export class WebtoolUserComponent implements OnInit {
       }
     });
   }
+
+  searchUsers(event: Event) {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+
+    if (!searchTerm) {
+      this.filteredRecords = [...this.records]; // Reset to all records if search term is empty
+      return;
+    }
+
+    // Filter records based on search term
+    this.filteredRecords = this.records.filter(record => {
+      const userName = record.userName.toLowerCase();
+      const email = record.email.toLowerCase();
+      const department = record.department.toLowerCase();
+
+      return userName.includes(searchTerm) || 
+             email.includes(searchTerm) || 
+             department.includes(searchTerm);
+    });
+  }
+  
   toggleRowExpansion(index: number) {
     this.records[index].isExpanded = !this.records[index].isExpanded;
   }

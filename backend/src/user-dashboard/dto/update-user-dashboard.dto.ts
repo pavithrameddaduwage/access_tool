@@ -1,10 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDashboardDto } from './create-user-dashboard.dto';
-import { IsArray, IsString } from 'class-validator';
+import { PartialType } from "@nestjs/mapped-types";
+import { IsArray, IsBoolean, IsString } from "class-validator";
+import { CreateUserDashboardDto } from "./create-user-dashboard.dto";
 
 export class UpdateUserDashboardDto extends PartialType(CreateUserDashboardDto) {
-
-    @IsArray()
+  @IsArray()
   dashboardIds: number[];
 
   @IsString()
@@ -12,4 +11,7 @@ export class UpdateUserDashboardDto extends PartialType(CreateUserDashboardDto) 
 
   @IsString()
   department: string;
+
+  @IsBoolean()
+  isActive: boolean; // Make this required
 }

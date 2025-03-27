@@ -89,28 +89,20 @@ let AuthService = class AuthService {
             console.log('AD user details not found for:', username);
             throw new common_1.UnauthorizedException('User details not found in Active Directory');
         }
+        const email = aduser.mail.toLowerCase();
         console.log('AD user found, checking local database...');
-        let dbUser = await this.usersService.findUserByEmail(aduser.mail.toLowerCase());
+        const dbUser = await this.usersService.findUserByEmail(email);
         if (!dbUser) {
-            console.log('User not found in database, creating new user...');
-            const createUserDto = {
-                email: aduser.mail.toLowerCase(),
-                name: aduser.displayName || aduser.mail,
-                is_active: true,
-                user_roles: [{ roleId: 2 }]
-            };
-            try {
-                dbUser = await this.usersService.create(createUserDto);
-                console.log('New user created successfully');
-            }
-            catch (error) {
-                console.error('Failed to create user:', error);
-                throw new common_1.UnauthorizedException('Failed to create user account');
-            }
+            console.log('User not found in database - access denied');
+            throw new common_1.UnauthorizedException('You are not authorized to access this application. Please contact your administrator.');
+        }
+        if (!dbUser.is_active) {
+            console.log('User is inactive - access denied');
+            throw new common_1.UnauthorizedException('Your account has been deactivated. Please contact your administrator.');
         }
         console.log('Creating JWT token...');
         const payload = {
-            email: aduser.mail.toLowerCase(),
+            email: email,
             name: dbUser.name,
             userid: dbUser.id,
             roles: dbUser.user_roles.map(role => role.role.role),
