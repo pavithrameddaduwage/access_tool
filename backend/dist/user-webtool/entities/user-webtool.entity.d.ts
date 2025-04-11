@@ -9,4 +9,6 @@ export declare class UserWebtool {
     roleId: number;
     webtool: Webtool;
     role: Role;
+    isActive: boolean;
+    lastActiveAt: Date;
 }

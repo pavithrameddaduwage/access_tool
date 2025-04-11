@@ -22,6 +22,7 @@ export declare class UserWebtoolController {
                 id: number;
                 name: string;
             }[];
+            isActive: boolean;
         };
     }>;
     deleteExternalAssignment(dto: ExternalDeleteAssignmentDto): Promise<{
@@ -32,4 +33,7 @@ export declare class UserWebtoolController {
             webtoolId: number;
         };
     }>;
+    updateStatus(email: string, webtoolId: number, dto: {
+        isActive: boolean;
+    }): Promise<void>;
 }

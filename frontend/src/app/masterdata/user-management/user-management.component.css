@@ -1,23 +1,36 @@
-/* user-management.component.css */
+/* Header styling */
+.user-management-table th {
+  background-color: #e5e7eb !important;
+  font-weight: 600;
+  position: relative;
+  padding: 0.5rem 0.75rem; /* Reduced from the original p-3 (0.75rem) */
+  font-size: 0.875rem; /* Slightly smaller font size */
+}
 
-  
-  .action-button {
-    @apply px-3 py-1 rounded text-white transition-colors duration-200;
-  }
-  
-  .edit-button {
-    @apply bg-blue-500 hover:bg-blue-600;
-  }
-  
-  .delete-button {
-    @apply bg-red-500 hover:bg-red-600;
-  }
-  
-  .checkbox-wrapper {
-    @apply flex items-center justify-center;
-  }
+/* Action column shadow effect */
+.sticky-action {
+  position: relative;
+  z-index: 30;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
+}
 
-  :host {
-    display: block;
-    height: 100%;
-  }
+/* Table layout */
+.user-management-table table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Ensure dropdowns are visible */
+.user-management-table td { 
+  overflow: visible !important;
+  position: relative;
+}
+
+.user-management-table-container {
+  overflow: visible !important;
+}
+
+/* Zebra striping while preserving hover */
+.user-management-table tr:nth-child(even) td:not(:hover) {
+  background-color: #f8fafc;
+}

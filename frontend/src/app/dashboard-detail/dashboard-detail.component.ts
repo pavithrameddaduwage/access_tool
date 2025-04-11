@@ -125,13 +125,23 @@ export class DashboardDetailComponent implements OnInit {
     }
   }
 
+  // selectADUser(user: any): void {
+  //   this.formData = {
+  //     userId: null,
+  //     userName: user.name,
+  //     email: user.email,
+  //     department: user.department,
+  //     isActive: true
+  //   };
+  //   this.adUsers = [];
+  // }
   selectADUser(user: any): void {
     this.formData = {
+      ...this.formData, // Keep existing values
       userId: null,
       userName: user.name,
       email: user.email,
-      department: user.department,
-      isActive: true
+      department: this.formData.department || user.department // Use existing if set, otherwise AD value
     };
     this.adUsers = [];
   }

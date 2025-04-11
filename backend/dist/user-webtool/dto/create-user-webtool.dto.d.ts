@@ -4,4 +4,5 @@ export declare class CreateUserWebtoolDto {
     department: string;
     webtoolId: number;
     roleId: number;
+    isActive?: boolean;
 }

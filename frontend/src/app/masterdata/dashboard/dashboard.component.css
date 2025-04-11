@@ -1,3 +1,54 @@
-.dashboard-header {
-    background-color: #f3f4f6 !important; 
-  }
+/* ONLY Table Visual Enhancements - Clean Version */
+table.w-full {
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+}
+
+/* Header Styling - No Gradient */
+table.w-full th {
+  background-color: #e5e7eb !important;
+  font-weight: 600;
+  color: #334155;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Simple Column Separator */
+table.w-full th:not(:last-child) {
+  border-right: 1px solid #d1d5db;
+}
+
+/* Header Hover - Solid Color */
+table.w-full th:hover {
+  background-color: #dfe3e8 !important;
+}
+
+/* Row Hover Effect */
+table.w-full tr:hover td {
+  background-color: #f8fafc !important;
+}
+
+/* Button Animations */
+table.w-full button {
+  transition: all 0.2s ease;
+}
+
+table.w-full button:hover {
+  transform: translateY(-1px);
+}
+
+/* Zebra Striping */
+table.w-full tr:nth-child(even) td {
+  background-color: #f8fafc !important;
+}
+
+/* Action Column Shadow Only */
+table.w-full th:last-child,
+table.w-full td:last-child {
+  box-shadow: -2px 0 3px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 1;
+}

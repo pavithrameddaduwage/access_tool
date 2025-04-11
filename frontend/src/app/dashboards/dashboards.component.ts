@@ -320,28 +320,54 @@ onUserSearch(event: any): void {
     this.adUsers = [];
   }
 }
-selectADUser(user: any): void {
-  console.log('AD User:', user); // Check incoming user data structure
+// selectADUser(user: any): void {
+//   console.log('AD User:', user); // Check incoming user data structure
 
+//   if (this.viewMode === 'matrix') {
+//     this.formData = {
+//       userId: null,
+//       userName: user.name,
+//       email: user.email,
+//       department: user.department
+//     };
+//     console.log('Updated formData:', this.formData);
+//   } else {
+//     const prevForm = { ...this.editForm };
+//     this.editForm = {
+//       ...this.editForm,
+//       userName: user.name,
+//       email: user.email,
+//       department: user.department,
+//       isActive: true 
+//     };
+//     console.log('Previous form:', prevForm);
+//     console.log('Updated editForm:', this.editForm);
+//   }
+  
+//   this.adUsers = [];
+// }
+selectADUser(user: any): void {
+  console.log('AD User:', user);
+  
   if (this.viewMode === 'matrix') {
+    // For matrix view, preserve any existing department value
+    const currentDepartment = this.formData.department;
     this.formData = {
       userId: null,
       userName: user.name,
       email: user.email,
-      department: user.department
+      department: currentDepartment || user.department // Use existing if set, otherwise AD value
     };
-    console.log('Updated formData:', this.formData);
   } else {
-    const prevForm = { ...this.editForm };
+    // For other views
+    const currentDepartment = this.editForm.department;
     this.editForm = {
       ...this.editForm,
       userName: user.name,
       email: user.email,
-      department: user.department,
+      department: currentDepartment || user.department, // Use existing if set, otherwise AD value
       isActive: true 
     };
-    console.log('Previous form:', prevForm);
-    console.log('Updated editForm:', this.editForm);
   }
   
   this.adUsers = [];
@@ -590,6 +616,32 @@ loadRecords() {
     });
   }
 
+// openForm(mode: 'add' | 'edit', record?: UserDashboardRecord, index?: number) {
+//   this.isEditMode = mode === 'edit';
+//   this.showForm = true;
+  
+//   if (mode === 'edit' && record) {
+//     this.selectedRowIndex = index ?? null;
+//     const dashboard = this.allDashboardOptions.find(d => d.value === record.dashboards[0]);
+//     const workspaceId = dashboard?.workspaceIds?.[0];
+//     const workspace = this.workspaceOptions.find(w => w.id === workspaceId);
+    
+//     this.editForm = {
+//       userName: record.userName,
+//       email: record.email,
+//       department: record.department,
+//       workspace: workspace?.value || '',
+//       dashboards: [...record.dashboards],
+//       isActive: record.isActive // Add this
+
+//     };
+//     this.selectedWorkspace = workspace?.value || '';
+//     this.selectedDashboards = [...record.dashboards];
+//     this.filterDashboardOptions();
+//   } else {
+//     this.resetForm();
+//   }
+// }
 openForm(mode: 'add' | 'edit', record?: UserDashboardRecord, index?: number) {
   this.isEditMode = mode === 'edit';
   this.showForm = true;
@@ -603,11 +655,10 @@ openForm(mode: 'add' | 'edit', record?: UserDashboardRecord, index?: number) {
     this.editForm = {
       userName: record.userName,
       email: record.email,
-      department: record.department,
+      department: record.department, // Keep existing department
       workspace: workspace?.value || '',
       dashboards: [...record.dashboards],
-      isActive: record.isActive // Add this
-
+      isActive: record.isActive
     };
     this.selectedWorkspace = workspace?.value || '';
     this.selectedDashboards = [...record.dashboards];

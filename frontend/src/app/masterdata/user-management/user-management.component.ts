@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersService } from '../../Services/users.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
@@ -34,7 +34,9 @@ interface CreateUserDto {
   selector: 'app-user-management',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './user-management.component.html'
+  templateUrl: './user-management.component.html',
+  encapsulation: ViewEncapsulation.None
+
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];

@@ -1,5 +1,5 @@
 
-import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserWebtoolDto {
   @IsString()
@@ -17,4 +17,8 @@ export class CreateUserWebtoolDto {
 
   @IsNumber()
   roleId: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }

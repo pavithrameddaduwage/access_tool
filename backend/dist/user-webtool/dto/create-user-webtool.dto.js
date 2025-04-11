@@ -35,4 +35,9 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateUserWebtoolDto.prototype, "roleId", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateUserWebtoolDto.prototype, "isActive", void 0);
 //# sourceMappingURL=create-user-webtool.dto.js.map

@@ -98,7 +98,8 @@ export class WebtoolsComponent implements OnInit {
     userName: '',
     email: '',
     department: '',
-    webtools: [] as string[]
+    webtools: [] as string[],
+    isActive: true // Add this
   };
 
   toolHeaders = [
@@ -118,8 +119,9 @@ export class WebtoolsComponent implements OnInit {
   userViewHeaders = [
     { name: 'actions', display_name: 'Actions', width: '10%' },
     { name: 'userName', display_name: 'User', width: '25%' },
-    { name: 'department', display_name: 'Department', width: '25%' },
-    { name: 'email', display_name: 'Email', width: '25%' },
+    { name: 'department', display_name: 'Department', width: '15%' },
+    { name: 'email', display_name: 'Email', width: '20%' },
+    { name: 'isActive', display_name: 'Status', width: '15%' }, // New column
     { name: 'webtools', display_name: 'Webtools', width: '15%' }
   ];
 
@@ -301,7 +303,8 @@ export class WebtoolsComponent implements OnInit {
       userName: '',
       email: '',
       department: '',
-      webtools: []
+      webtools: [],
+      isActive: true // Add this
     };
     this.selectedRoles = [];
     this.webtoolRoleSelections = [];
@@ -330,7 +333,8 @@ export class WebtoolsComponent implements OnInit {
       userName: user.name,
       email: user.email,
       department: user.department,
-      webtools: this.selectedWebtools
+      webtools: this.selectedWebtools,
+      isActive: true 
     };
     this.adUsers = [];
   }
@@ -419,7 +423,9 @@ export class WebtoolsComponent implements OnInit {
           email: user.email,
           department: user.department,
           roles: Object.values(user.roles).flat(),
-          webtools: user.webtools
+          webtools: user.webtools,
+          isActive: user.isActive !== undefined ? user.isActive : true, // Default to true if undefined
+          lastActiveAt: user.lastActiveAt
         }));
         this.originalUsers = [...this.users]; // Initialize originalUsers
       },
@@ -474,7 +480,9 @@ export class WebtoolsComponent implements OnInit {
               email: user.email,
               department: user.department,
               roles: userRoles,
-              webtools: user.webtools
+              webtools: user.webtools,
+              isActive: user.isActive !== undefined ? user.isActive : true,
+              lastActiveAt: user.lastActiveAt
             };
           });
   
@@ -730,120 +738,91 @@ export class WebtoolsComponent implements OnInit {
 
 
 
-  onSave() {
+  async onSave() {
     if (this.viewMode === 'matrix') {
-      this.saveMatrixAssignment();
-      if (this.selectedWebtool) {
-        this.expandedWebtoolId = this.selectedWebtool.id;
-      }
-    } else {
-      // User view save logic
-      if (!this.editForm.email || this.webtoolRoleSelections.length === 0) {
+        this.saveMatrixAssignment();
+        if (this.selectedWebtool) {
+            this.expandedWebtoolId = this.selectedWebtool.id;
+        }
+        return;
+    }
+
+    // 1. Validation
+    if (!this.editForm.email || this.webtoolRoleSelections.length === 0) {
         this.toastService.show('Please select user and at least one webtool', 'warning');
         return;
-      }
-  
-      // Remove any webtools that have no roles selected
-      this.webtoolRoleSelections = this.webtoolRoleSelections.filter(selection => 
-        selection.selectedRoles.length > 0
-      );
-  
-      if (this.webtoolRoleSelections.length === 0) {
-        this.toastService.show('Please select at least one role for a webtool', 'warning');
-        return;
-      }
-  
-      // If editing, first delete existing assignments
-      if (this.isEditMode) {
-        this.userWebtoolService.getUserWebtoolsByUser(this.editForm.email).pipe(
-          switchMap(userWebtools => {
-            const deletePromises = userWebtools.map(uw => 
-              this.userWebtoolService.deleteUserWebtool(this.editForm.email, uw.webtoolId)
-            );
-            return forkJoin(deletePromises);
-          }),
-          switchMap(() => {
-            // After deleting, create new assignments
-            const createPromises = this.webtoolRoleSelections.flatMap(selection => 
-              selection.selectedRoles.map(role => {
-                const dto: CreateUserWebtoolDto = {
-                  email: this.editForm.email,
-                  userName: this.editForm.userName,
-                  department: this.editForm.department,
-                  webtoolId: selection.webtoolId,
-                  roleId: role.id
-                };
-                return this.userWebtoolService.createUserWebtool(dto).toPromise();
-              })
-            );
-            return Promise.all(createPromises);
-          }),
-          finalize(() => {
-            // Reload all data
-            this.loadWebTools();
-            this.loadUsersView();
-            this.loadUserWebtoolData();
-          }),
-          catchError(error => {
-            this.toastService.show('Failed to update assignments', 'error');
-            console.error('Error updating assignments:', error);
-            return EMPTY;
-          })
-        ).subscribe({
-          next: () => {
-            this.toastService.show('User assignments updated successfully', 'success');
-            this.closeForm();
-          }
-        });
-      } else {
-        // New user creation - keep existing check
-        this.userWebtoolService.getUserWebtoolsByUser(this.editForm.email).pipe(
-          map(userWebtools => {
-            if (userWebtools && userWebtools.length > 0) {
-              throw new Error('User already exists');
-            }
-            return userWebtools;
-          }),
-          switchMap(() => {
-            const createPromises = this.webtoolRoleSelections.flatMap(selection => 
-              selection.selectedRoles.map(role => {
-                const dto: CreateUserWebtoolDto = {
-                  email: this.editForm.email,
-                  userName: this.editForm.userName,
-                  department: this.editForm.department,
-                  webtoolId: selection.webtoolId,
-                  roleId: role.id
-                };
-                return this.userWebtoolService.createUserWebtool(dto).toPromise();
-              })
-            );
-            return Promise.all(createPromises);
-          }),
-          finalize(() => {
-            // Reload all data
-            this.loadWebTools();
-            this.loadUsersView();
-            this.loadUserWebtoolData();
-          }),
-          catchError(error => {
-            if (error.message === 'User already exists') {
-              this.toastService.show('This user already has webtool assignments', 'error');
-            } else {
-              this.toastService.show('Failed to create assignments', 'error');
-              console.error('Error creating assignments:', error);
-            }
-            return EMPTY;
-          })
-        ).subscribe({
-          next: () => {
-            this.toastService.show('User assignments created successfully', 'success');
-            this.closeForm();
-          }
-        });
-      }
     }
-  }
 
+    try {
+        console.log('Saving with isActive:', this.editForm.isActive);
+
+        // 2. Get current assignments first (for cleanup)
+        const userWebtools = await this.userWebtoolService.getUserWebtoolsByUser(this.editForm.email)
+            .pipe(tap(assignments => console.log('Current assignments:', assignments)))
+            .toPromise();
+
+        if (userWebtools?.length) {
+            // 3. Delete existing assignments
+            await Promise.all(
+                userWebtools.map(uw => {
+                    console.log(`Deleting assignment for webtool ${uw.webtoolId}`);
+                    return this.userWebtoolService.deleteUserWebtool(this.editForm.email, uw.webtoolId).toPromise();
+                })
+            );
+        }
+
+        // 4. Create new assignments
+        const createPromises = this.webtoolRoleSelections.flatMap(selection => 
+            selection.selectedRoles.map(role => {
+                const dto: CreateUserWebtoolDto = {
+                    email: this.editForm.email,
+                    userName: this.editForm.userName,
+                    department: this.editForm.department,
+                    webtoolId: selection.webtoolId,
+                    roleId: role.id,
+                    isActive: this.editForm.isActive // Explicitly pass the status
+                };
+                console.log('Creating assignment with:', dto);
+                return this.userWebtoolService.createUserWebtool(dto).toPromise();
+            })
+        );
+
+        await Promise.all(createPromises);
+
+        // 5. Force refresh data with cache busting
+        const refresh = async () => {
+            this.webtools = [];
+            this.users = [];
+            await this.loadWebTools();
+            await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between loads
+            await this.loadUsersView();
+            this.loadUserWebtoolData();
+        };
+
+        await refresh();
+        
+        // 6. Verify the changes
+        const updated = await this.userWebtoolService.getUserWebtoolsByUser(this.editForm.email)
+            .pipe(
+                tap(assignments => console.log('Updated assignments:', assignments)),
+                map(assignments => assignments.some(a => a.isActive === this.editForm.isActive))
+            )
+            .toPromise();
+
+        if (updated) {
+            this.toastService.show('Changes saved successfully', 'success');
+            this.closeForm();
+        } else {
+            throw new Error('Status not updated in database');
+        }
+    } catch (error) {
+        console.error('Error in onSave:', error);
+        this.toastService.show('Failed to save changes. Please try again.', 'error');
+        // Rollback - reload original data
+        this.loadUsersView();
+        this.loadUserWebtoolData();
+    }
+}
   // private saveMatrixAssignment() {
   //   if (!this.editForm.email || !this.selectedWebtool || this.selectedRoles.length === 0) {
   //     alert('Please select a user and at least one role');
@@ -1358,57 +1337,57 @@ onUserViewRoleChange(event: string, selection: WebtoolRoleSelection) {
     }
   }
   openUserViewEditForm(mode: 'edit', user: WebtoolUserDisplay) { 
-    if (this.viewMode !== 'users') return; // Safety check
+    console.log('Edit clicked for user:', user); 
+    if (this.viewMode !== 'users') return;
     
     this.isEditMode = true;
-    // Set user details
     this.editForm = {
       userId: user.userId,
       userName: user.userName,
       email: user.email,
       department: user.department,
-      webtools: user.webtools || []
+      webtools: user.webtools || [],
+      isActive: user.isActive // Remove the ternary - we want the exact value
     };
-  
-    // Load and set existing webtool-role combinations
-    user.webtools?.forEach(webtoolName => {
-      const webtool = this.webtoolOptions.find(w => w.value === webtoolName);
-      if (webtool) {
-        this.roleService.getRolesByWebtool(webtool.id).subscribe({
-          next: (roles) => {
-            const mappedRoles = roles.map(r => ({
-              id: r.id,
-              value: r.roles,
-              label: r.roles,
-              privileges: r.privileges
-            }));
-  
-            // Find user's roles for this webtool
-            const userRolesForWebtool = user.roles?.filter(role => {
-              return roles.some(r => r.id === role.id);
-            });
-  
-            const selection: WebtoolRoleSelection = {
-              webtoolId: webtool.id,
-              webtoolName: webtool.value,
-              availableRoles: mappedRoles,
-              selectedRoles: userRolesForWebtool?.map(role => ({
-                id: role.id,
-                name: role.name,
-                privileges: role.privileges
-              })) || []
-            };
-  
-            this.webtoolRoleSelections.push(selection);
-          },
-          error: (error) => console.error('Error loading roles:', error)
-        });
-      }
-    });
-  
+    
+    console.log('Form data with isActive:', this  .editForm.isActive); // Debug the value
+    
+    // Load webtool role selections for this user
+    this.loadUserWebtoolRoles(user);
+    
     this.showForm = true;
+}
+  private loadUserWebtoolRoles(user: WebtoolUserDisplay) {
+    this.webtoolRoleSelections = [];
+    
+    if (user.webtools && user.webtools.length > 0) {
+      user.webtools.forEach(webtoolName => {
+        const webtool = this.webtoolOptions.find(w => w.value === webtoolName);
+        if (webtool) {
+          this.roleService.getRolesByWebtool(webtool.id).subscribe({
+            next: (roles) => {
+              const userRolesForWebtool = user.roles.filter(role => 
+                roles.some(r => r.id === role.id)
+              );
+              
+              this.webtoolRoleSelections.push({
+                webtoolId: webtool.id,
+                webtoolName: webtool.value,
+                availableRoles: roles.map(r => ({
+                  id: r.id,
+                  value: r.roles,
+                  label: r.roles,
+                  privileges: r.privileges
+                })),
+                selectedRoles: [...userRolesForWebtool]
+              });
+            },
+            error: (error) => console.error('Error loading roles:', error)
+          });
+        }
+      });
+    }
   }
-
 
 
   loadRecords() {
@@ -1465,7 +1444,8 @@ onUserViewRoleChange(event: string, selection: WebtoolRoleSelection) {
       userName: user.userName,
       email: user.email,
       department: user.department,
-      webtools: user.webtools || []
+      webtools: user.webtools || [],
+      isActive: user.isActive !== undefined ? user.isActive : true
     };
     this.selectedWebtools = [...(user.webtools || [])];
     this.showForm = true;
@@ -1692,7 +1672,9 @@ private openMatrixForm(mode: 'add' | 'edit', record?: any, index?: number) {
       userName: record.userName,
       email: record.email,
       department: record.department,
-      webtools: record.webtools || []
+      webtools: record.webtools || [],
+      isActive: record.isActive !== undefined ? record.isActive : true // Add this
+
     };
 
     // Important: Get the currently expanded webtool
@@ -1750,7 +1732,8 @@ private openUserViewForm(mode: 'add' | 'edit', user?: WebtoolUserDisplay) {
       userName: user.userName,
       email: user.email,
       department: user.department,
-      webtools: user.webtools || []
+      webtools: user.webtools || [],
+      isActive: user.isActive !== undefined ? user.isActive : true
     };
 
     // Load and set existing webtool-role combinations
@@ -1804,7 +1787,8 @@ private openWebtoolForm(mode: 'add' | 'edit', record?: any) {
       userName: record.userName,
       email: record.email,
       department: record.department,
-      webtools: [record.webtool]
+      webtools: [record.webtool],
+      isActive: record.isActive !== undefined ? record.isActive : true // Add this
     };
 
     // Load roles for the webtool

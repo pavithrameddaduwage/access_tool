@@ -21,6 +21,7 @@ import { UserManagementComponent } from '../masterdata/user-management/user-mana
 import { PowerBIAnalyticsComponent } from '../powerbi-analytics/powerbi-analytics.component';
 import { PowerBIUsageDashboardComponent } from '../powerbi-usage-dashboard/powerbi-usage-dashboard.component';
 import { WebtoolAnalyticsComponent } from '../webtool-analytics/webtool-analytics.component';
+import { PowerBIDashboardComponent } from '../powerbi-dashboard/powerbi-dashboard.component';
 
 const routeConfig: Routes = [
   {
@@ -173,6 +174,11 @@ const routeConfig: Routes = [
   {
     path: 'webtool-usage',
     component: WebtoolAnalyticsComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'powerbi',
+    component: PowerBIDashboardComponent,
     pathMatch: 'full'
   }
 ];

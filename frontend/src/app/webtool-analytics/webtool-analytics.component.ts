@@ -67,7 +67,186 @@ export class WebtoolAnalyticsComponent implements OnInit {
   enhancedAccessMatrix: any;
   topUsersChart: any;
 
-  
+selectedWebtool: string | number = 'all';
+
+filteredWebtoolUsageChart: any;
+filteredDepartmentDistributionChart: any;
+filteredUserWebtoolMatrix: any;
+filteredDepartmentUsageChart: any;
+filteredTopUsersChart: any;
+
+filterByWebtool() {
+  if (this.selectedWebtool === 'all') {
+    // Show all data - with improved User-Webtool Matrix x-axis labels
+    this.filteredWebtoolUsageChart = this.webtoolUsageChart;
+    this.filteredDepartmentDistributionChart = this.departmentDistributionChart;
+    this.filteredDepartmentUsageChart = this.departmentUsageChart;
+    this.filteredTopUsersChart = this.topUsersChart;
+    
+    // Enhanced unfiltered matrix with proper x-axis labels
+    this.filteredUserWebtoolMatrix = {
+      ...this.userWebtoolMatrix,
+      xaxis: {
+        ...this.userWebtoolMatrix.xaxis,
+        labels: {
+          show: true,
+          rotate: -45,
+          style: {
+            fontSize: '10px',
+            fontFamily: 'Arial, sans-serif'
+          },
+          formatter: (value: string) => {
+            // Truncate long names if needed
+            return value.length > 15 ? value.substring(0, 12) + '...' : value;
+          }
+        }
+      },
+      chart: {
+        ...this.userWebtoolMatrix.chart,
+        height: Math.max(400, this.users.length * 20)
+      }
+    };
+    
+  } else {
+    // Filter data based on selected webtool
+    const webtoolId = Number(this.selectedWebtool);
+    const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
+    const usersWithAccess = this.users.filter(u => u.webtools.has(webtoolId));
+    
+    // 1. Filter Webtool Usage Chart
+    this.filteredWebtoolUsageChart = {
+      ...this.webtoolUsageChart,
+      series: [{
+        name: 'Users',
+        data: [usersWithAccess.length]
+      }],
+      xaxis: {
+        ...this.webtoolUsageChart.xaxis,
+        categories: [webtoolName]
+      }
+    };
+    
+    // 2. Filter Department Distribution
+    const deptCounts = usersWithAccess.reduce((acc, user) => {
+      const dept = user.department || 'Unknown';
+      acc[dept] = (acc[dept] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+    
+    this.filteredDepartmentDistributionChart = {
+      ...this.departmentDistributionChart,
+      series: Object.values(deptCounts),
+      labels: Object.keys(deptCounts),
+      colors: this.generateColorPalette(Object.keys(deptCounts).length)
+    };
+    
+    // 3. Filter User-Webtool Matrix (with enhanced x-axis)
+    this.filteredUserWebtoolMatrix = {
+      ...this.userWebtoolMatrix,
+      series: [{
+        name: webtoolName,
+        data: this.users.map(user => ({
+          x: user.name,
+          y: user.webtools.has(webtoolId) ? 1 : 0
+        }))
+      }],
+      yaxis: {
+        categories: [webtoolName],
+        labels: {
+          style: {
+            fontSize: '12px'
+          }
+        }
+      },
+      xaxis: {
+        type: 'category',
+        labels: {
+          show: true,
+          rotate: -45,
+          style: {
+            fontSize: '10px',
+            fontFamily: 'Arial, sans-serif'
+          },
+          formatter: (value: string) => {
+            return value.length > 15 ? value.substring(0, 12) + '...' : value;
+          }
+        }
+      },
+      chart: {
+        ...this.userWebtoolMatrix.chart,
+        height: Math.max(400, this.users.length * 20)
+      },
+      tooltip: {
+        custom: ({ dataPointIndex }: any) => {
+          const user = this.users[dataPointIndex];
+          return `
+            <div class="p-2">
+              <div><strong>User:</strong> ${user.name}</div>
+              <div><strong>Email:</strong> ${user.email}</div>
+              <div><strong>Access:</strong> ${user.webtools.has(webtoolId) ? 'Yes' : 'No'}</div>
+            </div>
+          `;
+        }
+      }
+    };
+    
+    // 4. Filter Department Webtool Usage
+    const selectedWebtoolData = this.metrics.departmentWebtoolUsage
+      .map(dept => ({
+        department: dept.department,
+        count: dept.webtools.find(w => w.name === webtoolName)?.count || 0
+      }))
+      .filter(dept => dept.count > 0)
+      .sort((a, b) => b.count - a.count);
+    
+    this.filteredDepartmentUsageChart = {
+      ...this.departmentUsageChart,
+      series: [{
+        name: webtoolName,
+        data: selectedWebtoolData.map(d => d.count)
+      }],
+      xaxis: {
+        ...this.departmentUsageChart.xaxis,
+        categories: selectedWebtoolData.map(d => d.department)
+      },
+      colors: this.generateColorPalette(selectedWebtoolData.length)
+    };
+    
+    // 5. Filter Top Users
+    const topUsers = usersWithAccess
+      .map(user => ({
+        name: user.name,
+        email: user.email,
+        count: 1 // Since we're already filtered to users with access
+      }))
+      .slice(0, 5); // Just take first 5 since all have count=1
+    
+    this.filteredTopUsersChart = {
+      ...this.topUsersChart,
+      series: [{
+        name: 'Access Count',
+        data: topUsers.map(u => u.count)
+      }],
+      xaxis: {
+        ...this.topUsersChart.xaxis,
+        categories: topUsers.map(u => u.name)
+      }
+    };
+  }
+}
+
+// Helper function to generate consistent colors
+private generateColorPalette(count: number): string[] {
+  const baseColors = ['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF'];
+  if (count <= baseColors.length) {
+    return baseColors.slice(0, count);
+  }
+  // Generate additional colors if needed
+  return [...baseColors, ...Array(count - baseColors.length).fill('#0077B6')];
+}
+
+
+
   metrics: DashboardMetrics = {
     totalUsers: 0,
     totalWebtools: 0,
@@ -96,6 +275,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadData();
+    this.filterByWebtool();
   }
 
   async loadData() {
@@ -291,7 +471,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
       series: this.webtools.map(webtool => ({
         name: webtool.webtool,
         data: this.users.map(user => ({
-          x: user.name,
+          x: user.name, // Use user.name instead of user.email
           y: user.webtools.has(webtool.id) ? 1 : 0
         }))
       })),
@@ -301,9 +481,25 @@ export class WebtoolAnalyticsComponent implements OnInit {
         toolbar: { show: false }
       },
       dataLabels: { enabled: false },
-      colors: ["#E5E7EB", "#3B82F6"],
-      xaxis: { type: 'category', labels: { show: false } },
-      yaxis: { categories: this.webtools.map(w => w.webtool) },
+      colors: ["#E5E7EB", "#0077B6"],
+      xaxis: { 
+        type: 'category', 
+        labels: { 
+          show: true, // Make sure labels are visible
+          rotate: -45, // Rotate labels if needed
+          style: {
+            fontSize: '10px' // Adjust font size as needed
+          }
+        } 
+      },
+      yaxis: { 
+        categories: this.webtools.map(w => w.webtool),
+        labels: {
+          style: {
+            fontSize: '10px' // Adjust font size as needed
+          }
+        }
+      },
       tooltip: {
         custom: ({ seriesIndex, dataPointIndex }: any) => {
           const user = this.users[dataPointIndex];
@@ -319,7 +515,6 @@ export class WebtoolAnalyticsComponent implements OnInit {
         }
       }
     };
-
     this.rolesPerWebtoolChart = {
       series: [{
         name: 'Roles',

@@ -164,4 +164,11 @@ createUserWebtool(data: CreateUserWebtoolDto): Observable<UserWebtool> {
       tap(data => console.log(`Received user webtools for webtool ${webtoolId}:`, data))
     );
   }
+
+  updateUserStatus(email: string, webtoolId: number, isActive: boolean): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/${email}/${webtoolId}/status`,
+      { isActive }
+    );
+  }
 }

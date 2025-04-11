@@ -1,0 +1,36 @@
+export declare class PowerBILog {
+    id: string;
+    recordType: number;
+    creationTime: Date;
+    operation: string;
+    organizationId: string;
+    userType: number;
+    userKey: string;
+    workload: string;
+    userId: string;
+    clientIP: string;
+    userAgent: string;
+    activity: string;
+    itemName: string;
+    workSpaceName: string;
+    datasetName: string;
+    reportName: string;
+    capacityId: string;
+    capacityName: string;
+    workspaceId: string;
+    objectId: string;
+    datasetId: string;
+    reportId: string;
+    artifactId: string;
+    artifactName: string;
+    isSuccess: boolean;
+    reportType: string;
+    requestId: string;
+    activityId: string;
+    distributionMethod: string;
+    consumptionMethod: string;
+    artifactKind: string;
+    refreshEnforcementPolicy: number;
+    billingType: number;
+    storedAt: Date;
+}

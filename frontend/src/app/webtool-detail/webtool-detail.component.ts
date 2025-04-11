@@ -341,7 +341,8 @@ export class WebtoolDetailComponent implements OnInit, OnDestroy {
               email: user.email,
               department: user.department,
               roles: user.roles[this.webtoolId] || [],
-              webtools: user.webtools
+              webtools: user.webtools,
+              isActive: user.isActive !== undefined ? user.isActive : true
             }));
           resolve(true);
         },

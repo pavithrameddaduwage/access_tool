@@ -30,4 +30,11 @@ export class UserWebtool {
   @ManyToOne(() => Role)
   @JoinColumn({ name: 'roleId' })
   role: Role;
+
+
+  @Column()
+  isActive: boolean;
+
+  @Column({ nullable: true })
+  lastActiveAt: Date;
 }

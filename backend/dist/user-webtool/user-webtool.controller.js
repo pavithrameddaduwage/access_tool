@@ -47,6 +47,9 @@ let UserWebtoolController = class UserWebtoolController {
     async deleteExternalAssignment(dto) {
         return this.userWebtoolService.deleteExternalAssignment(dto);
     }
+    async updateStatus(email, webtoolId, dto) {
+        return this.userWebtoolService.updateActiveStatus(email, webtoolId, dto.isActive);
+    }
 };
 exports.UserWebtoolController = UserWebtoolController;
 __decorate([
@@ -112,6 +115,15 @@ __decorate([
     __metadata("design:paramtypes", [external_delete_assignment_dto_1.ExternalDeleteAssignmentDto]),
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "deleteExternalAssignment", null);
+__decorate([
+    (0, common_1.Patch)(':email/:webtoolId/status'),
+    __param(0, (0, common_1.Param)('email')),
+    __param(1, (0, common_1.Param)('webtoolId')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Object]),
+    __metadata("design:returntype", Promise)
+], UserWebtoolController.prototype, "updateStatus", null);
 exports.UserWebtoolController = UserWebtoolController = __decorate([
     (0, common_1.Controller)('user-webtools'),
     __metadata("design:paramtypes", [user_webtool_service_1.UserWebtoolService])

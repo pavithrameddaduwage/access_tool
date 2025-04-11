@@ -50,6 +50,14 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'roleId' }),
     __metadata("design:type", role_entity_1.Role)
 ], UserWebtool.prototype, "role", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Boolean)
+], UserWebtool.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Date)
+], UserWebtool.prototype, "lastActiveAt", void 0);
 exports.UserWebtool = UserWebtool = __decorate([
     (0, typeorm_1.Entity)()
 ], UserWebtool);

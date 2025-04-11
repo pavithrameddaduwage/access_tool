@@ -12,17 +12,172 @@ th:first-child,
 th.sticky-action {
   background-color: #e5e7eb !important;
 }
-
-/* Override any dynamic styles for sticky action column */
-#sticky-action-column {
-  background-color: #e5e7eb !important;
+/* Custom Table Component Styles */
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-[id^="sticky-column-"] th:first-child {
-  background-color: #e5e7eb !important;
+/* Table Container */
+.table-container {
+  margin: 0 auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: white;
 }
 
-/* Ensure consistency during scroll */
-th[style*="position: sticky"] {
-  background-color: #e5e7eb !important;
+/* Table Styles */
+table {
+  width: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  vertical-align: middle;
+}
+
+
+
+th {
+  background-color: #e5e7eb !important; /* Same as action header */
+  font-weight: 600;
+  color: #334155;
+  position: relative;
+}
+
+/* Remove the specific first-child styling since all headers will be same color */
+th:first-child,
+th.sticky-action {
+  background-color: #e5e7eb !important; /* Ensures consistency */
+}
+
+/* Action Column */
+th:first-child,
+td:first-child {
+  background-color: #f8fafc;
+  font-weight: 500;
+}
+
+/* Hover Effects */
+tr:hover td {
+  background-color: #f1f5f9;
+}
+
+/* Button Styles */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* Edit/Save Buttons */
+button[edit-button] {
+  color: #3b82f6;
+}
+
+button[save-button] {
+  color: #10b981;
+}
+
+button[delete-button] {
+  color: #ef4444;
+}
+
+/* Input Styles */
+input, select {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
+}
+
+/* Sticky Columns */
+.sticky-action {
+  position: sticky;
+  left: 0;
+  z-index: 30;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sticky-column {
+  position: sticky;
+  left: 100px; /* Adjust based on action column width */
+  z-index: 20;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Pagination Styles */
+.pagination-container {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  th, td {
+    padding: 0.5rem;
+    font-size: 0.6875rem;
+  }
+  
+  .table-container {
+    border-radius: 0;
+  }
+  
+  /* Make sure percentage widths are respected */
+  th[style*="width"], 
+  td[style*="width"] {
+    width: auto !important;
+    min-width: calc(var(--width) * 1px);
+    max-width: calc(var(--width) * 1px);
+  }
+}
+
+/* Animation for sorting arrows */
+.sort-arrow {
+  transition: transform 0.2s ease;
+}
+
+.sort-arrow.asc {
+  transform: rotate(180deg);
+}
+
+/* Zebra striping for better readability */
+tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+/* Ensure dropdowns are visible */
+td { 
+  overflow: visible !important;
+  position: relative;
 }

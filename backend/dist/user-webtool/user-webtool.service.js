@@ -44,14 +44,19 @@ let UserWebtoolService = class UserWebtoolService {
             userName: createUserWebtoolDto.userName,
             department: createUserWebtoolDto.department,
             webtoolId: createUserWebtoolDto.webtoolId,
-            roleId: createUserWebtoolDto.roleId
+            roleId: createUserWebtoolDto.roleId,
+            isActive: createUserWebtoolDto.isActive,
+            lastActiveAt: createUserWebtoolDto.isActive === false ? new Date() : null
         });
         const saved = await this.userWebtoolRepository.save(userWebtool);
         const result = await this.userWebtoolRepository.findOne({
             where: { id: saved.id },
             relations: ['webtool', 'role']
         });
-        console.log('Created user webtool:', result);
+        console.log('Created user webtool with status:', {
+            isActive: result.isActive,
+            lastActiveAt: result.lastActiveAt
+        });
         return result;
     }
     async removeRole(email, webtoolId, roleId) {
@@ -141,7 +146,9 @@ let UserWebtoolService = class UserWebtoolService {
             userName: dto.userName,
             department: dto.department,
             webtoolId: dto.webtoolId,
-            roleId: roleId
+            roleId: roleId,
+            isActive: true,
+            lastActiveAt: new Date()
         }));
         const saved = await this.userWebtoolRepository.save(userWebtools);
         return {
@@ -154,7 +161,8 @@ let UserWebtoolService = class UserWebtoolService {
                 roles: roles.map(role => ({
                     id: role.id,
                     name: role.roles
-                }))
+                })),
+                isActive: true
             }
         };
     }
@@ -171,6 +179,24 @@ let UserWebtoolService = class UserWebtoolService {
                 webtoolId: dto.webtoolId
             }
         };
+    }
+    async updateActiveStatus(email, webtoolId, isActive) {
+        await this.userWebtoolRepository.update({ email, webtoolId }, {
+            isActive,
+            lastActiveAt: isActive ? null : new Date()
+        });
+    }
+    async update(id, updateDto) {
+        const updateData = { ...updateDto };
+        if (updateDto.isActive !== undefined) {
+            updateData.lastActiveAt = updateDto.isActive ?
+                null : new Date().toISOString();
+        }
+        await this.userWebtoolRepository.update(id, updateData);
+        return this.userWebtoolRepository.findOne({
+            where: { id },
+            relations: ['webtool', 'role']
+        });
     }
 };
 exports.UserWebtoolService = UserWebtoolService;

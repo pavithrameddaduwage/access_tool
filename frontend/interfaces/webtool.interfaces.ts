@@ -26,6 +26,8 @@ export interface WebtoolUser {
   department: string;
   roles: { [webtoolId: number]: UserRole[] };
   webtools?: string[];
+  isActive?: boolean;          // Add this
+  lastActiveAt?: Date;         // Add this
 }
 
 // export interface WebtoolUser {
@@ -51,15 +53,15 @@ export interface WebtoolRoleSelection {
   selectedRoles: UserRole[];
   availableRoles?: HeaderOption[];  // Changed from Role[] to HeaderOption[]
 }
+export interface CreateUserWebtoolDto {
+  email: string;
+  userName: string;
+  department: string;
+  webtoolId: number;
+  roleId: number;
+  isActive?: boolean;  // Add this line
+}
 
-  export interface CreateUserWebtoolDto {
-    email: string;
-    userName: string;
-    department: string;
-    webtoolId: number;
-    roleId: number;
-  }
-  
   export interface UserWebtool {
     id?: number;
     userId?: number;
@@ -68,12 +70,15 @@ export interface WebtoolRoleSelection {
     userName: string;
     email: string;
     department: string;
+
     webtools: [];
     roles?: [{
       id: number;
       name: string;
       privileges: string;
     }];
+    isActive: boolean;          // Add this
+    lastActiveAt?: Date;        // Add this
   }
   
   export interface WebtoolUserDisplay {
@@ -81,10 +86,12 @@ export interface WebtoolRoleSelection {
     userName: string;
     email: string;
     department: string;
+
     roles: UserRole[];
     webtools?: string[];
+    isActive: boolean;          // Add this
+    lastActiveAt?: Date;        // Add this
   }
-
   export interface WebtoolWithUsers extends Webtool {
     users: WebtoolUserDisplay[];
     totalUsers: number;

@@ -108,7 +108,10 @@ console.log('Headers:', this.headers);
 
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.checkViewport();
+  window.addEventListener('resize', () => this.checkViewport());
+  }
 
 
   // Save the table data to localStorage
@@ -738,6 +741,26 @@ getColumnData(column: any): any[] {
   }
 
 
+@Input() mobileBreakpoint: number = 768; // Default breakpoint for mobile devices
+isMobileView: boolean = false;
+
+
+checkViewport() {
+  this.isMobileView = window.innerWidth < this.mobileBreakpoint;
+  this.adjustForMobileView();
+}
+
+adjustForMobileView() {
+  if (this.isMobileView) {
+    // Adjust settings for mobile
+    this.rowsperpage = 5; // Show fewer rows on mobile
+    // You can add other mobile-specific adjustments here
+  } else {
+    // Reset to desktop settings
+    this.rowsperpage = this.showPaginationHeader ? 15 : 1000;
+  }
+  this.updateDisplayData();
+}
 }
 
 
