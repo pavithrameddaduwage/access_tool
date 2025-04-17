@@ -110,4 +110,9 @@ createMapping(email: string, realName: string): Observable<UserMapping> {
     })
   );
 }
+
+getDatabaseUsers(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/database/database-users`);
+}
+
 }

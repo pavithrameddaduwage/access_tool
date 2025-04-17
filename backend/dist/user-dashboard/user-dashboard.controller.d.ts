@@ -30,4 +30,5 @@ export declare class UserDashboardController {
         dashboards: string[];
     }>;
     remove(email: string): Promise<void>;
+    getDatabaseUsers(): Promise<import("../powerbi-metrics/powerbi-metrics.service").UserMetric[]>;
 }

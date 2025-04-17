@@ -16,21 +16,19 @@ export class PowerBILogsCollectorTask {
     private readonly powerbiLogRepository: Repository<PowerBILog>,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_2AM) // Runs at 2 AM daily
+  @Cron(CronExpression.EVERY_DAY_AT_2AM) 
   async collectPreviousDayLogs() {
     try {
       this.logger.log('Starting Power BI logs collection for previous day');
       
-      // Set time range for full day (00:00:00 to 23:59:59)
       const now = new Date();
       const endDate = new Date(now);
-      endDate.setDate(now.getDate() - 1); // Yesterday
+      endDate.setDate(now.getDate() - 1); 
       endDate.setHours(23, 59, 59, 999);
       
       const startDate = new Date(endDate);
       startDate.setHours(0, 0, 0, 0);
 
-      // Check if we already have data for this date range
       const existingCount = await this.powerbiLogRepository.count({
         where: {
           creationTime: Between(startDate, endDate),
@@ -44,11 +42,9 @@ export class PowerBILogsCollectorTask {
         return;
       }
 
-      // Get access token and ensure subscription
       const accessToken = await this.powerbiMetricsService.getAccessToken();
       await this.powerbiMetricsService.ensureSubscription(accessToken);
       
-      // Get content URIs and fetch logs (same as your collectRawData endpoint)
       const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
       const allLogs = await Promise.all(
         contentUris.map(uri => 
@@ -60,12 +56,10 @@ export class PowerBILogsCollectorTask {
         )
       );
 
-      // Filter and process logs
       const powerBILogs = allLogs.flat().filter(
         entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport'
       );
 
-      // Additional duplicate check at the record level
       const newLogs = await this.filterExistingLogs(powerBILogs);
       
       if (newLogs.length > 0) {

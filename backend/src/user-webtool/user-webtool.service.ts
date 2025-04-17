@@ -138,7 +138,9 @@ export class UserWebtoolService {
           email: uw.email,
           department: uw.department,
           roles: {},
-          webtools: []
+          webtools: [],
+          isActive: uw.isActive,
+          lastActiveAt: uw.lastActiveAt  
         });
       }
   

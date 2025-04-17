@@ -89,7 +89,8 @@ export class UserWebtoolService {
           email: uw.email,
           department: uw.department,
           roles: uw.roles || {},  
-          webtools: uw.webtools || []
+          webtools: uw.webtools || [],
+          
         }));
   
         const userMap = new Map<string, LocalWebtoolUser>();

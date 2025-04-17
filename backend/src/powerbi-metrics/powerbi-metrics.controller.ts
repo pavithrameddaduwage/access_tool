@@ -77,71 +77,183 @@ async collectRawData(
 
 
 
-@Get('views-by-date')
-async getViewsByDate(
-  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date
-) {
-  return this.powerbiMetricsService.getViewCountsByDate(startDate, endDate);
-}
+// @Get('views-by-date')
+// async getViewsByDate(
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
+// ) {
+//   return this.powerbiMetricsService.getViewCountsByDate(startDate, endDate);
+// }
 
-@Get('top-reports')
-async getTopReports(
-  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
-  @Query('limit', new DefaultValuePipe(10), new ParseIntPipe()) limit: number
-) {
-  return this.powerbiMetricsService.getTopReports(startDate, endDate, limit);
-}
+// @Get('top-reports')
+// async getTopReports(
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+//   @Query('limit', new DefaultValuePipe(10), new ParseIntPipe()) limit: number
+// ) {
+//   return this.powerbiMetricsService.getTopReports(startDate, endDate, limit);
+// }
 
-@Get('top-users')
-async getTopUsers(
-  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
-  @Query('limit', new DefaultValuePipe(10), new ParseIntPipe()) limit: number
-) {
-  return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit);
-}
+// @Get('top-users')
+// async getTopUsers(
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+//   @Query('limit', new DefaultValuePipe(10), new ParseIntPipe()) limit: number
+// ) {
+//   return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit);
+// }
 
-@Get('user-activity-trend')
-async getUserActivityTrend(
-  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date
-) {
-  return this.powerbiMetricsService.getUserActivityTrend(startDate, endDate);
-}
+// @Get('user-activity-trend')
+// async getUserActivityTrend(
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
+// ) {
+//   return this.powerbiMetricsService.getUserActivityTrend(startDate, endDate);
+// }
+
+// @Get('unique-user-count')
+// async getUniqueUserCount(
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
+// ) {
+//   return this.powerbiMetricsService.getUniqueUserCount(startDate, endDate);
+// }
+
+// @Get('unique-report-count')
+// async getUniqueReportCount(
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
+// ) {
+//   return this.powerbiMetricsService.getUniqueReportCount(startDate, endDate);
+// }
+
+// @Get('user-metrics')
+// async getUserMetrics(
+//   @Query('userId') userId: string,
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
+// ) {
+//   return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate);
+// }
+
+// @Get('workspace-views-distribution')
+// async getWorkspaceViewsDistribution(
+//   @Query('userId') userId: string,
+//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
+// ) {
+//   return this.powerbiMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate);
+// }
+
 
 @Get('unique-user-count')
 async getUniqueUserCount(
   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
 ) {
-  return this.powerbiMetricsService.getUniqueUserCount(startDate, endDate);
+  return this.powerbiMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId);
 }
 
 @Get('unique-report-count')
 async getUniqueReportCount(
   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string
 ) {
-  return this.powerbiMetricsService.getUniqueReportCount(startDate, endDate);
+  return this.powerbiMetricsService.getUniqueReportCount(startDate, endDate, workspaceId);
+}
+
+@Get('user-activity-trend')
+async getUserActivityTrend(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId);
 }
 
 @Get('user-metrics')
 async getUserMetrics(
   @Query('userId') userId: string,
   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate, workspaceId, reportId);
+}
+
+@Get('user-consumption-methods')
+async getUserConsumptionMethods(
+  @Query('userId') userId: string,
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
   @Query('endDate', ParseISO8601DatePipe) endDate: Date
 ) {
-  return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate);
+  return this.powerbiMetricsService.getUserConsumptionMethods(userId, startDate, endDate);
 }
 
 @Get('workspace-views-distribution')
 async getWorkspaceViewsDistribution(
   @Query('userId') userId: string,
   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-  @Query('endDate', ParseISO8601DatePipe) endDate: Date
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('reportId') reportId?: string
 ) {
-  return this.powerbiMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate);
+  return this.powerbiMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate, reportId);
 }
+
+@Get('distinct-workspaces')
+async getDistinctWorkspaces(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getDistinctWorkspaces(startDate, endDate, reportId);
+}
+
+@Get('distinct-reports')
+async getDistinctReports(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string
+) {
+  return this.powerbiMetricsService.getDistinctReports(startDate, endDate, workspaceId);
+}
+
+
+@Get('views-by-date')
+async getViewsByDate(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId);
+}
+
+@Get('top-reports')
+async getTopReports(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  @Query('workspaceId') workspaceId?: string
+) {
+  return this.powerbiMetricsService.getTopReports(startDate, endDate, limit, workspaceId);
+}
+
+@Get('top-users')
+async getTopUsers(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit, workspaceId, reportId);
+}
+
+
 }

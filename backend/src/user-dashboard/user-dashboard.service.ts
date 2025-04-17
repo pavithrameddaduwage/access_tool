@@ -6,6 +6,7 @@ import { UserDashboard } from './entities/user-dashboard.entity';
 import { CreateUserDashboardDto } from './dto/create-user-dashboard.dto';
 import { UpdateUserDashboardDto } from './dto/update-user-dashboard.dto';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
+import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
 
 @Injectable()
 export class UserDashboardService {
@@ -176,5 +177,20 @@ async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
 }
  async remove(email: string) {
    await this.userDashboardRepository.delete({ email });
+ }
+
+ async getDatabaseUsers(): Promise<UserMetric[]> {
+   const activeUsers = await this.userDashboardRepository
+     .createQueryBuilder('user')
+     .select(['MIN(user.id) as id', 'user.email']) 
+     .where('user.isActive = true')
+     .andWhere('user.email IS NOT NULL')
+     .groupBy('user.email')
+     .getRawMany();
+ 
+   
+ 
+   return activeUsers
+   
  }
 }

@@ -36,6 +36,10 @@ let UserDashboardController = class UserDashboardController {
     remove(email) {
         return this.userDashboardService.remove(email);
     }
+    async getDatabaseUsers() {
+        console.log('testing');
+        return this.userDashboardService.getDatabaseUsers();
+    }
 };
 exports.UserDashboardController = UserDashboardController;
 __decorate([
@@ -73,6 +77,12 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], UserDashboardController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)('database/database-users'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserDashboardController.prototype, "getDatabaseUsers", null);
 exports.UserDashboardController = UserDashboardController = __decorate([
     (0, common_1.Controller)('user-dashboards'),
     __metadata("design:paramtypes", [user_dashboard_service_1.UserDashboardService])

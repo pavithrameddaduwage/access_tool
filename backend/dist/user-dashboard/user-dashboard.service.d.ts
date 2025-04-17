@@ -3,6 +3,7 @@ import { UserDashboard } from './entities/user-dashboard.entity';
 import { CreateUserDashboardDto } from './dto/create-user-dashboard.dto';
 import { UpdateUserDashboardDto } from './dto/update-user-dashboard.dto';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
+import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
 export declare class UserDashboardService {
     private userDashboardRepository;
     private dashboardRepository;
@@ -33,4 +34,5 @@ export declare class UserDashboardService {
         dashboards: string[];
     }>;
     remove(email: string): Promise<void>;
+    getDatabaseUsers(): Promise<UserMetric[]>;
 }

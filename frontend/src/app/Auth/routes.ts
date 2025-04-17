@@ -135,7 +135,7 @@ const routeConfig: Routes = [
   },
   {
     path: 'home',
-    component: PowerBIUsageDashboardComponent,
+    component: PowerBIDashboardComponent,
     canActivate: [authGuard],
     title: 'Home',
     pathMatch: 'full'
@@ -179,6 +179,11 @@ const routeConfig: Routes = [
   {
     path: 'powerbi',
     component: PowerBIDashboardComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'webtool-dashboard',
+    component: WebtoolAnalyticsComponent,
     pathMatch: 'full'
   }
 ];

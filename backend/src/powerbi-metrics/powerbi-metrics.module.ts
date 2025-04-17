@@ -8,11 +8,12 @@ import { PowerBILog } from './entities/powerbi-log.entity';
 import { PowerBIMetricsController } from './powerbi-metrics.controller';
 import { PowerBIMetricsService } from './powerbi-metrics.service';
 import { PowerBILogsCollectorTask } from './tasks/powerbi-logs-collector.task';
+import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    TypeOrmModule.forFeature([PowerBILog]),
+    TypeOrmModule.forFeature([PowerBILog, UserDashboard]),
     HttpModule,
     ConfigModule.forRoot(),
   ],

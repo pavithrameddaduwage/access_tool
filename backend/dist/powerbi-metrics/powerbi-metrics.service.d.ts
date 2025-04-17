@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
+import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 export interface PowerBILogEntry {
     Id: string;
     RecordType: number;
@@ -37,6 +38,25 @@ export interface PowerBILogEntry {
     RefreshEnforcementPolicy?: number;
     BillingType?: number;
 }
+export interface UserMetric {
+    userId: string;
+    email?: string;
+    userName?: string;
+    department?: string;
+    count: number;
+}
+export interface UserDetail {
+    id: string;
+    email?: string;
+    totalViews: number;
+    reports: number;
+    workspaces: number;
+    lastActivity: string;
+    activityByDate: {
+        date: string;
+        count: number;
+    }[];
+}
 export interface PowerBIMetrics {
     uniqueUsers: {
         count: number;
@@ -66,8 +86,9 @@ export interface PowerBIMetrics {
 export declare class PowerBIMetricsService {
     private readonly httpService;
     private readonly configService;
+    private userDashboardRepository;
     private readonly powerbiLogRepository;
-    constructor(httpService: HttpService, configService: ConfigService, powerbiLogRepository: Repository<PowerBILog>);
+    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>);
     private readonly logger;
     getAccessToken(): Promise<string>;
     ensureSubscription(accessToken: string): Promise<void>;
@@ -84,27 +105,40 @@ export declare class PowerBIMetricsService {
     getAllLogEntries(startDate: Date, endDate: Date): Promise<PowerBILogEntry[]>;
     getContentUris(accessToken: string, startDate: Date, endDate: Date): Promise<string[]>;
     collectDailyLogs(): Promise<void>;
-    getUniqueUserCount(startDate: Date, endDate: Date): Promise<number>;
-    getUniqueReportCount(startDate: Date, endDate: Date): Promise<number>;
     private filterExistingLogs;
-    getViewCountsByDate(startDate: Date, endDate: Date): Promise<{
+    getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{
+        id: string;
+        name: string;
+    }[]>;
+    getViewCountsByDate(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
         date: string;
         count: number;
     }[]>;
-    getTopReports(startDate: Date, endDate: Date, limit?: number): Promise<{
+    getUserActivityTrend(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
+        date: string;
+        count: number;
+    }[]>;
+    getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        id: string;
+        name: string;
+        workspaceId: string;
+    }[]>;
+    getTopReports(startDate: Date, endDate: Date, limit?: number, workspaceId?: string): Promise<{
         reportId: string;
         reportName: string;
         count: number;
     }[]>;
-    getTopUsers(startDate: Date, endDate: Date, limit?: number): Promise<{
+    getTopUsers(startDate: Date, endDate: Date, limit?: number, workspaceId?: string, reportId?: string): Promise<{
         userId: string;
         count: number;
     }[]>;
-    getUserActivityTrend(startDate: Date, endDate: Date): Promise<{
-        date: string;
+    getUserConsumptionMethods(userId: string, startDate: Date, endDate: Date): Promise<{
+        method: string;
         count: number;
     }[]>;
-    getUserMetrics(userId: string, startDate: Date, endDate: Date): Promise<{
+    getUniqueUserCount(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<number>;
+    getUniqueReportCount(startDate: Date, endDate: Date, workspaceId?: string): Promise<number>;
+    getUserMetrics(userId: string, startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
         totalViews: number;
         reports: {
             reportId: string;
@@ -119,10 +153,14 @@ export declare class PowerBIMetricsService {
             count: number;
         }[];
     }>;
+    private getUserTotalViews;
     private getUserReports;
     private getUserWorkspaces;
-    private getUserActivityByDate;
-    getWorkspaceViewsDistribution(userId: string, startDate: Date, endDate: Date): Promise<{
+    getUserActivityByDate(userId: string, startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
+        date: string;
+        count: number;
+    }[]>;
+    getWorkspaceViewsDistribution(userId: string, startDate: Date, endDate: Date, reportId?: string): Promise<{
         workspaceId: string;
         workspaceName: string;
         count: number;

@@ -21,10 +21,12 @@ const rxjs_1 = require("rxjs");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const powerbi_log_entity_1 = require("./entities/powerbi-log.entity");
+const user_dashboard_entity_1 = require("../user-dashboard/entities/user-dashboard.entity");
 let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsService {
-    constructor(httpService, configService, powerbiLogRepository) {
+    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository) {
         this.httpService = httpService;
         this.configService = configService;
+        this.userDashboardRepository = userDashboardRepository;
         this.powerbiLogRepository = powerbiLogRepository;
         this.logger = new common_1.Logger(PowerBIMetricsService_1.name);
     }
@@ -440,25 +442,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             this.logger.error('Failed to collect daily logs', error.stack);
         }
     }
-    async getUniqueUserCount(startDate, endDate) {
-        const result = await this.powerbiLogRepository
-            .createQueryBuilder('log')
-            .select('COUNT(DISTINCT log.userId)', 'count')
-            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-            .andWhere("log.operation = 'ViewReport'")
-            .getRawOne();
-        return parseInt(result?.count || 0);
-    }
-    async getUniqueReportCount(startDate, endDate) {
-        const result = await this.powerbiLogRepository
-            .createQueryBuilder('log')
-            .select('COUNT(DISTINCT log.reportId)', 'count')
-            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-            .andWhere("log.operation = 'ViewReport'")
-            .andWhere('log.reportId IS NOT NULL')
-            .getRawOne();
-        return parseInt(result?.count || 0);
-    }
     async filterExistingLogs(logs) {
         const existingIds = await this.powerbiLogRepository.find({
             where: {
@@ -469,14 +452,37 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const existingIdSet = new Set(existingIds.map(l => l.id));
         return logs.filter(log => !existingIdSet.has(log.Id));
     }
-    async getViewCountsByDate(startDate, endDate) {
-        const logs = await this.powerbiLogRepository.find({
-            where: {
-                creationTime: (0, typeorm_2.Between)(startDate, endDate),
-                operation: 'ViewReport'
-            },
-            select: ['creationTime']
-        });
+    async getDistinctWorkspaces(startDate, endDate, reportId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.workspaceId', 'id')
+            .addSelect('log.workSpaceName', 'name')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.workspaceId IS NOT NULL')
+            .distinct(true);
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const results = await query.getRawMany();
+        return results.map(r => ({
+            id: r.id,
+            name: r.name || 'Unknown Workspace'
+        }));
+    }
+    async getViewCountsByDate(startDate, endDate, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .select(['log.creationTime']);
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const logs = await query.getMany();
         const counts = new Map();
         logs.forEach(log => {
             const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
@@ -487,49 +493,19 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .map(([date, count]) => ({ date, count }))
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }
-    async getTopReports(startDate, endDate, limit = 10) {
-        const results = await this.powerbiLogRepository
+    async getUserActivityTrend(startDate, endDate, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
             .createQueryBuilder('log')
-            .select("log.reportId", "reportId")
-            .addSelect("log.reportName", "reportName")
-            .addSelect("COUNT(*)", "count")
-            .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
-            .andWhere("log.reportId IS NOT NULL")
-            .groupBy("log.reportId, log.reportName")
-            .orderBy("COUNT(*)", "DESC")
-            .limit(limit)
-            .getRawMany();
-        return results.map(r => ({
-            reportId: r.reportId,
-            reportName: r.reportName || 'Unknown Report',
-            count: parseInt(r.count)
-        }));
-    }
-    async getTopUsers(startDate, endDate, limit = 10) {
-        const results = await this.powerbiLogRepository
-            .createQueryBuilder('log')
-            .select("log.userId", "userId")
-            .addSelect("COUNT(*)", "count")
-            .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
-            .andWhere("log.operation = 'ViewReport'")
-            .groupBy("log.userId")
-            .orderBy("COUNT(*)", "DESC")
-            .limit(limit)
-            .getRawMany();
-        return results.map(r => ({
-            userId: r.userId,
-            count: parseInt(r.count)
-        }));
-    }
-    async getUserActivityTrend(startDate, endDate) {
-        const logs = await this.powerbiLogRepository.find({
-            where: {
-                creationTime: (0, typeorm_2.Between)(startDate, endDate),
-                operation: 'ViewReport'
-            },
-            select: ['creationTime', 'userId']
-        });
+            .select(['log.creationTime', 'log.userId']);
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const logs = await query.getMany();
         const dailyActiveUsers = new Map();
         logs.forEach(log => {
             const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
@@ -546,19 +522,175 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }))
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }
-    async getUserMetrics(userId, startDate, endDate) {
+    async getDistinctReports(startDate, endDate, workspaceId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.reportId', 'id')
+            .addSelect('log.reportName', 'name')
+            .addSelect('log.workspaceId', 'workspaceId')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.reportId IS NOT NULL')
+            .distinct(true);
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        const results = await query.getRawMany();
+        return results.map(r => ({
+            id: r.id,
+            name: r.name || 'Unknown Report',
+            workspaceId: r.workspaceId
+        }));
+    }
+    async getTopReports(startDate, endDate, limit = 10, workspaceId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select("log.reportId", "reportId")
+            .addSelect("log.reportName", "reportName")
+            .addSelect("COUNT(*)", "count")
+            .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere("log.reportId IS NOT NULL");
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+        }
+        const results = await query
+            .groupBy("log.reportId, log.reportName")
+            .orderBy("COUNT(*)", "DESC")
+            .limit(limit)
+            .getRawMany();
+        return results.map(r => ({
+            reportId: r.reportId,
+            reportName: r.reportName || 'Unknown Report',
+            count: parseInt(r.count)
+        }));
+    }
+    async getTopUsers(startDate, endDate, limit = 10, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select("log.userId", "userId")
+            .addSelect("COUNT(*)", "count")
+            .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'");
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere("log.reportId = :reportId", { reportId });
+        }
+        const results = await query
+            .groupBy("log.userId")
+            .orderBy("COUNT(*)", "DESC")
+            .limit(limit)
+            .getRawMany();
+        return results.map(r => ({
+            userId: r.userId,
+            count: parseInt(r.count)
+        }));
+    }
+    async getUserConsumptionMethods(userId, startDate, endDate) {
+        const allLogs = await this.powerbiLogRepository.find({
+            where: {
+                userId,
+                creationTime: (0, typeorm_2.Between)(startDate, endDate),
+            },
+            select: ['consumptionMethod', 'operation'],
+        });
+        console.log('All logs count:', allLogs.length);
+        console.log('All operations:', [...new Set(allLogs.map(l => l.operation))]);
+        const logs = allLogs.filter(log => log.operation === 'ViewReport');
+        console.log('ViewReport logs count:', logs.length);
+        console.log('Raw consumption methods from DB:', logs.map(l => ({
+            value: l.consumptionMethod,
+            type: typeof l.consumptionMethod,
+            isNull: l.consumptionMethod === null,
+            isUndefined: l.consumptionMethod === undefined,
+            isEmptyString: l.consumptionMethod === '',
+            isNullString: l.consumptionMethod === 'NULL',
+        })));
+        const strictNulls = logs.filter(log => log.consumptionMethod === null);
+        const undefinedValues = logs.filter(log => log.consumptionMethod === undefined);
+        const emptyStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod === '');
+        const blankStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod.trim() === '' && log.consumptionMethod !== '');
+        const nullStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod === 'NULL');
+        console.log('Strict null values:', strictNulls.length);
+        console.log('Undefined values:', undefinedValues.length);
+        console.log('Empty strings:', emptyStrings.length);
+        console.log('Blank strings (whitespace):', blankStrings.length);
+        console.log('NULL string values:', nullStrings.length);
+        const unusualValues = logs.filter(log => {
+            const cm = log.consumptionMethod;
+            return cm !== null &&
+                typeof cm === 'string' &&
+                cm !== '' &&
+                cm !== 'NULL' &&
+                !['Microsoft Teams', 'Power BI Web', 'Power BI Mobile', 'Export Report', 'PowerPoint add-in', 'Embedding for your organization'].includes(cm);
+        });
+        console.log('Unusual values:', unusualValues.map(l => l.consumptionMethod));
+        const methodCounts = new Map();
+        logs.forEach(log => {
+            if (log.consumptionMethod === null ||
+                log.consumptionMethod === undefined ||
+                log.consumptionMethod === 'NULL' ||
+                log.consumptionMethod === 'null' ||
+                (typeof log.consumptionMethod === 'string' && log.consumptionMethod.trim() === '') ||
+                (typeof log.consumptionMethod === 'object')) {
+                console.log('Found null-like value:', log.consumptionMethod);
+                methodCounts.set('Microsoft Teams', (methodCounts.get('Microsoft Teams') || 0) + 1);
+            }
+            else {
+                methodCounts.set(log.consumptionMethod.trim(), (methodCounts.get(log.consumptionMethod.trim()) || 0) + 1);
+            }
+        });
+        console.log('Method counts after processing:', Array.from(methodCounts.entries()));
+        console.log('Microsoft Teams count:', methodCounts.get('Microsoft Teams') || 0);
+        if ((strictNulls.length > 0 || undefinedValues.length > 0 || emptyStrings.length > 0 ||
+            blankStrings.length > 0 || nullStrings.length > 0) && !methodCounts.has('Microsoft Teams')) {
+            const nullLikeCount = strictNulls.length + undefinedValues.length + emptyStrings.length +
+                blankStrings.length + nullStrings.length;
+            console.log(`Forcing Microsoft Teams with ${nullLikeCount} nulls`);
+            methodCounts.set('Microsoft Teams', nullLikeCount);
+        }
+        return Array.from(methodCounts.entries()).map(([method, count]) => ({
+            method,
+            count,
+        }));
+    }
+    async getUniqueUserCount(startDate, endDate, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('COUNT(DISTINCT log.userId)', 'count')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'");
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const result = await query.getRawOne();
+        return parseInt(result?.count || 0);
+    }
+    async getUniqueReportCount(startDate, endDate, workspaceId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('COUNT(DISTINCT log.reportId)', 'count')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.reportId IS NOT NULL');
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        const result = await query.getRawOne();
+        return parseInt(result?.count || 0);
+    }
+    async getUserMetrics(userId, startDate, endDate, workspaceId, reportId) {
         try {
             const [totalViews, reports, workspaces, activityByDate] = await Promise.all([
-                this.powerbiLogRepository.count({
-                    where: {
-                        userId,
-                        creationTime: (0, typeorm_2.Between)(startDate, endDate),
-                        operation: 'ViewReport'
-                    }
-                }),
-                this.getUserReports(userId, startDate, endDate),
-                this.getUserWorkspaces(userId, startDate, endDate),
-                this.getUserActivityByDate(userId, startDate, endDate)
+                this.getUserTotalViews(userId, startDate, endDate, workspaceId, reportId),
+                this.getUserReports(userId, startDate, endDate, workspaceId, reportId),
+                this.getUserWorkspaces(userId, startDate, endDate, reportId),
+                this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId)
             ]);
             return {
                 totalViews: totalViews || 0,
@@ -577,8 +709,22 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             };
         }
     }
-    async getUserReports(userId, startDate, endDate) {
-        return this.powerbiLogRepository
+    async getUserTotalViews(userId, startDate, endDate, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .where('log.userId = :userId', { userId })
+            .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'");
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        return query.getCount();
+    }
+    async getUserReports(userId, startDate, endDate, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .select('log.reportId', 'reportId')
             .addSelect('log.reportName', 'reportName')
@@ -586,12 +732,17 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
-            .andWhere('log.reportId IS NOT NULL')
-            .getRawMany()
-            .catch(() => []);
+            .andWhere('log.reportId IS NOT NULL');
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        return query.getRawMany().catch(() => []);
     }
-    async getUserWorkspaces(userId, startDate, endDate) {
-        return this.powerbiLogRepository
+    async getUserWorkspaces(userId, startDate, endDate, reportId) {
+        const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .select('log.workspaceId', 'workspaceId')
             .addSelect('log.workSpaceName', 'workspaceName')
@@ -599,25 +750,41 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
-            .andWhere('log.workspaceId IS NOT NULL')
-            .getRawMany()
-            .catch(() => []);
+            .andWhere('log.workspaceId IS NOT NULL');
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        return query.getRawMany().catch(() => []);
     }
-    async getUserActivityByDate(userId, startDate, endDate) {
-        return this.powerbiLogRepository
+    async getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId) {
+        const query = this.powerbiLogRepository
             .createQueryBuilder('log')
-            .select("DATE(log.creationTime)", "date")
-            .addSelect("COUNT(*)", "count")
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
-            .groupBy("DATE(log.creationTime)")
-            .orderBy("DATE(log.creationTime)", "ASC")
-            .getRawMany()
-            .catch(() => []);
+            .select(['log.creationTime']);
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const logs = await query.getMany();
+        const dailyViews = new Map();
+        logs.forEach(log => {
+            const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
+            const dateKey = colomboTime.toISOString().split('T')[0];
+            dailyViews.set(dateKey, (dailyViews.get(dateKey) || 0) + 1);
+        });
+        return Array.from(dailyViews.entries())
+            .map(([date, count]) => ({
+            date,
+            count
+        }))
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }
-    async getWorkspaceViewsDistribution(userId, startDate, endDate) {
-        const results = await this.powerbiLogRepository
+    async getWorkspaceViewsDistribution(userId, startDate, endDate, reportId) {
+        const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .select('log.workspaceId', 'workspaceId')
             .addSelect('log.workSpaceName', 'workspaceName')
@@ -625,7 +792,11 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
-            .andWhere('log.workspaceId IS NOT NULL')
+            .andWhere('log.workspaceId IS NOT NULL');
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const results = await query
             .groupBy('log.workspaceId, log.workSpaceName')
             .orderBy('COUNT(*)', 'DESC')
             .getRawMany();
@@ -639,9 +810,11 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
 exports.PowerBIMetricsService = PowerBIMetricsService;
 exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __param(2, (0, typeorm_1.InjectRepository)(powerbi_log_entity_1.PowerBILog)),
+    __param(2, (0, typeorm_1.InjectRepository)(user_dashboard_entity_1.UserDashboard)),
+    __param(3, (0, typeorm_1.InjectRepository)(powerbi_log_entity_1.PowerBILog)),
     __metadata("design:paramtypes", [axios_1.HttpService,
         config_1.ConfigService,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], PowerBIMetricsService);
 //# sourceMappingURL=powerbi-metrics.service.js.map

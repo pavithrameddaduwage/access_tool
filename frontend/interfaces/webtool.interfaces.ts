@@ -77,8 +77,8 @@ export interface CreateUserWebtoolDto {
       name: string;
       privileges: string;
     }];
-    isActive: boolean;          // Add this
-    lastActiveAt?: Date;        // Add this
+    isActive: boolean;          
+    lastActiveAt?: Date;       
   }
   
   export interface WebtoolUserDisplay {

@@ -36,4 +36,11 @@ export class UserDashboardController {
   remove(@Param('email') email: string) {
     return this.userDashboardService.remove(email);
   }
+
+  @Get('database/database-users')
+  async getDatabaseUsers() {
+    console.log('testing')
+  return this.userDashboardService.getDatabaseUsers();
+  
+}
 }

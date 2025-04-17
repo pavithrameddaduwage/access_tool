@@ -9,26 +9,13 @@ export declare class PowerBIMetricsController {
         message: string;
         logs: import("./powerbi-metrics.service").PowerBILogEntry[];
     }>;
-    getViewsByDate(startDate: Date, endDate: Date): Promise<{
+    getUniqueUserCount(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<number>;
+    getUniqueReportCount(startDate: Date, endDate: Date, workspaceId?: string): Promise<number>;
+    getUserActivityTrend(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
         date: string;
         count: number;
     }[]>;
-    getTopReports(startDate: Date, endDate: Date, limit: number): Promise<{
-        reportId: string;
-        reportName: string;
-        count: number;
-    }[]>;
-    getTopUsers(startDate: Date, endDate: Date, limit: number): Promise<{
-        userId: string;
-        count: number;
-    }[]>;
-    getUserActivityTrend(startDate: Date, endDate: Date): Promise<{
-        date: string;
-        count: number;
-    }[]>;
-    getUniqueUserCount(startDate: Date, endDate: Date): Promise<number>;
-    getUniqueReportCount(startDate: Date, endDate: Date): Promise<number>;
-    getUserMetrics(userId: string, startDate: Date, endDate: Date): Promise<{
+    getUserMetrics(userId: string, startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
         totalViews: number;
         reports: {
             reportId: string;
@@ -43,9 +30,35 @@ export declare class PowerBIMetricsController {
             count: number;
         }[];
     }>;
-    getWorkspaceViewsDistribution(userId: string, startDate: Date, endDate: Date): Promise<{
+    getUserConsumptionMethods(userId: string, startDate: Date, endDate: Date): Promise<{
+        method: string;
+        count: number;
+    }[]>;
+    getWorkspaceViewsDistribution(userId: string, startDate: Date, endDate: Date, reportId?: string): Promise<{
         workspaceId: string;
         workspaceName: string;
+        count: number;
+    }[]>;
+    getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{
+        id: string;
+        name: string;
+    }[]>;
+    getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        id: string;
+        name: string;
+        workspaceId: string;
+    }[]>;
+    getViewsByDate(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
+        date: string;
+        count: number;
+    }[]>;
+    getTopReports(startDate: Date, endDate: Date, limit: number, workspaceId?: string): Promise<{
+        reportId: string;
+        reportName: string;
+        count: number;
+    }[]>;
+    getTopUsers(startDate: Date, endDate: Date, limit: number, workspaceId?: string, reportId?: string): Promise<{
+        userId: string;
         count: number;
     }[]>;
 }

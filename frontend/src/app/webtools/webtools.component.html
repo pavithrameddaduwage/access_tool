@@ -293,25 +293,26 @@
          <td class="px-6 py-4 border-r border-gray-300">{{ user.email }}</td>
          <td class="px-6 py-4 border-r border-gray-300">{{ user.department }}</td>
           <!-- Status Column -->
-        <td class="px-6 py-4 border-r border-gray-300">
-          <div class="relative group">
-            <span class="px-2 py-1 text-xs font-medium rounded-full"
-                  [ngClass]="{
-                    'bg-green-100 text-green-800': user.isActive,
-                    'bg-red-100 text-red-800': !user.isActive
-                  }">
-              {{ user.isActive ? 'Active' : 'Inactive' }}
-            </span>
-            <!-- Tooltip for inactive users -->
-            <div *ngIf="!user.isActive && user.lastActiveAt" 
-                 class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-10">
-              Deactivated: {{ user.lastActiveAt | date:'medium' }}
-              <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-2">
-                <div class="border-solid border-4 border-transparent border-t-gray-900"></div>
-              </div>
-            </div>
-          </div>
-        </td>
+<!-- In webtools.component.html -->
+<td class="px-6 py-4 border-r border-gray-300">
+  <div class="relative group">
+    <span class="px-2 py-1 text-xs font-medium rounded-full"
+          [ngClass]="{
+            'bg-green-100 text-green-800': user.isActive,
+            'bg-red-100 text-red-800': !user.isActive
+          }">
+      {{ user.isActive ? 'Active' : 'Inactive' }}
+    </span>
+    <!-- Tooltip for inactive users -->
+    <div *ngIf="!user.isActive && user.lastActiveAt" 
+         class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-10">
+      Deactivated: {{ user.lastActiveAt | date:'medium' }}
+      <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-2">
+        <div class="border-solid border-4 border-transparent border-t-gray-900"></div>
+      </div>
+    </div>
+  </div>
+</td>
          <td class="px-6 py-4 border-r border-gray-300">
            <div class="flex flex-wrap gap-1">
              <span 
@@ -475,17 +476,17 @@
         </div>
       </div>
       <!-- Active Status Checkbox -->
-  <div>
-    <label class="flex items-center space-x-2">
-      <input 
-        type="checkbox" 
-        [(ngModel)]="editForm.isActive"
-        name="isActive"
-        class="form-checkbox h-4 w-4 text-blue-600"
-      >
-      <span class="text-gray-700 text-sm">Active User</span>
-    </label>
-  </div>
+      <div>
+        <label class="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="editForm.isActive"
+            name="isActive"
+            class="form-checkbox h-4 w-4 text-blue-600"
+          >
+          <span class="text-gray-700 text-sm">Active User</span>
+        </label>
+      </div>
 
       <!-- Webtool Selection -->
       <div>

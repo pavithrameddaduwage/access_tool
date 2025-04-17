@@ -88,7 +88,9 @@ let UserWebtoolService = class UserWebtoolService {
                     email: uw.email,
                     department: uw.department,
                     roles: {},
-                    webtools: []
+                    webtools: [],
+                    isActive: uw.isActive,
+                    lastActiveAt: uw.lastActiveAt
                 });
             }
             const userData = userMap.get(uw.email);

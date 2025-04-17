@@ -102,6 +102,16 @@ let UserDashboardService = class UserDashboardService {
     async remove(email) {
         await this.userDashboardRepository.delete({ email });
     }
+    async getDatabaseUsers() {
+        const activeUsers = await this.userDashboardRepository
+            .createQueryBuilder('user')
+            .select(['MIN(user.id) as id', 'user.email'])
+            .where('user.isActive = true')
+            .andWhere('user.email IS NOT NULL')
+            .groupBy('user.email')
+            .getRawMany();
+        return activeUsers;
+    }
 };
 exports.UserDashboardService = UserDashboardService;
 exports.UserDashboardService = UserDashboardService = __decorate([

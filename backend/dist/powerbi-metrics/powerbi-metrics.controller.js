@@ -52,29 +52,38 @@ let PowerBIMetricsController = class PowerBIMetricsController {
             logs: powerBILogs.slice(0, 5)
         };
     }
-    async getViewsByDate(startDate, endDate) {
-        return this.powerbiMetricsService.getViewCountsByDate(startDate, endDate);
+    async getUniqueUserCount(startDate, endDate, workspaceId, reportId) {
+        return this.powerbiMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId);
     }
-    async getTopReports(startDate, endDate, limit) {
-        return this.powerbiMetricsService.getTopReports(startDate, endDate, limit);
+    async getUniqueReportCount(startDate, endDate, workspaceId) {
+        return this.powerbiMetricsService.getUniqueReportCount(startDate, endDate, workspaceId);
     }
-    async getTopUsers(startDate, endDate, limit) {
-        return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit);
+    async getUserActivityTrend(startDate, endDate, workspaceId, reportId) {
+        return this.powerbiMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId);
     }
-    async getUserActivityTrend(startDate, endDate) {
-        return this.powerbiMetricsService.getUserActivityTrend(startDate, endDate);
+    async getUserMetrics(userId, startDate, endDate, workspaceId, reportId) {
+        return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate, workspaceId, reportId);
     }
-    async getUniqueUserCount(startDate, endDate) {
-        return this.powerbiMetricsService.getUniqueUserCount(startDate, endDate);
+    async getUserConsumptionMethods(userId, startDate, endDate) {
+        return this.powerbiMetricsService.getUserConsumptionMethods(userId, startDate, endDate);
     }
-    async getUniqueReportCount(startDate, endDate) {
-        return this.powerbiMetricsService.getUniqueReportCount(startDate, endDate);
+    async getWorkspaceViewsDistribution(userId, startDate, endDate, reportId) {
+        return this.powerbiMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate, reportId);
     }
-    async getUserMetrics(userId, startDate, endDate) {
-        return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate);
+    async getDistinctWorkspaces(startDate, endDate, reportId) {
+        return this.powerbiMetricsService.getDistinctWorkspaces(startDate, endDate, reportId);
     }
-    async getWorkspaceViewsDistribution(userId, startDate, endDate) {
-        return this.powerbiMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate);
+    async getDistinctReports(startDate, endDate, workspaceId) {
+        return this.powerbiMetricsService.getDistinctReports(startDate, endDate, workspaceId);
+    }
+    async getViewsByDate(startDate, endDate, workspaceId, reportId) {
+        return this.powerbiMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId);
+    }
+    async getTopReports(startDate, endDate, limit, workspaceId) {
+        return this.powerbiMetricsService.getTopReports(startDate, endDate, limit, workspaceId);
+    }
+    async getTopUsers(startDate, endDate, limit, workspaceId, reportId) {
+        return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit, workspaceId, reportId);
     }
 };
 exports.PowerBIMetricsController = PowerBIMetricsController;
@@ -117,73 +126,51 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "collectRawData", null);
 __decorate([
-    (0, common_1.Get)('views-by-date'),
-    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Date,
-        Date]),
-    __metadata("design:returntype", Promise)
-], PowerBIMetricsController.prototype, "getViewsByDate", null);
-__decorate([
-    (0, common_1.Get)('top-reports'),
-    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), new common_1.ParseIntPipe())),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Date,
-        Date, Number]),
-    __metadata("design:returntype", Promise)
-], PowerBIMetricsController.prototype, "getTopReports", null);
-__decorate([
-    (0, common_1.Get)('top-users'),
-    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), new common_1.ParseIntPipe())),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Date,
-        Date, Number]),
-    __metadata("design:returntype", Promise)
-], PowerBIMetricsController.prototype, "getTopUsers", null);
-__decorate([
-    (0, common_1.Get)('user-activity-trend'),
-    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Date,
-        Date]),
-    __metadata("design:returntype", Promise)
-], PowerBIMetricsController.prototype, "getUserActivityTrend", null);
-__decorate([
     (0, common_1.Get)('unique-user-count'),
     __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
     __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __param(3, (0, common_1.Query)('reportId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Date,
-        Date]),
+        Date, String, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUniqueUserCount", null);
 __decorate([
     (0, common_1.Get)('unique-report-count'),
     __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
     __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Date,
-        Date]),
+        Date, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUniqueReportCount", null);
+__decorate([
+    (0, common_1.Get)('user-activity-trend'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __param(3, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getUserActivityTrend", null);
 __decorate([
     (0, common_1.Get)('user-metrics'),
     __param(0, (0, common_1.Query)('userId')),
     __param(1, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
     __param(2, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(3, (0, common_1.Query)('workspaceId')),
+    __param(4, (0, common_1.Query)('reportId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Date,
-        Date]),
+        Date, String, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUserMetrics", null);
 __decorate([
-    (0, common_1.Get)('workspace-views-distribution'),
+    (0, common_1.Get)('user-consumption-methods'),
     __param(0, (0, common_1.Query)('userId')),
     __param(1, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
     __param(2, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
@@ -191,7 +178,72 @@ __decorate([
     __metadata("design:paramtypes", [String, Date,
         Date]),
     __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getUserConsumptionMethods", null);
+__decorate([
+    (0, common_1.Get)('workspace-views-distribution'),
+    __param(0, (0, common_1.Query)('userId')),
+    __param(1, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(3, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getWorkspaceViewsDistribution", null);
+__decorate([
+    (0, common_1.Get)('distinct-workspaces'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getDistinctWorkspaces", null);
+__decorate([
+    (0, common_1.Get)('distinct-reports'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getDistinctReports", null);
+__decorate([
+    (0, common_1.Get)('views-by-date'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __param(3, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getViewsByDate", null);
+__decorate([
+    (0, common_1.Get)('top-reports'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
+    __param(3, (0, common_1.Query)('workspaceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, Number, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getTopReports", null);
+__decorate([
+    (0, common_1.Get)('top-users'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
+    __param(3, (0, common_1.Query)('workspaceId')),
+    __param(4, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, Number, String, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getTopUsers", null);
 exports.PowerBIMetricsController = PowerBIMetricsController = __decorate([
     (0, common_1.Controller)('powerbi-metrics'),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService])
