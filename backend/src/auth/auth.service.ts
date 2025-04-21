@@ -32,8 +32,8 @@ const config = {
      
        
     },
-    timeout: 30000,  // Increase timeout
-    reconnect: true, // Enable reconnection
+    timeout: 30000,  
+    reconnect: true,
     connectTimeout: 30000,
 };
 const ad = new ActiveDirectory(config);

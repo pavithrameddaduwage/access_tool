@@ -381,7 +381,7 @@ export class PowerBIDashboardComponent implements OnInit {
           format: 'dd MMM yyyy'
         }
       },
-      colors: ['#0077B6'],
+      colors: ['#ffb703'],
       fill: {
         type: 'gradient',
         gradient: {
@@ -475,17 +475,77 @@ export class PowerBIDashboardComponent implements OnInit {
 
     return methodExplanations[method] || method;
   }
+  // async selectUser(userId: string) {
+  //   this.selectedUserId = userId;
+  //   const endDate = new Date();
+  //   const startDate = new Date();
+  //   startDate.setDate(endDate.getDate() - this.selectedPeriod);
+  
+  //   try {
+  //     const [userMetrics, workspaceDistribution, consumptionMethods] = await Promise.all([
+  //       this.powerBIMetricsService.getUserMetrics(userId, startDate, endDate).toPromise(),
+  //       this.powerBIMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate).toPromise(),
+  //       this.powerBIMetricsService.getUserConsumptionMethods(userId, startDate, endDate).toPromise()
+  //     ]);
+  
+  //     if (!userMetrics || !workspaceDistribution || !consumptionMethods) {
+  //       throw new Error('Failed to load user metrics');
+  //     }
+  
+  //     // Process consumption methods to replace null with 'Microsoft Teams'
+  //     this.userConsumptionMethods = consumptionMethods.map(m => ({
+  //       method: m.method === null ? 'Microsoft Teams' : m.method,
+  //       count: m.count
+  //     }));
+  
+  //     this.userMetrics = {
+  //       ...userMetrics,
+  //       activityChartData: userMetrics.activityByDate.map(a => ({
+  //         x: a.date,
+  //         y: a.count
+  //       })),
+  //       workspaceDistribution,
+  //       consumptionMethods: this.userConsumptionMethods
+  //     };
+  
+  //     this.prepareUserWorkspacePieChart();
+  //     this.prepareUserConsumptionChart();
+  //     this.cdr.detectChanges();
+  //   } catch (error) {
+  //     console.error('Error loading user metrics:', error);
+  //   }
+  // }
+
   async selectUser(userId: string) {
     this.selectedUserId = userId;
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - this.selectedPeriod);
   
+    // Get current filter values
+    const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
+    const reportId = this.selectedReport === null ? undefined : this.selectedReport;
+  
     try {
       const [userMetrics, workspaceDistribution, consumptionMethods] = await Promise.all([
-        this.powerBIMetricsService.getUserMetrics(userId, startDate, endDate).toPromise(),
-        this.powerBIMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate).toPromise(),
-        this.powerBIMetricsService.getUserConsumptionMethods(userId, startDate, endDate).toPromise()
+        this.powerBIMetricsService.getUserMetrics(
+          userId, 
+          startDate, 
+          endDate,
+          workspaceId,
+          reportId
+        ).toPromise(),
+        this.powerBIMetricsService.getWorkspaceViewsDistribution(
+          userId, 
+          startDate, 
+          endDate,
+          reportId
+        ).toPromise(),
+        this.powerBIMetricsService.getUserConsumptionMethods(
+          userId, 
+          startDate, 
+          endDate
+        ).toPromise()
       ]);
   
       if (!userMetrics || !workspaceDistribution || !consumptionMethods) {
@@ -515,8 +575,6 @@ export class PowerBIDashboardComponent implements OnInit {
       console.error('Error loading user metrics:', error);
     }
   }
-
-
   
   private prepareUserWorkspacePieChart() {
     if (!this.userMetrics?.workspaceDistribution) return;
@@ -564,6 +622,83 @@ export class PowerBIDashboardComponent implements OnInit {
     const startIndex = (this.currentPage - 1) * this.usersPerPage;
     return this.filteredUsers.slice(startIndex, startIndex + this.usersPerPage);
   }
+  // async loadData(days: number): Promise<void> {
+  //   this.loading = true;
+  //   this.error = '';
+  //   this.selectedPeriod = days;
+  
+  //   try {
+  //     const endDate = new Date();
+  //     const startDate = new Date();
+  //     startDate.setDate(endDate.getDate() - days);
+  
+  //     // Handle workspace and report filters
+  //     const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
+  //       ? undefined 
+  //       : this.selectedWorkspace as string;
+      
+  //     const reportId = this.selectedReport === null 
+  //       ? undefined 
+  //       : this.selectedReport as string;
+  
+  //     // Get all metrics in parallel with filters applied
+  //     const [
+  //       viewsByDate, 
+  //       topReports, 
+  //       topUsers, 
+  //       activityTrend,
+  //       uniqueUserCount,
+  //       uniqueReportCount
+  //     ] = await Promise.all([
+  //       this.powerBIMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getTopReports(startDate, endDate, 10, workspaceId).toPromise(),
+  //       this.powerBIMetricsService.getTopUsers(startDate, endDate, 10, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getUniqueReportCount(startDate, endDate, workspaceId).toPromise()
+  //     ]);
+  
+  //     // Calculate total views
+  //     const totalViews = (viewsByDate || []).reduce((sum, day) => sum + (day?.count || 0), 0);
+  
+  //     // Update metrics
+  //     this.metrics = {
+  //       totalViews,
+  //       uniqueUsers: uniqueUserCount || 0,
+  //       uniqueReports: uniqueReportCount || 0,
+  //       topReports: topReports || [],
+  //       topUsers: topUsers || [],
+  //       activityTrend: activityTrend || [],
+  //       viewsByDate: (viewsByDate || []).reduce((acc, day) => {
+  //         if (day?.date) {
+  //           acc[day.date] = day.count || 0;
+  //         }
+  //         return acc;
+  //       }, {} as Record<string, number>)
+  //     };
+  
+  //     // Process users and workspaces
+  //     await this.processUsers(startDate, endDate, workspaceId, reportId);
+  //     this.prepareCharts();
+      
+  //     this.dataLoaded = true;
+  //   } catch (error) {
+  //     console.error('Error loading data:', error);
+  //     this.error = 'Failed to load data';
+  //     this.metrics = {
+  //       totalViews: 0,
+  //       uniqueUsers: 0,
+  //       uniqueReports: 0,
+  //       topReports: [],
+  //       topUsers: [],
+  //       activityTrend: [],
+  //       viewsByDate: {}
+  //     };
+  //   } finally {
+  //     this.loading = false;
+  //   }
+  // }
+
   async loadData(days: number): Promise<void> {
     this.loading = true;
     this.error = '';
@@ -623,6 +758,11 @@ export class PowerBIDashboardComponent implements OnInit {
       await this.processUsers(startDate, endDate, workspaceId, reportId);
       this.prepareCharts();
       
+      // If a user is selected, refresh their data with the new filters
+      if (this.selectedUserId) {
+        await this.selectUser(this.selectedUserId);
+      }
+      
       this.dataLoaded = true;
     } catch (error) {
       console.error('Error loading data:', error);
@@ -640,8 +780,6 @@ export class PowerBIDashboardComponent implements OnInit {
       this.loading = false;
     }
   }
-
-
   private prepareUserConsumptionChart() {
     if (!this.userConsumptionMethods || this.userConsumptionMethods.length === 0) return;
     
@@ -803,28 +941,29 @@ export class PowerBIDashboardComponent implements OnInit {
   }
 
   exportUserListToCSV() {
-    const headers = ['Name', 'Views', 'Last Seen'];
-    const rows = this.allUsers.map(user => [
-      user.id,
-      user.totalViews,
-      user.lastActivity,
+    const usersToExport = this.filteredUsers;
+    
+    const headers = ['Email', 'Total Views', 'Last Activity'];
+    const rows = usersToExport.map(user => [
+      user.id, 
+      user.totalViews, 
+      user.lastActivity === 'Never' ? 'Never' : new Date(user.lastActivity).toLocaleDateString()
     ]);
   
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.join(',')), 
+      ...rows.map(row => row.join(',')) 
     ].join('\n');
   
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'user_list.csv';
+    link.download = 'powerbi-users.csv';
     link.click();
   }
 
 
 
-// In your component class
 workspaces: PowerBIWorkspace[] = [];
 reports: PowerBIReport[] = [];
 

@@ -22,7 +22,6 @@ let AuthController = class AuthController {
     }
     async signIn(signInDto) {
         try {
-            console.log('Login request received:', signInDto);
             const result = await this.authService.signIn(signInDto.email, signInDto.password);
             return result;
         }

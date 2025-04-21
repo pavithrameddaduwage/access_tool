@@ -17,12 +17,11 @@ import { Public } from './decorators/public.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @Public() // This is crucial
+  @Public() 
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: Record<string, any>) {
     try {
-      console.log('Login request received:', signInDto);
       const result = await this.authService.signIn(
         signInDto.email, 
         signInDto.password
@@ -30,7 +29,7 @@ export class AuthController {
       return result;
     } catch (error) {
       console.error('Login error in controller:', error);
-      throw error; // Let the exception filter handle it
+      throw error;
     }
   }
   //   @UseGuards(AuthGuard)
