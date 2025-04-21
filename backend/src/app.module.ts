@@ -24,7 +24,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { HttpExceptionFilter } from './http-exception.filter';
-import { PowerBIAnalyticsModule } from './powerbi-analytics/powerbi-analytics.module';
+// import { PowerBIAnalyticsModule } from './powerbi-analytics/powerbi-analytics.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserMappingsModule } from './user-mappings/user-mappings.module';
 import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
@@ -64,7 +64,6 @@ import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
     WebtoolUserModule,
     AuthModule,
     UsersModule,
-    PowerBIAnalyticsModule,
     UserMappingsModule,
     PowerBIMetricsModule,
     ],
