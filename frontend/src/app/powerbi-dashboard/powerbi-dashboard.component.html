@@ -305,8 +305,8 @@
     <p class="text-2xl font-bold text-yellow-600">{{ userMetrics.activityByDate?.length || 0 }}</p>
   </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <!-- Workspace Views Pie Chart -->
   <div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100">
     <h3 class="text-lg font-semibold mb-4 text-gray-800">Workspace Views</h3>
@@ -336,6 +336,24 @@
   </div>
 </div>
 
+<!-- Report Views Pie Chart (Full Width) -->
+<div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100 mb-6">
+  <h3 class="text-lg font-semibold mb-4 text-gray-800">Top 10 Report Views</h3>
+  <apx-chart
+    *ngIf="userReportViewsChartOptions"
+    [series]="userReportViewsChartOptions.series"
+    [chart]="userReportViewsChartOptions.chart"
+    [labels]="userReportViewsChartOptions.labels"
+    [colors]="userReportViewsChartOptions.colors"
+    [dataLabels]="userReportViewsChartOptions.dataLabels"
+    [tooltip]="userReportViewsChartOptions.tooltip"
+    [legend]="userReportViewsChartOptions.legend"
+  ></apx-chart>
+  <div *ngIf="!userReportViewsChartOptions" class="text-center text-gray-500 py-10">
+    No report view data available for this user
+  </div>
+</div>
+
 <!-- Activity Chart (Full Width) -->
 <div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100">
   <h3 class="text-lg font-semibold mb-4 text-gray-800">Activity Timeline</h3>
@@ -343,7 +361,9 @@
     *ngIf="userMetrics.activityChartData?.length"
     [series]="[{ name: 'Views', data: userMetrics.activityChartData }]"
     [chart]="{ type: 'bar', height: 350 }"
-    [xaxis]="{ type: 'datetime' }"
+    [xaxis]="{ type: 'datetime',   labels: {
+      format: 'yyyy-MM-dd'
+    } }"
     [colors]="['#0077B6']"
   ></apx-chart>
 </div>

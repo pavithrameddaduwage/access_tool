@@ -99,6 +99,11 @@ export declare class PowerBIMetricsService {
     processLogEntries(entries: PowerBILogEntry[]): PowerBIMetrics;
     getPowerBIMetrics(startDate: Date, endDate: Date): Promise<PowerBIMetrics>;
     saveRawLogs(logs: PowerBILogEntry[]): Promise<void>;
+    getUserReportViewsDistribution(userId: string, startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        reportId: string;
+        reportName: string;
+        count: number;
+    }[]>;
     private getLogsFromDatabase;
     private fetchAndProcessLogs;
     private emptyMetricsResponse;
@@ -165,4 +170,5 @@ export declare class PowerBIMetricsService {
         workspaceName: string;
         count: number;
     }[]>;
+    private normalizeWorkspaceName;
 }

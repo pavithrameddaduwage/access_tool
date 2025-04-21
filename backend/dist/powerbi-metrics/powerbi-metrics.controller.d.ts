@@ -61,4 +61,9 @@ export declare class PowerBIMetricsController {
         userId: string;
         count: number;
     }[]>;
+    getUserReportViewsDistribution(userId: string, startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        reportId: string;
+        reportName: string;
+        count: number;
+    }[]>;
 }

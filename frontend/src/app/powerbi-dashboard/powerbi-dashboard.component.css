@@ -1,0 +1,9 @@
+/* Make first x-axis label bold */
+.first-xaxis-label {
+    font-weight: 700 !important;
+  }
+  
+  /* Ensure custom styles are applied */
+  :host ::ng-deep .first-xaxis-label {
+    font-weight: 900 !important;
+  }

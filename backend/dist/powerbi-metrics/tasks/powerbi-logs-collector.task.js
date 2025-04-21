@@ -17,9 +17,9 @@ exports.PowerBILogsCollectorTask = void 0;
 const common_1 = require("@nestjs/common");
 const schedule_1 = require("@nestjs/schedule");
 const powerbi_metrics_service_1 = require("../powerbi-metrics.service");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
+const typeorm_1 = require("typeorm");
 const powerbi_log_entity_1 = require("../entities/powerbi-log.entity");
+const typeorm_2 = require("@nestjs/typeorm");
 let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCollectorTask {
     constructor(powerbiMetricsService, powerbiLogRepository) {
         this.powerbiMetricsService = powerbiMetricsService;
@@ -30,14 +30,13 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
         try {
             this.logger.log('Starting Power BI logs collection for previous day');
             const now = new Date();
-            const endDate = new Date(now);
-            endDate.setDate(now.getDate() - 1);
-            endDate.setHours(23, 59, 59, 999);
+            const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999);
             const startDate = new Date(endDate);
-            startDate.setHours(0, 0, 0, 0);
+            startDate.setUTCHours(0, 0, 0, 0);
+            this.logger.debug(`Date range: ${startDate.toISOString()} to ${endDate.toISOString()}`);
             const existingCount = await this.powerbiLogRepository.count({
                 where: {
-                    creationTime: (0, typeorm_2.Between)(startDate, endDate),
+                    creationTime: (0, typeorm_1.Between)(startDate, endDate),
                     workload: 'PowerBI',
                     operation: 'ViewReport',
                 },
@@ -49,13 +48,16 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
             const accessToken = await this.powerbiMetricsService.getAccessToken();
             await this.powerbiMetricsService.ensureSubscription(accessToken);
             const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
+            this.logger.debug(`Found ${contentUris.length} content URIs`);
             const allLogs = await Promise.all(contentUris.map(uri => this.powerbiMetricsService.getLogEntries(uri, accessToken)
                 .catch(e => {
                 this.logger.error(`Failed to process URI ${uri}: ${e.message}`);
                 return [];
             })));
             const powerBILogs = allLogs.flat().filter(entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport');
+            this.logger.debug(`Fetched ${powerBILogs.length} raw Power BI logs`);
             const newLogs = await this.filterExistingLogs(powerBILogs);
+            this.logger.debug(`Found ${newLogs.length} new logs to save`);
             if (newLogs.length > 0) {
                 await this.powerbiMetricsService.saveRawLogs(newLogs);
                 this.logger.log(`Successfully saved ${newLogs.length} new logs for ${startDate.toISOString().split('T')[0]}`);
@@ -66,12 +68,13 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
         }
         catch (error) {
             this.logger.error('Failed to collect Power BI logs', error.stack);
+            throw error;
         }
     }
     async filterExistingLogs(logs) {
         const existingIds = await this.powerbiLogRepository.find({
             where: {
-                id: (0, typeorm_2.In)(logs.map(l => l.Id)),
+                id: (0, typeorm_1.In)(logs.map(l => l.Id)),
             },
             select: ['id'],
         });
@@ -81,15 +84,15 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
 };
 exports.PowerBILogsCollectorTask = PowerBILogsCollectorTask;
 __decorate([
-    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_DAY_AT_2AM),
+    (0, schedule_1.Cron)('0 00 01 * * *'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PowerBILogsCollectorTask.prototype, "collectPreviousDayLogs", null);
 exports.PowerBILogsCollectorTask = PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, typeorm_1.InjectRepository)(powerbi_log_entity_1.PowerBILog)),
+    __param(1, (0, typeorm_2.InjectRepository)(powerbi_log_entity_1.PowerBILog)),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService,
-        typeorm_2.Repository])
+        typeorm_1.Repository])
 ], PowerBILogsCollectorTask);
 //# sourceMappingURL=powerbi-logs-collector.task.js.map

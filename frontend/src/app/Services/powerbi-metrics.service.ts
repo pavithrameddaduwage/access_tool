@@ -314,7 +314,24 @@ export class PowerBIMetricsService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-
+  getUserReportViewsDistribution(
+    userId: string, 
+    startDate: Date, 
+    endDate: Date,
+    workspaceId?: string
+  ): Observable<{reportId: string, reportName: string, count: number}[]> {
+    const params: any = {
+      userId,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    if (workspaceId) params.workspaceId = workspaceId;
+    
+    return this.http.get<{reportId: string, reportName: string, count: number}[]>(
+      `${this.apiUrl}/user-report-views-distribution`, 
+      { params }
+    );
+  }
 
   
 }

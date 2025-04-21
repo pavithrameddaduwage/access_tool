@@ -262,42 +262,70 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         };
     }
     async saveRawLogs(logs) {
-        const entities = logs.map(log => this.powerbiLogRepository.create({
-            id: log.Id,
-            recordType: log.RecordType,
-            creationTime: new Date(log.CreationTime),
-            operation: log.Operation,
-            organizationId: log.OrganizationId,
-            userType: log.UserType,
-            userKey: log.UserKey,
-            workload: log.Workload,
-            userId: log.UserId,
-            clientIP: log.ClientIP,
-            userAgent: log.UserAgent,
-            activity: log.Activity,
-            itemName: log.ItemName,
-            workSpaceName: log.WorkSpaceName,
-            datasetName: log.DatasetName,
-            reportName: log.ReportName,
-            capacityId: log.CapacityId,
-            capacityName: log.CapacityName,
-            workspaceId: log.WorkspaceId,
-            objectId: log.ObjectId,
-            datasetId: log.DatasetId,
-            reportId: log.ReportId,
-            artifactId: log.ArtifactId,
-            artifactName: log.ArtifactName,
-            isSuccess: log.IsSuccess,
-            reportType: log.ReportType,
-            requestId: log.RequestId,
-            activityId: log.ActivityId,
-            distributionMethod: log.DistributionMethod,
-            consumptionMethod: log.ConsumptionMethod,
-            artifactKind: log.ArtifactKind,
-            refreshEnforcementPolicy: log.RefreshEnforcementPolicy,
-            billingType: log.BillingType,
-        }));
+        const entities = logs.map(log => {
+            const cleanedWorkspaceName = log.WorkSpaceName?.startsWith('PersonalWorkspace')
+                ? 'PersonalWorkspace'
+                : log.WorkSpaceName;
+            return this.powerbiLogRepository.create({
+                id: log.Id,
+                recordType: log.RecordType,
+                creationTime: new Date(log.CreationTime),
+                operation: log.Operation,
+                organizationId: log.OrganizationId,
+                userType: log.UserType,
+                userKey: log.UserKey,
+                workload: log.Workload,
+                userId: log.UserId,
+                clientIP: log.ClientIP,
+                userAgent: log.UserAgent,
+                activity: log.Activity,
+                itemName: log.ItemName,
+                workSpaceName: cleanedWorkspaceName,
+                datasetName: log.DatasetName,
+                reportName: log.ReportName,
+                capacityId: log.CapacityId,
+                capacityName: log.CapacityName,
+                workspaceId: log.WorkspaceId,
+                objectId: log.ObjectId,
+                datasetId: log.DatasetId,
+                reportId: log.ReportId,
+                artifactId: log.ArtifactId,
+                artifactName: log.ArtifactName,
+                isSuccess: log.IsSuccess,
+                reportType: log.ReportType,
+                requestId: log.RequestId,
+                activityId: log.ActivityId,
+                distributionMethod: log.DistributionMethod,
+                consumptionMethod: log.ConsumptionMethod,
+                artifactKind: log.ArtifactKind,
+                refreshEnforcementPolicy: log.RefreshEnforcementPolicy,
+                billingType: log.BillingType,
+            });
+        });
         await this.powerbiLogRepository.save(entities);
+    }
+    async getUserReportViewsDistribution(userId, startDate, endDate, workspaceId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.reportId', 'reportId')
+            .addSelect('log.reportName', 'reportName')
+            .addSelect('COUNT(*)', 'count')
+            .where('log.userId = :userId', { userId })
+            .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.reportId IS NOT NULL');
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        const results = await query
+            .groupBy('log.reportId, log.reportName')
+            .orderBy('COUNT(*)', 'DESC')
+            .getRawMany();
+        return results.map(r => ({
+            reportId: r.reportId,
+            reportName: r.reportName || 'Unknown Report',
+            count: parseInt(r.count)
+        }));
     }
     async getLogsFromDatabase(startDate, endDate) {
         const logs = await this.powerbiLogRepository.find({
@@ -805,6 +833,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             workspaceName: r.workspaceName || 'Unknown Workspace',
             count: parseInt(r.count)
         }));
+    }
+    normalizeWorkspaceName(name) {
+        if (name.startsWith('PersonalWorkspace')) {
+            return 'PersonalWorkspace';
+        }
+        return name;
     }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;

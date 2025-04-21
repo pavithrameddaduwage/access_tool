@@ -2,9 +2,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PowerBILogEntry, PowerBIMetricsService } from '../powerbi-metrics.service';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, Repository } from 'typeorm';
 import { PowerBILog } from '../entities/powerbi-log.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PowerBILogsCollectorTask {
@@ -16,18 +16,25 @@ export class PowerBILogsCollectorTask {
     private readonly powerbiLogRepository: Repository<PowerBILog>,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_2AM) 
+  @Cron('0 00 01 * * *')
   async collectPreviousDayLogs() {
     try {
       this.logger.log('Starting Power BI logs collection for previous day');
       
+      // Get UTC dates for yesterday
       const now = new Date();
-      const endDate = new Date(now);
-      endDate.setDate(now.getDate() - 1); 
-      endDate.setHours(23, 59, 59, 999);
+      const endDate = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - 1,
+        23, 59, 59, 999
+      );
+      
       
       const startDate = new Date(endDate);
-      startDate.setHours(0, 0, 0, 0);
+      startDate.setUTCHours(0, 0, 0, 0);
+
+      this.logger.debug(`Date range: ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
       const existingCount = await this.powerbiLogRepository.count({
         where: {
@@ -44,8 +51,10 @@ export class PowerBILogsCollectorTask {
 
       const accessToken = await this.powerbiMetricsService.getAccessToken();
       await this.powerbiMetricsService.ensureSubscription(accessToken);
-      
       const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
+      
+      this.logger.debug(`Found ${contentUris.length} content URIs`);
+
       const allLogs = await Promise.all(
         contentUris.map(uri => 
           this.powerbiMetricsService.getLogEntries(uri, accessToken)
@@ -60,8 +69,11 @@ export class PowerBILogsCollectorTask {
         entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport'
       );
 
+      this.logger.debug(`Fetched ${powerBILogs.length} raw Power BI logs`);
+
       const newLogs = await this.filterExistingLogs(powerBILogs);
-      
+      this.logger.debug(`Found ${newLogs.length} new logs to save`);
+
       if (newLogs.length > 0) {
         await this.powerbiMetricsService.saveRawLogs(newLogs);
         this.logger.log(`Successfully saved ${newLogs.length} new logs for ${startDate.toISOString().split('T')[0]}`);
@@ -70,6 +82,7 @@ export class PowerBILogsCollectorTask {
       }
     } catch (error) {
       this.logger.error('Failed to collect Power BI logs', error.stack);
+      throw error; 
     }
   }
 

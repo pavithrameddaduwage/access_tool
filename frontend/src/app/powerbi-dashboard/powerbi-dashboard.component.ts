@@ -120,6 +120,8 @@ export class PowerBIDashboardComponent implements OnInit {
     '#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'
   ];
 
+userReportViews: {reportId: string, reportName: string, count: number}[] = [];
+
   // Pagination
   currentPage = 1;
   usersPerPage = 10;
@@ -434,35 +436,55 @@ export class PowerBIDashboardComponent implements OnInit {
   }
 
   private prepareActivityTrendChart() {
+    // First ensure the activity trend data is sorted by date
+    const sortedActivityTrend = [...this.metrics.activityTrend].sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  
     this.activityTrendChartOptions = {
       series: [{
         name: 'Active Users',
-        data: this.metrics.activityTrend.map(t => t.count)
+        data: sortedActivityTrend.map(t => t.count)
       }],
       chart: {
         type: 'line',
-        height: 350
+        height: 350,
+        toolbar: { show: false }
       },
       xaxis: {
-        categories: this.metrics.activityTrend.map(t => t.date),
+        categories: sortedActivityTrend.map(t => t.date),
         type: 'datetime',
         labels: {
-          datetimeUTC: true
-        }
+          formatter: (value: string, timestamp?: number, opts?: any) => {
+            const date = new Date(value);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = date.toLocaleString('default', { month: 'short' });
+            
+            // For the first label, return formatted string with CSS class
+            if (opts?.dataPointIndex === 0) {
+              return `<span class="first-xaxis-label">${day} ${month}</span>`;
+            }
+            return `${day} ${month}`;
+          },
+          style: {
+            colors: '#6B7280',
+            fontSize: '12px',
+            cssClass: 'apexcharts-xaxis-label'
+          }
+        },
+        axisBorder: { show: true, color: '#E5E7EB' },
+        axisTicks: { show: true, color: '#E5E7EB' }
       },
       yaxis: {
-        title: {
-          text: 'Active Users'
-        }
+        title: { text: 'Active Users' },
+        labels: { style: { colors: '#6B7280', fontSize: '12px' } }
       },
-      stroke: {
-        width: 1,
-        curve: 'smooth'
-      },
-      colors: ['#ffb703']
+      stroke: { width: 2, curve: 'smooth' },
+      colors: ['#ffb703'],
+      grid: { borderColor: '#E5E7EB' },
+      tooltip: { x: { format: 'dd MMM yyyy' } }
     };
   }
-
   private getConsumptionMethodDisplayName(method: string): string {
     const methodExplanations: {[key: string]: string} = {
       'Microsoft Teams': 'Microsoft Teams (embedded views)',
@@ -475,17 +497,37 @@ export class PowerBIDashboardComponent implements OnInit {
 
     return methodExplanations[method] || method;
   }
+
   // async selectUser(userId: string) {
   //   this.selectedUserId = userId;
   //   const endDate = new Date();
   //   const startDate = new Date();
   //   startDate.setDate(endDate.getDate() - this.selectedPeriod);
   
+  //   // Get current filter values
+  //   const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
+  //   const reportId = this.selectedReport === null ? undefined : this.selectedReport;
+  
   //   try {
   //     const [userMetrics, workspaceDistribution, consumptionMethods] = await Promise.all([
-  //       this.powerBIMetricsService.getUserMetrics(userId, startDate, endDate).toPromise(),
-  //       this.powerBIMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate).toPromise(),
-  //       this.powerBIMetricsService.getUserConsumptionMethods(userId, startDate, endDate).toPromise()
+  //       this.powerBIMetricsService.getUserMetrics(
+  //         userId, 
+  //         startDate, 
+  //         endDate,
+  //         workspaceId,
+  //         reportId
+  //       ).toPromise(),
+  //       this.powerBIMetricsService.getWorkspaceViewsDistribution(
+  //         userId, 
+  //         startDate, 
+  //         endDate,
+  //         reportId
+  //       ).toPromise(),
+  //       this.powerBIMetricsService.getUserConsumptionMethods(
+  //         userId, 
+  //         startDate, 
+  //         endDate
+  //       ).toPromise()
   //     ]);
   
   //     if (!userMetrics || !workspaceDistribution || !consumptionMethods) {
@@ -500,10 +542,7 @@ export class PowerBIDashboardComponent implements OnInit {
   
   //     this.userMetrics = {
   //       ...userMetrics,
-  //       activityChartData: userMetrics.activityByDate.map(a => ({
-  //         x: a.date,
-  //         y: a.count
-  //       })),
+  //       activityChartData: this.generateDailyActivityData(startDate, endDate, userMetrics.activityByDate),
   //       workspaceDistribution,
   //       consumptionMethods: this.userConsumptionMethods
   //     };
@@ -515,19 +554,18 @@ export class PowerBIDashboardComponent implements OnInit {
   //     console.error('Error loading user metrics:', error);
   //   }
   // }
-
+  
   async selectUser(userId: string) {
     this.selectedUserId = userId;
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - this.selectedPeriod);
   
-    // Get current filter values
     const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
     const reportId = this.selectedReport === null ? undefined : this.selectedReport;
   
     try {
-      const [userMetrics, workspaceDistribution, consumptionMethods] = await Promise.all([
+      const [userMetrics, workspaceDistribution, consumptionMethods, reportViews] = await Promise.all([
         this.powerBIMetricsService.getUserMetrics(
           userId, 
           startDate, 
@@ -545,14 +583,19 @@ export class PowerBIDashboardComponent implements OnInit {
           userId, 
           startDate, 
           endDate
+        ).toPromise(),
+        this.powerBIMetricsService.getUserReportViewsDistribution(
+          userId,
+          startDate,
+          endDate,
+          workspaceId
         ).toPromise()
       ]);
   
-      if (!userMetrics || !workspaceDistribution || !consumptionMethods) {
+      if (!userMetrics || !workspaceDistribution || !consumptionMethods || !reportViews) {
         throw new Error('Failed to load user metrics');
       }
   
-      // Process consumption methods to replace null with 'Microsoft Teams'
       this.userConsumptionMethods = consumptionMethods.map(m => ({
         method: m.method === null ? 'Microsoft Teams' : m.method,
         count: m.count
@@ -568,14 +611,81 @@ export class PowerBIDashboardComponent implements OnInit {
         consumptionMethods: this.userConsumptionMethods
       };
   
+      this.userReportViews = reportViews;
+      
       this.prepareUserWorkspacePieChart();
       this.prepareUserConsumptionChart();
+      this.prepareUserReportViewsChart();
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error loading user metrics:', error);
     }
   }
+
+  private prepareUserReportViewsChart() {
+    if (!this.userReportViews || this.userReportViews.length === 0) {
+      this.userReportViewsChartOptions = null;
+      return;
+    }
+
+    console.log("viewsss", this.userReportViews)
   
+    const topReports = this.userReportViews.slice(0,10);
+    
+    this.userReportViewsChartOptions = {
+      series: topReports.map(r => r.count),
+      chart: {
+        type: 'pie',
+        height: 400, 
+      },
+      labels: topReports.map(r => r.reportName || `Report (${r.reportId.slice(0, 6)}...`),
+      dataLabels: {
+        enabled: true,
+        formatter: (val: number) => `${val.toFixed(1)}%`,
+        style: {
+          fontSize: '12px',
+          colors: ['#fff'],
+        },
+      },
+      legend: {
+        position: 'bottom',
+        formatter: (legendName: string) => {
+          const reportData = topReports.find(r => 
+            (r.reportName || `Report (${r.reportId.slice(0, 6)}...`) === legendName
+          );
+          return `${legendName} (${reportData?.count || 0})`;
+        },
+      },
+      tooltip: {
+        y: {
+          formatter: (value: number) => `${value} views`,
+        },
+      },
+      colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7', '#5E8CBE', '#4A7FB7', '#3672B0', '#2365A9'],
+    };
+  }
+
+  private generateDailyActivityData(startDate: Date, endDate: Date, activityData: {date: string, count: number}[]): any[] {
+    const activityMap = new Map<string, number>();
+    activityData.forEach(item => {
+      activityMap.set(item.date, item.count);
+    });
+  
+    const allDates = [];
+    const currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      allDates.push(dateStr);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  
+    return allDates.map(date => ({
+      x: date,
+      y: activityMap.get(date) || 0
+    }));
+  }
+
   private prepareUserWorkspacePieChart() {
     if (!this.userMetrics?.workspaceDistribution) return;
 

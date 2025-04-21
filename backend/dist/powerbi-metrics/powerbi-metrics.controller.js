@@ -85,6 +85,9 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getTopUsers(startDate, endDate, limit, workspaceId, reportId) {
         return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit, workspaceId, reportId);
     }
+    async getUserReportViewsDistribution(userId, startDate, endDate, workspaceId) {
+        return this.powerbiMetricsService.getUserReportViewsDistribution(userId, startDate, endDate, workspaceId);
+    }
 };
 exports.PowerBIMetricsController = PowerBIMetricsController;
 __decorate([
@@ -244,6 +247,17 @@ __decorate([
         Date, Number, String, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getTopUsers", null);
+__decorate([
+    (0, common_1.Get)('user-report-views-distribution'),
+    __param(0, (0, common_1.Query)('userId')),
+    __param(1, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(3, (0, common_1.Query)('workspaceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getUserReportViewsDistribution", null);
 exports.PowerBIMetricsController = PowerBIMetricsController = __decorate([
     (0, common_1.Controller)('powerbi-metrics'),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService])

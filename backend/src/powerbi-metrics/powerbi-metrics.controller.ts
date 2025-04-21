@@ -254,6 +254,19 @@ async getTopUsers(
 ) {
   return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit, workspaceId, reportId);
 }
-
+@Get('user-report-views-distribution')
+async getUserReportViewsDistribution(
+  @Query('userId') userId: string,
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string
+) {
+  return this.powerbiMetricsService.getUserReportViewsDistribution(
+    userId, 
+    startDate, 
+    endDate,
+    workspaceId
+  );
+}
 
 }
