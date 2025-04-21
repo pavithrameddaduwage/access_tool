@@ -689,7 +689,29 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
   private prepareUserWorkspacePieChart() {
     if (!this.userMetrics?.workspaceDistribution) return;
 
-    const viewsData = this.userMetrics.workspaceDistribution as WorkspaceViewDistribution[];
+    let viewsData = this.userMetrics.workspaceDistribution as WorkspaceViewDistribution[];
+    let personalWorkspaceCount = 0;
+    viewsData.forEach((w:any)=> {
+      if (w.workspaceName === 'PersonalWorkspace') {
+        w.workspaceId = '000000'
+        personalWorkspaceCount += w.count;
+      }
+
+    })
+
+    viewsData = viewsData.filter((w:any) => w.workspaceName !== 'PersonalWorkspace');
+
+
+    if (personalWorkspaceCount > 0) {
+      viewsData.push({
+        workspaceId: '000000',
+        workspaceName: 'Personal Workspace',
+        count: personalWorkspaceCount
+      });
+    }
+
+
+    console.log("viewsData", viewsData)
 
     this.userWorkspacePieChartOptions = {
       series: viewsData.map(w => w.count),
