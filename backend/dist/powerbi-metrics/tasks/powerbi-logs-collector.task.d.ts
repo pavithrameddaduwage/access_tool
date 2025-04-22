@@ -8,4 +8,5 @@ export declare class PowerBILogsCollectorTask {
     constructor(powerbiMetricsService: PowerBIMetricsService, powerbiLogRepository: Repository<PowerBILog>);
     collectPreviousDayLogs(): Promise<void>;
     private filterExistingLogs;
+    private formatDate;
 }

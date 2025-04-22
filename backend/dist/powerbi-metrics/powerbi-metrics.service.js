@@ -513,8 +513,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const logs = await query.getMany();
         const counts = new Map();
         logs.forEach(log => {
-            const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-            const dateKey = colomboTime.toISOString().split('T')[0];
+            const dateKey = log.creationTime.toISOString().split('T')[0];
             counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
         });
         return Array.from(counts.entries())
@@ -536,8 +535,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const logs = await query.getMany();
         const dailyActiveUsers = new Map();
         logs.forEach(log => {
-            const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-            const dateKey = colomboTime.toISOString().split('T')[0];
+            const dateKey = log.creationTime.toISOString().split('T')[0];
             if (!dailyActiveUsers.has(dateKey)) {
                 dailyActiveUsers.set(dateKey, new Set());
             }
@@ -800,8 +798,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const logs = await query.getMany();
         const dailyViews = new Map();
         logs.forEach(log => {
-            const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-            const dateKey = colomboTime.toISOString().split('T')[0];
+            const dateKey = log.creationTime.toISOString().split('T')[0];
             dailyViews.set(dateKey, (dailyViews.get(dateKey) || 0) + 1);
         });
         return Array.from(dailyViews.entries())
