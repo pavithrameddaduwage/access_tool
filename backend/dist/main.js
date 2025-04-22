@@ -8,14 +8,9 @@ const path_1 = require("path");
 dotenv.config({ path: (0, path_1.join)(__dirname, '../.env') });
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    app.enableCors({
-        origin: true,
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        allowedHeaders: 'Content-Type,Authorization',
-        exposedHeaders: 'Content-Range,X-Content-Range'
-    });
+    app.enableCors();
     app.useGlobalPipes(new common_1.ValidationPipe());
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 4006);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

@@ -48,7 +48,7 @@ exports.AppModule = AppModule = __decorate([
                 host: 'localhost',
                 port: 5432,
                 username: 'postgres',
-                password: '12345',
+                password: "M!SAppsTest",
                 database: 'user-access',
                 entities: [type_entity_1.Type, dashboard_entity_1.Dashboard,
                     dashboard_type_entity_1.DashboardType,
