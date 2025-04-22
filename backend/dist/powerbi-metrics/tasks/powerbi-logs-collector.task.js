@@ -31,20 +31,8 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
             this.logger.log('Starting Power BI logs collection for previous day');
             const now = new Date();
             const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999);
-            const startDate = new Date(endDate);
-            startDate.setUTCHours(0, 0, 0, 0);
-            this.logger.debug(`Date range: ${startDate.toISOString()} to ${endDate.toISOString()}`);
-            const existingCount = await this.powerbiLogRepository.count({
-                where: {
-                    creationTime: (0, typeorm_1.Between)(startDate, endDate),
-                    workload: 'PowerBI',
-                    operation: 'ViewReport',
-                },
-            });
-            if (existingCount > 0) {
-                this.logger.warn(`Already have ${existingCount} logs for this date range, skipping collection`);
-                return;
-            }
+            const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 0, 0, 0, 0);
+            this.logger.debug(`Date range: ${this.formatDate(startDate)} to ${this.formatDate(endDate)}`);
             const accessToken = await this.powerbiMetricsService.getAccessToken();
             await this.powerbiMetricsService.ensureSubscription(accessToken);
             const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
@@ -60,7 +48,7 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
             this.logger.debug(`Found ${newLogs.length} new logs to save`);
             if (newLogs.length > 0) {
                 await this.powerbiMetricsService.saveRawLogs(newLogs);
-                this.logger.log(`Successfully saved ${newLogs.length} new logs for ${startDate.toISOString().split('T')[0]}`);
+                this.logger.log(`Successfully saved ${newLogs.length} new logs for date ${this.formatDate(startDate)}`);
             }
             else {
                 this.logger.log('No new logs to save');
@@ -81,10 +69,13 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
         const existingIdSet = new Set(existingIds.map(l => l.id));
         return logs.filter(log => !existingIdSet.has(log.Id));
     }
+    formatDate(date) {
+        return date.toISOString().replace('T', ' ').substring(0, 19) + ' EDT';
+    }
 };
 exports.PowerBILogsCollectorTask = PowerBILogsCollectorTask;
 __decorate([
-    (0, schedule_1.Cron)('0 00 01 * * *'),
+    (0, schedule_1.Cron)('0 50 19 * * *'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

@@ -338,43 +338,7 @@ export class PowerBIMetricsService {
   }
 
 
-  // async getPowerBIMetrics(startDate: Date, endDate: Date): Promise<PowerBIMetrics> {
-  //   // First try to get from database (historical data)
-  //   const dbLogs = await this.getLogsFromDatabase(startDate, endDate);
-    
-  //   if (dbLogs.length > 0) {
-  //     return this.processLogEntries(dbLogs);
-  //   }
-    
-  //   // Fallback to API if no historical data available
-  //   try {
-  //     const accessToken = await this.getAccessToken();
-  //     await this.ensureSubscription(accessToken);
-  //     const contentUris = await this.getContentUris(accessToken, startDate, endDate);
-      
-  //     const batchSize = 3;
-  //     const allLogEntries: PowerBILogEntry[] = [];
-      
-  //     for (let i = 0; i < contentUris.length; i += batchSize) {
-  //       const batch = contentUris.slice(i, i + batchSize);
-  //       const batchResults = await Promise.all(
-  //         batch.map(uri => 
-  //           this.getLogEntries(uri, accessToken)
-  //             .catch(e => {
-  //               console.warn(`Failed to process ${uri}`, e.message);
-  //               return [];
-  //             })
-  //         )
-  //       );
-  //       allLogEntries.push(...batchResults.flat());
-  //     }
 
-  //     return this.processLogEntries(allLogEntries.filter(Boolean));
-  //   } catch (error) {
-  //     console.error('Critical error:', error);
-  //     return this.emptyMetricsResponse();
-  //   }
-  // }
   async getPowerBIMetrics(startDate: Date, endDate: Date): Promise<PowerBIMetrics> {
     // First get all relevant logs
     const logs = await this.getLogsFromDatabase(startDate, endDate);
@@ -476,45 +440,7 @@ export class PowerBIMetricsService {
       }
     };
   }
-  // async saveRawLogs(logs: PowerBILogEntry[]): Promise<void> {
-  //   const entities = logs.map(log => this.powerbiLogRepository.create({
-  //     id: log.Id,
-  //     recordType: log.RecordType,
-  //     creationTime: new Date(log.CreationTime),
-  //     operation: log.Operation,
-  //     organizationId: log.OrganizationId,
-  //     userType: log.UserType,
-  //     userKey: log.UserKey,
-  //     workload: log.Workload,
-  //     userId: log.UserId,
-  //     clientIP: log.ClientIP,
-  //     userAgent: log.UserAgent,
-  //     activity: log.Activity,
-  //     itemName: log.ItemName,
-  //     workSpaceName: log.WorkSpaceName,
-  //     datasetName: log.DatasetName,
-  //     reportName: log.ReportName,
-  //     capacityId: log.CapacityId,
-  //     capacityName: log.CapacityName,
-  //     workspaceId: log.WorkspaceId,
-  //     objectId: log.ObjectId,
-  //     datasetId: log.DatasetId,
-  //     reportId: log.ReportId,
-  //     artifactId: log.ArtifactId,
-  //     artifactName: log.ArtifactName,
-  //     isSuccess: log.IsSuccess,
-  //     reportType: log.ReportType,
-  //     requestId: log.RequestId,
-  //     activityId: log.ActivityId,
-  //     distributionMethod: log.DistributionMethod,
-  //     consumptionMethod: log.ConsumptionMethod,
-  //     artifactKind: log.ArtifactKind,
-  //     refreshEnforcementPolicy: log.RefreshEnforcementPolicy,
-  //     billingType: log.BillingType,
-  //   }));
-  
-  //   await this.powerbiLogRepository.save(entities);
-  // }
+
   async saveRawLogs(logs: PowerBILogEntry[]): Promise<void> {
     const entities = logs.map(log => {
       const cleanedWorkspaceName = log.WorkSpaceName?.startsWith('PersonalWorkspace')
@@ -778,28 +704,6 @@ public async collectDailyLogs(): Promise<void> {
   }
 }
 
-// async getUniqueUserCount(startDate: Date, endDate: Date): Promise<number> {
-//   const result = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select('COUNT(DISTINCT log.userId)', 'count')
-//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .getRawOne();
-
-//   return parseInt(result?.count || 0);
-// }
-
-// async getUniqueReportCount(startDate: Date, endDate: Date): Promise<number> {
-//   const result = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select('COUNT(DISTINCT log.reportId)', 'count')
-//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .andWhere('log.reportId IS NOT NULL')
-//     .getRawOne();
-
-//   return parseInt(result?.count || 0);
-// }
 
 private async filterExistingLogs(logs: PowerBILogEntry[]): Promise<PowerBILogEntry[]> {
   const existingIds = await this.powerbiLogRepository.find({
@@ -814,238 +718,7 @@ private async filterExistingLogs(logs: PowerBILogEntry[]): Promise<PowerBILogEnt
 }
 
 
-// async getViewCountsByDate(startDate: Date, endDate: Date): Promise<{date: string, count: number}[]> {
-//   const results = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select("DATE(log.creationTime)", "date")
-//     .addSelect("COUNT(*)", "count")
-//     .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .groupBy("DATE(log.creationTime)")
-//     .orderBy("DATE(log.creationTime)", "ASC")
-//     .getRawMany();
 
-//   return results.map(r => ({
-//     date: r.date,
-//     count: parseInt(r.count)
-//   }));
-// }
-// async getViewCountsByDate(startDate: Date, endDate: Date): Promise<{date: string, count: number}[]> {
-//   // 1. Get raw UTC data from DB
-//   const logs = await this.powerbiLogRepository.find({
-//     where: {
-//       creationTime: Between(startDate, endDate),
-//       operation: 'ViewReport'
-//     },
-//     select: ['creationTime']
-//   });
-
-//   // 2. Convert to Colombo time (UTC+5:30) and count
-//   const counts = new Map<string, number>();
-  
-//   logs.forEach(log => {
-//     // Convert UTC to Colombo time (add 5h 30m)
-//     const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-//     const dateKey = colomboTime.toISOString().split('T')[0]; // YYYY-MM-DD
-    
-//     counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
-//   });
-
-//   // 3. Return sorted results
-//   return Array.from(counts.entries())
-//     .map(([date, count]) => ({ date, count }))
-//     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-// }
-
-// async getTopReports(startDate: Date, endDate: Date, limit: number = 10): Promise<{reportId: string, reportName: string, count: number}[]> {
-//   const results = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select("log.reportId", "reportId")
-//     .addSelect("log.reportName", "reportName")
-//     .addSelect("COUNT(*)", "count")
-//     .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .andWhere("log.reportId IS NOT NULL")
-//     .groupBy("log.reportId, log.reportName")
-//     .orderBy("COUNT(*)", "DESC")
-//     .limit(limit)
-//     .getRawMany();
-
-//   return results.map(r => ({
-//     reportId: r.reportId,
-//     reportName: r.reportName || 'Unknown Report',
-//     count: parseInt(r.count)
-//   }));
-// }
-
-// async getTopUsers(startDate: Date, endDate: Date, limit: number = 10): Promise<{userId: string, count: number}[]> {
-//   const results = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select("log.userId", "userId")
-//     .addSelect("COUNT(*)", "count")
-//     .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .groupBy("log.userId")
-//     .orderBy("COUNT(*)", "DESC")
-//     .limit(limit)
-//     .getRawMany();
-
-//   return results.map(r => ({
-//     userId: r.userId,
-//     count: parseInt(r.count)
-//   }));
-// }
-
-// async getUserActivityTrend(startDate: Date, endDate: Date): Promise<{date: string, count: number}[]> {
-//   // 1. Get raw data from DB (all view events)
-//   const logs = await this.powerbiLogRepository.find({
-//     where: {
-//       creationTime: Between(startDate, endDate),
-//       operation: 'ViewReport'
-//     },
-//     select: ['creationTime', 'userId']
-//   });
-
-//   // 2. Convert to Colombo time and count UNIQUE users per day
-//   const dailyActiveUsers = new Map<string, Set<string>>(); // Date -> Set of user IDs
-
-//   logs.forEach(log => {
-//     // Convert to Colombo time (UTC+5:30)
-//     const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-//     const dateKey = colomboTime.toISOString().split('T')[0]; // YYYY-MM-DD
-
-//     // Initialize the Set if it doesn't exist
-//     if (!dailyActiveUsers.has(dateKey)) {
-//       dailyActiveUsers.set(dateKey, new Set());
-//     }
-
-//     // Add user to the Set (automatically handles uniqueness)
-//     dailyActiveUsers.get(dateKey)?.add(log.userId);
-//   });
-
-//   // 3. Convert to sorted array of {date, count}
-//   return Array.from(dailyActiveUsers.entries())
-//     .map(([date, users]) => ({
-//       date,
-//       count: users.size // Number of unique users
-//     }))
-//     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-// }
-
-// async getWorkspaceForReport(reportId: string): Promise<{workspaceId: string, workspaceName: string} | null> {
-//   const result = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select('log.workspaceId', 'workspaceId')
-//     .addSelect('log.workSpaceName', 'workspaceName')
-//     .where('log.reportId = :reportId', { reportId })
-//     .andWhere('log.workspaceId IS NOT NULL')
-//     .limit(1)
-//     .getRawOne();
-
-//   return result ? {
-//     workspaceId: result.workspaceId,
-//     workspaceName: result.workspaceName || 'Unknown Workspace'
-//   } : null;
-// }
-
-// async getUserMetrics(userId: string, startDate: Date, endDate: Date): Promise<{
-//   totalViews: number;
-//   reports: {reportId: string, reportName: string}[];
-//   workspaces: {workspaceId: string, workspaceName: string}[];
-//   activityByDate: {date: string, count: number}[];
-// }> {
-//   try {
-//     const [totalViews, reports, workspaces, activityByDate] = await Promise.all([
-//       this.powerbiLogRepository.count({
-//         where: {
-//           userId,
-//           creationTime: Between(startDate, endDate),
-//           operation: 'ViewReport'
-//         }
-//       }),
-//       this.getUserReports(userId, startDate, endDate),
-//       this.getUserWorkspaces(userId, startDate, endDate),
-//       this.getUserActivityByDate(userId, startDate, endDate)
-//     ]);
-
-//     return {
-//       totalViews: totalViews || 0,
-//       reports: reports || [],
-//       workspaces: workspaces || [],
-//       activityByDate: activityByDate || []
-//     };
-//   } catch (error) {
-//     console.error('Error getting user metrics:', error);
-//     return {
-//       totalViews: 0,
-//       reports: [],
-//       workspaces: [],
-//       activityByDate: []
-//     };
-//   }
-// }
-
-// private async getUserReports(userId: string, startDate: Date, endDate: Date) {
-//   return this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select('log.reportId', 'reportId')
-//     .addSelect('log.reportName', 'reportName')
-//     .distinct(true)
-//     .where('log.userId = :userId', { userId })
-//     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .andWhere('log.reportId IS NOT NULL')
-//     .getRawMany()
-//     .catch(() => []);
-// }
-
-// private async getUserWorkspaces(userId: string, startDate: Date, endDate: Date) {
-//   return this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select('log.workspaceId', 'workspaceId')
-//     .addSelect('log.workSpaceName', 'workspaceName')
-//     .distinct(true)
-//     .where('log.userId = :userId', { userId })
-//     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .andWhere('log.workspaceId IS NOT NULL')
-//     .getRawMany()
-//     .catch(() => []);
-// }
-
-// private async getUserActivityByDate(userId: string, startDate: Date, endDate: Date) {
-//   return this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select("DATE(log.creationTime)", "date")
-//     .addSelect("COUNT(*)", "count")
-//     .where('log.userId = :userId', { userId })
-//     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .groupBy("DATE(log.creationTime)")
-//     .orderBy("DATE(log.creationTime)", "ASC")
-//     .getRawMany()
-//     .catch(() => []);
-// }
-// async getWorkspaceViewsDistribution(userId: string, startDate: Date, endDate: Date): Promise<{workspaceId: string, workspaceName: string, count: number}[]> {
-//   const results = await this.powerbiLogRepository
-//     .createQueryBuilder('log')
-//     .select('log.workspaceId', 'workspaceId')
-//     .addSelect('log.workSpaceName', 'workspaceName')
-//     .addSelect('COUNT(*)', 'count')
-//     .where('log.userId = :userId', { userId })
-//     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-//     .andWhere("log.operation = 'ViewReport'")
-//     .andWhere('log.workspaceId IS NOT NULL')
-//     .groupBy('log.workspaceId, log.workSpaceName')
-//     .orderBy('COUNT(*)', 'DESC')
-//     .getRawMany();
-
-//   return results.map(r => ({
-//     workspaceId: r.workspaceId,
-//     workspaceName: r.workspaceName || 'Unknown Workspace',
-//     count: parseInt(r.count)
-//   }));
-// }
 
 async getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{id: string, name: string}[]> {
   const query = this.powerbiLogRepository
@@ -1074,7 +747,6 @@ async getViewCountsByDate(
   workspaceId?: string, 
   reportId?: string
 ): Promise<{date: string, count: number}[]> {
-  // 1. Get raw UTC data from DB with filters
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
@@ -1091,23 +763,17 @@ async getViewCountsByDate(
 
   const logs = await query.getMany();
 
-  // 2. Convert to Colombo time (UTC+5:30) and count
   const counts = new Map<string, number>();
   
   logs.forEach(log => {
-    // Convert UTC to Colombo time (add 5h 30m)
-    const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-    const dateKey = colomboTime.toISOString().split('T')[0]; // YYYY-MM-DD
-    
+    const dateKey = log.creationTime.toISOString().split('T')[0]; 
     counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
   });
 
-  // 3. Return sorted results
   return Array.from(counts.entries())
     .map(([date, count]) => ({ date, count }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
-
 
 async getUserActivityTrend(
   startDate: Date, 
@@ -1115,7 +781,6 @@ async getUserActivityTrend(
   workspaceId?: string, 
   reportId?: string
 ): Promise<{date: string, count: number}[]> {
-  // 1. Get raw data from DB (all view events) with filters
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
@@ -1132,31 +797,26 @@ async getUserActivityTrend(
 
   const logs = await query.getMany();
 
-  // 2. Convert to Colombo time and count UNIQUE users per day
-  const dailyActiveUsers = new Map<string, Set<string>>(); // Date -> Set of user IDs
+  const dailyActiveUsers = new Map<string, Set<string>>();
 
   logs.forEach(log => {
-    // Convert to Colombo time (UTC+5:30)
-    const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-    const dateKey = colomboTime.toISOString().split('T')[0]; // YYYY-MM-DD
+    const dateKey = log.creationTime.toISOString().split('T')[0]; 
 
-    // Initialize the Set if it doesn't exist
     if (!dailyActiveUsers.has(dateKey)) {
       dailyActiveUsers.set(dateKey, new Set());
     }
 
-    // Add user to the Set (automatically handles uniqueness)
     dailyActiveUsers.get(dateKey)?.add(log.userId);
   });
 
-  // 3. Convert to sorted array of {date, count}
   return Array.from(dailyActiveUsers.entries())
     .map(([date, users]) => ({
       date,
-      count: users.size // Number of unique users
+      count: users.size 
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
+
 async getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{id: string, name: string, workspaceId: string}[]> {
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
@@ -1475,6 +1135,50 @@ private async getUserWorkspaces(
   return query.getRawMany().catch(() => []);
 }
 
+// async getUserActivityByDate(
+//   userId: string, 
+//   startDate: Date, 
+//   endDate: Date,
+//   workspaceId?: string,
+//   reportId?: string
+// ): Promise<{date: string, count: number}[]> {
+//   // 1. Get raw data from DB with filters
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .where('log.userId = :userId', { userId })
+//     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .select(['log.creationTime']);
+
+//   if (workspaceId && workspaceId !== 'all') {
+//     query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+//   }
+
+//   if (reportId) {
+//     query.andWhere('log.reportId = :reportId', { reportId });
+//   }
+
+//   const logs = await query.getMany();
+
+//   // 2. Convert to Colombo time and count views per day
+//   const dailyViews = new Map<string, number>(); // Date -> View count
+
+//   logs.forEach(log => {
+//     // Convert to Colombo time (UTC+5:30)
+//     const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
+//     const dateKey = colomboTime.toISOString().split('T')[0]; // YYYY-MM-DD
+
+//     dailyViews.set(dateKey, (dailyViews.get(dateKey) || 0) + 1);
+//   });
+
+//   // 3. Convert to sorted array of {date, count}
+//   return Array.from(dailyViews.entries())
+//     .map(([date, count]) => ({
+//       date,
+//       count
+//     }))
+//     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+// }
 async getUserActivityByDate(
   userId: string, 
   startDate: Date, 
@@ -1500,14 +1204,12 @@ async getUserActivityByDate(
 
   const logs = await query.getMany();
 
-  // 2. Convert to Colombo time and count views per day
+  // 2. Count views per day in EDT timezone (server's local timezone)
   const dailyViews = new Map<string, number>(); // Date -> View count
 
   logs.forEach(log => {
-    // Convert to Colombo time (UTC+5:30)
-    const colomboTime = new Date(log.creationTime.getTime() + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
-    const dateKey = colomboTime.toISOString().split('T')[0]; // YYYY-MM-DD
-
+    // Date objects from DB are already converted to local timezone (EDT)
+    const dateKey = log.creationTime.toISOString().split('T')[0]; // YYYY-MM-DD
     dailyViews.set(dateKey, (dailyViews.get(dateKey) || 0) + 1);
   });
 
@@ -1519,7 +1221,6 @@ async getUserActivityByDate(
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
-
 async getWorkspaceViewsDistribution(
   userId: string, 
   startDate: Date, 

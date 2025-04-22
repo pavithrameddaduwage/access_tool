@@ -55,95 +55,23 @@ async collectRawData(
   const accessToken = await this.powerbiMetricsService.getAccessToken();
   await this.powerbiMetricsService.ensureSubscription(accessToken);
   
-  // Get raw logs
   const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
   const allLogs = await Promise.all(
     contentUris.map(uri => this.powerbiMetricsService.getLogEntries(uri, accessToken))
   );
   
-  // Filter and save
   const powerBILogs = allLogs.flat().filter(
     entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport'
   );
   
-  // Save to database
   await this.powerbiMetricsService.saveRawLogs(powerBILogs);
   
   return {
     message: `Saved ${powerBILogs.length} raw logs`,
-    logs: powerBILogs.slice(0, 5) // Return first 5 as sample
+    logs: powerBILogs.slice(0, 5) 
   };
 }
 
-
-
-// @Get('views-by-date')
-// async getViewsByDate(
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
-// ) {
-//   return this.powerbiMetricsService.getViewCountsByDate(startDate, endDate);
-// }
-
-// @Get('top-reports')
-// async getTopReports(
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date,
-//   @Query('limit', new DefaultValuePipe(10), new ParseIntPipe()) limit: number
-// ) {
-//   return this.powerbiMetricsService.getTopReports(startDate, endDate, limit);
-// }
-
-// @Get('top-users')
-// async getTopUsers(
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date,
-//   @Query('limit', new DefaultValuePipe(10), new ParseIntPipe()) limit: number
-// ) {
-//   return this.powerbiMetricsService.getTopUsers(startDate, endDate, limit);
-// }
-
-// @Get('user-activity-trend')
-// async getUserActivityTrend(
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
-// ) {
-//   return this.powerbiMetricsService.getUserActivityTrend(startDate, endDate);
-// }
-
-// @Get('unique-user-count')
-// async getUniqueUserCount(
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
-// ) {
-//   return this.powerbiMetricsService.getUniqueUserCount(startDate, endDate);
-// }
-
-// @Get('unique-report-count')
-// async getUniqueReportCount(
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
-// ) {
-//   return this.powerbiMetricsService.getUniqueReportCount(startDate, endDate);
-// }
-
-// @Get('user-metrics')
-// async getUserMetrics(
-//   @Query('userId') userId: string,
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
-// ) {
-//   return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate);
-// }
-
-// @Get('workspace-views-distribution')
-// async getWorkspaceViewsDistribution(
-//   @Query('userId') userId: string,
-//   @Query('startDate', ParseISO8601DatePipe) startDate: Date,
-//   @Query('endDate', ParseISO8601DatePipe) endDate: Date
-// ) {
-//   return this.powerbiMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate);
-// }
 
 
 @Get('unique-user-count')
@@ -241,6 +169,7 @@ async getTopReports(
   @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   @Query('workspaceId') workspaceId?: string
 ) {
+  
   return this.powerbiMetricsService.getTopReports(startDate, endDate, limit, workspaceId);
 }
 
