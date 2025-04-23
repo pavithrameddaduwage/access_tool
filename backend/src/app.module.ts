@@ -38,8 +38,8 @@ import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
       host: 'localhost', 
       port: 5432,
       username: 'postgres', 
-      password: '12345', 
-      //password:"M!SAppsTest",
+      // password: '12345', 
+      password:"M!SAppsTest",
  
       database: 'user-access',
       entities: [Type,  Dashboard,
@@ -49,7 +49,11 @@ import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
         Valuetype], 
       autoLoadEntities: true, 
       synchronize: true, 
-      logging: true, 
+      logging: false, 
+      extra: {
+        // Set timezone for all database connections
+        timezone: 'America/New_York'
+      }
     }, ),
     DepartmentModule,
     RolesModule,

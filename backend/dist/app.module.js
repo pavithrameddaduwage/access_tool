@@ -48,7 +48,7 @@ exports.AppModule = AppModule = __decorate([
                 host: 'localhost',
                 port: 5432,
                 username: 'postgres',
-                password: '12345',
+                password: "M!SAppsTest",
                 database: 'user-access',
                 entities: [type_entity_1.Type, dashboard_entity_1.Dashboard,
                     dashboard_type_entity_1.DashboardType,
@@ -56,7 +56,10 @@ exports.AppModule = AppModule = __decorate([
                     valuetype_entity_1.Valuetype],
                 autoLoadEntities: true,
                 synchronize: true,
-                logging: true,
+                logging: false,
+                extra: {
+                    timezone: 'America/New_York'
+                }
             }),
             department_module_1.DepartmentModule,
             roles_module_1.RolesModule,

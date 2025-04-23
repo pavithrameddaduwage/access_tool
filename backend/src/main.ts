@@ -8,6 +8,8 @@ import { join } from 'path';
 dotenv.config({ path: join(__dirname, '../.env') });
 
 async function bootstrap() {
+  process.env.TZ = 'America/New_York';
+
   const app = await NestFactory.create(AppModule);
 app.enableCors({
   origin: true,
@@ -15,7 +17,7 @@ app.enableCors({
   allowedHeaders: 'Content-Type,Authorization',
   exposedHeaders: 'Content-Range,X-Content-Range'
 });  app.useGlobalPipes(new ValidationPipe());
-  await app.listen(process.env.PORT ?? 3000); //change this to 3000 later
-  //await app.listen(process.env.PORT ?? 4006)
+  // await app.listen(process.env.PORT ?? 3000); //change this to 3000 later
+ await app.listen(process.env.PORT ?? 4006)
 }
 bootstrap();

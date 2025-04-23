@@ -866,6 +866,8 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
         this.powerBIMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId).toPromise(),
         this.powerBIMetricsService.getUniqueReportCount(startDate, endDate, workspaceId).toPromise()
       ]);
+
+      console.log("vies check", viewsByDate)
   
       // Calculate total views
       const totalViews = (viewsByDate || []).reduce((sum, day) => sum + (day?.count || 0), 0);

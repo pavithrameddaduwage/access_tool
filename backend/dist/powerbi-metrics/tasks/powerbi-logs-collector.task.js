@@ -32,9 +32,11 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
             const now = new Date();
             const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999);
             const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 0, 0, 0, 0);
-            this.logger.debug(`Date range: ${this.formatDate(startDate)} to ${this.formatDate(endDate)}`);
+            console.log("date formt", startDate, endDate);
             const accessToken = await this.powerbiMetricsService.getAccessToken();
+            console.log("access token retrieved: ", accessToken);
             await this.powerbiMetricsService.ensureSubscription(accessToken);
+            console.log("Subscription successful");
             const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
             this.logger.debug(`Found ${contentUris.length} content URIs`);
             const allLogs = await Promise.all(contentUris.map(uri => this.powerbiMetricsService.getLogEntries(uri, accessToken)
@@ -75,7 +77,7 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
 };
 exports.PowerBILogsCollectorTask = PowerBILogsCollectorTask;
 __decorate([
-    (0, schedule_1.Cron)('0 50 19 * * *'),
+    (0, schedule_1.Cron)('0 23 12 * * *'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

@@ -5,6 +5,7 @@ import { PowerBILogEntry, PowerBIMetricsService } from '../powerbi-metrics.servi
 import { Between, In, Repository } from 'typeorm';
 import { PowerBILog } from '../entities/powerbi-log.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class PowerBILogsCollectorTask {
@@ -16,20 +17,19 @@ export class PowerBILogsCollectorTask {
     private readonly powerbiLogRepository: Repository<PowerBILog>,
   ) {}
 
-  @Cron('0 50 19 * * *')  
+  @Cron('0 23 12 * * *')  
   async collectPreviousDayLogs() {
     try {
       this.logger.log('Starting Power BI logs collection for previous day');
-      
       const now = new Date();
-      
+
       const endDate = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate() - 1, 
         23, 59, 59, 999
       );
-      
+
       const startDate = new Date(
         now.getFullYear(),
         now.getMonth(),
@@ -37,11 +37,12 @@ export class PowerBILogsCollectorTask {
         0, 0, 0, 0
       );
 
-      this.logger.debug(`Date range: ${this.formatDate(startDate)} to ${this.formatDate(endDate)}`);
-
+      console.log("date formt", startDate, endDate)
 
       const accessToken = await this.powerbiMetricsService.getAccessToken();
+      console.log("access token retrieved: ", accessToken);
       await this.powerbiMetricsService.ensureSubscription(accessToken);
+      console.log("Subscription successful")
       const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
       
       this.logger.debug(`Found ${contentUris.length} content URIs`);
@@ -92,4 +93,5 @@ export class PowerBILogsCollectorTask {
   private formatDate(date: Date): string {
     return date.toISOString().replace('T', ' ').substring(0, 19) + ' EDT';
   }
+
 }

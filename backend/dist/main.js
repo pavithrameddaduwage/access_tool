@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 const path_1 = require("path");
 dotenv.config({ path: (0, path_1.join)(__dirname, '../.env') });
 async function bootstrap() {
+    process.env.TZ = 'America/New_York';
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
         origin: true,
@@ -15,7 +16,7 @@ async function bootstrap() {
         exposedHeaders: 'Content-Range,X-Content-Range'
     });
     app.useGlobalPipes(new common_1.ValidationPipe());
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 4006);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

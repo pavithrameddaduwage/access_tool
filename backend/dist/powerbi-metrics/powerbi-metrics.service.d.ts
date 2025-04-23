@@ -104,6 +104,7 @@ export declare class PowerBIMetricsService {
         reportName: string;
         count: number;
     }[]>;
+    getAllLogs(): Promise<PowerBILog[]>;
     private getLogsFromDatabase;
     private fetchAndProcessLogs;
     private emptyMetricsResponse;

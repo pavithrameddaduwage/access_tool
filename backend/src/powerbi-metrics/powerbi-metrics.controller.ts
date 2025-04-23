@@ -114,6 +114,11 @@ async getUserMetrics(
   return this.powerbiMetricsService.getUserMetrics(userId, startDate, endDate, workspaceId, reportId);
 }
 
+@Get('get-log')
+async getLog(){
+  return this.powerbiMetricsService.getAllLogs();
+}
+
 @Get('user-consumption-methods')
 async getUserConsumptionMethods(
   @Query('userId') userId: string,

@@ -149,11 +149,11 @@ export class PowerBIMetricsService {
       if (error.response?.data?.error?.code === 'AF20024') return;
       
       // Log other errors but don't throw
-      console.warn('Subscription check completed with warnings:', {
-        status: error.response?.status,
-        code: error.response?.data?.error?.code,
-        message: error.response?.data?.error?.message || error.message
-      });
+      // console.warn('Subscription check completed with warnings:', {
+      //   status: error.response?.status,
+      //   code: error.response?.data?.error?.code,
+      //   message: error.response?.data?.error?.message || error.message
+      // });
     }
   }
 
@@ -450,7 +450,7 @@ export class PowerBIMetricsService {
       return this.powerbiLogRepository.create({
         id: log.Id,
         recordType: log.RecordType,
-        creationTime: new Date(log.CreationTime),
+        creationTime: new Date(log.CreationTime + 'Z'), 
         operation: log.Operation,
         organizationId: log.OrganizationId,
         userType: log.UserType,
@@ -520,6 +520,9 @@ export class PowerBIMetricsService {
     }));
   }
 
+  getAllLogs() {
+    return this.powerbiLogRepository.find();
+  }
   private async getLogsFromDatabase(startDate: Date, endDate: Date): Promise<PowerBILogEntry[]> {
     const logs = await this.powerbiLogRepository.find({
       where: {
@@ -595,7 +598,7 @@ export class PowerBIMetricsService {
           // Include other relevant fields
         }));
     } catch (error) {
-      console.error(`Failed to process ${contentUri}:`, error.message);
+      // console.error(`Failed to process ${contentUri}:`, error.message);
       return [];
     }
   }
@@ -747,6 +750,7 @@ async getViewCountsByDate(
   workspaceId?: string, 
   reportId?: string
 ): Promise<{date: string, count: number}[]> {
+  console.log("date time",startDate, endDate)
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
@@ -765,7 +769,10 @@ async getViewCountsByDate(
 
   const counts = new Map<string, number>();
   
+  console.log("logs",logs)
+
   logs.forEach(log => {
+    console.log("log creation time",log.creationTime)
     const dateKey = log.creationTime.toISOString().split('T')[0]; 
     counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
   });
@@ -913,21 +920,11 @@ async getUserConsumptionMethods(
     select: ['consumptionMethod', 'operation'],
   });
 
-  console.log('All logs count:', allLogs.length);
-  console.log('All operations:', [...new Set(allLogs.map(l => l.operation))]);
-  
+
   // Now filter for ViewReport operation
   const logs = allLogs.filter(log => log.operation === 'ViewReport');
   
-  console.log('ViewReport logs count:', logs.length);
-  console.log('Raw consumption methods from DB:', logs.map(l => ({
-    value: l.consumptionMethod,
-    type: typeof l.consumptionMethod,
-    isNull: l.consumptionMethod === null,
-    isUndefined: l.consumptionMethod === undefined,
-    isEmptyString: l.consumptionMethod === '',
-    isNullString: l.consumptionMethod === 'NULL',
-  })));
+
   
   // Let's examine each null-like value differently
   const strictNulls = logs.filter(log => log.consumptionMethod === null);
@@ -936,11 +933,11 @@ async getUserConsumptionMethods(
   const blankStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod.trim() === '' && log.consumptionMethod !== '');
   const nullStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod === 'NULL');
   
-  console.log('Strict null values:', strictNulls.length);
-  console.log('Undefined values:', undefinedValues.length);
-  console.log('Empty strings:', emptyStrings.length);
-  console.log('Blank strings (whitespace):', blankStrings.length);
-  console.log('NULL string values:', nullStrings.length);
+  // console.log('Strict null values:', strictNulls.length);
+  // console.log('Undefined values:', undefinedValues.length);
+  // console.log('Empty strings:', emptyStrings.length);
+  // console.log('Blank strings (whitespace):', blankStrings.length);
+  // console.log('NULL string values:', nullStrings.length);
 
   // Maybe the null is stored differently in the database
   // Let's check for any unusual values
@@ -952,7 +949,7 @@ async getUserConsumptionMethods(
            cm !== 'NULL' && 
            !['Microsoft Teams', 'Power BI Web', 'Power BI Mobile', 'Export Report', 'PowerPoint add-in', 'Embedding for your organization'].includes(cm);
   });
-  console.log('Unusual values:', unusualValues.map(l => l.consumptionMethod));
+  // console.log('Unusual values:', unusualValues.map(l => l.consumptionMethod));
 
   const methodCounts = new Map<string, number>();
   logs.forEach(log => {
@@ -963,22 +960,22 @@ async getUserConsumptionMethods(
         log.consumptionMethod === 'null' || // Try lowercase null
         (typeof log.consumptionMethod === 'string' && log.consumptionMethod.trim() === '') ||
         (typeof log.consumptionMethod === 'object')) { // Catch any other strange object
-      console.log('Found null-like value:', log.consumptionMethod);
+      // console.log('Found null-like value:', log.consumptionMethod);
       methodCounts.set('Microsoft Teams', (methodCounts.get('Microsoft Teams') || 0) + 1);
     } else {
       methodCounts.set(log.consumptionMethod.trim(), (methodCounts.get(log.consumptionMethod.trim()) || 0) + 1);
     }
   });
 
-  console.log('Method counts after processing:', Array.from(methodCounts.entries()));
-  console.log('Microsoft Teams count:', methodCounts.get('Microsoft Teams') || 0);
+  // console.log('Method counts after processing:', Array.from(methodCounts.entries()));
+  // console.log('Microsoft Teams count:', methodCounts.get('Microsoft Teams') || 0);
 
   // Force add Microsoft Teams if it's missing and we know there are null values
   if ((strictNulls.length > 0 || undefinedValues.length > 0 || emptyStrings.length > 0 || 
        blankStrings.length > 0 || nullStrings.length > 0) && !methodCounts.has('Microsoft Teams')) {
     const nullLikeCount = strictNulls.length + undefinedValues.length + emptyStrings.length + 
                           blankStrings.length + nullStrings.length;
-    console.log(`Forcing Microsoft Teams with ${nullLikeCount} nulls`);
+    // console.log(`Forcing Microsoft Teams with ${nullLikeCount} nulls`);
     methodCounts.set('Microsoft Teams', nullLikeCount);
   }
 
@@ -1050,7 +1047,7 @@ async getUserMetrics(
       activityByDate: activityByDate || []
     };
   } catch (error) {
-    console.error('Error getting user metrics:', error);
+    // console.error('Error getting user metrics:', error);
     return {
       totalViews: 0,
       reports: [],

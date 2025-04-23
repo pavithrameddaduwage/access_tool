@@ -61,11 +61,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         catch (error) {
             if (error.response?.data?.error?.code === 'AF20024')
                 return;
-            console.warn('Subscription check completed with warnings:', {
-                status: error.response?.status,
-                code: error.response?.data?.error?.code,
-                message: error.response?.data?.error?.message || error.message
-            });
         }
     }
     async getLogEntries(contentUri, accessToken) {
@@ -269,7 +264,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             return this.powerbiLogRepository.create({
                 id: log.Id,
                 recordType: log.RecordType,
-                creationTime: new Date(log.CreationTime),
+                creationTime: new Date(log.CreationTime + 'Z'),
                 operation: log.Operation,
                 organizationId: log.OrganizationId,
                 userType: log.UserType,
@@ -326,6 +321,9 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             reportName: r.reportName || 'Unknown Report',
             count: parseInt(r.count)
         }));
+    }
+    getAllLogs() {
+        return this.powerbiLogRepository.find();
     }
     async getLogsFromDatabase(startDate, endDate) {
         const logs = await this.powerbiLogRepository.find({
@@ -394,7 +392,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             }));
         }
         catch (error) {
-            console.error(`Failed to process ${contentUri}:`, error.message);
             return [];
         }
     }
@@ -499,6 +496,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }));
     }
     async getViewCountsByDate(startDate, endDate, workspaceId, reportId) {
+        console.log("date time", startDate, endDate);
         const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
@@ -512,7 +510,9 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         const logs = await query.getMany();
         const counts = new Map();
+        console.log("logs", logs);
         logs.forEach(log => {
+            console.log("log creation time", log.creationTime);
             const dateKey = log.creationTime.toISOString().split('T')[0];
             counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
         });
@@ -622,28 +622,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             },
             select: ['consumptionMethod', 'operation'],
         });
-        console.log('All logs count:', allLogs.length);
-        console.log('All operations:', [...new Set(allLogs.map(l => l.operation))]);
         const logs = allLogs.filter(log => log.operation === 'ViewReport');
-        console.log('ViewReport logs count:', logs.length);
-        console.log('Raw consumption methods from DB:', logs.map(l => ({
-            value: l.consumptionMethod,
-            type: typeof l.consumptionMethod,
-            isNull: l.consumptionMethod === null,
-            isUndefined: l.consumptionMethod === undefined,
-            isEmptyString: l.consumptionMethod === '',
-            isNullString: l.consumptionMethod === 'NULL',
-        })));
         const strictNulls = logs.filter(log => log.consumptionMethod === null);
         const undefinedValues = logs.filter(log => log.consumptionMethod === undefined);
         const emptyStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod === '');
         const blankStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod.trim() === '' && log.consumptionMethod !== '');
         const nullStrings = logs.filter(log => typeof log.consumptionMethod === 'string' && log.consumptionMethod === 'NULL');
-        console.log('Strict null values:', strictNulls.length);
-        console.log('Undefined values:', undefinedValues.length);
-        console.log('Empty strings:', emptyStrings.length);
-        console.log('Blank strings (whitespace):', blankStrings.length);
-        console.log('NULL string values:', nullStrings.length);
         const unusualValues = logs.filter(log => {
             const cm = log.consumptionMethod;
             return cm !== null &&
@@ -652,7 +636,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 cm !== 'NULL' &&
                 !['Microsoft Teams', 'Power BI Web', 'Power BI Mobile', 'Export Report', 'PowerPoint add-in', 'Embedding for your organization'].includes(cm);
         });
-        console.log('Unusual values:', unusualValues.map(l => l.consumptionMethod));
         const methodCounts = new Map();
         logs.forEach(log => {
             if (log.consumptionMethod === null ||
@@ -661,20 +644,16 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 log.consumptionMethod === 'null' ||
                 (typeof log.consumptionMethod === 'string' && log.consumptionMethod.trim() === '') ||
                 (typeof log.consumptionMethod === 'object')) {
-                console.log('Found null-like value:', log.consumptionMethod);
                 methodCounts.set('Microsoft Teams', (methodCounts.get('Microsoft Teams') || 0) + 1);
             }
             else {
                 methodCounts.set(log.consumptionMethod.trim(), (methodCounts.get(log.consumptionMethod.trim()) || 0) + 1);
             }
         });
-        console.log('Method counts after processing:', Array.from(methodCounts.entries()));
-        console.log('Microsoft Teams count:', methodCounts.get('Microsoft Teams') || 0);
         if ((strictNulls.length > 0 || undefinedValues.length > 0 || emptyStrings.length > 0 ||
             blankStrings.length > 0 || nullStrings.length > 0) && !methodCounts.has('Microsoft Teams')) {
             const nullLikeCount = strictNulls.length + undefinedValues.length + emptyStrings.length +
                 blankStrings.length + nullStrings.length;
-            console.log(`Forcing Microsoft Teams with ${nullLikeCount} nulls`);
             methodCounts.set('Microsoft Teams', nullLikeCount);
         }
         return Array.from(methodCounts.entries()).map(([method, count]) => ({
@@ -726,7 +705,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             };
         }
         catch (error) {
-            console.error('Error getting user metrics:', error);
             return {
                 totalViews: 0,
                 reports: [],
