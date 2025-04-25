@@ -18,10 +18,13 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_dashboard_entity_1 = require("./entities/user-dashboard.entity");
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
+const dashboard_workspace_entity_1 = require("../dashboard/entities/dashboard-workspace.entity");
+const workspace_entity_1 = require("../workspace/entities/workspace.entity");
 let UserDashboardService = class UserDashboardService {
-    constructor(userDashboardRepository, dashboardRepository) {
+    constructor(userDashboardRepository, dashboardRepository, dashboardWorkspaceRepository) {
         this.userDashboardRepository = userDashboardRepository;
         this.dashboardRepository = dashboardRepository;
+        this.dashboardWorkspaceRepository = dashboardWorkspaceRepository;
     }
     async findAll() {
         const results = await this.userDashboardRepository.find({
@@ -112,13 +115,52 @@ let UserDashboardService = class UserDashboardService {
             .getRawMany();
         return activeUsers;
     }
+    async getDatabaseUsersByWorkspaceAndReportID(workspaceName, reportName) {
+        console.log('workspaceName:', workspaceName, 'reportName:', reportName);
+        const activeUsers = await this.userDashboardRepository
+            .createQueryBuilder('user')
+            .select(['MIN(user.id) as id', 'user.email'])
+            .innerJoin(dashboard_entity_1.Dashboard, 'd', 'd.id = user.dashboardId')
+            .innerJoin('d.dashboardWorkspaces', 'dw')
+            .innerJoin('dw.workspace', 'w')
+            .where('user.isActive = true')
+            .andWhere('user.email IS NOT NULL');
+        if (workspaceName && workspaceName !== '') {
+            activeUsers.andWhere('w.workspace = :workspaceName', { workspaceName: workspaceName });
+        }
+        if (reportName && reportName !== '') {
+            activeUsers.andWhere('d.dashboard = :reportName', { reportName: reportName });
+        }
+        activeUsers.groupBy('user.email');
+        return activeUsers.getRawMany();
+    }
+    async getPermittedUsers(workspaceName, reportName) {
+        const query = this.userDashboardRepository
+            .createQueryBuilder('ud')
+            .innerJoin(dashboard_entity_1.Dashboard, 'd', 'd.id = ud.dashboardId')
+            .innerJoin(dashboard_workspace_entity_1.DashboardWorkspace, 'dw', 'dw.dashboardId = d.id')
+            .innerJoin(workspace_entity_1.Workspace, 'w', 'w.id = dw.workspaceId')
+            .where('ud.isActive = true');
+        if (workspaceName) {
+            query.andWhere('w.workspace = :workspaceName', { workspaceName });
+        }
+        if (reportName) {
+            query.andWhere('d.dashboard = :reportName', { reportName });
+        }
+        const results = await query
+            .select('DISTINCT ud.email', 'email')
+            .getRawMany();
+        return results.map(r => r.email);
+    }
 };
 exports.UserDashboardService = UserDashboardService;
 exports.UserDashboardService = UserDashboardService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_dashboard_entity_1.UserDashboard)),
     __param(1, (0, typeorm_1.InjectRepository)(dashboard_entity_1.Dashboard)),
+    __param(2, (0, typeorm_1.InjectRepository)(dashboard_workspace_entity_1.DashboardWorkspace)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], UserDashboardService);
 //# sourceMappingURL=user-dashboard.service.js.map

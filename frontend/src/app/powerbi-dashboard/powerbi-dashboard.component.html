@@ -358,15 +358,109 @@
 <div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100">
   <h3 class="text-lg font-semibold mb-4 text-gray-800">Activity Timeline</h3>
   <apx-chart
-    *ngIf="userMetrics.activityChartData?.length"
-    [series]="[{ name: 'Views', data: userMetrics.activityChartData }]"
-    [chart]="{ type: 'bar', height: 350 }"
-    [xaxis]="{ type: 'datetime',   labels: {
-      format: 'yyyy-MM-dd'
-    } }"
-    [colors]="['#0077B6']"
+    *ngIf="activityTimelineChartOptions"
+    [series]="activityTimelineChartOptions.series"
+    [chart]="activityTimelineChartOptions.chart"
+    [xaxis]="activityTimelineChartOptions.xaxis"
+    [colors]="activityTimelineChartOptions.colors"
+    
   ></apx-chart>
-</div>
+  </div>
+
+  <div *ngIf="showDatePopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b p-4">
+        <h3 class="text-lg font-semibold text-gray-800">
+          Reports viewed on {{ selectedDateForPopup | date:'mediumDate' }}
+        </h3>
+        <button 
+          (click)="closeDatePopup()"
+          class="text-gray-500 hover:text-gray-700 focus:outline-none"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Loading State -->
+      <div *ngIf="selectedDateReports.length === 0" class="p-8 text-center">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto"></div>
+        <p class="mt-4 text-gray-600">Loading report data...</p>
+      </div>
+      
+      <!-- Content -->
+      <div *ngIf="selectedDateReports.length > 0" class="flex-1 overflow-y-auto">
+        <div class="divide-y divide-gray-200">
+          <div *ngFor="let report of selectedDateReports" class="p-4 hover:bg-gray-50 transition-colors">
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-medium text-gray-900">{{ report.reportName || 'Unnamed Report' }}</h4>
+                <p class="text-sm text-gray-500 mt-1">{{ getWorkspaceName(report.reportId.split('/')[0]) }}</p>
+              </div>
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                {{ report.count }} {{ report.count === 1 ? 'view' : 'views' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="selectedDateReports.length === 0 && !selectedDateForPopup" class="p-8 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h4 class="mt-4 font-medium text-gray-900">No report data</h4>
+        <p class="mt-1 text-gray-500">No reports were viewed on this date</p>
+      </div>
+      
+      <!-- Footer -->
+      <div class="border-t p-4 flex justify-end">
+        <button
+          (click)="closeDatePopup()"
+          class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+<!-- Reports Table for Selected Date -->
+<!-- <div *ngIf="selectedDate" class="mt-6">
+  <h4 class="text-md font-semibold mb-3 text-gray-700">
+    Reports viewed on {{ selectedDate | date:'mediumDate' }}
+  </h4>
+  
+  <div *ngIf="dateReportViews === undefined" class="text-center py-4">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+    <p class="mt-2 text-gray-600">Loading report data...</p>
+  </div>
+  
+  <div *ngIf="dateReportViews && dateReportViews.length" class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Name</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let report of dateReportViews">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ report.reportName }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.count }}</td>
+          </tr>
+        </tbody>
+      </table>    </table>
+  </div>
+  
+  <div *ngIf="dateReportViews && !dateReportViews.length" class="text-center text-gray-500 py-4">
+    No report views recorded for this date
+  </div>
+</div> -->
 </div>
 </div>
     <!-- Aggregate User Metrics -->
@@ -397,6 +491,43 @@
             [dataLabels]="topUsersChartOptions.dataLabels"
             [colors]="topUsersChartOptions.colors"
           ></apx-chart>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md md:col-span-2">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Unused Reports</h3>
+          
+          <div *ngIf="loadingUnusedReports" class="flex justify-center items-center h-32">
+            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        
+          <div *ngIf="!loadingUnusedReports">
+            <div *ngIf="unusedReports.length > 0; else noUnusedReports">
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Report Name
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let report of unusedReports">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ report.dashboard }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+        
+            <ng-template #noUnusedReports>
+              <div class="text-center py-4 text-gray-500">
+                No unused reports found in the selected period
+              </div>
+            </ng-template>
+          </div>
         </div>
       </div>
     </ng-template>

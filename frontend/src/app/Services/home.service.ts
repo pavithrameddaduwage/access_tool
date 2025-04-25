@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { UserMapping } from '../Models/user-mapping.model';
@@ -113,6 +113,28 @@ createMapping(email: string, realName: string): Observable<UserMapping> {
 
 getDatabaseUsers(): Observable<any[]> {
   return this.http.get<any[]>(`${this.apiUrl}/database/database-users`);
+}
+
+getDashboardsByWorkspace(workspaceId: string): Observable<any> {
+  return this.http.get(`${this.apiUrl}/dashboard-workspace/${workspaceId}`);
+}
+getPermittedUsers(workspaceId?: string, reportId?: string): Observable<string[]> {
+  let params = new HttpParams();
+
+  if (workspaceId) {
+    params = params.set('workspaceId', workspaceId);
+  }
+
+  if (reportId) {
+    params = params.set('reportId', reportId);
+  }
+
+  return this.http.get<string[]>(`${this.apiUrl}/permitted`, { params });
+}
+
+
+getDatabaseUsersByWorkspaceAndReportID(workspaceName: string, reportName: string): Observable<any[]> {
+  return this.http.post<any[]>(`${this.apiUrl}/activeUsers/getDatabaseUsersByWorkspaceAndReportID`, { workspaceName, reportName });
 }
 
 }

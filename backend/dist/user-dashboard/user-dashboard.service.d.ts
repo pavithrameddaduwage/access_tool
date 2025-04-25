@@ -4,10 +4,12 @@ import { CreateUserDashboardDto } from './dto/create-user-dashboard.dto';
 import { UpdateUserDashboardDto } from './dto/update-user-dashboard.dto';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
+import { DashboardWorkspace } from 'src/dashboard/entities/dashboard-workspace.entity';
 export declare class UserDashboardService {
     private userDashboardRepository;
     private dashboardRepository;
-    constructor(userDashboardRepository: Repository<UserDashboard>, dashboardRepository: Repository<Dashboard>);
+    private dashboardWorkspaceRepository;
+    constructor(userDashboardRepository: Repository<UserDashboard>, dashboardRepository: Repository<Dashboard>, dashboardWorkspaceRepository: Repository<DashboardWorkspace>);
     findAll(): Promise<unknown[]>;
     findOne(email: string): Promise<{
         email: string;
@@ -35,4 +37,6 @@ export declare class UserDashboardService {
     }>;
     remove(email: string): Promise<void>;
     getDatabaseUsers(): Promise<UserMetric[]>;
+    getDatabaseUsersByWorkspaceAndReportID(workspaceName: string, reportName: string): Promise<UserMetric[]>;
+    getPermittedUsers(workspaceName?: string, reportName?: string): Promise<string[]>;
 }

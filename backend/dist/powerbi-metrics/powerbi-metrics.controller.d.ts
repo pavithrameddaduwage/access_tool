@@ -67,4 +67,14 @@ export declare class PowerBIMetricsController {
         reportName: string;
         count: number;
     }[]>;
+    getDailyUserReportViews(userId: string, date: Date, workspaceId?: string, reportId?: string): Promise<{
+        reportId: string;
+        reportName: string;
+        count: number;
+    }[]>;
+    getUnusedReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        id: number;
+        dashboard: string;
+        groupId: number | null;
+    }[]>;
 }
