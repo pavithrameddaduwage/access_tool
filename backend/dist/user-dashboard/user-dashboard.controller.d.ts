@@ -1,6 +1,7 @@
 import { UserDashboardService } from './user-dashboard.service';
 import { CreateUserDashboardDto } from './dto/create-user-dashboard.dto';
 import { UpdateUserDashboardDto } from './dto/update-user-dashboard.dto';
+import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
 export declare class UserDashboardController {
     private readonly userDashboardService;
     constructor(userDashboardService: UserDashboardService);
@@ -30,5 +31,10 @@ export declare class UserDashboardController {
         dashboards: string[];
     }>;
     remove(email: string): Promise<void>;
-    getDatabaseUsers(): Promise<import("../powerbi-metrics/powerbi-metrics.service").UserMetric[]>;
+    getDatabaseUsers(): Promise<UserMetric[]>;
+    permittedUsers(workspaceId?: string, reportId?: string): Promise<string[]>;
+    getDatabaseUsersByWorkspaceAndReportID(data: {
+        workspaceName: string;
+        reportName: string;
+    }): Promise<UserMetric[]>;
 }

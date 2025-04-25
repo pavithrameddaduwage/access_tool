@@ -13,13 +13,15 @@ const user_dashboard_controller_1 = require("./user-dashboard.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_dashboard_entity_1 = require("./entities/user-dashboard.entity");
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
+const workspace_entity_1 = require("../workspace/entities/workspace.entity");
+const dashboard_workspace_entity_1 = require("../dashboard/entities/dashboard-workspace.entity");
 let UserDashboardModule = class UserDashboardModule {
 };
 exports.UserDashboardModule = UserDashboardModule;
 exports.UserDashboardModule = UserDashboardModule = __decorate([
     (0, common_1.Module)({
         controllers: [user_dashboard_controller_1.UserDashboardController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([user_dashboard_entity_1.UserDashboard, dashboard_entity_1.Dashboard])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([user_dashboard_entity_1.UserDashboard, dashboard_entity_1.Dashboard, workspace_entity_1.Workspace, dashboard_workspace_entity_1.DashboardWorkspace])],
         providers: [user_dashboard_service_1.UserDashboardService],
     })
 ], UserDashboardModule);

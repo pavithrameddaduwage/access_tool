@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
+import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 export interface PowerBILogEntry {
     Id: string;
     RecordType: number;
@@ -88,7 +89,8 @@ export declare class PowerBIMetricsService {
     private readonly configService;
     private userDashboardRepository;
     private readonly powerbiLogRepository;
-    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>);
+    private readonly dashboardRepository;
+    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>);
     private readonly logger;
     getAccessToken(): Promise<string>;
     ensureSubscription(accessToken: string): Promise<void>;
@@ -104,6 +106,8 @@ export declare class PowerBIMetricsService {
         reportName: string;
         count: number;
     }[]>;
+    private convertToEdtStartOfDay;
+    private convertToEdtEndOfDay;
     getAllLogs(): Promise<PowerBILog[]>;
     private getLogsFromDatabase;
     private fetchAndProcessLogs;
@@ -172,4 +176,9 @@ export declare class PowerBIMetricsService {
         count: number;
     }[]>;
     private normalizeWorkspaceName;
+    getUnusedReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        id: number;
+        dashboard: string;
+        groupId: number | null;
+    }[]>;
 }

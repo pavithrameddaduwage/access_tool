@@ -22,12 +22,14 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const powerbi_log_entity_1 = require("./entities/powerbi-log.entity");
 const user_dashboard_entity_1 = require("../user-dashboard/entities/user-dashboard.entity");
+const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
 let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsService {
-    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository) {
+    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository) {
         this.httpService = httpService;
         this.configService = configService;
         this.userDashboardRepository = userDashboardRepository;
         this.powerbiLogRepository = powerbiLogRepository;
+        this.dashboardRepository = dashboardRepository;
         this.logger = new common_1.Logger(PowerBIMetricsService_1.name);
     }
     async getAccessToken() {
@@ -300,27 +302,54 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         await this.powerbiLogRepository.save(entities);
     }
     async getUserReportViewsDistribution(userId, startDate, endDate, workspaceId) {
+        const edtStart = this.convertToEdtStartOfDay(startDate);
+        const edtEnd = this.convertToEdtEndOfDay(endDate);
         const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .select('log.reportId', 'reportId')
             .addSelect('log.reportName', 'reportName')
-            .addSelect('COUNT(*)', 'count')
+            .addSelect('log.creationTime', 'creationTime')
             .where('log.userId = :userId', { userId })
-            .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere('log.creationTime BETWEEN :startDate AND :endDate', {
+            startDate: edtStart,
+            endDate: edtEnd
+        })
             .andWhere("log.operation = 'ViewReport'")
             .andWhere('log.reportId IS NOT NULL');
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
-        const results = await query
-            .groupBy('log.reportId, log.reportName')
-            .orderBy('COUNT(*)', 'DESC')
-            .getRawMany();
-        return results.map(r => ({
-            reportId: r.reportId,
-            reportName: r.reportName || 'Unknown Report',
-            count: parseInt(r.count)
-        }));
+        const rawLogs = await query.getRawMany();
+        const reportViews = new Map();
+        rawLogs.forEach(log => {
+            const key = log.reportId;
+            const reportName = log.reportName || 'Unknown Report';
+            if (!reportViews.has(key)) {
+                reportViews.set(key, {
+                    reportId: key,
+                    reportName: reportName,
+                    count: 0
+                });
+            }
+            reportViews.get(key).count += 1;
+        });
+        return Array.from(reportViews.values())
+            .sort((a, b) => b.count - a.count);
+    }
+    convertToEdtStartOfDay(date) {
+        const edtDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        edtDate.setHours(0, 0, 0, 0);
+        return edtDate;
+    }
+    convertToEdtEndOfDay(date) {
+        const edtDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        edtDate.setHours(23, 59, 59, 999);
+        return edtDate;
     }
     getAllLogs() {
         return this.powerbiLogRepository.find();
@@ -490,10 +519,25 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             query.andWhere('log.reportId = :reportId', { reportId });
         }
         const results = await query.getRawMany();
-        return results.map(r => ({
-            id: r.id,
-            name: r.name || 'Unknown Workspace'
-        }));
+        const workspaceMap = new Map();
+        results.forEach(r => {
+            const name = r.name || 'Unknown Workspace';
+            if (name === 'PersonalWorkspace') {
+                if (!workspaceMap.has('PersonalWorkspace')) {
+                    workspaceMap.set('PersonalWorkspace', {
+                        id: '000000',
+                        name: 'Personal Workspace'
+                    });
+                }
+            }
+            else {
+                workspaceMap.set(r.id, {
+                    id: r.id,
+                    name: name
+                });
+            }
+        });
+        return Array.from(workspaceMap.values());
     }
     async getViewCountsByDate(startDate, endDate, workspaceId, reportId) {
         console.log("date time", startDate, endDate);
@@ -503,7 +547,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .andWhere("log.operation = 'ViewReport'")
             .select(['log.creationTime']);
         if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
@@ -512,8 +561,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const counts = new Map();
         console.log("logs", logs);
         logs.forEach(log => {
-            console.log("log creation time", log.creationTime);
-            const dateKey = log.creationTime.toISOString().split('T')[0];
+            const utcDate = new Date(log.creationTime);
+            const options = { timeZone: 'America/New_York' };
+            const edtDateString = utcDate.toLocaleDateString('en-US', options);
+            const edtDateParts = edtDateString.split('/');
+            const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
+            console.log("log creation time (EDT)", dateKey);
             counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
         });
         return Array.from(counts.entries())
@@ -526,8 +579,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
             .select(['log.creationTime', 'log.userId']);
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
@@ -535,7 +593,11 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const logs = await query.getMany();
         const dailyActiveUsers = new Map();
         logs.forEach(log => {
-            const dateKey = log.creationTime.toISOString().split('T')[0];
+            const utcDate = new Date(log.creationTime);
+            const options = { timeZone: 'America/New_York' };
+            const edtDateString = utcDate.toLocaleDateString('en-US', options);
+            const edtDateParts = edtDateString.split('/');
+            const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
             if (!dailyActiveUsers.has(dateKey)) {
                 dailyActiveUsers.set(dateKey, new Set());
             }
@@ -558,8 +620,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .andWhere("log.operation = 'ViewReport'")
             .andWhere('log.reportId IS NOT NULL')
             .distinct(true);
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         const results = await query.getRawMany();
         return results.map(r => ({
@@ -578,7 +645,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .andWhere("log.operation = 'ViewReport'")
             .andWhere("log.reportId IS NOT NULL");
         if (workspaceId && workspaceId !== 'all') {
-            query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         const results = await query
             .groupBy("log.reportId, log.reportName")
@@ -599,7 +671,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'");
         if (workspaceId && workspaceId !== 'all') {
-            query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere("log.reportId = :reportId", { reportId });
@@ -667,8 +744,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .select('COUNT(DISTINCT log.userId)', 'count')
             .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'");
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
@@ -683,8 +765,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
             .andWhere('log.reportId IS NOT NULL');
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         const result = await query.getRawOne();
         return parseInt(result?.count || 0);
@@ -719,8 +806,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'");
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
@@ -737,8 +829,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
             .andWhere('log.reportId IS NOT NULL');
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
@@ -767,8 +864,13 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
             .select(['log.creationTime']);
-        if (workspaceId && workspaceId !== 'all') {
-            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
         }
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
@@ -776,7 +878,11 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const logs = await query.getMany();
         const dailyViews = new Map();
         logs.forEach(log => {
-            const dateKey = log.creationTime.toISOString().split('T')[0];
+            const utcDate = new Date(log.creationTime);
+            const options = { timeZone: 'America/New_York' };
+            const edtDateString = utcDate.toLocaleDateString('en-US', options);
+            const edtDateParts = edtDateString.split('/');
+            const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
             dailyViews.set(dateKey, (dailyViews.get(dateKey) || 0) + 1);
         });
         return Array.from(dailyViews.entries())
@@ -815,14 +921,50 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         return name;
     }
+    async getUnusedReports(startDate, endDate, workspaceId) {
+        const viewedReports = await this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.reportName', 'reportName')
+            .addSelect('log.creationTime', 'creationTime')
+            .distinct(true)
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.reportName IS NOT NULL');
+        if (workspaceId && workspaceId !== 'all') {
+            viewedReports.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        const rawLogs = await viewedReports.getRawMany();
+        const viewedReportNames = new Set();
+        rawLogs.forEach(log => {
+            const utcDate = new Date(log.creationTime);
+            const options = { timeZone: 'America/New_York' };
+            const edtDate = new Date(utcDate.toLocaleString('en-US', options));
+            if (log.reportName && log.reportName.trim() !== '') {
+                viewedReportNames.add(log.reportName.toLowerCase().trim());
+            }
+        });
+        const viewedReportNamesArray = Array.from(viewedReportNames);
+        const query = this.dashboardRepository
+            .createQueryBuilder('dashboard')
+            .select(['dashboard.id', 'dashboard.dashboard', 'dashboard.groupId'])
+            .where('dashboard.dashboard IS NOT NULL');
+        if (viewedReportNamesArray.length > 0) {
+            query.andWhere('LOWER(TRIM(dashboard.dashboard)) NOT IN (:...viewedReportNames)', {
+                viewedReportNames: viewedReportNamesArray
+            });
+        }
+        return query.getMany();
+    }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;
 exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(user_dashboard_entity_1.UserDashboard)),
     __param(3, (0, typeorm_1.InjectRepository)(powerbi_log_entity_1.PowerBILog)),
+    __param(4, (0, typeorm_1.InjectRepository)(dashboard_entity_1.Dashboard)),
     __metadata("design:paramtypes", [axios_1.HttpService,
         config_1.ConfigService,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], PowerBIMetricsService);

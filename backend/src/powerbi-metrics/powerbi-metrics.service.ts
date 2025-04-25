@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
+import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 export interface PowerBILogEntry {
   Id: string;
   RecordType: number;
@@ -96,7 +97,9 @@ export class PowerBIMetricsService {
       @InjectRepository(UserDashboard)
        private userDashboardRepository: Repository<UserDashboard>,
     @InjectRepository(PowerBILog)
-    private readonly powerbiLogRepository: Repository<PowerBILog>
+    private readonly powerbiLogRepository: Repository<PowerBILog>,
+    @InjectRepository(Dashboard)
+    private readonly dashboardRepository: Repository<Dashboard>
   ) {}
   
 
@@ -488,38 +491,105 @@ export class PowerBIMetricsService {
   }
   
 
+  // async getUserReportViewsDistribution(
+  //   userId: string, 
+  //   startDate: Date, 
+  //   endDate: Date,
+  //   workspaceId?: string
+  // ): Promise<{reportId: string, reportName: string, count: number}[]> {
+  //   const query = this.powerbiLogRepository
+  //     .createQueryBuilder('log')
+  //     .select('log.reportId', 'reportId')
+  //     .addSelect('log.reportName', 'reportName')
+  //     .addSelect('COUNT(*)', 'count')
+  //     .where('log.userId = :userId', { userId })
+  //     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+  //     .andWhere("log.operation = 'ViewReport'")
+  //     .andWhere('log.reportId IS NOT NULL');
+  
+  //   if (workspaceId && workspaceId !== 'all') {
+  //     query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+  //   }
+  
+  //   const results = await query
+  //     .groupBy('log.reportId, log.reportName')
+  //     .orderBy('COUNT(*)', 'DESC')
+  //     .getRawMany();
+  
+  //   return results.map(r => ({
+  //     reportId: r.reportId,
+  //     reportName: r.reportName || 'Unknown Report',
+  //     count: parseInt(r.count)
+  //   }));
+  // }
   async getUserReportViewsDistribution(
     userId: string, 
     startDate: Date, 
     endDate: Date,
     workspaceId?: string
   ): Promise<{reportId: string, reportName: string, count: number}[]> {
+    // First convert the input dates to UTC start/end of day in EDT timezone
+    const edtStart = this.convertToEdtStartOfDay(startDate);
+    const edtEnd = this.convertToEdtEndOfDay(endDate);
+    
     const query = this.powerbiLogRepository
       .createQueryBuilder('log')
       .select('log.reportId', 'reportId')
       .addSelect('log.reportName', 'reportName')
-      .addSelect('COUNT(*)', 'count')
+      .addSelect('log.creationTime', 'creationTime')
       .where('log.userId = :userId', { userId })
-      .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { 
+        startDate: edtStart, 
+        endDate: edtEnd 
+      })
       .andWhere("log.operation = 'ViewReport'")
       .andWhere('log.reportId IS NOT NULL');
   
-    if (workspaceId && workspaceId !== 'all') {
-      query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-    }
+      if (workspaceId) {
+        if (workspaceId === '000000') {
+          query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+        } else {
+          query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+        }
+      }
   
-    const results = await query
-      .groupBy('log.reportId, log.reportName')
-      .orderBy('COUNT(*)', 'DESC')
-      .getRawMany();
-  
-    return results.map(r => ({
-      reportId: r.reportId,
-      reportName: r.reportName || 'Unknown Report',
-      count: parseInt(r.count)
-    }));
+    const rawLogs = await query.getRawMany();
+    
+    const reportViews = new Map<string, {reportId: string, reportName: string, count: number}>();
+    
+    rawLogs.forEach(log => {
+      const key = log.reportId;
+      const reportName = log.reportName || 'Unknown Report';
+      
+      if (!reportViews.has(key)) {
+        reportViews.set(key, {
+          reportId: key,
+          reportName: reportName,
+          count: 0
+        });
+      }
+      
+      reportViews.get(key)!.count += 1;
+    });
+    
+    return Array.from(reportViews.values())
+      .sort((a, b) => b.count - a.count);
   }
-
+  
+  // Helper methods for EDT timezone conversion
+  private convertToEdtStartOfDay(date: Date): Date {
+    // Convert to EDT start of day (00:00:00)
+    const edtDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    edtDate.setHours(0, 0, 0, 0);
+    return edtDate;
+  }
+  
+  private convertToEdtEndOfDay(date: Date): Date {
+    // Convert to EDT end of day (23:59:59)
+    const edtDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    edtDate.setHours(23, 59, 59, 999);
+    return edtDate;
+  }
   getAllLogs() {
     return this.powerbiLogRepository.find();
   }
@@ -739,10 +809,29 @@ async getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): 
 
   const results = await query.getRawMany();
 
-  return results.map(r => ({
-    id: r.id,
-    name: r.name || 'Unknown Workspace'
-  }));
+  // Group by workspace name, handling PersonalWorkspace specially
+  const workspaceMap = new Map<string, {id: string, name: string}>();
+  
+  results.forEach(r => {
+    const name = r.name || 'Unknown Workspace';
+    
+    if (name === 'PersonalWorkspace') {
+      // Use a consistent ID for all PersonalWorkspace entries
+      if (!workspaceMap.has('PersonalWorkspace')) {
+        workspaceMap.set('PersonalWorkspace', {
+          id: '000000', // Use the same ID you used in the frontend
+          name: 'Personal Workspace'
+        });
+      }
+    } else {
+      workspaceMap.set(r.id, {
+        id: r.id,
+        name: name
+      });
+    }
+  });
+  
+  return Array.from(workspaceMap.values());
 }
 async getViewCountsByDate(
   startDate: Date, 
@@ -750,30 +839,50 @@ async getViewCountsByDate(
   workspaceId?: string, 
   reportId?: string
 ): Promise<{date: string, count: number}[]> {
-  console.log("date time",startDate, endDate)
+  console.log("date time", startDate, endDate);
+  
+  // Query remains the same - working with UTC in the database
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
     .andWhere("log.operation = 'ViewReport'")
     .select(['log.creationTime']);
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId && workspaceId !== 'all') {
+      if (workspaceId === '000000') {
+        // Special case for PersonalWorkspace
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        // Normal case for regular workspaces
+        query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+      }
+    }
 
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
   }
 
   const logs = await query.getMany();
-
   const counts = new Map<string, number>();
   
-  console.log("logs",logs)
+  console.log("logs", logs);
 
+  // Convert UTC to EDT when processing the logs
   logs.forEach(log => {
-    console.log("log creation time",log.creationTime)
-    const dateKey = log.creationTime.toISOString().split('T')[0]; 
+    // Convert UTC date to EDT
+    const utcDate = new Date(log.creationTime);
+    
+    // Options for converting to EDT
+    const options = { timeZone: 'America/New_York' };
+    
+    // Format date in EDT timezone
+    const edtDateString = utcDate.toLocaleDateString('en-US', options);
+    const edtDateParts = edtDateString.split('/');
+    
+    // Format as YYYY-MM-DD
+    const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
+    
+    console.log("log creation time (EDT)", dateKey);
     counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
   });
 
@@ -782,6 +891,47 @@ async getViewCountsByDate(
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
+// async getUserActivityTrend(
+//   startDate: Date, 
+//   endDate: Date, 
+//   workspaceId?: string, 
+//   reportId?: string
+// ): Promise<{date: string, count: number}[]> {
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .select(['log.creationTime', 'log.userId']);
+
+//   if (workspaceId && workspaceId !== 'all') {
+//     query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+//   }
+
+//   if (reportId) {
+//     query.andWhere('log.reportId = :reportId', { reportId });
+//   }
+
+//   const logs = await query.getMany();
+
+//   const dailyActiveUsers = new Map<string, Set<string>>();
+
+//   logs.forEach(log => {
+//     const dateKey = log.creationTime.toISOString().split('T')[0]; 
+
+//     if (!dailyActiveUsers.has(dateKey)) {
+//       dailyActiveUsers.set(dateKey, new Set());
+//     }
+
+//     dailyActiveUsers.get(dateKey)?.add(log.userId);
+//   });
+
+//   return Array.from(dailyActiveUsers.entries())
+//     .map(([date, users]) => ({
+//       date,
+//       count: users.size 
+//     }))
+//     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+// }
 async getUserActivityTrend(
   startDate: Date, 
   endDate: Date, 
@@ -794,9 +944,13 @@ async getUserActivityTrend(
     .andWhere("log.operation = 'ViewReport'")
     .select(['log.creationTime', 'log.userId']);
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
@@ -807,7 +961,18 @@ async getUserActivityTrend(
   const dailyActiveUsers = new Map<string, Set<string>>();
 
   logs.forEach(log => {
-    const dateKey = log.creationTime.toISOString().split('T')[0]; 
+    // Convert UTC date to EDT
+    const utcDate = new Date(log.creationTime);
+    
+    // Options for converting to EDT
+    const options = { timeZone: 'America/New_York' };
+    
+    // Format date in EDT timezone
+    const edtDateString = utcDate.toLocaleDateString('en-US', options);
+    const edtDateParts = edtDateString.split('/');
+    
+    // Format as YYYY-MM-DD
+    const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
 
     if (!dailyActiveUsers.has(dateKey)) {
       dailyActiveUsers.set(dateKey, new Set());
@@ -823,7 +988,6 @@ async getUserActivityTrend(
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
-
 async getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{id: string, name: string, workspaceId: string}[]> {
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
@@ -835,9 +999,13 @@ async getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): 
     .andWhere('log.reportId IS NOT NULL')
     .distinct(true);
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   const results = await query.getRawMany();
 
@@ -861,9 +1029,15 @@ async getTopReports(startDate: Date, endDate: Date, limit: number = 10, workspac
     .andWhere("log.operation = 'ViewReport'")
     .andWhere("log.reportId IS NOT NULL");
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-  }
+    if (workspaceId && workspaceId !== 'all') {
+      if (workspaceId === '000000') {
+        // Special case for PersonalWorkspace
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        // Normal case for regular workspaces
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   const results = await query
     .groupBy("log.reportId, log.reportName")
@@ -886,9 +1060,15 @@ async getTopUsers(startDate: Date, endDate: Date, limit: number = 10, workspaceI
     .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
     .andWhere("log.operation = 'ViewReport'");
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-  }
+    if (workspaceId && workspaceId !== 'all') {
+      if (workspaceId === '000000') {
+        // Special case for PersonalWorkspace
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        // Normal case for regular workspaces
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   if (reportId) {
     query.andWhere("log.reportId = :reportId", { reportId });
@@ -992,10 +1172,13 @@ async getUniqueUserCount(startDate: Date, endDate: Date, workspaceId?: string, r
     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
     .andWhere("log.operation = 'ViewReport'");
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
-
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
   }
@@ -1012,9 +1195,13 @@ async getUniqueReportCount(startDate: Date, endDate: Date, workspaceId?: string)
     .andWhere("log.operation = 'ViewReport'")
     .andWhere('log.reportId IS NOT NULL');
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   const result = await query.getRawOne();
   return parseInt(result?.count || 0);
@@ -1070,9 +1257,13 @@ private async getUserTotalViews(
     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
     .andWhere("log.operation = 'ViewReport'");
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
@@ -1098,9 +1289,13 @@ private async getUserReports(
     .andWhere("log.operation = 'ViewReport'")
     .andWhere('log.reportId IS NOT NULL');
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
@@ -1191,9 +1386,13 @@ async getUserActivityByDate(
     .andWhere("log.operation = 'ViewReport'")
     .select(['log.creationTime']);
 
-  if (workspaceId && workspaceId !== 'all') {
-    query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
-  }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
 
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
@@ -1201,12 +1400,23 @@ async getUserActivityByDate(
 
   const logs = await query.getMany();
 
-  // 2. Count views per day in EDT timezone (server's local timezone)
+  // 2. Count views per day in EDT timezone
   const dailyViews = new Map<string, number>(); // Date -> View count
 
   logs.forEach(log => {
-    // Date objects from DB are already converted to local timezone (EDT)
-    const dateKey = log.creationTime.toISOString().split('T')[0]; // YYYY-MM-DD
+    // Convert UTC date to EDT
+    const utcDate = new Date(log.creationTime);
+    
+    // Options for converting to EDT
+    const options = { timeZone: 'America/New_York' };
+    
+    // Format date in EDT timezone
+    const edtDateString = utcDate.toLocaleDateString('en-US', options);
+    const edtDateParts = edtDateString.split('/');
+    
+    // Format as YYYY-MM-DD
+    const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
+    
     dailyViews.set(dateKey, (dailyViews.get(dateKey) || 0) + 1);
   });
 
@@ -1261,5 +1471,65 @@ private normalizeWorkspaceName(name: string | undefined): string {
   return name;
 }
 
+
+async getUnusedReports(
+  startDate: Date, 
+  endDate: Date, 
+  workspaceId?: string
+): Promise<{id: number, dashboard: string, groupId: number | null}[]> {
+  // Get all reports that have been viewed in the selected period
+  const viewedReports = await this.powerbiLogRepository
+    .createQueryBuilder('log')
+    .select('log.reportName', 'reportName')
+    .addSelect('log.creationTime', 'creationTime')  // Include creationTime for timezone conversion
+    .distinct(true)  // Use distinct(true) instead of putting DISTINCT in the select
+    .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+    .andWhere("log.operation = 'ViewReport'")
+    .andWhere('log.reportName IS NOT NULL');
+
+  if (workspaceId && workspaceId !== 'all') {
+    viewedReports.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+  }
+
+  const rawLogs = await viewedReports.getRawMany();
+  
+
+  const viewedReportNames = new Set<string>();
+  
+  rawLogs.forEach(log => {
+    // Convert UTC date to EDT
+    const utcDate = new Date(log.creationTime);
+    
+    // Options for converting to EDT
+    const options = { timeZone: 'America/New_York' };
+    
+    // Format date in EDT timezone
+    const edtDate = new Date(utcDate.toLocaleString('en-US', options));
+    
+    // Check if the EDT date is between startDate and endDate
+    // Add report name to the set if it's valid and not empty
+    if (log.reportName && log.reportName.trim() !== '') {
+      viewedReportNames.add(log.reportName.toLowerCase().trim());
+    }
+  });
+
+  // Convert set to array
+  const viewedReportNamesArray = Array.from(viewedReportNames);
+  
+  // Get all dashboards from the database that aren't in the viewed reports list
+  const query = this.dashboardRepository
+    .createQueryBuilder('dashboard')
+    .select(['dashboard.id', 'dashboard.dashboard', 'dashboard.groupId'])
+    .where('dashboard.dashboard IS NOT NULL');
+
+  if (viewedReportNamesArray.length > 0) {
+    // Compare case-insensitive and trim whitespace
+    query.andWhere('LOWER(TRIM(dashboard.dashboard)) NOT IN (:...viewedReportNames)', { 
+      viewedReportNames: viewedReportNamesArray 
+    });
+  }
+
+  return query.getMany();
+}
 
 }

@@ -1,5 +1,5 @@
 // user-dashboard.service.ts
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDashboard } from './entities/user-dashboard.entity';
@@ -7,6 +7,8 @@ import { CreateUserDashboardDto } from './dto/create-user-dashboard.dto';
 import { UpdateUserDashboardDto } from './dto/update-user-dashboard.dto';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
+import { DashboardWorkspace } from 'src/dashboard/entities/dashboard-workspace.entity';
+import { Workspace } from 'src/workspace/entities/workspace.entity';
 
 @Injectable()
 export class UserDashboardService {
@@ -14,7 +16,9 @@ export class UserDashboardService {
    @InjectRepository(UserDashboard)
    private userDashboardRepository: Repository<UserDashboard>,
    @InjectRepository(Dashboard)
-   private dashboardRepository: Repository<Dashboard>
+   private dashboardRepository: Repository<Dashboard>,
+   @InjectRepository(DashboardWorkspace)
+    private dashboardWorkspaceRepository: Repository<DashboardWorkspace>,
  ) {}
 
  // Update findAll() method
@@ -193,4 +197,71 @@ async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
    return activeUsers
    
  }
+ async getDatabaseUsersByWorkspaceAndReportID(workspaceName: string, reportName: string): Promise<UserMetric[]> {
+  console.log('workspaceName:', workspaceName, 'reportName:', reportName); 
+  
+  const activeUsers = await this.userDashboardRepository
+    .createQueryBuilder('user')
+    .select(['MIN(user.id) as id', 'user.email']) 
+    .innerJoin(Dashboard, 'd', 'd.id = user.dashboardId')
+    .innerJoin('d.dashboardWorkspaces', 'dw')
+    .innerJoin('dw.workspace', 'w')
+    .where('user.isActive = true')
+    .andWhere('user.email IS NOT NULL')
+    
+
+    if (workspaceName && workspaceName !== '') {
+       activeUsers.andWhere('w.workspace = :workspaceName', { workspaceName: workspaceName })
+    } 
+
+    if (reportName && reportName !== '') {
+      activeUsers.andWhere('d.dashboard = :reportName', { reportName: reportName })
+   } 
+    activeUsers.groupBy('user.email')
+
+  
+
+  return  activeUsers.getRawMany();
+
+  
+}
+
+//  private async getWorkspaceNameById(workspaceId: string): Promise<string | null> {
+//   const workspace = await this.workspaceRepository.findOne({ 
+//     where: { id: workspaceId } 
+//   });
+//   return workspace?.workspace || null;
+// }
+
+// private async getReportNameById(reportId: string): Promise<string | null> {
+//   const report = await this.dashboardRepository.findOne({ 
+//     where: { id: reportId } 
+//   });
+//   return report?.dashboard || null;
+// }
+
+
+ public  async getPermittedUsers(workspaceName?: string, reportName?: string): Promise<string[]> {
+  const query = this.userDashboardRepository
+    .createQueryBuilder('ud')
+    .innerJoin(Dashboard, 'd', 'd.id = ud.dashboardId')
+    .innerJoin(DashboardWorkspace, 'dw', 'dw.dashboardId = d.id')
+    .innerJoin(Workspace, 'w', 'w.id = dw.workspaceId')
+    .where('ud.isActive = true');
+
+  if (workspaceName) {
+    query.andWhere('w.workspace = :workspaceName', { workspaceName });
+  }
+
+  if (reportName) {
+    query.andWhere('d.dashboard = :reportName', { reportName });
+  }
+
+  const results = await query
+    .select('DISTINCT ud.email', 'email')
+    .getRawMany();
+
+  return results.map(r => r.email);
+}
+
 }

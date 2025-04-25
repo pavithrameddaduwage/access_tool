@@ -1,9 +1,10 @@
 // user-dashboard.controller.ts
-import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { UserDashboardService } from './user-dashboard.service';
 import { CreateUserDashboardDto } from './dto/create-user-dashboard.dto';
 import { UpdateUserDashboardDto } from './dto/update-user-dashboard.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
 
 @Controller('user-dashboards')
 export class UserDashboardController {
@@ -42,5 +43,19 @@ export class UserDashboardController {
     console.log('testing')
   return this.userDashboardService.getDatabaseUsers();
   
+}
+@Get('permitted')
+async permittedUsers(
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+): Promise<string[]> {
+  return this.userDashboardService.getPermittedUsers(workspaceId, reportId);
+}
+
+@Post('activeUsers/getDatabaseUsersByWorkspaceAndReportID')
+async getDatabaseUsersByWorkspaceAndReportID(@Body() data: { workspaceName: string, reportName: string }
+
+): Promise<UserMetric[]> {
+  return this.userDashboardService.getDatabaseUsersByWorkspaceAndReportID(data.workspaceName, data.reportName);
 }
 }

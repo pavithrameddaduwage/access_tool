@@ -91,6 +91,16 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getUserReportViewsDistribution(userId, startDate, endDate, workspaceId) {
         return this.powerbiMetricsService.getUserReportViewsDistribution(userId, startDate, endDate, workspaceId);
     }
+    async getDailyUserReportViews(userId, date, workspaceId, reportId) {
+        const startDate = new Date(date);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(date);
+        endDate.setHours(23, 59, 59, 999);
+        return this.powerbiMetricsService.getUserReportViewsDistribution(userId, startDate, endDate, workspaceId);
+    }
+    async getUnusedReports(startDate, endDate, workspaceId) {
+        return this.powerbiMetricsService.getUnusedReports(startDate, endDate, workspaceId);
+    }
 };
 exports.PowerBIMetricsController = PowerBIMetricsController;
 __decorate([
@@ -267,6 +277,26 @@ __decorate([
         Date, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUserReportViewsDistribution", null);
+__decorate([
+    (0, common_1.Get)('daily-user-reports'),
+    __param(0, (0, common_1.Query)('userId')),
+    __param(1, (0, common_1.Query)('date', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __param(3, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Date, String, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getDailyUserReportViews", null);
+__decorate([
+    (0, common_1.Get)('unused-reports'),
+    __param(0, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getUnusedReports", null);
 exports.PowerBIMetricsController = PowerBIMetricsController = __decorate([
     (0, common_1.Controller)('powerbi-metrics'),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService])

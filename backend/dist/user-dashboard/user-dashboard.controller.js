@@ -40,6 +40,12 @@ let UserDashboardController = class UserDashboardController {
         console.log('testing');
         return this.userDashboardService.getDatabaseUsers();
     }
+    async permittedUsers(workspaceId, reportId) {
+        return this.userDashboardService.getPermittedUsers(workspaceId, reportId);
+    }
+    async getDatabaseUsersByWorkspaceAndReportID(data) {
+        return this.userDashboardService.getDatabaseUsersByWorkspaceAndReportID(data.workspaceName, data.reportName);
+    }
 };
 exports.UserDashboardController = UserDashboardController;
 __decorate([
@@ -83,6 +89,21 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserDashboardController.prototype, "getDatabaseUsers", null);
+__decorate([
+    (0, common_1.Get)('permitted'),
+    __param(0, (0, common_1.Query)('workspaceId')),
+    __param(1, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserDashboardController.prototype, "permittedUsers", null);
+__decorate([
+    (0, common_1.Post)('activeUsers/getDatabaseUsersByWorkspaceAndReportID'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserDashboardController.prototype, "getDatabaseUsersByWorkspaceAndReportID", null);
 exports.UserDashboardController = UserDashboardController = __decorate([
     (0, common_1.Controller)('user-dashboards'),
     __metadata("design:paramtypes", [user_dashboard_service_1.UserDashboardService])

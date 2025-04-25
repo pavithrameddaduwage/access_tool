@@ -203,4 +203,35 @@ async getUserReportViewsDistribution(
   );
 }
 
+
+@Get('daily-user-reports')
+async getDailyUserReportViews(
+  @Query('userId') userId: string,
+  @Query('date', ParseISO8601DatePipe) date: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  const startDate = new Date(date);
+  startDate.setHours(0,0,0,0);
+  
+  const endDate = new Date(date);
+  endDate.setHours(23,59,59,999);
+
+  return this.powerbiMetricsService.getUserReportViewsDistribution(
+    userId,
+    startDate,
+    endDate,
+    workspaceId
+  );
+}
+
+
+@Get('unused-reports')
+async getUnusedReports(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string
+): Promise<{id: number, dashboard: string, groupId: number | null}[]> {
+  return this.powerbiMetricsService.getUnusedReports(startDate, endDate, workspaceId);
+}
 }

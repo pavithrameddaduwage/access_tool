@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface PowerBILog {
@@ -117,15 +117,15 @@ export class PowerBIMetricsService {
       { params }
     );
   }
-    getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Observable<PowerBIWorkspace[]> {
-    const params: any = {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString()
-    };
-    if (reportId) params.reportId = reportId;
+  //   getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Observable<PowerBIWorkspace[]> {
+  //   const params: any = {
+  //     startDate: startDate.toISOString(),
+  //     endDate: endDate.toISOString()
+  //   };
+  //   if (reportId) params.reportId = reportId;
     
-    return this.http.get<PowerBIWorkspace[]>(`${this.apiUrl}/distinct-workspaces`, { params });
-  }
+  //   return this.http.get<PowerBIWorkspace[]>(`${this.apiUrl}/distinct-workspaces`, { params });
+  // }
 
   getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Observable<PowerBIReport[]> {
     const params: any = {
@@ -333,5 +333,62 @@ export class PowerBIMetricsService {
     );
   }
 
+  
+
+  getDailyUserReportViews(
+    userId: string, 
+    date: Date,
+    workspaceId?: string,
+    reportId?: string
+  ): Observable<{reportId: string, reportName: string, count: number}[]> {
+    const params: any = {
+      userId,
+      date: date.toISOString().split('T')[0]
+    };
+    
+    if (workspaceId) params.workspaceId = workspaceId;
+    if (reportId) params.reportId = reportId;
+  
+    return this.http.get<any[]>(`${this.apiUrl}/daily-user-reports`, { params });
+  }
+
+
+
+  getUnusedReports(
+    startDate: Date, 
+    endDate: Date,
+    workspaceId?: string
+  ): Observable<{id: number, dashboard: string, groupId: number | null}[]> {
+    const params: any = {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    if (workspaceId) params.workspaceId = workspaceId;
+    
+    return this.http.get<{id: number, dashboard: string, groupId: number | null}[]>(
+      `${this.apiUrl}/unused-reports`, 
+      { params }
+    );
+  }
+
+  getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Observable<PowerBIWorkspace[]> {
+    const params: any = {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    if (reportId) params.reportId = reportId;
+    
+    return this.http.get<PowerBIWorkspace[]>(`${this.apiUrl}/distinct-workspaces`, { params }).pipe(
+      map(workspaces => {
+        // Frontend normalization for safety
+        return workspaces.map(ws => ({
+          ...ws,
+          name: ws.name?.startsWith('PersonalWorkspace') ? 'PersonalWorkspace' : ws.name
+        }));
+      }),
+      // Remove duplicates after normalization
+      map(workspaces => [...new Map(workspaces.map(ws => [ws.id, ws])).values()])
+    );
+  }
   
 }
