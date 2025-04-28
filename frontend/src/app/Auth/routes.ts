@@ -22,6 +22,7 @@ import { PowerBIAnalyticsComponent } from '../powerbi-analytics/powerbi-analytic
 import { PowerBIUsageDashboardComponent } from '../powerbi-usage-dashboard/powerbi-usage-dashboard.component';
 import { WebtoolAnalyticsComponent } from '../webtool-analytics/webtool-analytics.component';
 import { PowerBIDashboardComponent } from '../powerbi-dashboard/powerbi-dashboard.component';
+import { AnalyticsComponent } from '../analytics/analytics.component';
 
 const routeConfig: Routes = [
   {
@@ -135,7 +136,7 @@ const routeConfig: Routes = [
   },
   {
     path: 'home',
-    component: PowerBIDashboardComponent,
+    component: AnalyticsComponent,
     canActivate: [authGuard],
     title: 'Home',
     pathMatch: 'full'

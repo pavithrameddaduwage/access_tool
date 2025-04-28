@@ -18,6 +18,14 @@ interface ReportMetric {
   count: number;
 }
 
+interface DateReportView {
+  reportId: string;
+  reportName: string;
+  count: number;
+  workspaceId?: string;
+  workspaceName?: string;
+}
+
 interface UserDetail {
   id: string;
   totalViews: number;
@@ -443,42 +451,120 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
   }
 
   private prepareActivityTimelineChart() {
+    interface ActivityDataItem {
+      x: string | number | Date;
+      y: number;
+    }
+    
+    // Create a map of your actual data for quick lookup
+    const dataMap = new Map<string, number>();
+    
+    // Find min and max dates in your data - with explicit Date typing
+    let minDate: Date | undefined = undefined;
+    let maxDate: Date | undefined = undefined;
+    
+    // Make sure we have data
+    if (this.userMetrics.activityChartData && this.userMetrics.activityChartData.length > 0) {
+      // First pass: determine min and max dates
+      for (const item of this.userMetrics.activityChartData) {
+        const itemDate = new Date(item.x);
+        
+        if (!minDate || itemDate < minDate) {
+          minDate = itemDate;
+        }
+        
+        if (!maxDate || itemDate > maxDate) {
+          maxDate = itemDate;
+        }
+      }
+      
+      // Second pass: populate the data map
+      for (const item of this.userMetrics.activityChartData) {
+        const dateStr = new Date(item.x).toISOString().split('T')[0];
+        dataMap.set(dateStr, item.y);
+      }
+    }
+    
+    // Generate complete date range with all dates between min and max
+    const categories: string[] = [];
+    const seriesData: number[] = [];
+    
+    // Only proceed if we found valid min and max dates
+    if (minDate instanceof Date && maxDate instanceof Date) {
+      const startTime = minDate.getTime();
+      const endTime = maxDate.getTime();
+      const currentDate = new Date(startTime);
+      
+      // Loop through all dates between min and max
+      while (currentDate.getTime() <= endTime) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        categories.push(dateStr);
+        
+        // Get the value or default to 0
+        const value = dataMap.get(dateStr) || 0;
+        seriesData.push(value);
+        
+        // Move to next day
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+    
     this.activityTimelineChartOptions = {
       series: [{
         name: 'Views',
-        data: this.userMetrics.activityChartData
+        data: seriesData
       }],
       chart: {
         type: 'bar',
         height: 350,
         events: {
           dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
-            console.log('Bar clicked!', config.dataPointIndex);
-            
             this.onActivityTimelineClick(config.dataPointIndex);
-          },
-          zoomed: (chartContext: any, { xaxis, yaxis }: any) => {console.log('Zoomed', xaxis);}
+          }
         }
       },
       xaxis: {
-        type: 'datetime',
+        type: 'category',
+        categories: categories,
         labels: {
-          format: 'yyyy-MM-dd'
+          rotate: -45,
+          hideOverlappingLabels: true,
+          offsetY: 5
+        },
+        axisBorder: {
+          show: true
+        },
+        axisTicks: {
+          show: true
         },
         tickPlacement: 'on',
+        position: 'bottom'
       },
       colors: ['#0077B6'],
-      toolbar: {
-        show: false 
-      },
       plotOptions: {
         bar: {
-          columnWidth: '80%', 
-          rangeBarOverlap: false,
-          rangeBarGroupRows: false
+          columnWidth: '60%',
+          distributed: true,
+          endingShape: 'flat'
         }
       },
-        };
+      grid: {
+        padding: {
+          left: 10,
+          right: 10
+        }
+      },
+      stroke: {
+        width: 0
+      },
+      tooltip: {
+        y: {
+          formatter: function(val: number) {
+            return val + " views";
+          }
+        }
+      }
+    };
   }
   private prepareActivityTrendChart() {
     // First ensure the activity trend data is sorted by date
@@ -1276,7 +1362,7 @@ onReportChange() {
 // The part for click event, Ill format and add the variables to the top afetr I confitm this thing is working
 activityTimelineChartOptions: any;
 selectedDate: string | null = null;
-dateReportViews: {reportId: string, reportName: string, count: number}[] | undefined = undefined;
+dateReportViews: DateReportView[] = [];
 
 // onActivityTimelineClick(dataPointIndex: number) {
 //   console.log('Chart clicked at index:', dataPointIndex);
@@ -1304,30 +1390,87 @@ async onActivityTimelineClick(dataPointIndex: number) {
     this.selectedDateReports = [];
   }
 }
+// async loadReportViewsForDate(date: string) {
+//   if (!this.selectedUserId) return;
+
+//   try {
+//     // Create date in EDT timezone
+//     const edtDate = new Date(date + 'T00:00:00-04:00'); // EDT is UTC-4
+    
+//     // Set start/end to beginning and end of day in EDT
+//     const startDate = new Date(edtDate);
+//     startDate.setHours(0, 0, 0, 0);
+    
+//     const endDate = new Date(edtDate);
+//     endDate.setHours(23, 59, 59, 999);
+    
+//     // Convert to UTC for the API call
+//     const utcStart = new Date(startDate.toISOString());
+//     const utcEnd = new Date(endDate.toISOString());
+
+//     this.dateReportViews = await this.powerBIMetricsService.getUserReportViewsDistribution(
+//       this.selectedUserId,
+//       utcStart,
+//       utcEnd,
+//       this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace
+//     ).toPromise() || [];
+    
+//     this.cdr.detectChanges();
+//   } catch (error) {
+//     console.error('Error loading report views:', error);
+//     this.dateReportViews = [];
+//     this.cdr.detectChanges();
+//   }
+// }
+
+//latest
+// async loadReportViewsForDate(date: string) {
+//   if (!this.selectedUserId) return;
+
+//   try {
+    
+//     const [year, month, day] = date.split('-').map(num => parseInt(num, 10));
+    
+//     const startDate = new Date(Date.UTC(year, month - 1, day, 4, 0, 0)); 
+//     const endDate = new Date(Date.UTC(year, month - 1, day, 28, 0, 0));  // 24:00 EDT = 04:00 UTC (next day)
+    
+//     // Adjust end time to 23:59:59.999
+//     endDate.setTime(endDate.getTime() - 1);
+    
+//     this.dateReportViews = await this.powerBIMetricsService.getUserReportViewsDistribution(
+//       this.selectedUserId,
+//       startDate,
+//       endDate,
+//       this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace
+//     ).toPromise() || [];
+    
+//     this.cdr.detectChanges();
+//   } catch (error) {
+//     console.error('Error loading report views:', error);
+//     this.dateReportViews = [];
+//     this.cdr.detectChanges();
+//   }
+// }
+
 async loadReportViewsForDate(date: string) {
   if (!this.selectedUserId) return;
 
   try {
-    // Create date in EDT timezone
-    const edtDate = new Date(date + 'T00:00:00-04:00'); // EDT is UTC-4
+    const [year, month, day] = date.split('-').map(num => parseInt(num, 10));
     
-    // Set start/end to beginning and end of day in EDT
-    const startDate = new Date(edtDate);
-    startDate.setHours(0, 0, 0, 0);
+    const startDate = new Date(Date.UTC(year, month - 1, day, 4, 0, 0)); 
+    const endDate = new Date(Date.UTC(year, month - 1, day, 28, 0, 0));  
     
-    const endDate = new Date(edtDate);
-    endDate.setHours(23, 59, 59, 999);
+    endDate.setTime(endDate.getTime() - 1);
     
-    // Convert to UTC for the API call
-    const utcStart = new Date(startDate.toISOString());
-    const utcEnd = new Date(endDate.toISOString());
-
     this.dateReportViews = await this.powerBIMetricsService.getUserReportViewsDistribution(
       this.selectedUserId,
-      utcStart,
-      utcEnd,
+      startDate,
+      endDate,
       this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace
     ).toPromise() || [];
+    
+    // No need to manually add workspace information since it comes from the backend
     
     this.cdr.detectChanges();
   } catch (error) {
@@ -1344,7 +1487,7 @@ getWorkspaceName(workspaceId: string): string {
 
 
 showDatePopup = false;
-selectedDateReports: {reportId: string, reportName: string, count: number}[] = [];
+selectedDateReports: DateReportView[] = [];
 selectedDateForPopup: string | null = null;
 
 

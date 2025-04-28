@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DashboardService } from '../Services/dashboard.service';
@@ -80,10 +80,34 @@ interface UserDashboardRecord {
   lastActiveAt?: string;      // Add this
 }
 
+@Pipe({
+  name: 'filterUsers'
+})
+export class FilterUsersPipe implements PipeTransform {
+  transform(users: UserDashboardRecord[], active: boolean, searchTerm: string = ''): UserDashboardRecord[] {
+    if (!users) return [];
+    
+    // Filter by active status first
+    let filtered = users.filter(user => user.isActive === active);
+    
+    // Then apply search filter if there's a search term
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(user => 
+        user.userName.toLowerCase().includes(term) || 
+        user.email.toLowerCase().includes(term) || 
+        user.department.toLowerCase().includes(term) ||
+        user.dashboards.some(dashboard => dashboard.toLowerCase().includes(term))
+      );
+    }
+    
+    return filtered;
+  }
+}
 @Component({
   selector: 'app-dashboards',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectWithSearchComponent],
+  imports: [CommonModule, FormsModule, SelectWithSearchComponent, FilterUsersPipe],
   templateUrl: './dashboards.component.html',
   styleUrls: ['./dashboards.component.css']
 })
@@ -101,7 +125,7 @@ export class DashboardsComponent implements OnInit {
   isWorkspaceDropdownOpen = false;
   selectedWorkspace: string | null = null;
   uniqueWorkspaces: string[] = [];
-  
+  activeUsersTab = true;
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
