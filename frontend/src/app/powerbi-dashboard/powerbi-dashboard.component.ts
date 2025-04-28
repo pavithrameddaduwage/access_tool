@@ -451,21 +451,63 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
   }
 
   private prepareActivityTimelineChart() {
-    // Define explicit types for the arrays
-    const categories: string[] = [];
-    const seriesData: number[] = [];
-    
-    // Define an interface for your data item structure
     interface ActivityDataItem {
-      x: string | number | Date; // Accept various date formats
+      x: string | number | Date;
       y: number;
     }
     
-    this.userMetrics.activityChartData.forEach((item: ActivityDataItem) => {
-      const dateStr = new Date(item.x).toISOString().split('T')[0];
-      categories.push(dateStr);
-      seriesData.push(item.y);
-    });
+    // Create a map of your actual data for quick lookup
+    const dataMap = new Map<string, number>();
+    
+    // Find min and max dates in your data - with explicit Date typing
+    let minDate: Date | undefined = undefined;
+    let maxDate: Date | undefined = undefined;
+    
+    // Make sure we have data
+    if (this.userMetrics.activityChartData && this.userMetrics.activityChartData.length > 0) {
+      // First pass: determine min and max dates
+      for (const item of this.userMetrics.activityChartData) {
+        const itemDate = new Date(item.x);
+        
+        if (!minDate || itemDate < minDate) {
+          minDate = itemDate;
+        }
+        
+        if (!maxDate || itemDate > maxDate) {
+          maxDate = itemDate;
+        }
+      }
+      
+      // Second pass: populate the data map
+      for (const item of this.userMetrics.activityChartData) {
+        const dateStr = new Date(item.x).toISOString().split('T')[0];
+        dataMap.set(dateStr, item.y);
+      }
+    }
+    
+    // Generate complete date range with all dates between min and max
+    const categories: string[] = [];
+    const seriesData: number[] = [];
+    
+    // Only proceed if we found valid min and max dates
+    if (minDate instanceof Date && maxDate instanceof Date) {
+      const startTime = minDate.getTime();
+      const endTime = maxDate.getTime();
+      const currentDate = new Date(startTime);
+      
+      // Loop through all dates between min and max
+      while (currentDate.getTime() <= endTime) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        categories.push(dateStr);
+        
+        // Get the value or default to 0
+        const value = dataMap.get(dateStr) || 0;
+        seriesData.push(value);
+        
+        // Move to next day
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
     
     this.activityTimelineChartOptions = {
       series: [{
@@ -518,7 +560,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       tooltip: {
         y: {
           formatter: function(val: number) {
-            return val + " views"
+            return val + " views";
           }
         }
       }

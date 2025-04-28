@@ -398,8 +398,9 @@
 </section>
 
   <!-- User Dashboards View -->
-  <section *ngIf="viewMode === 'users'" class="container mx-auto px-4 py-8 max-w-7xl">
-     <!-- Add Button and Search Bar Row -->
+ <!-- User Dashboards View -->
+<section *ngIf="viewMode === 'users'" class="container mx-auto px-4 py-8 max-w-7xl">
+  <!-- Add Button and Search Bar Row -->
   <div class="mb-4 flex justify-between items-center">
     <!-- Search Bar -->
     <div class="w-1/2">
@@ -428,8 +429,30 @@
     </button>
   </div>
 
+  <!-- User Status Tabs -->
+  <div class="flex border-b border-gray-200 mb-4">
+    <button
+      (click)="activeUsersTab = true"
+      [class.border-b-2]="activeUsersTab"
+      [class.border-blue-500]="activeUsersTab"
+      [class.text-blue-600]="activeUsersTab"
+      class="px-4 py-2 font-medium text-sm focus:outline-none"
+    >
+      Active Users
+    </button>
+    <button
+      (click)="activeUsersTab = false"
+      [class.border-b-2]="!activeUsersTab"
+      [class.border-blue-500]="!activeUsersTab"
+      [class.text-blue-600]="!activeUsersTab"
+      class="px-4 py-2 font-medium text-sm focus:outline-none"
+    >
+      Inactive Users
+    </button>
+  </div>
 
-    <!-- Records Table -->
+  <!-- Active Users Table -->
+  <div *ngIf="activeUsersTab">
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white text-gray-900">
       <table class="w-full text-sm text-left text-gray-700">
         <thead class="text-xs uppercase">
@@ -471,7 +494,7 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let record of filteredRecords; let i = index">
+          <ng-container *ngFor="let record of records | filterUsers:true:userSearchTerm; let i = index">
             <!-- Main Row -->
             <tr class="bg-white border-b hover:bg-gray-50">
               <td class="px-6 py-4 border-r border-gray-300">
@@ -508,14 +531,9 @@
               <td class="px-6 py-4 border-r border-gray-300">{{ record.email }}</td>
               <td class="px-6 py-4 border-r border-gray-300">
                 <span 
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  [class.bg-green-100]="record.isActive"
-                  [class.text-green-800]="record.isActive"
-                  [class.bg-red-100]="!record.isActive"
-                  [class.text-red-800]="!record.isActive"
-                  [title]="!record.isActive ? 'Last active: ' + (record.lastActiveAt | date:'medium') : ''"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
                 >
-                  {{ record.isActive ? 'Active' : 'Inactive' }}
+                  Active
                 </span>
               </td>
               <td class="px-6 py-4 border-r border-gray-300">
@@ -559,6 +577,136 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- Inactive Users Table -->
+  <div *ngIf="!activeUsersTab">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white text-gray-900">
+      <table class="w-full text-sm text-left text-gray-700">
+        <thead class="text-xs uppercase">
+          <tr>
+            <th 
+              *ngFor="let header of userDashboardHeaders" 
+              [style.width]="header.width" 
+              [class]="header.class"
+              class="px-6 py-3 border-r border-gray-300 text-gray-700"
+              [class.cursor-pointer]="header.sortable"
+              (click)="header.sortable && sortRecords(header.name)"
+            >
+              <div class="flex items-center justify-between">
+                {{ header.display_name }}
+                <div *ngIf="header.sortable" class="flex flex-col ml-1">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    class="h-3 w-3 mb-0.5"
+                    [class.text-blue-600]="sortColumn === header.name && sortDirection === 'asc'"
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                  </svg>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    class="h-3 w-3"
+                    [class.text-blue-600]="sortColumn === header.name && sortDirection === 'desc'"
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let record of records | filterUsers:false:userSearchTerm; let i = index">
+            <!-- Main Row -->
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="px-6 py-4 border-r border-gray-300">
+                <div class="flex items-center space-x-3">
+                  <button 
+                    (click)="openForm('edit', record, i)"
+                    class="text-blue-600 hover:text-blue-800"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button 
+                    (click)="deleteRecord(record)"
+                    class="text-red-600 hover:text-red-800"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                  <button 
+                    (click)="toggleRowExpansion(i)"
+                    class="text-gray-600 hover:text-gray-800 transform transition-transform duration-200"
+                    [class.rotate-180]="record.isExpanded"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+              <td class="px-6 py-4 border-r border-gray-300">{{ record.userName }}</td>
+              <td class="px-6 py-4 border-r border-gray-300">{{ record.department }}</td>
+              <td class="px-6 py-4 border-r border-gray-300">{{ record.email }}</td>
+              <td class="px-6 py-4 border-r border-gray-300">
+                <span 
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                  [title]="'Last active: ' + (record.lastActiveAt | date:'medium')"
+                >
+                  Inactive
+                </span>
+              </td>
+              <td class="px-6 py-4 border-r border-gray-300">
+                <div class="flex flex-wrap gap-1">
+                  <ng-container *ngIf="!record.isExpanded">
+                    <span 
+                      *ngFor="let dashboard of record.dashboards.slice(0, 3)"
+                      class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                    >
+                      {{ dashboard }}
+                    </span>
+                    <span 
+                      *ngIf="record.dashboards.length > 3"
+                      class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full cursor-pointer"
+                      (click)="toggleRowExpansion(i)"
+                    >
+                      +{{ record.dashboards.length - 3 }} more
+                    </span>
+                  </ng-container>
+                </div>
+              </td>
+            </tr>
+            
+            <!-- Expanded Row -->
+            <tr *ngIf="record.isExpanded" class="bg-gray-50">
+              <td class="px-6 py-4 border-r border-gray-300">
+                <!-- Empty Actions column -->
+              </td>
+              <td colspan="4" class="px-6 py-4">
+                <div class="flex flex-wrap gap-2">
+                  <span 
+                    *ngFor="let dashboard of record.dashboards"
+                    class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                  >
+                    {{ dashboard }}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- Modal/Popup Form -->
 <div *ngIf="showForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

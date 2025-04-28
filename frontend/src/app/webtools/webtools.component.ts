@@ -18,6 +18,7 @@ import {   Webtool,
   WebtoolRoleSelection, HeaderOption} from '../../../interfaces/webtool.interfaces';
 import { ToastService } from '../Services/toast.service';
 import { ConfirmationService } from '../Services/confirmation.service';
+import { Pipe, PipeTransform } from '@angular/core';
 
 interface Role {
   id: number;
@@ -53,12 +54,33 @@ interface UserWebtool {
   };
 }
 
-
+@Pipe({
+  name: 'filterUsers'
+})
+export class FilterUsersPipe implements PipeTransform {
+  transform(users: WebtoolUserDisplay[], active: boolean, searchTerm: string = ''): WebtoolUserDisplay[] {
+    if (!users) return [];
+    
+    // Filter by active status first
+    let filtered = users.filter(user => user.isActive === active);
+    
+    // Then apply search filter if there's a search term
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(user => 
+        user.userName.toLowerCase().includes(term) || 
+        user.email.toLowerCase().includes(term) || 
+        user.department.toLowerCase().includes(term))
+    }
+    
+    return filtered;
+  }
+}
 
 @Component({
   selector: 'app-webtools',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectWithSearchComponent],
+  imports: [CommonModule, FormsModule, SelectWithSearchComponent, FilterUsersPipe],
   providers: [UserService],
   templateUrl: './webtools.component.html'
 })
@@ -72,7 +94,7 @@ export class WebtoolsComponent implements OnInit {
   searchTerm: string = '';
   
   originalUsers: WebtoolUserDisplay[] = [];
-
+  activeUsersTab = true;
 
   userOptions: HeaderOption[] = [];
   roleOptions: HeaderOption[] = [];
