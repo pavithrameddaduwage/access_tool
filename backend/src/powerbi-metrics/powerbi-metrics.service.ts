@@ -522,12 +522,16 @@ export class PowerBIMetricsService {
   //     count: parseInt(r.count)
   //   }));
   // }
+
+
+  //new one
+  
   async getUserReportViewsDistribution(
     userId: string, 
     startDate: Date, 
     endDate: Date,
     workspaceId?: string
-  ): Promise<{reportId: string, reportName: string, count: number}[]> {
+  ): Promise<{reportId: string, reportName: string, workspaceName: string, count: number}[]> {
     // First convert the input dates to UTC start/end of day in EDT timezone
     const edtStart = this.convertToEdtStartOfDay(startDate);
     const edtEnd = this.convertToEdtEndOfDay(endDate);
@@ -536,6 +540,7 @@ export class PowerBIMetricsService {
       .createQueryBuilder('log')
       .select('log.reportId', 'reportId')
       .addSelect('log.reportName', 'reportName')
+      .addSelect('log.workSpaceName', 'workspaceName') // Add this line
       .addSelect('log.creationTime', 'creationTime')
       .where('log.userId = :userId', { userId })
       .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { 
@@ -555,16 +560,18 @@ export class PowerBIMetricsService {
   
     const rawLogs = await query.getRawMany();
     
-    const reportViews = new Map<string, {reportId: string, reportName: string, count: number}>();
+    const reportViews = new Map<string, {reportId: string, reportName: string, workspaceName: string, count: number}>();
     
     rawLogs.forEach(log => {
       const key = log.reportId;
       const reportName = log.reportName || 'Unknown Report';
+      const workspaceName = log.workspaceName || 'Unknown Workspace';
       
       if (!reportViews.has(key)) {
         reportViews.set(key, {
           reportId: key,
           reportName: reportName,
+          workspaceName: workspaceName,
           count: 0
         });
       }
@@ -1438,7 +1445,7 @@ async getWorkspaceViewsDistribution(
     .createQueryBuilder('log')
     .select('log.workspaceId', 'workspaceId')
     .addSelect('log.workSpaceName', 'workspaceName')
-    .addSelect('COUNT(*)', 'count')
+    .addSelect('log.creationTime', 'creationTime')  // Add creation time for timezone conversion
     .where('log.userId = :userId', { userId })
     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
     .andWhere("log.operation = 'ViewReport'")
@@ -1448,18 +1455,41 @@ async getWorkspaceViewsDistribution(
     query.andWhere('log.reportId = :reportId', { reportId });
   }
 
-  const results = await query
-    .groupBy('log.workspaceId, log.workSpaceName')
-    .orderBy('COUNT(*)', 'DESC')
-    .getRawMany();
-
-  return results.map(r => ({
-    workspaceId: r.workspaceId,
-    workspaceName: r.workspaceName || 'Unknown Workspace',
-    count: parseInt(r.count)
-  }));
+  const rawLogs = await query.getRawMany();
+  
+  // Process using EDT timezone
+  const workspaceCounts = new Map<string, {workspaceId: string, workspaceName: string, count: number}>();
+  
+  rawLogs.forEach(log => {
+    // Convert UTC date to EDT
+    const utcDate = new Date(log.creationTime);
+    
+    // Options for converting to EDT
+    const options = { timeZone: 'America/New_York' };
+    
+    // Format date in EDT timezone
+    const edtDateString = utcDate.toLocaleDateString('en-US', options);
+    const edtDateParts = edtDateString.split('/');
+    
+    // Create a key for the workspace
+    const key = log.workspaceId;
+    
+    if (!workspaceCounts.has(key)) {
+      workspaceCounts.set(key, {
+        workspaceId: log.workspaceId,
+        workspaceName: log.workspaceName || 'Unknown Workspace',
+        count: 0
+      });
+    }
+    
+    // Increment count
+    workspaceCounts.get(key)!.count += 1;
+  });
+  
+  // Convert to array and sort by count descending
+  return Array.from(workspaceCounts.values())
+    .sort((a, b) => b.count - a.count);
 }
-
 
 
 private normalizeWorkspaceName(name: string | undefined): string {

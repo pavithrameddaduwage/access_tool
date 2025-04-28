@@ -104,6 +104,7 @@ export declare class PowerBIMetricsService {
     getUserReportViewsDistribution(userId: string, startDate: Date, endDate: Date, workspaceId?: string): Promise<{
         reportId: string;
         reportName: string;
+        workspaceName: string;
         count: number;
     }[]>;
     private convertToEdtStartOfDay;

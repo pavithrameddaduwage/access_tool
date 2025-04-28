@@ -308,6 +308,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .createQueryBuilder('log')
             .select('log.reportId', 'reportId')
             .addSelect('log.reportName', 'reportName')
+            .addSelect('log.workSpaceName', 'workspaceName')
             .addSelect('log.creationTime', 'creationTime')
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', {
@@ -329,10 +330,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         rawLogs.forEach(log => {
             const key = log.reportId;
             const reportName = log.reportName || 'Unknown Report';
+            const workspaceName = log.workspaceName || 'Unknown Workspace';
             if (!reportViews.has(key)) {
                 reportViews.set(key, {
                     reportId: key,
                     reportName: reportName,
+                    workspaceName: workspaceName,
                     count: 0
                 });
             }
@@ -897,7 +900,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .createQueryBuilder('log')
             .select('log.workspaceId', 'workspaceId')
             .addSelect('log.workSpaceName', 'workspaceName')
-            .addSelect('COUNT(*)', 'count')
+            .addSelect('log.creationTime', 'creationTime')
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere("log.operation = 'ViewReport'")
@@ -905,15 +908,25 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         if (reportId) {
             query.andWhere('log.reportId = :reportId', { reportId });
         }
-        const results = await query
-            .groupBy('log.workspaceId, log.workSpaceName')
-            .orderBy('COUNT(*)', 'DESC')
-            .getRawMany();
-        return results.map(r => ({
-            workspaceId: r.workspaceId,
-            workspaceName: r.workspaceName || 'Unknown Workspace',
-            count: parseInt(r.count)
-        }));
+        const rawLogs = await query.getRawMany();
+        const workspaceCounts = new Map();
+        rawLogs.forEach(log => {
+            const utcDate = new Date(log.creationTime);
+            const options = { timeZone: 'America/New_York' };
+            const edtDateString = utcDate.toLocaleDateString('en-US', options);
+            const edtDateParts = edtDateString.split('/');
+            const key = log.workspaceId;
+            if (!workspaceCounts.has(key)) {
+                workspaceCounts.set(key, {
+                    workspaceId: log.workspaceId,
+                    workspaceName: log.workspaceName || 'Unknown Workspace',
+                    count: 0
+                });
+            }
+            workspaceCounts.get(key).count += 1;
+        });
+        return Array.from(workspaceCounts.values())
+            .sort((a, b) => b.count - a.count);
     }
     normalizeWorkspaceName(name) {
         if (name.startsWith('PersonalWorkspace')) {
