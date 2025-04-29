@@ -17,7 +17,7 @@ export class PowerBILogsCollectorTask {
     private readonly powerbiLogRepository: Repository<PowerBILog>,
   ) {}
 
-  @Cron('0 58 12 * * *')  
+  @Cron('0 58 0 * * *')  
   async collectPreviousDayLogs() {
     try {
       this.logger.log('Starting Power BI logs collection for previous day');
