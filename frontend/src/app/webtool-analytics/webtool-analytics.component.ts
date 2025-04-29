@@ -5,7 +5,10 @@ import { RolesService } from '../Services/roles.service';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule } from '@angular/forms';
-import { Role, UserWebtool, Webtool, WebtoolUser } from '../../../interfaces/webtool.interfaces';
+import { Role, UserWebtool, Webtool } from '../../../interfaces/webtool.interfaces';
+import { forkJoin } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+
 
 
 interface ProcessedUser {
@@ -38,17 +41,6 @@ interface DashboardMetrics {
   }[];
 }
 
-
-interface ExtendedDashboardMetrics extends DashboardMetrics {
-  userActivityOverTime: { date: string; count: number }[];
-  rolesPerWebtool: MetricItem[];
-  privilegesDistribution: MetricItem[];
-  departmentWebtoolUsage: {
-    department: string;
-    webtools: { name: string; count: number }[];
-  }[];
-}
-
 @Component({
   selector: 'app-webtool-analytics',
   templateUrl: './webtool-analytics.component.html',
@@ -59,193 +51,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
   webtools: Webtool[] = [];
   users: ProcessedUser[] = [];
   roles: Role[] = [];
-
-  userActivityChart: any;
-  rolesPerWebtoolChart: any;
-  privilegesChart: any;
-  departmentUsageChart: any;
-  enhancedAccessMatrix: any;
-  topUsersChart: any;
-
-selectedWebtool: string | number = 'all';
-
-filteredWebtoolUsageChart: any;
-filteredDepartmentDistributionChart: any;
-filteredUserWebtoolMatrix: any;
-filteredDepartmentUsageChart: any;
-filteredTopUsersChart: any;
-
-filterByWebtool() {
-  if (this.selectedWebtool === 'all') {
-    // Show all data - with improved User-Webtool Matrix x-axis labels
-    this.filteredWebtoolUsageChart = this.webtoolUsageChart;
-    this.filteredDepartmentDistributionChart = this.departmentDistributionChart;
-    this.filteredDepartmentUsageChart = this.departmentUsageChart;
-    this.filteredTopUsersChart = this.topUsersChart;
-    
-    // Enhanced unfiltered matrix with proper x-axis labels
-    this.filteredUserWebtoolMatrix = {
-      ...this.userWebtoolMatrix,
-      xaxis: {
-        ...this.userWebtoolMatrix.xaxis,
-        labels: {
-          show: true,
-          rotate: -45,
-          style: {
-            fontSize: '10px',
-            fontFamily: 'Arial, sans-serif'
-          },
-          formatter: (value: string) => {
-            // Truncate long names if needed
-            return value.length > 15 ? value.substring(0, 12) + '...' : value;
-          }
-        }
-      },
-      chart: {
-        ...this.userWebtoolMatrix.chart,
-        height: Math.max(400, this.users.length * 20)
-      }
-    };
-    
-  } else {
-    // Filter data based on selected webtool
-    const webtoolId = Number(this.selectedWebtool);
-    const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
-    const usersWithAccess = this.users.filter(u => u.webtools.has(webtoolId));
-    
-    // 1. Filter Webtool Usage Chart
-    this.filteredWebtoolUsageChart = {
-      ...this.webtoolUsageChart,
-      series: [{
-        name: 'Users',
-        data: [usersWithAccess.length]
-      }],
-      xaxis: {
-        ...this.webtoolUsageChart.xaxis,
-        categories: [webtoolName]
-      }
-    };
-    
-    // 2. Filter Department Distribution
-    const deptCounts = usersWithAccess.reduce((acc, user) => {
-      const dept = user.department || 'Unknown';
-      acc[dept] = (acc[dept] || 0) + 1;
-      return acc;
-    }, {} as { [key: string]: number });
-    
-    this.filteredDepartmentDistributionChart = {
-      ...this.departmentDistributionChart,
-      series: Object.values(deptCounts),
-      labels: Object.keys(deptCounts),
-      colors: this.generateColorPalette(Object.keys(deptCounts).length)
-    };
-    
-    // 3. Filter User-Webtool Matrix (with enhanced x-axis)
-    this.filteredUserWebtoolMatrix = {
-      ...this.userWebtoolMatrix,
-      series: [{
-        name: webtoolName,
-        data: this.users.map(user => ({
-          x: user.name,
-          y: user.webtools.has(webtoolId) ? 1 : 0
-        }))
-      }],
-      yaxis: {
-        categories: [webtoolName],
-        labels: {
-          style: {
-            fontSize: '12px'
-          }
-        }
-      },
-      xaxis: {
-        type: 'category',
-        labels: {
-          show: true,
-          rotate: -45,
-          style: {
-            fontSize: '10px',
-            fontFamily: 'Arial, sans-serif'
-          },
-          formatter: (value: string) => {
-            return value.length > 15 ? value.substring(0, 12) + '...' : value;
-          }
-        }
-      },
-      chart: {
-        ...this.userWebtoolMatrix.chart,
-        height: Math.max(400, this.users.length * 20)
-      },
-      tooltip: {
-        custom: ({ dataPointIndex }: any) => {
-          const user = this.users[dataPointIndex];
-          return `
-            <div class="p-2">
-              <div><strong>User:</strong> ${user.name}</div>
-              <div><strong>Email:</strong> ${user.email}</div>
-              <div><strong>Access:</strong> ${user.webtools.has(webtoolId) ? 'Yes' : 'No'}</div>
-            </div>
-          `;
-        }
-      }
-    };
-    
-    // 4. Filter Department Webtool Usage
-    const selectedWebtoolData = this.metrics.departmentWebtoolUsage
-      .map(dept => ({
-        department: dept.department,
-        count: dept.webtools.find(w => w.name === webtoolName)?.count || 0
-      }))
-      .filter(dept => dept.count > 0)
-      .sort((a, b) => b.count - a.count);
-    
-    this.filteredDepartmentUsageChart = {
-      ...this.departmentUsageChart,
-      series: [{
-        name: webtoolName,
-        data: selectedWebtoolData.map(d => d.count)
-      }],
-      xaxis: {
-        ...this.departmentUsageChart.xaxis,
-        categories: selectedWebtoolData.map(d => d.department)
-      },
-      colors: this.generateColorPalette(selectedWebtoolData.length)
-    };
-    
-    // 5. Filter Top Users
-    const topUsers = usersWithAccess
-      .map(user => ({
-        name: user.name,
-        email: user.email,
-        count: 1 // Since we're already filtered to users with access
-      }))
-      .slice(0, 5); // Just take first 5 since all have count=1
-    
-    this.filteredTopUsersChart = {
-      ...this.topUsersChart,
-      series: [{
-        name: 'Access Count',
-        data: topUsers.map(u => u.count)
-      }],
-      xaxis: {
-        ...this.topUsersChart.xaxis,
-        categories: topUsers.map(u => u.name)
-      }
-    };
-  }
-}
-
-// Helper function to generate consistent colors
-private generateColorPalette(count: number): string[] {
-  const baseColors = ['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF'];
-  if (count <= baseColors.length) {
-    return baseColors.slice(0, count);
-  }
-  // Generate additional colors if needed
-  return [...baseColors, ...Array(count - baseColors.length).fill('#0077B6')];
-}
-
-
+  rawData: UserWebtool[] = [];
 
   metrics: DashboardMetrics = {
     totalUsers: 0,
@@ -260,13 +66,27 @@ private generateColorPalette(count: number): string[] {
     topUsers: []
   };
 
-  
   chartsInitialized = false;
   webtoolUsageChart: any = null;
   roleDistributionChart: any = null;
   departmentDistributionChart: any = null;
   userWebtoolMatrix: any = null;
+  rolesPerWebtoolChart: any = null;
+  departmentUsageChart: any = null;
+  topUsersChart: any = null;
+  userStatusChart: any = null;
 
+  filteredWebtoolUsageChart: any = null;
+  filteredDepartmentDistributionChart: any = null;
+  filteredUserWebtoolMatrix: any = null;
+  filteredDepartmentUsageChart: any = null;
+  filteredTopUsersChart: any = null;
+
+  selectedWebtool: string | number = 'all';
+
+  userStatusData: { active: number, inactive: number } = { active: 0, inactive: 0 };
+
+  
   constructor(
     private webtoolService: WebtoolService,
     private userWebtoolService: UserWebtoolService,
@@ -281,15 +101,18 @@ private generateColorPalette(count: number): string[] {
   async loadData() {
     try {
       const [webtools, userWebtools, roles] = await Promise.all([
-        this.webtoolService.getWebtools().toPromise(),
-        this.userWebtoolService.getConsolidatedUserData().toPromise(),
-        this.rolesService.getRoles().toPromise()
+        firstValueFrom(this.webtoolService.getWebtools()),
+        firstValueFrom(this.userWebtoolService.getAllActiveUserWebtools()),
+        firstValueFrom(this.rolesService.getRoles())
       ]);
-
+  
+ 
+  
       this.webtools = webtools || [];
       this.roles = roles || [];
-      this.users = this.processUsers(userWebtools || []);
-      
+      this.rawData = userWebtools || [];
+      this.users = this.processUsers(this.rawData);
+  
       this.calculateMetrics();
       this.initCharts();
       this.chartsInitialized = true;
@@ -300,38 +123,31 @@ private generateColorPalette(count: number): string[] {
       this.chartsInitialized = true;
     }
   }
+  
 
-
-  private processUsers(userWebtools: WebtoolUser[]): ProcessedUser[] {
+  private processUsers(userWebtools: UserWebtool[]): ProcessedUser[] {
     const userMap = new Map<string, ProcessedUser>();
     
-    userWebtools.forEach(user => {
-      if (!userMap.has(user.email)) {
-        userMap.set(user.email, {
-          email: user.email,
-          name: user.userName,
-          department: user.department,
+    userWebtools.forEach(record => {
+      if (!userMap.has(record.email)) {
+        userMap.set(record.email, {
+          email: record.email,
+          name: record.userName,
+          department: record.department,
           webtools: new Set<number>(),
           roles: new Set<number>()
         });
       }
       
-      const processedUser = userMap.get(user.email)!;
+      const user = userMap.get(record.email)!;
+      user.webtools.add(record.webtoolId);
       
-      // Process webtools (matching names to IDs)
-      user.webtools?.forEach(webtoolName => {
-        const matchingWebtool = this.webtools.find(w => w.webtool === webtoolName);
-        if (matchingWebtool) {
-          processedUser.webtools.add(matchingWebtool.id);
-        }
-      });
-      
-      // Process roles from all webtools
-      Object.values(user.roles || {}).forEach(roleArray => {
-        roleArray.forEach(role => {
-          processedUser.roles.add(role.id);
+      // Check if roles array exists and has at least one element
+      if (record.roles && record.roles.length > 0) {
+        record.roles.forEach(role => {
+          user.roles.add(role.id);
         });
-      });
+      }
     });
     
     return Array.from(userMap.values());
@@ -358,10 +174,9 @@ private generateColorPalette(count: number): string[] {
 
     // Top webtools by user count
     const webtoolUsage = new Map<number, number>();
-    this.users.forEach(user => {
-      user.webtools.forEach(webtoolId => {
-        webtoolUsage.set(webtoolId, (webtoolUsage.get(webtoolId) || 0) + 1);
-      });
+    this.webtools.forEach(webtool => {
+      const count = this.rawData.filter(r => r.webtoolId === webtool.id).length;
+      webtoolUsage.set(webtool.id, count);
     });
     
     this.metrics.topWebtools = Array.from(webtoolUsage.entries())
@@ -372,55 +187,204 @@ private generateColorPalette(count: number): string[] {
       }))
       .sort((a, b) => b.count - a.count);
 
-  // Roles per Webtool (fixed)
-  this.metrics.rolesPerWebtool = this.webtools.map(webtool => {
-    // Count unique roles across all users for this webtool
-    const roleCounts = new Set<number>();
-    this.users.forEach(user => {
-      if (user.webtools.has(webtool.id)) {
-        user.roles.forEach(roleId => roleCounts.add(roleId));
-      }
-    });
-    return {
-      id: webtool.id,
-      name: webtool.webtool,
-      count: roleCounts.size
-    };
-  }).sort((a, b) => b.count - a.count);
-      // 4. Department vs Webtool Usage
-      const departmentMap = new Map<string, Map<string, number>>();
+    // Roles per Webtool
+    this.metrics.rolesPerWebtool = this.webtools.map(webtool => {
+      const roleCounts = new Set<number>();
       this.users.forEach(user => {
-        if (!departmentMap.has(user.department)) {
-          departmentMap.set(user.department, new Map<string, number>());
+        if (user.webtools.has(webtool.id)) {
+          user.roles.forEach(roleId => roleCounts.add(roleId));
         }
-        const deptWebtools = departmentMap.get(user.department)!;
-        user.webtools.forEach(webtoolId => {
-          const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
-          deptWebtools.set(webtoolName, (deptWebtools.get(webtoolName) || 0) + 1);
-        });
       });
-      
-      this.metrics.departmentWebtoolUsage = Array.from(departmentMap.entries())
-        .map(([department, webtoolCounts]) => ({
-          department,
-          webtools: Array.from(webtoolCounts.entries())
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count)
-        }));
-          // Top Users by Webtool count
-  this.metrics.topUsers = this.users
-  .map(user => ({
-    name: user.name,
-    email: user.email,
-    count: user.webtools.size
-  }))
-  .sort((a, b) => b.count - a.count)
-  .slice(0, 5); // Get top 5
+      return {
+        id: webtool.id,
+        name: webtool.webtool,
+        count: roleCounts.size
+      };
+    }).sort((a, b) => b.count - a.count);
 
+    // Department vs Webtool Usage
+    const departmentMap = new Map<string, Map<string, number>>();
+    this.users.forEach(user => {
+      if (!departmentMap.has(user.department)) {
+        departmentMap.set(user.department, new Map<string, number>());
+      }
+      const deptWebtools = departmentMap.get(user.department)!;
+      user.webtools.forEach(webtoolId => {
+        const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
+        deptWebtools.set(webtoolName, (deptWebtools.get(webtoolName) || 0) + 1);
+      });
+    });
+    
+    this.metrics.departmentWebtoolUsage = Array.from(departmentMap.entries())
+      .map(([department, webtoolCounts]) => ({
+        department,
+        webtools: Array.from(webtoolCounts.entries())
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count)
+      }));
+
+    // Top Users
+    this.metrics.topUsers = this.users
+      .map(user => ({
+        name: user.name,
+        email: user.email,
+        count: user.webtools.size
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+  }
+
+  filterByWebtool() {
+    if (this.selectedWebtool === 'all') {
+      this.filteredWebtoolUsageChart = {
+        ...this.webtoolUsageChart,
+        series: [{
+          name: 'Users',
+          data: this.metrics.topWebtools.map(w => w.count)
+        }]
+      };
+      
+      this.filteredDepartmentDistributionChart = {
+        ...this.departmentDistributionChart,
+        series: Object.values(this.metrics.usersByDepartment),
+        labels: Object.keys(this.metrics.usersByDepartment)
+      };
+      
+      this.filteredDepartmentUsageChart = {
+        ...this.departmentUsageChart,
+        series: this.metrics.departmentWebtoolUsage.map(dept => ({
+          name: dept.department,
+          data: dept.webtools.map(w => w.count)
+        }))
+      };
+      
+      this.filteredTopUsersChart = {
+        ...this.topUsersChart,
+        series: [{
+          name: 'Webtools',
+          data: this.metrics.topUsers.map(u => u.count)
+        }]
+      };
+      
+      this.filteredUserWebtoolMatrix = {
+        ...this.userWebtoolMatrix,
+        series: this.webtools.map(webtool => ({
+          name: webtool.webtool,
+          data: this.users.map(user => ({
+            x: user.name,
+            y: user.webtools.has(webtool.id) ? 1 : 0
+          }))
+        })),
+        chart: {
+          ...this.userWebtoolMatrix.chart,
+          height: Math.max(400, this.users.length * 20)
+        }
+      };
+    } else {
+      const webtoolId = Number(this.selectedWebtool);
+      const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
+      const usersWithAccess = this.users.filter(u => u.webtools.has(webtoolId));
+      
+      this.filteredWebtoolUsageChart = {
+        ...this.webtoolUsageChart,
+        series: [{
+          name: 'Users',
+          data: [usersWithAccess.length]
+        }],
+        xaxis: {
+          ...this.webtoolUsageChart.xaxis,
+          categories: [webtoolName]
+        }
+      };
+      
+      const deptCounts = usersWithAccess.reduce((acc, user) => {
+        const dept = user.department || 'Unknown';
+        acc[dept] = (acc[dept] || 0) + 1;
+        return acc;
+      }, {} as { [key: string]: number });
+      
+      this.filteredDepartmentDistributionChart = {
+        ...this.departmentDistributionChart,
+        series: Object.values(deptCounts),
+        labels: Object.keys(deptCounts),
+        colors: this.generateColorPalette(Object.keys(deptCounts).length)
+      };
+      
+      this.filteredUserWebtoolMatrix = {
+        ...this.userWebtoolMatrix,
+        series: [{
+          name: webtoolName,
+          data: this.users.map(user => ({
+            x: user.name,
+            y: user.webtools.has(webtoolId) ? 1 : 0
+          }))
+        }],
+        yaxis: {
+          categories: [webtoolName],
+          labels: {
+            style: {
+              fontSize: '12px'
+            }
+          }
+        },
+        chart: {
+          ...this.userWebtoolMatrix.chart,
+          height: Math.max(400, this.users.length * 20)
+        }
+      };
+
+      const selectedWebtoolData = this.metrics.departmentWebtoolUsage
+        .map(dept => ({
+          department: dept.department,
+          count: dept.webtools.find(w => w.name === webtoolName)?.count || 0
+        }))
+        .filter(dept => dept.count > 0)
+        .sort((a, b) => b.count - a.count);
+      
+      this.filteredDepartmentUsageChart = {
+        ...this.departmentUsageChart,
+        series: [{
+          name: webtoolName,
+          data: selectedWebtoolData.map(d => d.count)
+        }],
+        xaxis: {
+          ...this.departmentUsageChart.xaxis,
+          categories: selectedWebtoolData.map(d => d.department)
+        },
+        colors: this.generateColorPalette(selectedWebtoolData.length)
+      };
+      
+      const topUsers = usersWithAccess
+        .map(user => ({
+          name: user.name,
+          email: user.email,
+          count: 1 
+        }))
+        .slice(0, 5);
+      
+      this.filteredTopUsersChart = {
+        ...this.topUsersChart,
+        series: [{
+          name: 'Access Count',
+          data: topUsers.map(u => u.count)
+        }],
+        xaxis: {
+          ...this.topUsersChart.xaxis,
+          categories: topUsers.map(u => u.name)
+        }
+      };
+    }
+  }
+
+  private generateColorPalette(count: number): string[] {
+    const baseColors = ['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF'];
+    if (count <= baseColors.length) {
+      return baseColors.slice(0, count);
+    }
+    return [...baseColors, ...Array(count - baseColors.length).fill('#0077B6')];
   }
 
   private initCharts() {
-    // Webtool Usage Chart
     this.webtoolUsageChart = {
       series: [{
         name: 'Users',
@@ -443,7 +407,6 @@ private generateColorPalette(count: number): string[] {
       colors: ['#3B82F6']
     };
 
-    // Role Distribution Chart
     this.roleDistributionChart = {
       series: this.metrics.roleDistribution.map(r => r.count),
       chart: {
@@ -454,7 +417,6 @@ private generateColorPalette(count: number): string[] {
       colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
     };
 
-    // Department Distribution Chart
     const departments = Object.keys(this.metrics.usersByDepartment);
     this.departmentDistributionChart = {
       series: departments.map(dept => this.metrics.usersByDepartment[dept]),
@@ -466,18 +428,17 @@ private generateColorPalette(count: number): string[] {
       colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
     };
 
-    // User-Webtool Matrix
     this.userWebtoolMatrix = {
       series: this.webtools.map(webtool => ({
         name: webtool.webtool,
-        data: this.users.map(user => ({
-          x: user.name, // Use user.name instead of user.email
+        data: this.users.map(user => ({ 
+          x: user.name,
           y: user.webtools.has(webtool.id) ? 1 : 0
         }))
-      })),
+      })),  // Added closing parenthesis and bracket here
       chart: {
         type: 'heatmap',
-        height: Math.max(400, this.users.length * 20),
+        height: Math.max(400, this.users.length * 20), 
         toolbar: { show: false }
       },
       dataLabels: { enabled: false },
@@ -485,10 +446,10 @@ private generateColorPalette(count: number): string[] {
       xaxis: { 
         type: 'category', 
         labels: { 
-          show: true, // Make sure labels are visible
-          rotate: -45, // Rotate labels if needed
+          show: true,
+          rotate: -45,
           style: {
-            fontSize: '10px' // Adjust font size as needed
+            fontSize: '10px'
           }
         } 
       },
@@ -496,7 +457,7 @@ private generateColorPalette(count: number): string[] {
         categories: this.webtools.map(w => w.webtool),
         labels: {
           style: {
-            fontSize: '10px' // Adjust font size as needed
+            fontSize: '10px'
           }
         }
       },
@@ -515,6 +476,7 @@ private generateColorPalette(count: number): string[] {
         }
       }
     };
+
     this.rolesPerWebtoolChart = {
       series: [{
         name: 'Roles',
@@ -530,8 +492,6 @@ private generateColorPalette(count: number): string[] {
       colors: ['#10B981']
     };
 
-
-    // 4. Department vs Webtool Usage
     this.departmentUsageChart = {
       series: this.metrics.departmentWebtoolUsage.map(dept => ({
         name: dept.department,
@@ -548,41 +508,40 @@ private generateColorPalette(count: number): string[] {
       colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
     };
 
-   
-  // Top Users Chart
-  this.topUsersChart = {
-    series: [{
-      name: 'Webtools',
-      data: this.metrics.topUsers.map(u => u.count)
-    }],
-    chart: {
-      type: 'bar',
-      height: 350
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 4,
-        horizontal: true,
+    this.topUsersChart = {
+      series: [{
+        name: 'Webtools',
+        data: this.metrics.topUsers.map(u => u.count)
+      }],
+      chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          horizontal: true,
+        }
+      },
+      xaxis: {
+        categories: this.metrics.topUsers.map(u => u.name),
+        title: { text: 'Number of Webtools' }
+      },
+      colors: ['#8B5CF6'],
+      tooltip: {
+        custom: ({ dataPointIndex }: any) => {
+          const user = this.metrics.topUsers[dataPointIndex];
+          return `
+            <div class="p-2">
+              <div><strong>User:</strong> ${user.name}</div>
+              <div><strong>Email:</strong> ${user.email}</div>
+              <div><strong>Webtools:</strong> ${user.count}</div>
+            </div>
+          `;
+        }
       }
-    },
-    xaxis: {
-      categories: this.metrics.topUsers.map(u => u.name),
-      title: { text: 'Number of Webtools' }
-    },
-    colors: ['#8B5CF6'],
-    tooltip: {
-      custom: ({ dataPointIndex }: any) => {
-        const user = this.metrics.topUsers[dataPointIndex];
-        return `
-          <div class="p-2">
-            <div><strong>User:</strong> ${user.name}</div>
-            <div><strong>Email:</strong> ${user.email}</div>
-            <div><strong>Webtools:</strong> ${user.count}</div>
-          </div>
-        `;
-      }
-    }
-  };
+    };
+
   }
 
   private initEmptyCharts() {

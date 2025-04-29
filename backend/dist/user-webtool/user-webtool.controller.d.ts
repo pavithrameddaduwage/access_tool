@@ -36,4 +36,5 @@ export declare class UserWebtoolController {
     updateStatus(email: string, webtoolId: number, dto: {
         isActive: boolean;
     }): Promise<void>;
+    getAllRawUserWebtools(): Promise<import("./entities/user-webtool.entity").UserWebtool[]>;
 }

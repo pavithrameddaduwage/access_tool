@@ -50,6 +50,9 @@ let UserWebtoolController = class UserWebtoolController {
     async updateStatus(email, webtoolId, dto) {
         return this.userWebtoolService.updateActiveStatus(email, webtoolId, dto.isActive);
     }
+    async getAllRawUserWebtools() {
+        return this.userWebtoolService.findAllRaw();
+    }
 };
 exports.UserWebtoolController = UserWebtoolController;
 __decorate([
@@ -124,6 +127,12 @@ __decorate([
     __metadata("design:paramtypes", [String, Number, Object]),
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Get)('raw/all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserWebtoolController.prototype, "getAllRawUserWebtools", null);
 exports.UserWebtoolController = UserWebtoolController = __decorate([
     (0, common_1.Controller)('user-webtools'),
     __metadata("design:paramtypes", [user_webtool_service_1.UserWebtoolService])

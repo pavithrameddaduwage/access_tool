@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { CreateUserWebtoolDto, UserRole, UserWebtool, WebtoolUser } from '../../../interfaces/webtool.interfaces';
 import { environment } from '../../environments/environment';
+// THIS IS USER-WEBTOOL.SERVICE.TS
 
 interface LocalWebtoolUser {
   userId: number;
@@ -172,4 +173,16 @@ createUserWebtool(data: CreateUserWebtoolDto): Observable<UserWebtool> {
       { isActive }
     );
   }
+
+  getAllActiveUserWebtools(): Observable<UserWebtool[]> {
+    return this.http.get<UserWebtool[]>(`${this.apiUrl}/raw/all`).pipe(
+      tap(data => console.log('Active users data:', data)),
+      catchError(error => {
+        console.error('Error fetching active users:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+
 }

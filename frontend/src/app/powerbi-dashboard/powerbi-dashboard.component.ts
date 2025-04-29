@@ -11,7 +11,10 @@ interface ViewCount {
   date: string;
   count: number;
 }
-
+interface ActivityData {
+  date: string;
+  count: number;
+}
 interface ReportMetric {
   reportId: string;
   reportName: string;
@@ -104,7 +107,7 @@ export class PowerBIDashboardComponent implements OnInit {
   userSearchQuery = '';
   filteredReports: ReportMetric[] = [];
 
-
+  dateIndexMapping: {[key: string]: number} = {};
   unusedReports: {id: number, dashboard: string, groupId: number | null}[] = [];
   loadingUnusedReports = false;
 
@@ -451,64 +454,54 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
   }
 
   private prepareActivityTimelineChart() {
-    interface ActivityDataItem {
-      x: string | number | Date;
-      y: number;
-    }
+    // Create a complete date range including all dates between min and max
+    const activityData: ActivityData[] = this.userMetrics.activityByDate || [];
     
-    // Create a map of your actual data for quick lookup
-    const dataMap = new Map<string, number>();
+    // Find min and max dates
+    let minDate: Date | undefined;
+    let maxDate: Date | undefined;
     
-    // Find min and max dates in your data - with explicit Date typing
-    let minDate: Date | undefined = undefined;
-    let maxDate: Date | undefined = undefined;
-    
-    // Make sure we have data
-    if (this.userMetrics.activityChartData && this.userMetrics.activityChartData.length > 0) {
-      // First pass: determine min and max dates
-      for (const item of this.userMetrics.activityChartData) {
-        const itemDate = new Date(item.x);
-        
-        if (!minDate || itemDate < minDate) {
-          minDate = itemDate;
-        }
-        
-        if (!maxDate || itemDate > maxDate) {
-          maxDate = itemDate;
-        }
-      }
+    if (activityData.length > 0) {
+      minDate = new Date(activityData[0].date);
+      maxDate = new Date(activityData[0].date);
       
-      // Second pass: populate the data map
-      for (const item of this.userMetrics.activityChartData) {
-        const dateStr = new Date(item.x).toISOString().split('T')[0];
-        dataMap.set(dateStr, item.y);
+      for (const item of activityData) {
+        const itemDate = new Date(item.date);
+        if (itemDate < minDate) minDate = itemDate;
+        if (itemDate > maxDate) maxDate = itemDate;
       }
     }
-    
-    // Generate complete date range with all dates between min and max
-    const categories: string[] = [];
+  
+    // Generate complete date range
+    const allDates: string[] = [];
     const seriesData: number[] = [];
+    const dateToIndexMap: {[key: string]: number} = {};
     
-    // Only proceed if we found valid min and max dates
-    if (minDate instanceof Date && maxDate instanceof Date) {
-      const startTime = minDate.getTime();
-      const endTime = maxDate.getTime();
-      const currentDate = new Date(startTime);
+    if (minDate && maxDate) {
+      const currentDate = new Date(minDate);
+      let index = 0;
       
-      // Loop through all dates between min and max
-      while (currentDate.getTime() <= endTime) {
+      while (currentDate <= maxDate) {
         const dateStr = currentDate.toISOString().split('T')[0];
-        categories.push(dateStr);
+        allDates.push(dateStr);
         
-        // Get the value or default to 0
-        const value = dataMap.get(dateStr) || 0;
-        seriesData.push(value);
+        // Find activity for this date (now properly typed)
+        const activity = activityData.find(a => a.date === dateStr);
+        seriesData.push(activity ? activity.count : 0);
         
-        // Move to next day
+        // Map the date to its original index in activityData
+        if (activity) {
+          dateToIndexMap[dateStr] = activityData.indexOf(activity);
+        }
+        
         currentDate.setDate(currentDate.getDate() + 1);
+        index++;
       }
+      
+      // Store the date mapping for click handling
+      this.dateIndexMapping = dateToIndexMap;
     }
-    
+  
     this.activityTimelineChartOptions = {
       series: [{
         name: 'Views',
@@ -519,49 +512,29 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
         height: 350,
         events: {
           dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
-            this.onActivityTimelineClick(config.dataPointIndex);
+            const clickedDate = allDates[config.dataPointIndex];
+            this.onActivityTimelineClick(clickedDate);
           }
         }
       },
       xaxis: {
         type: 'category',
-        categories: categories,
+        categories: allDates,
         labels: {
           rotate: -45,
           hideOverlappingLabels: true,
           offsetY: 5
-        },
-        axisBorder: {
-          show: true
-        },
-        axisTicks: {
-          show: true
-        },
-        tickPlacement: 'on',
-        position: 'bottom'
+        }
       },
       colors: ['#0077B6'],
       plotOptions: {
         bar: {
-          columnWidth: '60%',
-          distributed: true,
-          endingShape: 'flat'
+          columnWidth: '60%'
         }
-      },
-      grid: {
-        padding: {
-          left: 10,
-          right: 10
-        }
-      },
-      stroke: {
-        width: 0
       },
       tooltip: {
         y: {
-          formatter: function(val: number) {
-            return val + " views";
-          }
+          formatter: (val: number) => `${val} views`,
         }
       }
     };
@@ -1114,8 +1087,13 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
     }
   }
   private prepareUserConsumptionChart() {
-    if (!this.userConsumptionMethods || this.userConsumptionMethods.length === 0) return;
-    
+    // Check if there are no consumption methods or all counts are 0
+    if (!this.userConsumptionMethods || this.userConsumptionMethods.length === 0 || 
+        this.userConsumptionMethods.every(m => m.count === 0)) {
+      this.userConsumptionChartOptions = null;
+      return;
+    }
+  
     console.log('User consumption methods before chart preparation:', this.userConsumptionMethods);
     const teamsData = this.userConsumptionMethods.find(m => m.method === 'Microsoft Teams');
     console.log('Microsoft Teams data:', teamsData);
@@ -1152,7 +1130,6 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'],
     };
     
-    // After chart preparation, log the final chart options to verify the data
     console.log('Chart series values:', this.userConsumptionChartOptions.series);
     console.log('Chart labels:', this.userConsumptionChartOptions.labels);
   }
@@ -1372,17 +1349,14 @@ dateReportViews: DateReportView[] = [];
   
 //   this.loadReportViewsForDate(selectedDate);
 // }
-async onActivityTimelineClick(dataPointIndex: number) {
-  const selectedDate = this.userMetrics.activityByDate[dataPointIndex].date;
-  this.selectedDateForPopup = selectedDate;
+async onActivityTimelineClick(clickedDate: string) {
+  this.selectedDateForPopup = clickedDate;
   
   try {
-    // Show loading state
     this.showDatePopup = true;
     this.selectedDateReports = [];
     
-    // Load data
-    await this.loadReportViewsForDate(selectedDate);
+    await this.loadReportViewsForDate(clickedDate);
     this.selectedDateReports = this.dateReportViews || [];
     
   } catch (error) {

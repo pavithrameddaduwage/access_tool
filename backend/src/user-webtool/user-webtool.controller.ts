@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, HttpStatus, HttpCode, UseGuards, Req, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, HttpStatus, HttpCode, UseGuards, Req, Patch, HttpException } from '@nestjs/common';
 import { UserWebtoolService } from './user-webtool.service';
 import { CreateUserWebtoolDto } from './dto/create-user-webtool.dto';
 import { ExternalWebtoolAssignmentDto } from './dto/external-webtool-assignment.dto';
@@ -76,4 +76,12 @@ async updateStatus(
 ) {
   return this.userWebtoolService.updateActiveStatus(email, webtoolId, dto.isActive);
 }
+
+@Get('raw/all')
+async getAllRawUserWebtools() {
+  return this.userWebtoolService.findAllRaw();
+}
+
+
+
 }

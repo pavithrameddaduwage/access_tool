@@ -341,5 +341,16 @@ export class UserWebtoolService {
       relations: ['webtool', 'role'] 
     });
   }
+
+  async findAllRaw() {
+    return this.userWebtoolRepository.find({
+      where: { isActive: true }, // Only active users
+      relations: ['webtool', 'role']
+    });
+  }
+
+
+  
+  
 }
 

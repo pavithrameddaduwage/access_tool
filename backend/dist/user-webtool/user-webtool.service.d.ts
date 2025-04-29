@@ -41,4 +41,5 @@ export declare class UserWebtoolService {
     }>;
     updateActiveStatus(email: string, webtoolId: number, isActive: boolean): Promise<void>;
     update(id: number, updateDto: UpdateUserWebtoolDto): Promise<UserWebtool>;
+    findAllRaw(): Promise<UserWebtool[]>;
 }

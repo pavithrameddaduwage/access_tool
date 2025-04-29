@@ -200,6 +200,12 @@ let UserWebtoolService = class UserWebtoolService {
             relations: ['webtool', 'role']
         });
     }
+    async findAllRaw() {
+        return this.userWebtoolRepository.find({
+            where: { isActive: true },
+            relations: ['webtool', 'role']
+        });
+    }
 };
 exports.UserWebtoolService = UserWebtoolService;
 exports.UserWebtoolService = UserWebtoolService = __decorate([
