@@ -26,7 +26,6 @@ let UserWebtoolService = class UserWebtoolService {
         this.roleRepository = roleRepository;
     }
     async create(createUserWebtoolDto) {
-        console.log('Creating user webtool with data:', createUserWebtoolDto);
         const webtool = await this.webtoolRepository.findOne({
             where: { id: createUserWebtoolDto.webtoolId }
         });
@@ -52,10 +51,6 @@ let UserWebtoolService = class UserWebtoolService {
         const result = await this.userWebtoolRepository.findOne({
             where: { id: saved.id },
             relations: ['webtool', 'role']
-        });
-        console.log('Created user webtool with status:', {
-            isActive: result.isActive,
-            lastActiveAt: result.lastActiveAt
         });
         return result;
     }

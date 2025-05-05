@@ -75,6 +75,6 @@ export class RoleTableComponent extends CustomTableComponent {
     super.handleSearch();
     
     // Add any RoleTableComponent-specific search handling here if needed
-    console.log('Search executed in RoleTableComponent');
+    // console.log('Search executed in RoleTableComponent');
   }
 }

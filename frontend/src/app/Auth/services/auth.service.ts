@@ -27,10 +27,10 @@ export class AuthService {
   }
 
   login(data: any): Observable<any> {
-    console.log('Login request data:', data);
+    // console.log('Login request data:', data);
     return this.http.post(`${environment.apiUrl}auth/login`, data)
       .pipe(
-        tap(response => console.log('Login response:', response))
+        tap(response => console.log('Login response:'))
       );
   }
   logout() {

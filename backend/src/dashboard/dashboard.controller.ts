@@ -28,9 +28,9 @@ export class DashboardController {
     @Param('id') id: string, 
     @Body() updateDashboardDto: UpdateDashboardDto
   ) {
-    console.log('Updating dashboard:', { id, data: updateDashboardDto }); // Debug log
+    // console.log('Updating dashboard:', { id, data: updateDashboardDto }); // Debug log
     const result = await this.dashboardService.update(+id, updateDashboardDto);
-    console.log('Update result:', result); // Debug log
+    // console.log('Update result:', result); // Debug log
     return result;
   }
   @Delete(':id')

@@ -43,7 +43,7 @@ export class RolesService {
       webtoolId: roleData.webtoolId
     };
 
-    console.log('Creating role with payload:', payload);
+    // console.log('Creating role with payload:', payload);
     return this.http.post<Role>(this.apiUrl, payload);
   }
 
@@ -54,7 +54,7 @@ export class RolesService {
       webtoolId: roleData.webtoolId
     };
 
-    console.log('Updating role with payload:', payload);
+    // console.log('Updating role with payload:', payload);
     return this.http.put<Role>(`${this.apiUrl}/${id}`, payload);
   }  deleteRole(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);

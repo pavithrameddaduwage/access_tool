@@ -562,14 +562,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         const logs = await query.getMany();
         const counts = new Map();
-        console.log("logs", logs);
         logs.forEach(log => {
             const utcDate = new Date(log.creationTime);
             const options = { timeZone: 'America/New_York' };
             const edtDateString = utcDate.toLocaleDateString('en-US', options);
             const edtDateParts = edtDateString.split('/');
             const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
-            console.log("log creation time (EDT)", dateKey);
             counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
         });
         return Array.from(counts.entries())

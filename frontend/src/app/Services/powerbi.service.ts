@@ -31,10 +31,10 @@ export class PowerBIService {
             
             if (usageReport) {
               this.usageMetricsReportId = usageReport.id;
-              console.log('Found usage metrics report:', usageReport.name, usageReport.id);
+              // console.log('Found usage metrics report:', usageReport.name, usageReport.id);
             } else if (reports.length > 0) {
               this.usageMetricsReportId = reports[0].id;
-              console.log('Using first available report:', reports[0].name, reports[0].id);
+              // console.log('Using first available report:', reports[0].name, reports[0].id);
             }
           });
         }

@@ -872,7 +872,7 @@ async getViewCountsByDate(
   const logs = await query.getMany();
   const counts = new Map<string, number>();
   
-  console.log("logs", logs);
+  // console.log("logs", logs);
 
   // Convert UTC to EDT when processing the logs
   logs.forEach(log => {
@@ -889,7 +889,7 @@ async getViewCountsByDate(
     // Format as YYYY-MM-DD
     const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
     
-    console.log("log creation time (EDT)", dateKey);
+    // console.log("log creation time (EDT)", dateKey);
     counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
   });
 
@@ -939,6 +939,63 @@ async getViewCountsByDate(
 //     }))
 //     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 // }
+//n ew one
+// async getUserActivityTrend(
+//   startDate: Date, 
+//   endDate: Date, 
+//   workspaceId?: string, 
+//   reportId?: string
+// ): Promise<{date: string, count: number}[]> {
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .select(['log.creationTime', 'log.userId']);
+
+//     if (workspaceId) {
+//       if (workspaceId === '000000') {
+//         query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+//       } else {
+//         query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+//       }
+//     }
+
+//   if (reportId) {
+//     query.andWhere('log.reportId = :reportId', { reportId });
+//   }
+
+//   const logs = await query.getMany();
+
+//   const dailyActiveUsers = new Map<string, Set<string>>();
+
+//   logs.forEach(log => {
+//     // Convert UTC date to EDT
+//     const utcDate = new Date(log.creationTime);
+    
+//     // Options for converting to EDT
+//     const options = { timeZone: 'America/New_York' };
+    
+//     // Format date in EDT timezone
+//     const edtDateString = utcDate.toLocaleDateString('en-US', options);
+//     const edtDateParts = edtDateString.split('/');
+    
+//     // Format as YYYY-MM-DD
+//     const dateKey = `${edtDateParts[2]}-${edtDateParts[0].padStart(2, '0')}-${edtDateParts[1].padStart(2, '0')}`;
+
+//     if (!dailyActiveUsers.has(dateKey)) {
+//       dailyActiveUsers.set(dateKey, new Set());
+//     }
+
+//     dailyActiveUsers.get(dateKey)?.add(log.userId);
+//   });
+
+//   return Array.from(dailyActiveUsers.entries())
+//     .map(([date, users]) => ({
+//       date,
+//       count: users.size 
+//     }))
+//     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+// }
 async getUserActivityTrend(
   startDate: Date, 
   endDate: Date, 
@@ -951,20 +1008,19 @@ async getUserActivityTrend(
     .andWhere("log.operation = 'ViewReport'")
     .select(['log.creationTime', 'log.userId']);
 
-    if (workspaceId) {
-      if (workspaceId === '000000') {
-        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
-      } else {
-        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-      }
+  if (workspaceId) {
+    if (workspaceId === '000000') {
+      query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+    } else {
+      query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
     }
+  }
 
   if (reportId) {
     query.andWhere('log.reportId = :reportId', { reportId });
   }
 
   const logs = await query.getMany();
-
   const dailyActiveUsers = new Map<string, Set<string>>();
 
   logs.forEach(log => {

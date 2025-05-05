@@ -59,8 +59,8 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const userRoles = request.user.roles;
 
-    console.log('Required role:', requiredRole);
-    console.log('User roles:', userRoles);
+    // console.log('Required role:', requiredRole);
+    // console.log('User roles:', userRoles);
 
     return this.matchRoles([requiredRole], userRoles);
   }
@@ -69,8 +69,8 @@ export class RolesGuard implements CanActivate {
     const normalizedUserRoles = userRoles.map(role => role.toLowerCase());
     const normalizedRequiredRoles = requiredRoles.map(role => role.toLowerCase());
     
-    console.log('Normalized user roles:', normalizedUserRoles);
-    console.log('Normalized required roles:', normalizedRequiredRoles);
+    // console.log('Normalized user roles:', normalizedUserRoles);
+    // console.log('Normalized required roles:', normalizedRequiredRoles);
     
     return normalizedRequiredRoles.some(role => normalizedUserRoles.includes(role));
   }

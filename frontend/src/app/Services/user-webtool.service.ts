@@ -36,7 +36,7 @@ export class UserWebtoolService {
   
   getUserWebtoolsByUser(email: string): Observable<UserWebtool[]> {
     return this.http.get<UserWebtool[]>(`${this.apiUrl}/user/${email}`).pipe(
-      tap(response => console.log('Response from getUserWebtoolsByUser:', response)),
+      tap(response => console.log('')),
       catchError(error => {
         console.error('Error in getUserWebtoolsByUser:', error);
         return throwError(() => error);
@@ -47,7 +47,7 @@ export class UserWebtoolService {
 
   findAll(): Observable<UserWebtool[]> {
     return this.http.get<UserWebtool[]>(`${this.apiUrl}`).pipe(
-      tap(data => console.log('Raw response from findAll:', data)),
+      tap(data => console.log('')),
       catchError(error => {
         console.error('Error in findAll:', error);
         return throwError(() => error);
@@ -72,7 +72,7 @@ export class UserWebtoolService {
   
   deleteUserWebtool(email: string, webtoolId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${email}/${webtoolId}`).pipe(
-      tap(() => console.log(`Deleted user webtool - email: ${email}, webtoolId: ${webtoolId}`)),
+      tap(() => console.log('')),
       catchError(error => {
         console.error('Error in deleteUserWebtool:', error);
         return throwError(() => error);
@@ -121,13 +121,13 @@ export class UserWebtoolService {
   getAllUserWebtools(): Observable<UserWebtool[]> {
     return this.http.get<UserWebtool[]>(this.apiUrl).pipe(
       tap(data => {
-        console.log('Raw data from API:', JSON.stringify(data, null, 2));
+        // console.log('Raw data from API:', JSON.stringify(data, null, 2));
         if (data.length > 0) {
-          console.log('Sample user structure:', JSON.stringify(data[0], null, 2));
+          // console.log('Sample user structure:', JSON.stringify(data[0], null, 2));
         }
       }),
       map(data => {
-        console.log('Transformed data:', data);
+        // console.log('Transformed data:', data);
         return data;
       }),
       catchError(error => {
@@ -151,9 +151,9 @@ export class UserWebtoolService {
 // }
 
 createUserWebtool(data: CreateUserWebtoolDto): Observable<UserWebtool> {
-  console.log('Creating user webtool with data:', data);
+  // console.log('Creating user webtool with data:', data);
   return this.http.post<UserWebtool>(this.apiUrl, data).pipe(
-    tap(response => console.log('Create response:', response)),
+    tap(response => console.log('')),
     catchError(error => {
       console.error('Error in createUserWebtool:', error);
       return throwError(() => error);
@@ -163,7 +163,7 @@ createUserWebtool(data: CreateUserWebtoolDto): Observable<UserWebtool> {
 
   getUserWebtoolsByWebtool(webtoolId: number): Observable<UserWebtool[]> {
     return this.http.get<UserWebtool[]>(`${this.apiUrl}/webtool/${webtoolId}`).pipe(
-      tap(data => console.log(`Received user webtools for webtool ${webtoolId}:`, data))
+      tap(data => console.log(''))
     );
   }
 
@@ -176,7 +176,7 @@ createUserWebtool(data: CreateUserWebtoolDto): Observable<UserWebtool> {
 
   getAllActiveUserWebtools(): Observable<UserWebtool[]> {
     return this.http.get<UserWebtool[]>(`${this.apiUrl}/raw/all`).pipe(
-      tap(data => console.log('Active users data:', data)),
+      tap(data => console.log('')),
       catchError(error => {
         console.error('Error fetching active users:', error);
         return throwError(() => error);

@@ -68,7 +68,7 @@ export class DepartmentComponent implements OnInit {
       (createdDepartment) => {
         // Push the newly created department into the table data
         this.filteredTableData = [...this.filteredTableData, createdDepartment];
-        console.log('New department added:', createdDepartment);
+        // console.log('New department added:', createdDepartment);
       },
       (error) => {
         console.error('Error creating department:', error);

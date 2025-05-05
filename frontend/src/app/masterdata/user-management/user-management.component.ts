@@ -187,14 +187,14 @@ export class UserManagementComponent implements OnInit {
 
   onUserSearch(event: any): void {
     const term = event.target.value.trim();
-    console.log('Search input changed:', term);
+    // console.log('Search input changed:', term);
     
     if (term.length >= 3) {
-      console.log('Term length >= 3, emitting search');
+      // console.log('Term length >= 3, emitting search');
       this.isSearching = true;
       this.searchTerm$.next(term);
     } else {
-      console.log('Term too short, clearing results');
+      // console.log('Term too short, clearing results');
       this.isSearching = false;
       this.adUsers = [];
     }

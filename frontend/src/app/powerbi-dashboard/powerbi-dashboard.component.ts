@@ -110,7 +110,8 @@ export class PowerBIDashboardComponent implements OnInit {
   dateIndexMapping: {[key: string]: number} = {};
   unusedReports: {id: number, dashboard: string, groupId: number | null}[] = [];
   loadingUnusedReports = false;
-
+  allRegularUsers: UserDetail[] = [];
+  allZeroViewUsers: UserDetail[] = [];
 
   // Metrics
   metrics: Metrics = {
@@ -539,64 +540,117 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       }
     };
   }
-  private prepareActivityTrendChart() {
-    // First ensure the activity trend data is sorted by date
-    const sortedActivityTrend = [...this.metrics.activityTrend].sort((a, b) => 
+  private prepareActivityTrendChart() { 
+    if (!this.metrics?.activityTrend) return; 
+  
+    // Sort activity trend data by date
+    const sortedTrend = [...this.metrics.activityTrend].sort((a, b) => 
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   
-    this.activityTrendChartOptions = {
-      series: [{
-        name: 'Active Users',
-        data: sortedActivityTrend.map(t => t.count)
+    // Process data with explicit UTC handling
+    const chartData = sortedTrend.map(item => ({ 
+      x: new Date(item.date).getTime(), // UTC timestamp 
+      y: item.count, 
+      // Store original date for tooltips
+      originalDate: item.date.split('T')[0] 
+    }));
+  
+    this.activityTrendChartOptions = { 
+      series: [{ 
+        name: 'Active Users', 
+        data: chartData 
       }],
-      chart: {
+      chart: { 
         type: 'line',
         height: 350,
-        toolbar: { show: false }
+        toolbar: { 
+          show: false 
+        } 
       },
-      plotOptions: {
-        bar: {
-          columnWidth: '60%' // Adjust this percentage to control bar width
-        }
+      plotOptions: { 
+        bar: { 
+          columnWidth: '60%' // Adjust this percentage to control bar width 
+        } 
       },
-      xaxis: {
-        categories: sortedActivityTrend.map(t => t.date),
-        type: 'datetime',
-        labels: {
-          formatter: (value: string, timestamp?: number, opts?: any) => {
-            const date = new Date(value);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = date.toLocaleString('default', { month: 'short' });
-            
-            // For the first label, return formatted string with CSS class
-            if (opts?.dataPointIndex === 0) {
-              return `<span class="first-xaxis-label">${day} ${month}</span>`;
-            }
-            return `${day} ${month}`;
+      xaxis: { 
+        type: 'datetime', 
+        // Force specific number of x-axis labels
+        tickAmount: 7,
+        // Show first and last date plus distribute evenly between
+        tickPlacement: 'on',
+        labels: { 
+          formatter: (timestamp: number) => { 
+            const dataPoint = chartData.find(d => d.x === timestamp); 
+            return this.formatDisplayDate(dataPoint?.originalDate || ''); 
           },
-          style: {
-            colors: '#6B7280',
-            fontSize: '12px',
-            cssClass: 'apexcharts-xaxis-label'
-          }
+          style: { 
+            colors: '#6B7280', 
+            fontSize: '12px', 
+            cssClass: 'apexcharts-xaxis-label' 
+          },
+          datetimeUTC: false,
+          showDuplicates: true,
+          rotate: 0
         },
-        axisBorder: { show: true, color: '#E5E7EB' },
-        axisTicks: { show: true, color: '#E5E7EB' }
+        axisBorder: { 
+          show: true, 
+          color: '#E5E7EB' 
+        }, 
+        axisTicks: { 
+          show: true, 
+          color: '#E5E7EB' 
+        }
+      }, 
+      yaxis: { 
+        title: { 
+          text: 'Active Users' 
+        }, 
+        labels: { 
+          style: { 
+            colors: '#6B7280', 
+            fontSize: '12px' 
+          } 
+        } 
       },
-      yaxis: {
-        title: { text: 'Active Users' },
-        labels: { style: { colors: '#6B7280', fontSize: '12px' } }
+      stroke: { 
+        width: 2, 
+        curve: 'smooth' 
+      }, 
+      colors: ['#ffb703'], 
+      grid: { 
+        borderColor: '#E5E7EB' 
       },
-      stroke: { width: 2, curve: 'smooth' },
-      colors: ['#ffb703'],
-      grid: { borderColor: '#E5E7EB' },
-      tooltip: { x: { format: 'dd MMM yyyy' } },
-      dataLabels: {
-        enabled: false
-      }
-    };
+      tooltip: { 
+        x: { 
+          formatter: (timestamp: number) => { 
+            const dataPoint = chartData.find(d => d.x === timestamp); 
+            return this.formatTooltipDate(dataPoint?.originalDate || ''); 
+          } 
+        } 
+      },
+      dataLabels: { 
+        enabled: false 
+      } 
+    }; 
   }
+  
+  private formatDisplayDate(isoDate: string) { 
+    if (!isoDate) return ''; 
+    const [year, month, day] = isoDate.split('-'); 
+    return `${parseInt(day)} ${new Date(isoDate).toLocaleString('default', { month: 'short' })}`; 
+  } 
+  
+  private formatTooltipDate(isoDate: string) { 
+    if (!isoDate) return ''; 
+    return new Date(isoDate).toLocaleDateString('en-US', { 
+      weekday: 'short', 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    }); 
+  }
+
   private getConsumptionMethodDisplayName(method: string): string {
     const methodExplanations: {[key: string]: string} = {
       'Microsoft Teams': 'Microsoft Teams (embedded views)',
@@ -753,7 +807,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       return;
     }
 
-    console.log("viewsss", this.userReportViews)
+    // console.log("viewsss", this.userReportViews)
   
     const topReports = this.userReportViews.slice(0,10);
     
@@ -837,7 +891,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
     }
 
 
-    console.log("viewsData", viewsData)
+    // console.log("viewsData", viewsData)
 
     this.userWorkspacePieChartOptions = {
       series: viewsData.map(w => w.count),
@@ -1094,9 +1148,9 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       return;
     }
   
-    console.log('User consumption methods before chart preparation:', this.userConsumptionMethods);
+    // console.log('User consumption methods before chart preparation:', this.userConsumptionMethods);
     const teamsData = this.userConsumptionMethods.find(m => m.method === 'Microsoft Teams');
-    console.log('Microsoft Teams data:', teamsData);
+    // console.log('Microsoft Teams data:', teamsData);
   
     this.userConsumptionChartOptions = {
       series: this.userConsumptionMethods.map(m => m.count),
@@ -1130,11 +1184,105 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'],
     };
     
-    console.log('Chart series values:', this.userConsumptionChartOptions.series);
-    console.log('Chart labels:', this.userConsumptionChartOptions.labels);
+    // console.log('Chart series values:', this.userConsumptionChartOptions.series);
+    // console.log('Chart labels:', this.userConsumptionChartOptions.labels);
   }
+  //actual one pls
+  // async processUsers(
+  //   startDate: Date, 
+  //   endDate: Date,
+  //   workspaceId?: string,
+  //   reportId?: string
+  // ): Promise<void> {
+  //   try {
+  //     const topUsers = await this.powerBIMetricsService.getTopUsers(
+  //       startDate, 
+  //       endDate, 
+  //       1000,
+  //       workspaceId || undefined,
+  //       reportId || undefined
+  //     ).toPromise().catch(() => [] as UserMetric[]);
   
-  async processUsers(
+  //     if (!topUsers || topUsers.length === 0) {
+  //       this.allUsers = [];
+  //       this.filteredUsers = [];
+  //       return;
+  //     }
+  
+  //     const userPromises = topUsers.map(async user => {
+  //       try {
+  //         const metrics = await this.powerBIMetricsService.getUserMetrics(
+  //           user.userId, 
+  //           startDate, 
+  //           endDate,
+  //           workspaceId || undefined,
+  //           reportId || undefined
+  //         ).toPromise();
+  
+  //         return {
+  //           id: user.userId,
+  //           totalViews: metrics?.totalViews || 0,
+  //           reports: metrics?.reports?.length || 0,
+  //           workspaces: metrics?.workspaces?.length || 0,
+  //           lastActivity: metrics?.activityByDate && metrics.activityByDate.length > 0 
+  //             ? metrics.activityByDate[metrics.activityByDate.length - 1].date 
+  //             : 'Never',
+  //           activityByDate: metrics?.activityByDate || []
+  //         } as UserDetail;
+  //       } catch (error) {
+  //         console.error(`Error processing user ${user.userId}:`, error);
+  //         return {
+  //           id: user.userId,
+  //           totalViews: 0,
+  //           reports: 0,
+  //           workspaces: 0,
+  //           lastActivity: 'Never',
+  //           activityByDate: []
+  //         } as UserDetail;
+  //       }
+  //     });
+
+  //     // let databaseUsers:any = await this.homeService.getDatabaseUsers().toPromise();
+
+
+  //     const workspaceName = this.workspaceOptions.find((w) => w.id === workspaceId)?.name ?? '';
+  //     const reportName = this.reportOptions.find((r) => r.id === reportId)?.name ?? '';
+  //     let databaseUsers:any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(workspaceName, reportName).toPromise().catch(() => [] as any[]);
+  //     databaseUsers = databaseUsers.map((user: any) => user.user_email)
+  //     console.log("database users", databaseUsers);
+
+
+      
+      
+  //     const users = await Promise.all(userPromises);
+  //     const userEmails = users.map((user: any) => user.id);
+  //     console.log("email", userEmails);
+  //     console.log("user check", users);
+  //     const difference = databaseUsers.filter((item:any) => !userEmails.includes(item));
+  //     console.log("difference", difference);
+
+  //     const zeroViewedUsers = difference.map((user: any) => {
+  //       return {
+  //         id: user,
+  //         totalViews: 0,
+  //         reports: 0,
+  //         workspaces: 0,
+  //         lastActivity: 'Never',
+  //         activityByDate: []
+  //       }
+  //     }
+  //     )
+
+    
+  //     this.allUsers = users;
+  //     this.filteredUsers = [...this.allUsers, ...zeroViewedUsers];
+  //   } catch (error) {
+  //     console.error('Error processing users:', error);
+  //     this.allUsers = [];
+  //     this.filteredUsers = [];
+  //   }
+  // }
+  private async processUsers(
     startDate: Date, 
     endDate: Date,
     workspaceId?: string,
@@ -1150,7 +1298,8 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       ).toPromise().catch(() => [] as UserMetric[]);
   
       if (!topUsers || topUsers.length === 0) {
-        this.allUsers = [];
+        this.allRegularUsers = [];
+        this.allZeroViewUsers = [];
         this.filteredUsers = [];
         return;
       }
@@ -1187,27 +1336,20 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
           } as UserDetail;
         }
       });
-
-      // let databaseUsers:any = await this.homeService.getDatabaseUsers().toPromise();
-
-
-      const workspaceName = this.workspaceOptions.find((w) => w.id === workspaceId)?.name ?? '';
-      const reportName = this.reportOptions.find((r) => r.id === reportId)?.name ?? '';
-      let databaseUsers:any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(workspaceName, reportName).toPromise().catch(() => [] as any[]);
-      databaseUsers = databaseUsers.map((user: any) => user.user_email)
-      console.log("database users", databaseUsers);
-
-
+  
+      let databaseUsers: any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(
+        this.workspaceOptions.find((w) => w.id === workspaceId)?.name ?? '',
+        this.reportOptions.find((r) => r.id === reportId)?.name ?? ''
+      ).toPromise().catch(() => [] as any[]);
       
+      databaseUsers = databaseUsers.map((user: any) => user.user_email);
       
       const users = await Promise.all(userPromises);
       const userEmails = users.map((user: any) => user.id);
-      console.log("email", userEmails);
-      console.log("user check", users);
-      const difference = databaseUsers.filter((item:any) => !userEmails.includes(item));
-      console.log("difference", difference);
-
-      const zeroViewedUsers = difference.map((user: any) => {
+      const difference = databaseUsers.filter((item: any) => !userEmails.includes(item));
+      
+      this.allRegularUsers = users;
+      this.allZeroViewUsers = difference.map((user: any) => {
         return {
           id: user,
           totalViews: 0,
@@ -1216,19 +1358,16 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
           lastActivity: 'Never',
           activityByDate: []
         }
-      }
-      )
-
-    
-      this.allUsers = users;
-      this.filteredUsers = [...this.allUsers, ...zeroViewedUsers];
+      });
+      
+      this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
     } catch (error) {
       console.error('Error processing users:', error);
-      this.allUsers = [];
+      this.allRegularUsers = [];
+      this.allZeroViewUsers = [];
       this.filteredUsers = [];
     }
   }
-
   changePage(page: number): void {
     this.currentPage = page;
   }
@@ -1238,19 +1377,30 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
+  // filterUsers() {
+  //   if (!this.userSearchQuery) {
+  //     this.filteredUsers = [...this.allUsers];
+  //     return;
+  //   }
+
+  //   const query = this.userSearchQuery.toLowerCase();
+  //   this.filteredUsers = this.allUsers.filter(user => 
+  //     user.id.toLowerCase().includes(query)
+  //   );
+  //   this.currentPage = 1;
+  // }
   filterUsers() {
     if (!this.userSearchQuery) {
-      this.filteredUsers = [...this.allUsers];
+      this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
       return;
     }
-
+  
     const query = this.userSearchQuery.toLowerCase();
-    this.filteredUsers = this.allUsers.filter(user => 
+    this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers].filter(user => 
       user.id.toLowerCase().includes(query)
     );
     this.currentPage = 1;
   }
-
   toggleUserListAccordion() {
     this.isUserListExpanded = !this.isUserListExpanded;
   }
@@ -1467,7 +1617,7 @@ selectedDateForPopup: string | null = null;
 
 
 closeDatePopup() {
-  console.log('Close clicked');
+  // console.log('Close clicked');
   this.showDatePopup = false;
   this.selectedDateForPopup = null;
   this.selectedDateReports = [];

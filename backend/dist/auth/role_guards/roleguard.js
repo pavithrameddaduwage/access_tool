@@ -24,15 +24,11 @@ let RolesGuard = class RolesGuard {
         }
         const request = context.switchToHttp().getRequest();
         const userRoles = request.user.roles;
-        console.log('Required role:', requiredRole);
-        console.log('User roles:', userRoles);
         return this.matchRoles([requiredRole], userRoles);
     }
     matchRoles(requiredRoles, userRoles) {
         const normalizedUserRoles = userRoles.map(role => role.toLowerCase());
         const normalizedRequiredRoles = requiredRoles.map(role => role.toLowerCase());
-        console.log('Normalized user roles:', normalizedUserRoles);
-        console.log('Normalized required roles:', normalizedRequiredRoles);
         return normalizedRequiredRoles.some(role => normalizedUserRoles.includes(role));
     }
 };

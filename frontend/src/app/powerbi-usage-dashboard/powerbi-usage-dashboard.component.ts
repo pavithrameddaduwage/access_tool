@@ -256,7 +256,7 @@ export class PowerBIUsageDashboardComponent implements OnInit {
         this.workspaceNames.set(ws.id, ws.name || `Workspace ${ws.id}`);
       });
       
-      console.log('Workspace Names:', this.workspaceNames); // Debugging: Log workspace names
+      // console.log('Workspace Names:', this.workspaceNames); // Debugging: Log workspace names
     } catch (error) {
       console.error('Failed to fetch workspace names:', error);
     }
@@ -384,7 +384,7 @@ export class PowerBIUsageDashboardComponent implements OnInit {
       .map(([id, count]) => ({ id, count }))
   };
 
-  console.log('Activity Trend Data:', result.activityTrend);
+  // console.log('Activity Trend Data:', result.activityTrend);
 
   return result;
 }
@@ -1073,7 +1073,7 @@ async prepareTopUsersChart() {
     return;
   }
 
-  console.log('Top Users Data:', this.metrics.topUsers); // Debugging
+  // console.log('Top Users Data:', this.metrics.topUsers); // Debugging
 
   // Extract emails from top users
   const emails = this.metrics.topUsers.map((user: UserMetric) => user.id);
@@ -1087,7 +1087,7 @@ async prepareTopUsersChart() {
     count: user.count
   }));
 
-  console.log('Top Users with Names:', topUsersWithNames); // Debugging
+  // console.log('Top Users with Names:', topUsersWithNames); // Debugging
 
   // Prepare chart options
   this.topUsersChartOptions = {
@@ -1138,7 +1138,7 @@ onTopUserChartClick(dataPointIndex: number) {
     return;
   }
 
-  console.log('Selected User ID:', selectedUserId);
+  // console.log('Selected User ID:', selectedUserId);
   
   // Update view state
   this.activeView = 'user';
@@ -1236,7 +1236,7 @@ getUserWorkspaceViews(userId: string): { workspace: string, views: number }[] {
     views
   }));
 
-  console.log('Workspace Views Data:', result); // Debugging
+  // console.log('Workspace Views Data:', result); // Debugging
   return result;
 }
 

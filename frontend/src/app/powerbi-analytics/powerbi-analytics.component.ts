@@ -204,21 +204,21 @@ export class PowerBIAnalyticsComponent implements OnInit {
   //dataset stuff
   loadReportData() {
     if (!this.selectedReport || !this.workspaceId) {
-      console.log('No report or workspace selected');
+      // console.log('No report or workspace selected');
       return;
     }
 
-    console.log('Loading data for:', {
-      workspaceId: this.workspaceId,
-      datasetId: this.selectedReport.datasetId,
-      reportName: this.selectedReport.name
-    });
+    // console.log('Loading data for:', {
+    //   workspaceId: this.workspaceId,
+    //   datasetId: this.selectedReport.datasetId,
+    //   reportName: this.selectedReport.name
+    // });
 
     // First get tables
     this.powerBIService.getTables(this.workspaceId, this.selectedReport.datasetId)
       .subscribe({
         next: (tables) => {
-          console.log('Available tables:', tables);
+          // console.log('Available tables:', tables);
           if (tables && tables.length > 0) {
             // Then get data
             this.powerBIService.getReportData(this.workspaceId, this.selectedReport!.datasetId)

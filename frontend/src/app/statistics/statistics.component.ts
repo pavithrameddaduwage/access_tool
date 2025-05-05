@@ -275,7 +275,7 @@ export class StatisticsComponent implements OnInit {
 
   
   private updateTypeValueComboChart(data: TypeValueChartData) {
-    console.log('Type Value Data:', data);
+    // console.log('Type Value Data:', data);
   
     this.typeValueComboOptions = {
       ...this.defaultConfig,
@@ -503,7 +503,7 @@ export class StatisticsComponent implements OnInit {
         data: valueTypeArray.map(vt => values.get(vt) || 0)
       }))
     };
-    console.log('Processed type-value data:', result);
+    // console.log('Processed type-value data:', result);
     return result;
 }
 

@@ -198,7 +198,7 @@ async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
    
  }
  async getDatabaseUsersByWorkspaceAndReportID(workspaceName: string, reportName: string): Promise<UserMetric[]> {
-  console.log('workspaceName:', workspaceName, 'reportName:', reportName); 
+  // console.log('workspaceName:', workspaceName, 'reportName:', reportName); 
   
   const activeUsers = await this.userDashboardRepository
     .createQueryBuilder('user')

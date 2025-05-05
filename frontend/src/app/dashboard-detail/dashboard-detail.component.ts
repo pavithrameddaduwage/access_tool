@@ -67,23 +67,23 @@ export class DashboardDetailComponent implements OnInit {
   
     this.searchTerm$.pipe(
       tap(term => {
-        console.log('New search term:', term);
+        // console.log('New search term:', term);
         currentSearchTerm = term;
       }),
       debounceTime(500), // Increased debounce time
       distinctUntilChanged(),
       tap(() => {
-        console.log('Starting search after debounce for:', currentSearchTerm);
+        // console.log('Starting search after debounce for:', currentSearchTerm);
         this.isSearching = true;
         this.adUsers = [];
       }),
       switchMap(term => {
         if (term !== currentSearchTerm) {
-          console.log('Search term changed, skipping old request');
+          // console.log('Search term changed, skipping old request');
           return of([]);
         }
         
-        console.log('Making AD search request for:', term);
+        // console.log('Making AD search request for:', term);
         return this.homeService.searchADUsers(term).pipe(
           tap(results => console.log('Search results received for term:', term, results)),
           catchError(error => {
@@ -94,12 +94,12 @@ export class DashboardDetailComponent implements OnInit {
       })
     ).subscribe({
       next: (users) => {
-        console.log('Processing search results:', users);
+        // console.log('Processing search results:', users);
         // Only update if we're still searching
         if (this.isSearching) {
           this.adUsers = users;
           this.isSearching = false;
-          console.log('Updated adUsers array:', this.adUsers);
+          // console.log('Updated adUsers array:', this.adUsers);
         }
       },
       error: (err) => {
@@ -112,14 +112,14 @@ export class DashboardDetailComponent implements OnInit {
 
   onUserSearch(event: any): void {
     const term = event.target.value.trim();
-    console.log('Search input changed:', term);
+    // console.log('Search input changed:', term);
     
     if (term.length >= 3) {
-      console.log('Term length >= 3, emitting search');
+      // console.log('Term length >= 3, emitting search');
       this.isSearching = true;
       this.searchTerm$.next(term);
     } else {
-      console.log('Term too short, clearing results');
+      // console.log('Term too short, clearing results');
       this.isSearching = false;
       this.adUsers = [];
     }

@@ -60,7 +60,7 @@ export class UserWebtoolService {
   // }
 
   async create(createUserWebtoolDto: CreateUserWebtoolDto) {
-    console.log('Creating user webtool with data:', createUserWebtoolDto);
+    // console.log('Creating user webtool with data:', createUserWebtoolDto);
   
     // 1. Validate webtool exists
     const webtool = await this.webtoolRepository.findOne({
@@ -98,10 +98,10 @@ export class UserWebtoolService {
       relations: ['webtool', 'role']
     });
 
-    console.log('Created user webtool with status:', { 
-      isActive: result.isActive, 
-      lastActiveAt: result.lastActiveAt 
-  });
+  //   console.log('Created user webtool with status:', { 
+  //     isActive: result.isActive, 
+  //     lastActiveAt: result.lastActiveAt 
+  // });
     return result;
 }
   async removeRole(email: string, webtoolId: number, roleId: number) {

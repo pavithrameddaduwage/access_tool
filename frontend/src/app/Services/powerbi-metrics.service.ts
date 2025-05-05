@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface PowerBILog {
@@ -209,21 +209,30 @@ export class PowerBIMetricsService {
     );
   }
   getUserActivityTrend(
-    startDate: Date, 
+    startDate: Date,
     endDate: Date,
     workspaceId?: string,
     reportId?: string
-  ): Observable<UserActivity[]> {
-    const params: any = {
+  ): Observable<{date: string, count: number}[]> {
+    const params = {
       startDate: startDate.toISOString(),
-      endDate: endDate.toISOString()
+      endDate: endDate.toISOString(),
+      ...(workspaceId && { workspaceId }),
+      ...(reportId && { reportId })
     };
-    if (workspaceId) params.workspaceId = workspaceId;
-    if (reportId) params.reportId = reportId;
-    
-    return this.http.get<UserActivity[]>(`${this.apiUrl}/user-activity-trend`, { params });
+  
+    return this.http.get<{date: string, count: number}[]>(`${this.apiUrl}/user-activity-trend`, { params })
+      .pipe(
+        map(response => response.map(item => ({
+          date: item.date, // Keep as YYYY-MM-DD
+          count: item.count
+        }))),
+        catchError(error => {
+          console.error('Error fetching activity trend:', error);
+          return of([]);
+        })
+      );
   }
-
   getUniqueUserCount(
     startDate: Date, 
     endDate: Date,

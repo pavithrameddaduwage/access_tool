@@ -218,7 +218,7 @@ toggleDropdown(event: Event) {
     {
       name: 'dashboards',
       display_name: 'Dashboards',
-      width: '20%', // Reduced from 25%
+      width: '20%', 
       class: 'bg-gray-100 text-gray-700',
       sortable: false
     }
@@ -288,23 +288,23 @@ sortRecords(column: string) {
 
     this.searchTerm$.pipe(
       tap(term => {
-        console.log('New search term:', term);
+        // console.log('New search term:', term);
         currentSearchTerm = term;
       }),
       debounceTime(500),  // Increased from 300 to 500
       distinctUntilChanged(),
       tap(() => {
-        console.log('Starting search after debounce for:', currentSearchTerm);
+        // console.log('Starting search after debounce for:', currentSearchTerm);
         this.isSearching = true;
         this.adUsers = [];
       }),
       switchMap(term => {
         if (term !== currentSearchTerm) {
-          console.log('Search term changed, skipping old request');
+          // console.log('Search term changed, skipping old request');
           return of([]);
         }
         
-        console.log('Making AD search request for:', term);
+        // console.log('Making AD search request for:', term);
         return this.homeService.searchADUsers(term).pipe(
           tap(results => console.log('Search results received for term:', term, results)),
           catchError(error => {
@@ -315,11 +315,11 @@ sortRecords(column: string) {
       })
     ).subscribe({
       next: (users) => {
-        console.log('Processing search results:', users);
+        // console.log('Processing search results:', users);
         if (this.isSearching) {
           this.adUsers = users;
           this.isSearching = false;
-          console.log('Updated adUsers array:', this.adUsers);
+          // console.log('Updated adUsers array:', this.adUsers);
         }
       },
       error: (err) => {
@@ -332,14 +332,14 @@ sortRecords(column: string) {
 
 onUserSearch(event: any): void {
   const term = event.target.value.trim();
-  console.log('Search input changed:', term);
+  // console.log('Search input changed:', term);
   
   if (term.length >= 3) {
-    console.log('Term length >= 3, emitting search');
+    // console.log('Term length >= 3, emitting search');
     this.isSearching = true;
     this.searchTerm$.next(term);
   } else {
-    console.log('Term too short, clearing results');
+    // console.log('Term too short, clearing results');
     this.isSearching = false;
     this.adUsers = [];
   }
@@ -371,7 +371,7 @@ onUserSearch(event: any): void {
 //   this.adUsers = [];
 // }
 selectADUser(user: any): void {
-  console.log('AD User:', user);
+  // console.log('AD User:', user);
   
   if (this.viewMode === 'matrix') {
     // For matrix view, preserve any existing department value

@@ -116,7 +116,6 @@ let UserDashboardService = class UserDashboardService {
         return activeUsers;
     }
     async getDatabaseUsersByWorkspaceAndReportID(workspaceName, reportName) {
-        console.log('workspaceName:', workspaceName, 'reportName:', reportName);
         const activeUsers = await this.userDashboardRepository
             .createQueryBuilder('user')
             .select(['MIN(user.id) as id', 'user.email'])

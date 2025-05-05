@@ -55,7 +55,7 @@ export class LoginComponent {
         password: this.formGroup.value.password
       }).subscribe({
         next: (result) => {
-          console.log('Login response:', result);
+          // console.log('Login response:', result);
           if (result.access_token) {
             localStorage.setItem("token", result.access_token);
             this.authService.setIsLogged(true);

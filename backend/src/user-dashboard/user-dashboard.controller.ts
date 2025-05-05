@@ -40,7 +40,7 @@ export class UserDashboardController {
 
   @Get('database/database-users')
   async getDatabaseUsers() {
-    console.log('testing')
+    // console.log('testing')
   return this.userDashboardService.getDatabaseUsers();
   
 }

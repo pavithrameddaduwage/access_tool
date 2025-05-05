@@ -22,11 +22,11 @@ export class HomeService {
   constructor(private http: HttpClient) {}
 
   searchADUsers(query: string): Observable<any[]> {
-    console.log('HomeService: sending search request');
+    // console.log('HomeService: sending search request');
     const body = { searchkey: query };
     
     return this.http.post<any[]>(`${this.authUrl}/searchUsers`, body).pipe(
-      tap(response => console.log('HomeService: received response:', response)),
+      tap(response => console.log('')),
       map(users => Array.isArray(users) ? users : []),
       catchError(error => {
         console.error('HomeService: error in search:', error);
@@ -90,7 +90,7 @@ deleteRecord(email: string): Observable<void> {
 // Fetch a mapping from the backend
 getMapping(email: string): Observable<UserMapping | null> {
   const url = `${this.url}user-mappings/${email}`;
-  console.log('Fetching mapping from:', url); // Debugging
+  // console.log('Fetching mapping from:', url); // Debugging
   return this.http.get<UserMapping | null>(url).pipe(
     catchError(error => {
       console.error('Error fetching mapping:', error);
@@ -102,7 +102,7 @@ getMapping(email: string): Observable<UserMapping | null> {
 // Create or update a mapping in the backend
 createMapping(email: string, realName: string): Observable<UserMapping> {
   const url = `${this.url}user-mappings`;
-  console.log('Creating/updating mapping at:', url); // Debugging
+  // console.log('Creating/updating mapping at:', url); // Debugging
   return this.http.post<UserMapping>(url, { email, realName }).pipe(
     catchError(error => {
       console.error('Error creating/updating mapping:', error);

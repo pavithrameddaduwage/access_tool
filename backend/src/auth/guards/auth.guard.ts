@@ -37,7 +37,7 @@ import {
   
       try {
         const payload = await this.jwtService.verifyAsync(token, {
-          secret: jwtConstants.secret  // Use the same secret as in auth.module.ts
+          secret: jwtConstants.secret 
         });
         request['user'] = payload;
       } catch (error) {

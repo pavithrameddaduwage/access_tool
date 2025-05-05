@@ -168,23 +168,23 @@ export class WebtoolsComponent implements OnInit {
   
       this.searchTerm$.pipe(
         tap(term => {
-          console.log('New search term:', term);
+          // console.log('New search term:', term);
           currentSearchTerm = term;
         }),
         debounceTime(500),  // Increased from 300 to 500
         distinctUntilChanged(),
         tap(() => {
-          console.log('Starting search after debounce for:', currentSearchTerm);
+          // console.log('Starting search after debounce for:', currentSearchTerm);
           this.isSearching = true;
           this.adUsers = [];
         }),
         switchMap(term => {
           if (term !== currentSearchTerm) {
-            console.log('Search term changed, skipping old request');
+            // console.log('Search term changed, skipping old request');
             return of([]);
           }
           
-          console.log('Making AD search request for:', term);
+          // console.log('Making AD search request for:', term);
           return this.homeService.searchADUsers(term).pipe(
             tap(results => console.log('Search results received for term:', term, results)),
             catchError(error => {
@@ -195,11 +195,11 @@ export class WebtoolsComponent implements OnInit {
         })
       ).subscribe({
         next: (users) => {
-          console.log('Processing search results:', users);
+          // console.log('Processing search results:', users);
           if (this.isSearching) {
             this.adUsers = users;
             this.isSearching = false;
-            console.log('Updated adUsers array:', this.adUsers);
+            // console.log('Updated adUsers array:', this.adUsers);
           }
         },
         error: (err) => {
@@ -335,20 +335,20 @@ export class WebtoolsComponent implements OnInit {
 
   onUserSearch(event: any): void {
     const term = event.target.value.trim();
-    console.log('Search input changed:', term);
+    // console.log('Search input changed:', term);
     
     if (term.length >= 3) {
-      console.log('Term length >= 3, emitting search');
+      // console.log('Term length >= 3, emitting search');
       this.isSearching = true;
       this.searchTerm$.next(term);
     } else {
-      console.log('Term too short, clearing results');
+      // console.log('Term too short, clearing results');
       this.isSearching = false;
       this.adUsers = [];
     }
   }
   selectADUser(user: any): void {
-    console.log('Raw AD user:', user);
+    // console.log('Raw AD user:', user);
     
     this.editForm = {
       userId: null,
@@ -386,7 +386,7 @@ export class WebtoolsComponent implements OnInit {
         });
   
         Promise.all(webtoolPromises).then(toolsWithRoles => {
-          console.log('Loaded webtools with roles:', toolsWithRoles);
+          // console.log('Loaded webtools with roles:', toolsWithRoles);
           this.webtools = toolsWithRoles;
           this.filteredWebtools = [...this.webtools];
           this.loadUserWebtoolData();
@@ -438,7 +438,7 @@ export class WebtoolsComponent implements OnInit {
   loadUsersView() {
     this.webtoolUserService.getRecords().subscribe({
       next: (users: WebtoolUser[]) => {
-        console.log('Loaded users:', users);
+        // console.log('Loaded users:', users);
         this.users = users.map(user => ({
           userId: user.userId,
           userName: user.userName,
@@ -450,7 +450,7 @@ export class WebtoolsComponent implements OnInit {
           isActive: user.isActive ?? false,
           lastActiveAt: user.lastActiveAt
         }));
-        console.log("here",Object.values(users[0].roles).flat())
+        // console.log("here",Object.values(users[0].roles).flat())
 
         this.originalUsers = [...this.users]; // Initialize originalUsers
       },
@@ -473,19 +473,19 @@ export class WebtoolsComponent implements OnInit {
     });
   }
   loadUserWebtoolData() {
-    console.log('Loading user webtool data...');
+    // console.log('Loading user webtool data...');
     this.userWebtoolService.getConsolidatedUserData().pipe(
-      tap(users => console.log('Raw user data:', users))
+      tap(users => console.log())
     ).subscribe({
       next: (users) => {
-        console.log('Processing consolidated user data:', users);
+        // console.log('Processing consolidated user data:', users);
         
         this.webtools = this.webtools.map(tool => {
-          console.log(`Processing webtool ${tool.webtool}`);
+          // console.log(`Processing webtool ${tool.webtool}`);
           
           const toolUsers = users.filter(user => {
             if (!user.webtools || !Array.isArray(user.webtools)) {
-              console.log(`No webtools array for user ${user.userName}`);
+              // console.log(`No webtools array for user ${user.userName}`);
               return false;
             }
   
@@ -493,11 +493,11 @@ export class WebtoolsComponent implements OnInit {
               wt.toLowerCase().trim() === tool.webtool.toLowerCase().trim()
             );
             
-            console.log(`User ${user.userName} has webtool ${tool.webtool}:`, hasWebtool);
+            // console.log(`User ${user.userName} has webtool ${tool.webtool}:`, hasWebtool);
             return hasWebtool;
           }).map(user => {
             const userRoles = user.roles[tool.id] || [];
-            console.log(`Roles for user ${user.userName}:`, userRoles);
+            // console.log(`Roles for user ${user.userName}:`, userRoles);
             
             return {
               userId: user.userId,
@@ -511,7 +511,7 @@ export class WebtoolsComponent implements OnInit {
             };
           });
   
-          console.log(`Found ${toolUsers.length} users for ${tool.webtool}:`, toolUsers);
+          // console.log(`Found ${toolUsers.length} users for ${tool.webtool}:`, toolUsers);
   
           return {
             ...tool,
@@ -779,7 +779,7 @@ export class WebtoolsComponent implements OnInit {
     }
   
     try {
-      console.log('Saving with isActive:', this.editForm.isActive);
+      // console.log('Saving with isActive:', this.editForm.isActive);
   
       // 2. Get current assignments first (for cleanup)
       const userWebtools = await this.userWebtoolService.getUserWebtoolsByUser(this.editForm.email)
@@ -790,7 +790,7 @@ export class WebtoolsComponent implements OnInit {
         // 3. Delete existing assignments
         await Promise.all(
           userWebtools.map(uw => {
-            console.log(`Deleting assignment for webtool ${uw.webtoolId}`);
+            // console.log(`Deleting assignment for webtool ${uw.webtoolId}`);
             return this.userWebtoolService.deleteUserWebtool(this.editForm.email, uw.webtoolId).toPromise();
           })
         );
@@ -807,7 +807,7 @@ export class WebtoolsComponent implements OnInit {
             roleId: role.id,
             isActive: this.editForm.isActive // Explicitly pass the status
           };
-          console.log('Creating assignment with:', dto);
+          // console.log('Creating assignment with:', dto);
           return this.userWebtoolService.createUserWebtool(dto).toPromise();
         })
       );
@@ -907,27 +907,27 @@ export class WebtoolsComponent implements OnInit {
   // }
 
   private saveMatrixAssignment() {
-    console.log('Saving matrix assignment with:', {
-      email: this.editForm.email,
-      selectedWebtool: this.selectedWebtool,
-      selectedRoles: this.selectedRoles
-    });
+    // console.log('Saving matrix assignment with:', {
+    //   email: this.editForm.email,
+    //   selectedWebtool: this.selectedWebtool,
+    //   selectedRoles: this.selectedRoles
+    // });
   
     // Validation check with detailed logging
     if (!this.editForm.email) {
-      console.log('Missing email');
+      // console.log('Missing email');
       this.toastService.show('Please select a user', 'warning');
       return;
     }
   
     if (!this.selectedWebtool) {
-      console.log('Missing selected webtool');
+      // console.log('Missing selected webtool');
       this.toastService.show('No webtool selected', 'warning');
       return;
     }
   
     if (!this.selectedRoles || this.selectedRoles.length === 0) {
-      console.log('No roles selected');
+      // console.log('No roles selected');
       this.toastService.show('Please select at least one role', 'warning');
       return;
     }
@@ -1000,7 +1000,7 @@ export class WebtoolsComponent implements OnInit {
         webtoolId: this.selectedWebtool!.id,
         roleId: role.id
       };
-      console.log('Creating assignment with dto:', dto);
+      // console.log('Creating assignment with dto:', dto);
       return this.userWebtoolService.createUserWebtool(dto).toPromise();
     });
     return from(Promise.all(createPromises));
@@ -1023,7 +1023,7 @@ export class WebtoolsComponent implements OnInit {
   
     this.userWebtoolService.createUserWebtool(userWebtoolData).subscribe({
       next: (response) => {
-        console.log('User-webtool created:', response);
+        // console.log('User-webtool created:', response);
         this.reloadAllViews();
         this.closeForm();
       },
@@ -1059,11 +1059,11 @@ export class WebtoolsComponent implements OnInit {
   }, 100);
 }
   private createNewAssignments() {
-    console.log('Creating new assignments with:', {
-      editForm: this.editForm,
-      selectedWebtools: this.selectedWebtools,
-      webtools: this.webtools
-    });
+    // console.log('Creating new assignments with:', {
+    //   editForm: this.editForm,
+    //   selectedWebtools: this.selectedWebtools,
+    //   webtools: this.webtools
+    // });
   
     const assignmentPromises = this.selectedWebtools.map(async webtoolName => {
       const webtool = this.webtools.find(w => w.webtool === webtoolName);
@@ -1087,7 +1087,7 @@ export class WebtoolsComponent implements OnInit {
           roleId: roles[0].id  
         };
   
-        console.log('Creating assignment:', userWebtoolData);
+        // console.log('Creating assignment:', userWebtoolData);
         return userWebtoolData;
       } catch (error) {
         console.error(`Error loading roles for webtool ${webtoolName}:`, error);
@@ -1111,7 +1111,7 @@ export class WebtoolsComponent implements OnInit {
         return Promise.all(createPromises);
       })
       .then(() => {
-        console.log('Successfully created all assignments');
+        // console.log('Successfully created all assignments');
         this.reloadAllViews();
         this.closeForm();
       })
@@ -1151,9 +1151,9 @@ export class WebtoolsComponent implements OnInit {
   
 
   navigateToWebtool(webtool: Webtool) {
-    console.log('Navigating to webtool:', webtool);
+    // console.log('Navigating to webtool:', webtool);
     this.router.navigate(['/webtool-detail', webtool.id]).then(() => {
-      console.log('Navigation complete');
+      // console.log('Navigation complete');
     }).catch(error => {
       console.error('Navigation error:', error);
     });
@@ -1244,7 +1244,7 @@ export class WebtoolsComponent implements OnInit {
   loadRoles(webtoolId: number) {
     this.roleService.getRolesByWebtool(webtoolId).subscribe({
       next: (roles) => {
-        console.log('Loaded roles for webtool:', roles);
+        // console.log('Loaded roles for webtool:', roles);
         this.roleOptions = roles.map(role => ({
           id: role.id,
           value: role.roles,
@@ -1342,7 +1342,7 @@ onUserViewRoleChange(event: string, selection: WebtoolRoleSelection) {
     }
   }
   openUserViewEditForm(mode: 'edit', user: WebtoolUserDisplay) { 
-    console.log('Edit clicked for user:', user); 
+    // console.log('Edit clicked for user:', user); 
     if (this.viewMode !== 'users') return;
     
     this.isEditMode = true;
@@ -1355,7 +1355,7 @@ onUserViewRoleChange(event: string, selection: WebtoolRoleSelection) {
       isActive: user.isActive // Directly use the user's isActive status
     };
     
-    console.log('Form data with isActive:', this.editForm.isActive);
+    // console.log('Form data with isActive:', this.editForm.isActive);
     
     // Load webtool role selections for this user
     this.loadUserWebtoolRoles(user);
@@ -1419,7 +1419,7 @@ onUserViewRoleChange(event: string, selection: WebtoolRoleSelection) {
   // }
 
   openAddUserForm(tool: Webtool) {
-    console.log('Opening add form for tool:', tool);
+    // console.log('Opening add form for tool:', tool);
     // Make sure we're creating a proper Webtool object
     this.selectedWebtool = {
       id: tool.id,
@@ -1439,7 +1439,7 @@ onUserViewRoleChange(event: string, selection: WebtoolRoleSelection) {
     this.resetForm();
     this.selectedRoles = [];
     
-    console.log('Selected webtool after setup:', this.selectedWebtool);
+    // console.log('Selected webtool after setup:', this.selectedWebtool);
   }
 
   openEditForm(mode: 'edit', user: WebtoolUserDisplay) { 
@@ -1686,13 +1686,13 @@ private openMatrixForm(mode: 'add' | 'edit', record?: any, index?: number) {
     const expandedWebtool = this.webtools.find(w => w.isExpanded);
     
     if (expandedWebtool) {
-      console.log('Found expanded webtool:', expandedWebtool);
+      // console.log('Found expanded webtool:', expandedWebtool);
       this.selectedWebtool = expandedWebtool;
       
       // Load roles for the expanded webtool
       this.roleService.getRolesByWebtool(expandedWebtool.id).subscribe({
         next: (roles) => {
-          console.log('Loaded roles for expanded webtool:', roles);
+          // console.log('Loaded roles for expanded webtool:', roles);
           
           // Map all available roles
           this.roleOptions = roles.map(role => ({
@@ -1711,8 +1711,8 @@ private openMatrixForm(mode: 'add' | 'edit', record?: any, index?: number) {
             }));
           }
           
-          console.log('Set roleOptions:', this.roleOptions);
-          console.log('Set selectedRoles:', this.selectedRoles);
+          // console.log('Set roleOptions:', this.roleOptions);
+          // console.log('Set selectedRoles:', this.selectedRoles);
         },
         error: (error) => {
           console.error('Error loading roles:', error);

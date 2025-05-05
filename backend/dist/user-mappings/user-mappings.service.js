@@ -22,24 +22,18 @@ let UserMappingsService = class UserMappingsService {
         this.userMappingRepo = userMappingRepo;
     }
     async findByEmail(email) {
-        console.log(`Fetching mapping for email: ${email}`);
         const result = await this.userMappingRepo.findOne({ where: { email } });
-        console.log('Query result:', result);
         return result;
     }
     async upsert(email, realName) {
-        console.log(`Upserting mapping for email: ${email}, realName: ${realName}`);
         let mapping = await this.findByEmail(email);
         if (mapping) {
-            console.log('Updating existing mapping:', mapping);
             mapping.real_name = realName;
         }
         else {
-            console.log('Creating new mapping for email:', email);
             mapping = this.userMappingRepo.create({ email, real_name: realName });
         }
         const savedMapping = await this.userMappingRepo.save(mapping);
-        console.log('Saved mapping:', savedMapping);
         return savedMapping;
     }
     async findAll() {

@@ -73,7 +73,7 @@ sortDirection: 'asc' | 'desc' = 'asc'; // Default to ascending
   ngOnChanges(changes: SimpleChanges) {
 
     if (changes['data']) {
-      console.log('Received data in CustomTableComponent:', this.data);
+      // console.log('Received data in CustomTableComponent:', this.data);
     }
     if (changes['showPaginationHeader']) {
       this.updateRowsPerPage();
@@ -86,8 +86,8 @@ sortDirection: 'asc' | 'desc' = 'asc'; // Default to ascending
     }
     if (changes['headers'] || changes['data']) {
       this.columns = this.headers;
-      console.log('headers', this.headers);
-      console.log('data', this.data);
+      // console.log('headers', this.headers);
+      // console.log('data', this.data);
 
       const currentSelectedPage = this.selectedPage;
 
@@ -101,10 +101,10 @@ sortDirection: 'asc' | 'desc' = 'asc'; // Default to ascending
       this.setPageCount();
     }
 
-    console.log('Filtered Rows:', this.filteredrows);
-console.log('Display Data:', this.displaydata);
-console.log('Headers:', this.headers);
-  console.log('Data:', this.data);
+//     console.log('Filtered Rows:', this.filteredrows);
+// console.log('Display Data:', this.displaydata);
+// console.log('Headers:', this.headers);
+//   console.log('Data:', this.data);
 
   }
 
@@ -118,7 +118,7 @@ console.log('Headers:', this.headers);
   saveToLocalStorage(): void {
     const tableData = this.collectTableData();
     localStorage.setItem('tableData', JSON.stringify(tableData)); // Save data in JSON format
-    console.log('Data saved to localStorage');
+    // console.log('Data saved to localStorage');
   }
 
   // Collect the table data (return the data to be saved)
@@ -132,9 +132,9 @@ console.log('Headers:', this.headers);
     if (savedData) {
       this.displaydata = JSON.parse(savedData);  // Convert JSON back to object
       this.filteredrows = this.displaydata;      // Optionally set filtered rows if needed
-      console.log('Data loaded from localStorage', this.displaydata);
+      // console.log('Data loaded from localStorage', this.displaydata);
     } else {
-      console.log('No saved data found');
+      // console.log('No saved data found');
     }
   }
 
@@ -142,10 +142,10 @@ console.log('Headers:', this.headers);
 
   updateRowsPerPage(): void {
     if (!this.showPaginationHeader) {
-      console.log('1000 rows');
+      // console.log('1000 rows');
       this.rowsperpage = 1000;
     } else {
-      console.log('15 rows');
+      // console.log('15 rows');
 
       this.rowsperpage = 15;
     }
@@ -197,11 +197,11 @@ console.log('Headers:', this.headers);
             const nextHeader = headers[index];
             const colWidth = nextHeader.getBoundingClientRect().width;
 
-            console.log(
-              `Column ${index + 2} (${
-                parentHeader.display_name
-              }): Width = ${colWidth}px`
-            );
+            // console.log(
+            //   `Column ${index + 2} (${
+            //     parentHeader.display_name
+            //   }): Width = ${colWidth}px`
+            // );
 
             let styleElement = document.querySelector(
               `#sticky-column-${index}`
@@ -250,19 +250,19 @@ console.log('Headers:', this.headers);
       this.defaultpagecount = Array(1)
         .fill(0)
         .map((x, i) => i);
-      console.log('pagecount: ', this.pagecount);
+      // console.log('pagecount: ', this.pagecount);
     } else {
       this.defaultpagecount = Array(
         Math.ceil(this.filteredrows.length / this.rowsperpage)
       )
         .fill(0)
         .map((x, i) => i);
-      console.log(
-        'page count',
-        this.pagecount,
-        this.filteredrows.length,
-        this.rowsperpage
-      );
+      // console.log(
+      //   'page count',
+      //   this.pagecount,
+      //   this.filteredrows.length,
+      //   this.rowsperpage
+      // );
     }
 
     this.pagecount = this.defaultpagecount.slice(0, this.rowsperpage);
@@ -275,12 +275,12 @@ console.log('Headers:', this.headers);
       index * this.rowsperpage + this.rowsperpage
     );
 
-    console.log(index);
+    // console.log(index);
     this.pagecount = this.defaultpagecount.slice(
       index - 5 < 0 ? 0 : index - 5,
       index + 5 < 10 ? 10 : index + 5
     );
-    console.log(this.pagecount);
+    // console.log(this.pagecount);
   }
 
   addRow() {
@@ -298,13 +298,13 @@ console.log('Headers:', this.headers);
 
   editRow(index: number) {
     this.displaydata[index].editing = true;
-    console.log('Edit');
+    // console.log('Edit');
   }
 
   // Save an existing row (edit mode)
   saveRow(index: number) {
     this.displaydata[index].editing = false; // Turn off editing mode
-    console.log('Saving existing row', this.displaydata[index]);
+    // console.log('Saving existing row', this.displaydata[index]);
 
     // Emit the updated row data, marked as not new
     this.saveItem.emit({ data: this.displaydata[index], isNew: false });
@@ -313,7 +313,7 @@ console.log('Headers:', this.headers);
   }
 
   saveNewRow() {
-    console.log('Saving new row:', this.newrow);
+    // console.log('Saving new row:', this.newrow);
     
     // Ensure webtoolId is properly set
     if (this.newrow.webtool) {
@@ -436,7 +436,7 @@ handleSearch() {
     const startIndex = this.selectedPage * this.rowsperpage;
     const endIndex = startIndex + this.rowsperpage;
   
-    console.log(`Slice start: ${startIndex}, Slice end: ${endIndex}`);
+    // console.log(`Slice start: ${startIndex}, Slice end: ${endIndex}`);
   
     this.displaydata = this.filteredrows.slice(startIndex, endIndex);
   
@@ -546,7 +546,7 @@ handleSearch() {
     }
   
     // Log the current state for debugging
-    console.log(`Sorting by ${this.sortColumn} in ${this.sortDirection} order`);
+    // console.log(`Sorting by ${this.sortColumn} in ${this.sortDirection} order`);
   
     // Separate rows into those with and without values for the column
     const rowsWithValues = this.filteredrows.filter(
@@ -607,7 +607,7 @@ onFilterChange(selectedValue: string, columnName: string): void {
   this.newrow[columnName] = selectedValue;  // Assign selected value to newrow[columnName]
   
   // Optionally, log the change for debugging
-  console.log(`New value for ${columnName}:`, selectedValue);
+  // console.log(`New value for ${columnName}:`, selectedValue);
 }
 
 onCategoryChange(selectedCategory: string) {
@@ -722,7 +722,7 @@ initializeDropdownOptions(columnName: string, options: any[]) {
 
 onColumnChange(label: string, columnName: string): void {
   // Handle additional logic for label changes in any column
-  console.log(`Label changed for ${columnName}:`, label);
+  // console.log(`Label changed for ${columnName}:`, label);
 }
 
 
@@ -735,7 +735,7 @@ getColumnData(column: any): any[] {
   return column.data || [];
 }
   onWebtoolSelect(event: any, row: any) {
-    console.log('Webtool selected:', event);
+    // console.log('Webtool selected:', event);
     row.webtool = event;
     row.webtoolId = event.id;
   }

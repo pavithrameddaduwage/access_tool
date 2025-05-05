@@ -30,15 +30,15 @@ export class SelectComponent implements OnChanges {
   }
 
   updateItems() {
-    console.log("updateItems",this.label,this.data,this.value)
+    // console.log("updateItems",this.label,this.data,this.value)
     this.items = this.data;
     this.selectedvalue = this.value;
   }
 
   setValue(e: any,label:string) {
-    console.log("targetvalue",e.target.value,this.data)
+    // console.log("targetvalue",e.target.value,this.data)
     let val=this.data.find((f:any)=>f.value.toString()==e.target.value.toString())
-    console.log("val",val,this.value)
+    // console.log("val",val,this.value)
     this.setSelectValue.emit({value:val?val.value:"",label:label});
   }
 

@@ -31,9 +31,7 @@ let DashboardController = class DashboardController {
         return this.dashboardService.findOne(+id);
     }
     async update(id, updateDashboardDto) {
-        console.log('Updating dashboard:', { id, data: updateDashboardDto });
         const result = await this.dashboardService.update(+id, updateDashboardDto);
-        console.log('Update result:', result);
         return result;
     }
     async remove(id) {

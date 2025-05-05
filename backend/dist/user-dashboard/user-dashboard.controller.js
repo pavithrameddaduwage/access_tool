@@ -37,7 +37,6 @@ let UserDashboardController = class UserDashboardController {
         return this.userDashboardService.remove(email);
     }
     async getDatabaseUsers() {
-        console.log('testing');
         return this.userDashboardService.getDatabaseUsers();
     }
     async permittedUsers(workspaceId, reportId) {

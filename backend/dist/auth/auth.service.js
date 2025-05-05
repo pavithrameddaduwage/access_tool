@@ -45,7 +45,6 @@ let AuthService = class AuthService {
                         resolve(false);
                     }
                     else {
-                        console.log('AD authentication result:', auth);
                         resolve(auth);
                     }
                 });
@@ -100,7 +99,6 @@ let AuthService = class AuthService {
             console.log('User is inactive - access denied');
             throw new common_1.UnauthorizedException('Your account has been deactivated. Please contact your administrator.');
         }
-        console.log('Creating JWT token...');
         const payload = {
             email: email,
             name: dbUser.name,
@@ -114,17 +112,13 @@ let AuthService = class AuthService {
         };
     }
     async searchUsers(query) {
-        console.log('Starting AD search with query:', query);
         const searchQuery = `(&(objectClass=user)(|(cn=${query}*)(mail=${query}*)))`;
         let searchCompleted = false;
         return new Promise((resolve, reject) => {
             let isResolved = false;
-            console.log('Initiating AD findUsers call for:', query);
             try {
                 ad.findUsers(searchQuery, true, (err, users) => {
-                    console.log('AD findUsers callback received for:', query);
                     if (isResolved || searchCompleted) {
-                        console.log('Request was already resolved for:', query);
                         return;
                     }
                     if (err) {
@@ -137,13 +131,11 @@ let AuthService = class AuthService {
                         isResolved = true;
                         return resolve([]);
                     }
-                    console.log("These are the users", users);
                     const formattedUsers = users.map((f) => ({
                         name: f.cn,
                         email: f.mail,
                         department: f.department
                     }));
-                    console.log('Formatted users for:', query, formattedUsers);
                     isResolved = true;
                     searchCompleted = true;
                     resolve(formattedUsers);

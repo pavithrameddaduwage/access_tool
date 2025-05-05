@@ -39,7 +39,7 @@ export class NavbarComponent implements OnInit {
     if (token) {
       try {
         this.user = jwtDecode(token);
-        console.log('User roles:', this.user.roles);
+        // console.log('User roles:', this.user.roles);
         this.isloggedIn = true;
       } catch (error) {
         console.error('Invalid token:', error);

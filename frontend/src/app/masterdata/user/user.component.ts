@@ -100,7 +100,7 @@ export class UserComponent implements OnInit {
   }
 
   onUsernameSearch(event: any): void {
-    console.log(this.adUsers);
+    // console.log(this.adUsers);
     const term = event.target.value;
     if (term.length >= 3) {
       this.searchTerm$.next(term);
