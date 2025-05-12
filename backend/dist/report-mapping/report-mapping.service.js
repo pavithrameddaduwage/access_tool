@@ -26,13 +26,10 @@ let ReportMappingService = class ReportMappingService {
     cleanReportName(name) {
         if (!name)
             return 'Unknown Report';
-        let cleaned = name.replace(/^HGU\s*-\s*/i, '')
-            .replace(/^HGU/i, '');
-        cleaned = cleaned.replace(/\s*-\s*Report$/i, '')
-            .replace(/Report$/i, '')
-            .replace(/\s*-\s*Dashboard$/i, '')
-            .replace(/Dashboard$/i, '');
-        cleaned = cleaned.trim();
+        let cleaned = name
+            .replace(/^(HGU\s*-\s*|HGU\s*|Dashboard\s*-\s*|Dashboard\s*|\bDash\s*-\s*|\bDash\s*)/i, '')
+            .replace(/(-?\s*Report\s*$|-?\s*Dashboard\s*$|-?\s*HGU\s*$|\s*-\s*Report\s*$|\s*-\s*Dashboard\s*$|\s*-\s*HGU\s*$)/i, '')
+            .trim();
         return cleaned || name;
     }
     async findOrCreate(reportId, originalName, workspaceId) {

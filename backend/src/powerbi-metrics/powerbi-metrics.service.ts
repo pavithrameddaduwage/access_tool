@@ -663,6 +663,64 @@ export class PowerBIMetricsService {
 
   //new one
   
+  // async getUserReportViewsDistribution(
+  //   userId: string, 
+  //   startDate: Date, 
+  //   endDate: Date,
+  //   workspaceId?: string
+  // ): Promise<{reportId: string, reportName: string, workspaceName: string, count: number}[]> {
+  //   // First convert the input dates to UTC start/end of day in EDT timezone
+  //   const edtStart = this.convertToEdtStartOfDay(startDate);
+  //   const edtEnd = this.convertToEdtEndOfDay(endDate);
+    
+  //   const query = this.powerbiLogRepository
+  //     .createQueryBuilder('log')
+  //     .select('log.reportId', 'reportId')
+  //     .addSelect('log.reportName', 'reportName')
+  //     .addSelect('log.workSpaceName', 'workspaceName') // Add this line
+  //     .addSelect('log.creationTime', 'creationTime')
+  //     .where('log.userId = :userId', { userId })
+  //     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { 
+  //       startDate: edtStart, 
+  //       endDate: edtEnd 
+  //     })
+  //     .andWhere("log.operation = 'ViewReport'")
+  //     .andWhere('log.reportId IS NOT NULL');
+  
+  //     if (workspaceId) {
+  //       if (workspaceId === '000000') {
+  //         query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+  //       } else {
+  //         query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+  //       }
+  //     }
+  
+  //   const rawLogs = await query.getRawMany();
+    
+  //   const reportViews = new Map<string, {reportId: string, reportName: string, workspaceName: string, count: number}>();
+    
+  //   rawLogs.forEach(log => {
+  //     const key = log.reportId;
+  //     const reportName = log.reportName || 'Unknown Report';
+  //     const workspaceName = log.workspaceName || 'Unknown Workspace';
+      
+  //     if (!reportViews.has(key)) {
+  //       reportViews.set(key, {
+  //         reportId: key,
+  //         reportName: reportName,
+  //         workspaceName: workspaceName,
+  //         count: 0
+  //       });
+  //     }
+      
+  //     reportViews.get(key)!.count += 1;
+  //   });
+    
+  //   return Array.from(reportViews.values())
+  //     .sort((a, b) => b.count - a.count);
+  // }
+  
+
   async getUserReportViewsDistribution(
     userId: string, 
     startDate: Date, 
@@ -676,8 +734,9 @@ export class PowerBIMetricsService {
     const query = this.powerbiLogRepository
       .createQueryBuilder('log')
       .select('log.reportId', 'reportId')
-      .addSelect('log.reportName', 'reportName')
-      .addSelect('log.workSpaceName', 'workspaceName') // Add this line
+      .addSelect('log.reportName', 'originalReportName')
+      .addSelect('log.workspaceId', 'workspaceId')
+      .addSelect('log.workSpaceName', 'originalWorkspaceName')
       .addSelect('log.creationTime', 'creationTime')
       .where('log.userId = :userId', { userId })
       .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { 
@@ -687,22 +746,26 @@ export class PowerBIMetricsService {
       .andWhere("log.operation = 'ViewReport'")
       .andWhere('log.reportId IS NOT NULL');
   
-      if (workspaceId) {
-        if (workspaceId === '000000') {
-          query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
-        } else {
-          query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-        }
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
       }
+    }
   
     const rawLogs = await query.getRawMany();
     
     const reportViews = new Map<string, {reportId: string, reportName: string, workspaceName: string, count: number}>();
     
-    rawLogs.forEach(log => {
+    for (const log of rawLogs) {
+      // Get mapped names
+      const [reportName, workspaceName] = await Promise.all([
+        this.reportMappingService.getDisplayName(log.reportId, log.originalReportName),
+        this.workspaceMappingService.getDisplayName(log.workspaceId, log.originalWorkspaceName)
+      ]);
+      
       const key = log.reportId;
-      const reportName = log.reportName || 'Unknown Report';
-      const workspaceName = log.workspaceName || 'Unknown Workspace';
       
       if (!reportViews.has(key)) {
         reportViews.set(key, {
@@ -714,12 +777,11 @@ export class PowerBIMetricsService {
       }
       
       reportViews.get(key)!.count += 1;
-    });
+    }
     
     return Array.from(reportViews.values())
       .sort((a, b) => b.count - a.count);
   }
-  
   // Helper methods for EDT timezone conversion
   private convertToEdtStartOfDay(date: Date): Date {
     // Convert to EDT start of day (00:00:00)
@@ -1407,6 +1469,43 @@ async getUniqueReportCount(startDate: Date, endDate: Date, workspaceId?: string)
   return parseInt(result?.count || 0);
 }
 
+// async getUserMetrics(
+//   userId: string, 
+//   startDate: Date, 
+//   endDate: Date,
+//   workspaceId?: string,
+//   reportId?: string
+// ): Promise<{
+//   totalViews: number;
+//   reports: {reportId: string, reportName: string}[];
+//   workspaces: {workspaceId: string, workspaceName: string}[];
+//   activityByDate: {date: string, count: number}[];
+// }> {
+//   try {
+//     const [totalViews, reports, workspaces, activityByDate] = await Promise.all([
+//       this.getUserTotalViews(userId, startDate, endDate, workspaceId, reportId),
+//       this.getUserReports(userId, startDate, endDate, workspaceId, reportId),
+//       this.getUserWorkspaces(userId, startDate, endDate, reportId),
+//       this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId)
+//     ]);
+
+//     return {
+//       totalViews: totalViews || 0,
+//       reports: reports || [],
+//       workspaces: workspaces || [],
+//       activityByDate: activityByDate || []
+//     };
+//   } catch (error) {
+//     // console.error('Error getting user metrics:', error);
+//     return {
+//       totalViews: 0,
+//       reports: [],
+//       workspaces: [],
+//       activityByDate: []
+//     };
+//   }
+// }
+
 async getUserMetrics(
   userId: string, 
   startDate: Date, 
@@ -1420,11 +1519,23 @@ async getUserMetrics(
   activityByDate: {date: string, count: number}[];
 }> {
   try {
-    const [totalViews, reports, workspaces, activityByDate] = await Promise.all([
+    const [totalViews, rawReports, rawWorkspaces, activityByDate] = await Promise.all([
       this.getUserTotalViews(userId, startDate, endDate, workspaceId, reportId),
       this.getUserReports(userId, startDate, endDate, workspaceId, reportId),
       this.getUserWorkspaces(userId, startDate, endDate, reportId),
       this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId)
+    ]);
+
+    // Map names for reports and workspaces
+    const [reports, workspaces] = await Promise.all([
+      Promise.all(rawReports.map(async r => ({
+        reportId: r.reportId,
+        reportName: await this.reportMappingService.getDisplayName(r.reportId, r.reportName)
+      }))),
+      Promise.all(rawWorkspaces.map(async w => ({
+        workspaceId: w.workspaceId,
+        workspaceName: await this.workspaceMappingService.getDisplayName(w.workspaceId, w.workspaceName)
+      })))
     ]);
 
     return {
@@ -1434,7 +1545,6 @@ async getUserMetrics(
       activityByDate: activityByDate || []
     };
   } catch (error) {
-    // console.error('Error getting user metrics:', error);
     return {
       totalViews: 0,
       reports: [],
@@ -1443,7 +1553,6 @@ async getUserMetrics(
     };
   }
 }
-
 private async getUserTotalViews(
   userId: string, 
   startDate: Date, 
@@ -1628,6 +1737,63 @@ async getUserActivityByDate(
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
+// async getWorkspaceViewsDistribution(
+//   userId: string, 
+//   startDate: Date, 
+//   endDate: Date,
+//   reportId?: string
+// ): Promise<{workspaceId: string, workspaceName: string, count: number}[]> {
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .select('log.workspaceId', 'workspaceId')
+//     .addSelect('log.workSpaceName', 'workspaceName')
+//     .addSelect('log.creationTime', 'creationTime')  // Add creation time for timezone conversion
+//     .where('log.userId = :userId', { userId })
+//     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .andWhere('log.workspaceId IS NOT NULL');
+
+//   if (reportId) {
+//     query.andWhere('log.reportId = :reportId', { reportId });
+//   }
+
+//   const rawLogs = await query.getRawMany();
+  
+//   // Process using EDT timezone
+//   const workspaceCounts = new Map<string, {workspaceId: string, workspaceName: string, count: number}>();
+  
+//   rawLogs.forEach(log => {
+//     // Convert UTC date to EDT
+//     const utcDate = new Date(log.creationTime);
+    
+//     // Options for converting to EDT
+//     const options = { timeZone: 'America/New_York' };
+    
+//     // Format date in EDT timezone
+//     const edtDateString = utcDate.toLocaleDateString('en-US', options);
+//     const edtDateParts = edtDateString.split('/');
+    
+//     // Create a key for the workspace
+//     const key = log.workspaceId;
+    
+//     if (!workspaceCounts.has(key)) {
+//       workspaceCounts.set(key, {
+//         workspaceId: log.workspaceId,
+//         workspaceName: log.workspaceName || 'Unknown Workspace',
+//         count: 0
+//       });
+//     }
+    
+//     // Increment count
+//     workspaceCounts.get(key)!.count += 1;
+//   });
+  
+//   // Convert to array and sort by count descending
+//   return Array.from(workspaceCounts.values())
+//     .sort((a, b) => b.count - a.count);
+// }
+
+
 async getWorkspaceViewsDistribution(
   userId: string, 
   startDate: Date, 
@@ -1637,8 +1803,8 @@ async getWorkspaceViewsDistribution(
   const query = this.powerbiLogRepository
     .createQueryBuilder('log')
     .select('log.workspaceId', 'workspaceId')
-    .addSelect('log.workSpaceName', 'workspaceName')
-    .addSelect('log.creationTime', 'creationTime')  // Add creation time for timezone conversion
+    .addSelect('log.workSpaceName', 'originalName')
+    .addSelect('log.creationTime', 'creationTime')
     .where('log.userId = :userId', { userId })
     .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
     .andWhere("log.operation = 'ViewReport'")
@@ -1650,40 +1816,39 @@ async getWorkspaceViewsDistribution(
 
   const rawLogs = await query.getRawMany();
   
-  // Process using EDT timezone
-  const workspaceCounts = new Map<string, {workspaceId: string, workspaceName: string, count: number}>();
+  const workspaceCounts = new Map<string, {
+    workspaceId: string, 
+    workspaceName: string, 
+    count: number
+  }>();
   
-  rawLogs.forEach(log => {
-    // Convert UTC date to EDT
+  for (const log of rawLogs) {
+    // Convert UTC date to EDT (existing time handling)
     const utcDate = new Date(log.creationTime);
-    
-    // Options for converting to EDT
     const options = { timeZone: 'America/New_York' };
-    
-    // Format date in EDT timezone
     const edtDateString = utcDate.toLocaleDateString('en-US', options);
     const edtDateParts = edtDateString.split('/');
     
-    // Create a key for the workspace
-    const key = log.workspaceId;
-    
-    if (!workspaceCounts.has(key)) {
-      workspaceCounts.set(key, {
+    // Get mapped workspace name
+    const displayName = await this.workspaceMappingService.getDisplayName(
+      log.workspaceId,
+      log.originalName
+    );
+
+    if (!workspaceCounts.has(log.workspaceId)) {
+      workspaceCounts.set(log.workspaceId, {
         workspaceId: log.workspaceId,
-        workspaceName: log.workspaceName || 'Unknown Workspace',
+        workspaceName: displayName,
         count: 0
       });
     }
     
-    // Increment count
-    workspaceCounts.get(key)!.count += 1;
-  });
+    workspaceCounts.get(log.workspaceId)!.count += 1;
+  }
   
-  // Convert to array and sort by count descending
   return Array.from(workspaceCounts.values())
     .sort((a, b) => b.count - a.count);
 }
-
 
 private normalizeWorkspaceName(name: string | undefined): string {
   

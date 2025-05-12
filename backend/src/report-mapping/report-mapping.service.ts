@@ -17,18 +17,16 @@ export class ReportMappingService {
   private cleanReportName(name: string): string {
     if (!name) return 'Unknown Report';
     
-    // Remove "HGU" prefix (case insensitive)
-    let cleaned = name.replace(/^HGU\s*-\s*/i, '')
-                     .replace(/^HGU/i, '');
-    
-    // Remove "Report" and "Dashboard" suffixes (case insensitive)
-    cleaned = cleaned.replace(/\s*-\s*Report$/i, '')
-                    .replace(/Report$/i, '')
-                    .replace(/\s*-\s*Dashboard$/i, '')
-                    .replace(/Dashboard$/i, '');
-    
-    // Trim whitespace
-    cleaned = cleaned.trim();
+    // Comprehensive cleaning of prefixes and suffixes
+    let cleaned = name
+      // Remove prefixes
+      .replace(/^(HGU\s*-\s*|HGU\s*|Dashboard\s*-\s*|Dashboard\s*|\bDash\s*-\s*|\bDash\s*)/i, '')
+      
+      // Remove suffixes
+      .replace(/(-?\s*Report\s*$|-?\s*Dashboard\s*$|-?\s*HGU\s*$|\s*-\s*Report\s*$|\s*-\s*Dashboard\s*$|\s*-\s*HGU\s*$)/i, '')
+      
+      // Trim any extra whitespace
+      .trim();
     
     return cleaned || name; // Return original if empty after cleaning
   }
