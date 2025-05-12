@@ -79,7 +79,8 @@ export class PowerBIMetricsService {
   private apiUrl = `${environment.apiUrl}powerbi-metrics`;
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient
+  ) { }
 
   // Basic log retrieval methods
   getAllLogEntries(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Observable<PowerBILog[]> {
@@ -127,15 +128,15 @@ export class PowerBIMetricsService {
   //   return this.http.get<PowerBIWorkspace[]>(`${this.apiUrl}/distinct-workspaces`, { params });
   // }
 
-  getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Observable<PowerBIReport[]> {
-    const params: any = {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString()
-    };
-    if (workspaceId) params.workspaceId = workspaceId;
+  // getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Observable<PowerBIReport[]> {
+  //   const params: any = {
+  //     startDate: startDate.toISOString(),
+  //     endDate: endDate.toISOString()
+  //   };
+  //   if (workspaceId) params.workspaceId = workspaceId;
     
-    return this.http.get<PowerBIReport[]>(`${this.apiUrl}/distinct-reports`, { params });
-  }
+  //   return this.http.get<PowerBIReport[]>(`${this.apiUrl}/distinct-reports`, { params });
+  // }
 
   // Metric methods with filtering
   getViewCountsByDate(
@@ -154,21 +155,21 @@ export class PowerBIMetricsService {
     return this.http.get<ViewCount[]>(`${this.apiUrl}/views-by-date`, { params });
   }
 
-  getTopReports(
-    startDate: Date, 
-    endDate: Date, 
-    limit: number = 10,
-    workspaceId?: string
-  ): Observable<ReportMetric[]> {
-    const params: any = {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      limit: limit.toString()
-    };
-    if (workspaceId) params.workspaceId = workspaceId;
+  // getTopReports(
+  //   startDate: Date, 
+  //   endDate: Date, 
+  //   limit: number = 10,
+  //   workspaceId?: string
+  // ): Observable<ReportMetric[]> {
+  //   const params: any = {
+  //     startDate: startDate.toISOString(),
+  //     endDate: endDate.toISOString(),
+  //     limit: limit.toString()
+  //   };
+  //   if (workspaceId) params.workspaceId = workspaceId;
     
-    return this.http.get<ReportMetric[]>(`${this.apiUrl}/top-reports`, { params });
-  }
+  //   return this.http.get<ReportMetric[]>(`${this.apiUrl}/top-reports`, { params });
+  // }
 
   getTopUsers(
     startDate: Date, 
@@ -341,7 +342,6 @@ export class PowerBIMetricsService {
       { params }
     );
   }
-
   
 
   getDailyUserReportViews(
@@ -399,5 +399,43 @@ export class PowerBIMetricsService {
       map(workspaces => [...new Map(workspaces.map(ws => [ws.id, ws])).values()])
     );
   }
+
+
+
+  // name
+
+  getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Observable<PowerBIReport[]> {
+    const params: any = {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    if (workspaceId) params.workspaceId = workspaceId;
+    
+    return this.http.get<PowerBIReport[]>(`${this.apiUrl}/distinct-reports`, { params });
+  }
   
+  getTopReports(
+    startDate: Date, 
+    endDate: Date, 
+    limit: number = 10,
+    workspaceId?: string
+  ): Observable<ReportMetric[]> {
+    const params: any = {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      limit: limit.toString()
+    };
+    if (workspaceId) params.workspaceId = workspaceId;
+    
+    return this.http.get<ReportMetric[]>(`${this.apiUrl}/top-reports`, { params });
+  }
+
+  getUserNameMappings(userEmails: string[]): Observable<{[email: string]: string}> {
+    return this.http.post<{[email: string]: string}>(
+      `${this.apiUrl}/user-name-mappings`,
+      { emails: userEmails }
+    ).pipe(
+      catchError(() => of({}))
+    );
+  }
 }

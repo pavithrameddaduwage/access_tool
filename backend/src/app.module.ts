@@ -28,6 +28,8 @@ import { HttpExceptionFilter } from './http-exception.filter';
 import { ConfigModule } from '@nestjs/config';
 import { UserMappingsModule } from './user-mappings/user-mappings.module';
 import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
+import { WorkspaceMappingModule } from './workspace-mapping/workspace-mapping.module';
+import { ReportMappingModule } from './report-mapping/report-mapping.module';
 
 @Module({
   imports: [ ConfigModule.forRoot({
@@ -70,6 +72,8 @@ import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
     UsersModule,
     UserMappingsModule,
     PowerBIMetricsModule,
+    WorkspaceMappingModule,
+    ReportMappingModule,
     ],
   controllers: [AppController],
   providers: [

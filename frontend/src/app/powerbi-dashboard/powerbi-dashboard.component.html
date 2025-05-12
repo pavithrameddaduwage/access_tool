@@ -1,544 +1,573 @@
-<div class="min-h-screen bg-gray-50">
-  <!-- Header Section -->
-  <div class="bg-white p-6 shadow-md mx-9 mt-6 rounded-lg">  
-    <div class="container mx-auto px-0"> 
-      <!-- Heading and Toggle Buttons -->
-      <div class="flex flex-col md:flex-row justify-center items-center mb-6">
-        <!-- Heading -->
-        <h1 class="text-xl font-bold text-gray-800 mb-4 mr-10 md:mb-0">Power BI Usage Analytics</h1>
+<div class="min-h-screen bg-gray-50 -mt-10">
+  <!-- Main Container -->
+  <div class="bg-white shadow-md rounded-lg mx-9 mt-5 p-6">
+   <!-- Header Section - Single Line Layout -->
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+  <!-- Title on the left -->
+  <h1 class="text-xl font-bold text-gray-800 whitespace-nowrap">Power BI Usage Analytics</h1>
+  
+  <!-- Filters and Workspace/User Toggle in the middle -->
+  <div class="flex flex-col md:flex-row gap-4 flex-1 mx-4">
+    <!-- Workspace Dropdown -->
+    <div class="w-full md:w-56">
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Workspace</label>
+      <select
+        [(ngModel)]="selectedWorkspace"
+        (change)="onWorkspaceChange()"
+        class="w-full p-2.5 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option *ngFor="let ws of workspaceOptions" [value]="ws.id">
+          {{ ws.name }}
+        </option>
+      </select>
+    </div>
 
-        <!-- Toggle Buttons -->
-        <div class="view-toggle-container flex gap-4">
-          <button
-            class="px-4 py-1.5 rounded-lg transition-colors font-medium text-sm"
-            [class.bg-[#0077B6]]="activeView === 'workspace'"
-            [class.text-white]="activeView === 'workspace'"
-            [class.bg-gray-200]="activeView !== 'workspace'"
-            [class.text-gray-700]="activeView !== 'workspace'"
-            (click)="activeView = 'workspace'"
-          >
-            Workspace View
-          </button>
-          <button
-            class="px-4 py-1.5 rounded-lg transition-colors font-medium text-sm"
-            [class.bg-[#0077B6]]="activeView === 'user'"
-            [class.text-white]="activeView === 'user'"
-            [class.bg-gray-200]="activeView !== 'user'"
-            [class.text-gray-700]="activeView !== 'user'"
-            (click)="activeView = 'user'; loadData(selectedPeriod)"
-          >
-            User Analytics
-          </button>
+    <!-- Report Dropdown -->
+    <div class="w-full md:w-56">
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Report</label>
+      <select
+        [(ngModel)]="selectedReport"
+        (change)="onReportChange()"
+        class="w-full p-2.5 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        [disabled]="!reportOptions.length"
+      >
+        <option [ngValue]="null">All Reports</option>
+        <option *ngFor="let report of reportOptions" [value]="report.id">
+          {{ report.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Time Duration Buttons -->
+    <div class="w-full md:w-72">
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Time Duration</label>
+      <div class="flex gap-2.5">
+        <button
+          *ngFor="let period of timePeriods"
+          (click)="loadData(period.days)"
+          class="flex-1 px-3.5 py-2 text-sm font-medium rounded-md transition-all duration-200"
+          [ngClass]="{
+            'bg-[#556FB5] text-white hover:bg-blue-600 shadow-md': selectedPeriod === period.days,
+            'bg-white text-gray-700 hover:bg-gray-50 shadow-sm': selectedPeriod !== period.days
+          }"
+        >
+          {{ period.label }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toggles on the right - Stacked vertically -->
+  <div class="flex flex-col items-end gap-2 flex-shrink-0">
+    <!-- PowerBI/Webtool Toggle - Top -->
+    <div class="relative">
+      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full blur-sm opacity-20"></div>
+      <div class="relative flex bg-gray-100 p-1 rounded-full border border-gray-200 shadow-inner">
+        <button
+          class="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200"
+          [class.bg-gradient-to-r]="activeDashboard === 'powerbi'"
+          [class.from-blue-500]="activeDashboard === 'powerbi'"
+          [class.to-blue-600]="activeDashboard === 'powerbi'"
+          [class.text-white]="activeDashboard === 'powerbi'"
+          [class.shadow-md]="activeDashboard === 'powerbi'"
+          [class.text-gray-600]="activeDashboard !== 'powerbi'"
+          [class.hover:text-gray-800]="activeDashboard !== 'powerbi'"
+          (click)="toggleDashboard('powerbi')"
+        >
+          PowerBI
+        </button>
+        <button
+          class="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200"
+          [class.bg-gradient-to-r]="activeDashboard === 'webtool'"
+          [class.from-blue-500]="activeDashboard === 'webtool'"
+          [class.to-blue-600]="activeDashboard === 'webtool'"
+          [class.text-white]="activeDashboard === 'webtool'"
+          [class.shadow-md]="activeDashboard === 'webtool'"
+          [class.text-gray-600]="activeDashboard !== 'webtool'"
+          [class.hover:text-gray-800]="activeDashboard !== 'webtool'"
+          (click)="toggleDashboard('webtool')"
+        >
+          Webtool
+        </button>
+      </div>
+    </div>
+    
+    <!-- Workspace/User Toggle - Bottom -->
+    <div class="view-toggle-container flex bg-gray-100 p-1 rounded-lg">
+      <button
+        class="px-3 py-1 rounded-md transition-colors font-medium text-xs"
+        [class.bg-[#0077B6]]="activeView === 'workspace'"
+        [class.text-white]="activeView === 'workspace'"
+        [class.bg-gray-200]="activeView !== 'workspace'"
+        [class.text-gray-700]="activeView !== 'workspace'"
+        (click)="activeView = 'workspace'"
+      >
+        Workspace
+      </button>
+      <button
+        class="px-3 py-1 rounded-md transition-colors font-medium text-xs ml-1"
+        [class.bg-[#0077B6]]="activeView === 'user'"
+        [class.text-white]="activeView === 'user'"
+        [class.bg-gray-200]="activeView !== 'user'"
+        [class.text-gray-700]="activeView !== 'user'"
+        (click)="activeView = 'user'; loadData(selectedPeriod)"
+      >
+        User
+      </button>
+    </div>
+  </div>
+</div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+    
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+      {{ error }}
+    </div>
+
+    <!-- Rest of your content remains the same -->
+    <!-- Workspace View -->
+    <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 mb-2">
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <h3 class="text-lg text-opacity-70 font-semibold text-gray-700 mb-2">Total Views</h3>
+          <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.totalViews || 0 }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <h3 class="text-lg text-opacity-70  font-semibold text-gray-700 mb-2">Unique Users</h3>
+          <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsers || 0 }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <h3 class="text-lg text-opacity-70 font-semibold text-gray-700 mb-2">Unique Reports</h3>
+          <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueReports || 0 }}</p>
         </div>
       </div>
 
-      <!-- Filters Section -->
-      <div class="flex flex-col md:flex-row gap-4 items-center">
-<!-- Workspace Dropdown -->
-<div class="w-full md:w-1/3">
-  <label class="block text-sm font-medium text-gray-700 mb-2">Workspace</label>
-  <select
-    [(ngModel)]="selectedWorkspace"
-    (change)="onWorkspaceChange()"
-    class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-  >
-    <!-- Only dynamic options - the "All Workspaces" comes from workspaceOptions -->
-    <option *ngFor="let ws of workspaceOptions" [value]="ws.id">
-      {{ ws.name }}
-    </option>
-  </select>
-</div>
+      <!-- Main Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Views Over Time -->
+        <div class="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow h-[350px]">
+          <h3 class="text-lg font-semibold text-gray-700 ml-3 mb-2">Views Over Time</h3>
+          <div class="h-[calc(100%-40px)]">
+            <apx-chart
+              *ngIf="viewsChartOptions"
+              [series]="viewsChartOptions.series"
+              [chart]="viewsChartOptions.chart"
+              [xaxis]="viewsChartOptions.xaxis"
+              [yaxis]="viewsChartOptions.yaxis"
+              [colors]="viewsChartOptions.colors"
+              [stroke]="viewsChartOptions.stroke"
+              height="100%"
+            ></apx-chart>
+          </div>
+        </div>
 
-<!-- Report Dropdown -->
-<div class="w-full md:w-1/3">
-  <label class="block text-sm font-medium text-gray-700 mb-2">Report</label>
-  <select
-    [(ngModel)]="selectedReport"
-    (change)="onReportChange()"
-    class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-    [disabled]="!reportOptions.length"
-  >
-    <option [ngValue]="null">All Reports</option>
-    <option *ngFor="let report of reportOptions" [value]="report.id">
-      {{ report.name }}
-    </option>
-  </select>
-</div>
+        <!-- Top Reports -->
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow h-[350px]">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Top Reports</h3>
+          <div class="h-[calc(100%-40px)]">
+            <apx-chart
+              *ngIf="topReportsChartOptions"
+              [series]="topReportsChartOptions.series"
+              [chart]="topReportsChartOptions.chart"
+              [xaxis]="topReportsChartOptions.xaxis"
+              [colors]="topReportsChartOptions.colors"
+              [plotOptions]="topReportsChartOptions.plotOptions"
+              height="100%"
+            ></apx-chart>
+          </div>
+        </div>
 
-        <!-- Time Duration Buttons -->
-        <div class="w-full md:w-1/3">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Time Duration</label>
-          <div class="flex gap-2">
+        <!-- Top Users Chart -->
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow h-[350px]">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Top Users</h3>
+          <div class="h-[calc(100%-40px)]">
+            <apx-chart
+              *ngIf="topUsersChartOptions"
+              [series]="topUsersChartOptions.series"
+              [chart]="topUsersChartOptions.chart"
+              [xaxis]="topUsersChartOptions.xaxis"
+              [plotOptions]="topUsersChartOptions.plotOptions"
+              [dataLabels]="topUsersChartOptions.dataLabels"
+              [colors]="topUsersChartOptions.colors"
+              height="100%"
+            ></apx-chart>
+          </div>
+        </div>
+
+        <!-- Activity Trend -->
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow h-[350px]">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">User Activity Trend</h3>
+          <div class="h-[calc(100%-40px)]">
+            <apx-chart
+              *ngIf="activityTrendChartOptions"
+              [series]="activityTrendChartOptions.series"
+              [chart]="activityTrendChartOptions.chart"
+              [xaxis]="activityTrendChartOptions.xaxis"
+              [stroke]="activityTrendChartOptions.stroke"
+              [colors]="activityTrendChartOptions.colors"
+              height="100%"
+            ></apx-chart>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- User View -->
+    <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
+      <!-- User List Section -->
+      <div class="mb-8 bg-white p-2 rounded-lg shadow-md mt-5">
+        <!-- Accordion Header -->
+        <div class="flex justify-between items-center cursor-pointer" (click)="toggleUserListAccordion()">
+          <h3 class="text-lg font-semibold text-gray-700">User List</h3>
+          <span class="text-gray-600">
+            {{ isUserListExpanded ? '▼' : '▶' }}
+          </span>
+        </div>
+
+        <!-- Accordion Content -->
+        <div *ngIf="isUserListExpanded" class="mt-4">
+          <!-- Search and Export Section -->
+          <div class="flex justify-between items-center mb-4">
+            <!-- Search Input -->
+            <input
+              type="text"
+              placeholder="Search users..."
+              class="w-full p-2 border rounded-lg mr-4"
+              [(ngModel)]="userSearchQuery"
+              (input)="filterUsers()"
+            />
+
+            <!-- Export Icon -->
             <button
-              *ngFor="let period of timePeriods"
-              (click)="loadData(period.days)"
-              class="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200"
-              [ngClass]="{
-                'bg-[#556FB5] text-white hover:bg-blue-600 shadow-lg': selectedPeriod === period.days,
-                'bg-white text-gray-700 hover:bg-gray-50 shadow-sm': selectedPeriod !== period.days
-              }"
+              class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+              (click)="exportUserListToCSV()"
+              title="Export to CSV"
             >
-              {{ period.label }}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+            </button>
+          </div>
+          
+          <!-- User Table -->
+          <div class="overflow-hidden rounded-xl shadow-sm border border-gray-200 bg-white">
+            <table class="w-full">
+              <!-- Table Headers -->
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    Name
+                  </th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    Views
+                  </th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    Last Seen
+                  </th>
+                </tr>
+              </thead>
+
+              <!-- Table Body -->
+              <tbody class="bg-white divide-y divide-gray-100">
+                <tr *ngFor="let user of getPaginatedUsers()"
+                class="transition-colors duration-150 ease-in-out hover:bg-gray-50 cursor-pointer"
+                [class.bg-blue-50]="selectedUserId === user.id"
+                (click)="selectUser(user.id)">
+              <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-800">
+                {{ user.name }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">
+                {{ user.totalViews }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">
+                {{ user.lastActivity }}
+              </td>
+            </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination Controls -->
+          <div class="pagination-controls mt-4 flex justify-center gap-2">
+            <button
+              *ngFor="let page of getPageNumbers()"
+              (click)="changePage(page)"
+              class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
+              [class.bg-blue-500.text-white]="currentPage === page"
+            >
+              {{ page }}
             </button>
           </div>
         </div>
-        
-      </div>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  <div *ngIf="loading" class="flex justify-center items-center h-64">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-6 mt-6">
-    {{ error }}
-  </div>
-
-  <!-- Workspace View -->
-  <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 mb-8 mx-9">
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Views</h3>
-        <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.totalViews || 0 }}</p>
-      </div>
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Unique Users</h3>
-        <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsers || 0 }}</p>
-      </div>
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Unique Reports</h3>
-        <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueReports || 0 }}</p>
-      </div>
-    </div>
-
-    <!-- Main Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-9">
-      <!-- Views Over Time -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Views Over Time</h3>
-        <apx-chart
-          *ngIf="viewsChartOptions"
-          [series]="viewsChartOptions.series"
-          [chart]="viewsChartOptions.chart"
-          [xaxis]="viewsChartOptions.xaxis"
-          [yaxis]="viewsChartOptions.yaxis"
-          [colors]="viewsChartOptions.colors"
-          [stroke]="viewsChartOptions.stroke"
-        ></apx-chart>
       </div>
 
-      <!-- Top Reports -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Top Reports</h3>
-        <apx-chart
-          *ngIf="topReportsChartOptions"
-          [series]="topReportsChartOptions.series"
-          [chart]="topReportsChartOptions.chart"
-          [xaxis]="topReportsChartOptions.xaxis"
-          [colors]="topReportsChartOptions.colors"
-          [plotOptions]="topReportsChartOptions.plotOptions"
-        ></apx-chart>
-      </div>
-
-      <!-- Top Users Chart -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-center font-semibold text-gray-700 mb-4">Top Users</h3>
-        <apx-chart
-          *ngIf="topUsersChartOptions"
-          [series]="topUsersChartOptions.series"
-          [chart]="topUsersChartOptions.chart"
-          [xaxis]="topUsersChartOptions.xaxis"
-          [plotOptions]="topUsersChartOptions.plotOptions"
-          [dataLabels]="topUsersChartOptions.dataLabels"
-          [colors]="topUsersChartOptions.colors"
-        ></apx-chart>
-      </div>
-
-      <!-- Activity Trend -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">User Activity Trend</h3>
-        <apx-chart
-          *ngIf="activityTrendChartOptions"
-          [series]="activityTrendChartOptions.series"
-          [chart]="activityTrendChartOptions.chart"
-          [xaxis]="activityTrendChartOptions.xaxis"
-          [stroke]="activityTrendChartOptions.stroke"
-          [colors]="activityTrendChartOptions.colors"
-        ></apx-chart>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- User View -->
-  <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
-    <!-- User List Section -->
-    <div class="mb-8 bg-white p-6 rounded-lg shadow-md mx-9 mt-5">
-      <!-- Accordion Header -->
-      <div class="flex justify-between items-center cursor-pointer" (click)="toggleUserListAccordion()">
-        <h3 class="text-lg font-semibold text-gray-700">User List</h3>
-        <span class="text-gray-600">
-          {{ isUserListExpanded ? '▼' : '▶' }}
-        </span>
-      </div>
-
-      <!-- Accordion Content -->
-      <div *ngIf="isUserListExpanded" class="mt-4">
-        <!-- Search and Export Section -->
-        <div class="flex justify-between items-center mb-4">
-          <!-- Search Input -->
-          <input
-            type="text"
-            placeholder="Search users..."
-            class="w-full p-2 border rounded-lg mr-4"
-            [(ngModel)]="userSearchQuery"
-            (input)="filterUsers()"
-          />
-
-          <!-- Export Icon -->
-          <button
-            class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
-            (click)="exportUserListToCSV()"
-            title="Export to CSV"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      <!-- User Metrics -->
+      <div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6">
+        <!-- Selected User Header -->
+        <div class="bg-white p-2 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">{{ selectedUserId }}</h2>
+            <button 
+              class="text-blue-600 hover:text-blue-800 font-medium"
+              (click)="selectedUserId = null"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
-          </button>
-        </div>
-<!-- User Table -->
-<div class="overflow-hidden rounded-xl shadow-sm border border-gray-200 bg-white">
-  <table class="w-full">
-    <!-- Table Headers -->
-    <thead class="bg-gray-50">
-      <tr>
-        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-          Name
-        </th>
-        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-          Views
-        </th>
-        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-          Last Seen
-        </th>
-      </tr>
-    </thead>
+              ← Back to all users
+            </button>
+          </div>
 
-    <!-- Table Body -->
-    <tbody class="bg-white divide-y divide-gray-100">
-      <tr *ngFor="let user of getPaginatedUsers()"
-          class="transition-colors duration-150 ease-in-out hover:bg-gray-50 cursor-pointer"
-          [class.bg-blue-50]="selectedUserId === user.id"
-          (click)="selectUser(user.id)">
-        <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-800">
-          {{ user.id  }}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">
-          {{ user.totalViews }}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">
-          {{ user.lastActivity }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-        <!-- Pagination Controls -->
-        <div class="pagination-controls mt-4 flex justify-center gap-2">
-          <button
-            *ngFor="let page of getPageNumbers()"
-            (click)="changePage(page)"
-            class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
-            [class.bg-blue-500.text-white]="currentPage === page"
-          >
-            {{ page }}
-          </button>
-        </div>
-      </div>
-    </div>
+          <!-- Metrics Tiles -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gray-50 p-4 rounded-lg text-center">
+              <h3 class="text-sm text-gray-600">Total Views</h3>
+              <p class="text-2xl font-bold text-blue-600">{{ userMetrics.totalViews || 0 }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg text-center">
+              <h3 class="text-sm text-gray-600">Reports Viewed</h3>
+              <p class="text-2xl font-bold text-green-600">{{ userMetrics.reports?.length || 0 }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg text-center">
+              <h3 class="text-sm text-gray-600">Workspaces</h3>
+              <p class="text-2xl font-bold text-purple-600">{{ userMetrics.workspaces?.length || 0 }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg text-center">
+              <h3 class="text-sm text-gray-600">Active Days</h3>
+              <p class="text-2xl font-bold text-yellow-600">{{ userMetrics.activityByDate?.length || 0 }}</p>
+            </div>
+          </div>
 
-    <!-- User Metrics -->
-    <div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6 mx-9">
-      <!-- Selected User Header -->
-      <div class="bg-white p-6 rounded-lg shadow-md">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800">{{ selectedUserId }}</h2>
-          <button 
-            class="text-blue-600 hover:text-blue-800 font-medium"
-            (click)="selectedUserId = null"
-          >
-            ← Back to all users
-          </button>
-        </div>
-
-        <!-- Metrics Tiles -->
-        <!-- In your template, update the metrics tiles section -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-  <div class="bg-gray-50 p-4 rounded-lg text-center">
-    <h3 class="text-sm text-gray-600">Total Views</h3>
-    <p class="text-2xl font-bold text-blue-600">{{ userMetrics.totalViews || 0 }}</p>
-  </div>
-  <div class="bg-gray-50 p-4 rounded-lg text-center">
-    <h3 class="text-sm text-gray-600">Reports Viewed</h3>
-    <p class="text-2xl font-bold text-green-600">{{ userMetrics.reports?.length || 0 }}</p>
-  </div>
-  <div class="bg-gray-50 p-4 rounded-lg text-center">
-    <h3 class="text-sm text-gray-600">Workspaces</h3>
-    <p class="text-2xl font-bold text-purple-600">{{ userMetrics.workspaces?.length || 0 }}</p>
-  </div>
-  <div class="bg-gray-50 p-4 rounded-lg text-center">
-    <h3 class="text-sm text-gray-600">Active Days</h3>
-    <p class="text-2xl font-bold text-yellow-600">{{ userMetrics.activityByDate?.length || 0 }}</p>
-  </div>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-  <!-- Workspace Views Pie Chart -->
-  <div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100">
-    <h3 class="text-lg font-semibold mb-4 text-gray-800">Workspace Views</h3>
-    <apx-chart
-      *ngIf="userWorkspacePieChartOptions"
-      [series]="userWorkspacePieChartOptions.series"
-      [chart]="userWorkspacePieChartOptions.chart"
-      [labels]="userWorkspacePieChartOptions.labels"
-      [colors]="userWorkspacePieChartOptions.colors"
-      [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-      [tooltip]="userWorkspacePieChartOptions.tooltip"
-    ></apx-chart>
-  </div>
-  
-<!-- Consumption Methods Pie Chart -->
-<!-- Consumption Methods Pie Chart -->
-<div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100">
-  <h3 class="text-lg font-semibold mb-4 text-gray-800">Consumption Methods</h3>
-  <apx-chart
-    *ngIf="userConsumptionChartOptions"
-    [series]="userConsumptionChartOptions.series"
-    [chart]="userConsumptionChartOptions.chart"
-    [labels]="userConsumptionChartOptions.labels"
-    [colors]="userConsumptionChartOptions.colors"
-    [dataLabels]="userConsumptionChartOptions.dataLabels"
-    [tooltip]="userConsumptionChartOptions.tooltip"
-  ></apx-chart>
-  
-  <div *ngIf="!userConsumptionChartOptions" class="flex flex-col items-center justify-center py-10">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <h4 class="text-xl font-medium text-gray-700 mb-1">No Consumption Data</h4>
-    <p class="text-gray-500 text-center max-w-xs">This user has no recorded consumption methods.</p>
-  </div>
-</div>
-</div>
-
-<!-- Report Views Pie Chart (Full Width) -->
-<div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100 mb-6">
-  <h3 class="text-lg font-semibold mb-4 text-gray-800">Top 10 Report Views</h3>
-  <apx-chart
-    *ngIf="userReportViewsChartOptions"
-    [series]="userReportViewsChartOptions.series"
-    [chart]="userReportViewsChartOptions.chart"
-    [labels]="userReportViewsChartOptions.labels"
-    [colors]="userReportViewsChartOptions.colors"
-    [dataLabels]="userReportViewsChartOptions.dataLabels"
-    [tooltip]="userReportViewsChartOptions.tooltip"
-    [legend]="userReportViewsChartOptions.legend"
-  ></apx-chart>
-  <div *ngIf="!userReportViewsChartOptions" class="text-center text-gray-500 py-10">
-    No report view data available for this user
-  </div>
-</div>
-
-<!-- Activity Chart (Full Width) -->
-<div class="bg-white shadow-sm p-5 rounded-lg border border-gray-100">
-  <h3 class="text-lg font-semibold mb-4 text-gray-800">Activity Timeline</h3>
-  <apx-chart
-    *ngIf="activityTimelineChartOptions"
-    [series]="activityTimelineChartOptions.series"
-    [chart]="activityTimelineChartOptions.chart"
-    [xaxis]="activityTimelineChartOptions.xaxis"
-    [colors]="activityTimelineChartOptions.colors"
-    
-  ></apx-chart>
-  </div>
-
-  <div *ngIf="showDatePopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
-      <!-- Header -->
-      <div class="flex justify-between items-center border-b p-4">
-        <h3 class="text-lg font-semibold text-gray-800">
-          Reports viewed on {{ selectedDateForPopup | date:'mediumDate' }}
-        </h3>
-        <button 
-          (click)="closeDatePopup()"
-          class="text-gray-500 hover:text-gray-700 focus:outline-none"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      
-      <!-- Loading State -->
-      <div *ngIf="selectedDateReports.length === 0" class="p-8 text-center">
-        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto"></div>
-        <p class="mt-4 text-gray-600">Loading report data...</p>
-      </div>
-      
-      <!-- Content -->
-      <div *ngIf="selectedDateReports.length > 0" class="flex-1 overflow-y-auto">
-        <div class="divide-y divide-gray-200">
-          <div *ngFor="let report of selectedDateReports" class="p-4 hover:bg-gray-50 transition-colors">
-            <div class="flex justify-between items-center">
-              <div>
-                <h4 class="font-medium text-gray-900">{{ report.reportName || 'Unnamed Report' }}</h4>
-                <p class="text-sm text-gray-500 mt-1">{{ report.workspaceName }}</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- Workspace Views Pie Chart -->
+            <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 h-[350px]">
+              <h3 class="text-lg font-semibold mb-2 text-gray-800">Workspace Views</h3>
+              <div class="h-[calc(100%-40px)]">
+                <apx-chart
+                  *ngIf="userWorkspacePieChartOptions"
+                  [series]="userWorkspacePieChartOptions.series"
+                  [chart]="userWorkspacePieChartOptions.chart"
+                  [labels]="userWorkspacePieChartOptions.labels"
+                  [colors]="userWorkspacePieChartOptions.colors"
+                  [dataLabels]="userWorkspacePieChartOptions.dataLabels"
+                  [tooltip]="userWorkspacePieChartOptions.tooltip"
+                  height="100%"
+                ></apx-chart>
               </div>
-              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                {{ report.count }} {{ report.count === 1 ? 'view' : 'views' }}
-              </span>
+            </div>
+            
+            <!-- Consumption Methods Pie Chart -->
+            <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 h-[350px]">
+              <h3 class="text-lg font-semibold mb-2 text-gray-800">Consumption Methods</h3>
+              <div class="h-[calc(100%-40px)]">
+                <apx-chart
+                  *ngIf="userConsumptionChartOptions"
+                  [series]="userConsumptionChartOptions.series"
+                  [chart]="userConsumptionChartOptions.chart"
+                  [labels]="userConsumptionChartOptions.labels"
+                  [colors]="userConsumptionChartOptions.colors"
+                  [dataLabels]="userConsumptionChartOptions.dataLabels"
+                  [tooltip]="userConsumptionChartOptions.tooltip"
+                  height="100%"
+                ></apx-chart>
+                
+                <div *ngIf="!userConsumptionChartOptions" class="flex flex-col items-center justify-center h-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h4 class="text-xl font-medium text-gray-700 mb-1">No Consumption Data</h4>
+                  <p class="text-gray-500 text-center max-w-xs">This user has no recorded consumption methods.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Report Views Pie Chart (Full Width) -->
+          <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 mb-6 h-[400px]">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Top 10 Report Views</h3>
+            <div class="h-[calc(100%-40px)]">
+              <apx-chart
+                *ngIf="userReportViewsChartOptions"
+                [series]="userReportViewsChartOptions.series"
+                [chart]="userReportViewsChartOptions.chart"
+                [labels]="userReportViewsChartOptions.labels"
+                [colors]="userReportViewsChartOptions.colors"
+                [dataLabels]="userReportViewsChartOptions.dataLabels"
+                [tooltip]="userReportViewsChartOptions.tooltip"
+                [legend]="userReportViewsChartOptions.legend"
+                height="100%"
+              ></apx-chart>
+              <div *ngIf="!userReportViewsChartOptions" class="text-center text-gray-500 h-full flex items-center justify-center">
+                No report view data available for this user
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Chart (Full Width) -->
+          <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 h-[400px]">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Activity Timeline</h3>
+            <div class="h-[calc(100%-40px)]">
+              <apx-chart
+                *ngIf="activityTimelineChartOptions"
+                [series]="activityTimelineChartOptions.series"
+                [chart]="activityTimelineChartOptions.chart"
+                [xaxis]="activityTimelineChartOptions.xaxis"
+                [colors]="activityTimelineChartOptions.colors"
+                height="100%"
+              ></apx-chart>
+            </div>
+          </div>
+
+          <div *ngIf="showDatePopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+              <!-- Header -->
+              <div class="flex justify-between items-center border-b p-4">
+                <h3 class="text-lg font-semibold text-gray-800">
+                  Reports viewed on {{ selectedDateForPopup | date:'mediumDate' }}
+                </h3>
+                <button 
+                  (click)="closeDatePopup()"
+                  class="text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- Loading State -->
+              <div *ngIf="selectedDateReports.length === 0" class="p-8 text-center">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto"></div>
+                <p class="mt-4 text-gray-600">Loading report data...</p>
+              </div>
+              
+              <!-- Content -->
+              <div *ngIf="selectedDateReports.length > 0" class="flex-1 overflow-y-auto">
+                <div class="divide-y divide-gray-200">
+                  <div *ngFor="let report of selectedDateReports" class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex justify-between items-center">
+                      <div>
+                        <h4 class="font-medium text-gray-900">{{ report.reportName || 'Unnamed Report' }}</h4>
+                        <p class="text-sm text-gray-500 mt-1">{{ report.workspaceName }}</p>
+                      </div>
+                      <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {{ report.count }} {{ report.count === 1 ? 'view' : 'views' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Empty State -->
+              <div *ngIf="selectedDateReports.length === 0 && !selectedDateForPopup" class="p-8 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h4 class="mt-4 font-medium text-gray-900">No report data</h4>
+                <p class="mt-1 text-gray-500">No reports were viewed on this date</p>
+              </div>
+              
+              <!-- Footer -->
+              <div class="border-t p-4 flex justify-end">
+                <button
+                  (click)="closeDatePopup()"
+                  class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Empty State -->
-      <div *ngIf="selectedDateReports.length === 0 && !selectedDateForPopup" class="p-8 text-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h4 class="mt-4 font-medium text-gray-900">No report data</h4>
-        <p class="mt-1 text-gray-500">No reports were viewed on this date</p>
-      </div>
-      
-      <!-- Footer -->
-      <div class="border-t p-4 flex justify-end">
-        <button
-          (click)="closeDatePopup()"
-          class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-
-<!-- Reports Table for Selected Date -->
-<!-- <div *ngIf="selectedDate" class="mt-6">
-  <h4 class="text-md font-semibold mb-3 text-gray-700">
-    Reports viewed on {{ selectedDate | date:'mediumDate' }}
-  </h4>
-  
-  <div *ngIf="dateReportViews === undefined" class="text-center py-4">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-    <p class="mt-2 text-gray-600">Loading report data...</p>
-  </div>
-  
-  <div *ngIf="dateReportViews && dateReportViews.length" class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Name</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr *ngFor="let report of dateReportViews">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ report.reportName }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.count }}</td>
-          </tr>
-        </tbody>
-      </table>    </table>
-  </div>
-  
-  <div *ngIf="dateReportViews && !dateReportViews.length" class="text-center text-gray-500 py-4">
-    No report views recorded for this date
-  </div>
-</div> -->
-</div>
-</div>
-    <!-- Aggregate User Metrics -->
-    <ng-template #userOverview>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mx-9">
-        <!-- User Activity Trend Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">User Activity Trend</h3>
-          <apx-chart
-            *ngIf="metrics.activityTrend?.length"
-            [series]="activityTrendChartOptions.series"
-            [chart]="activityTrendChartOptions.chart"
-            [xaxis]="activityTrendChartOptions.xaxis"
-            [stroke]="activityTrendChartOptions.stroke"
-            [colors]="activityTrendChartOptions.colors"
-          ></apx-chart>
-        </div>
-        
-        <!-- Top Users Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">Top Users</h3>
-          <apx-chart
-            *ngIf="metrics.topUsers?.length"
-            [series]="topUsersChartOptions.series"
-            [chart]="topUsersChartOptions.chart"
-            [xaxis]="topUsersChartOptions.xaxis"
-            [plotOptions]="topUsersChartOptions.plotOptions"
-            [dataLabels]="topUsersChartOptions.dataLabels"
-            [colors]="topUsersChartOptions.colors"
-          ></apx-chart>
-        </div>
-
-        <div *ngIf="false" class="bg-white p-6 rounded-lg shadow-md md:col-span-2">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Unused Reports</h3>
+      <!-- Aggregate User Metrics -->
+      <ng-template #userOverview>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- User Activity Trend Chart -->
+          <div class="bg-white p-4 rounded-lg shadow-md h-[400px]">
+            <h3 class="text-lg font-semibold mb-2">User Activity Trend</h3>
+            <div class="h-[calc(100%-40px)]">
+              <apx-chart
+                *ngIf="metrics.activityTrend?.length"
+                [series]="activityTrendChartOptions.series"
+                [chart]="activityTrendChartOptions.chart"
+                [xaxis]="activityTrendChartOptions.xaxis"
+                [stroke]="activityTrendChartOptions.stroke"
+                [colors]="activityTrendChartOptions.colors"
+                height="100%"
+              ></apx-chart>
+            </div>
+          </div>
           
-          <div *ngIf="loadingUnusedReports" class="flex justify-center items-center h-32">
-            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        
-          <div *ngIf="!loadingUnusedReports">
-            <div *ngIf="unusedReports.length > 0; else noUnusedReports">
-              <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Report Name
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    <tr *ngFor="let report of unusedReports">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ report.dashboard }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <!-- Top Users Chart -->
+          <div class="bg-white p-4 rounded-lg shadow-md h-[400px]">
+            <h3 class="text-lg font-semibold mb-2">Top Users</h3>
+            <div class="h-[calc(100%-40px)]">
+              <apx-chart
+                *ngIf="metrics.topUsers?.length"
+                [series]="topUsersChartOptions.series"
+                [chart]="topUsersChartOptions.chart"
+                [xaxis]="topUsersChartOptions.xaxis"
+                [plotOptions]="topUsersChartOptions.plotOptions"
+                [dataLabels]="topUsersChartOptions.dataLabels"
+                [colors]="topUsersChartOptions.colors"
+                height="100%"
+              ></apx-chart>
             </div>
-        
-            <ng-template #noUnusedReports>
-              <div class="text-center py-4 text-gray-500">
-                No unused reports found in the selected period
+          </div>
+
+          <div *ngIf="true" class="bg-white p-4 rounded-lg shadow-md md:col-span-2 h-[400px]">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Unused Reports</h3>
+            
+            <div *ngIf="loadingUnusedReports" class="flex justify-center items-center h-full">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          
+            <div *ngIf="!loadingUnusedReports" class="h-[calc(100%-40px)]">
+              <div *ngIf="unusedReports.length > 0; else noUnusedReports">
+                <div class="overflow-x-auto h-full">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Report Name
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr *ngFor="let report of unusedReports">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {{ report.dashboard }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </ng-template>
+          
+              <ng-template #noUnusedReports>
+                <div class="text-center py-4 text-gray-500 h-full flex items-center justify-center">
+                  No unused reports found in the selected period
+                </div>
+              </ng-template>
+            </div>
           </div>
         </div>
-      </div>
-    </ng-template>
-  </ng-container>
+      </ng-template>
+    </ng-container>
+  </div>
 </div>

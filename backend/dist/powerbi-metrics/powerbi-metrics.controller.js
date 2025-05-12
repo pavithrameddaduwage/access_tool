@@ -101,6 +101,9 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getUnusedReports(startDate, endDate, workspaceId) {
         return this.powerbiMetricsService.getUnusedReports(startDate, endDate, workspaceId);
     }
+    async getUserNameMappings(body) {
+        return this.powerbiMetricsService.getUserNameMappings(body.emails);
+    }
 };
 exports.PowerBIMetricsController = PowerBIMetricsController;
 __decorate([
@@ -297,6 +300,13 @@ __decorate([
         Date, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUnusedReports", null);
+__decorate([
+    (0, common_1.Post)('user-name-mappings'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getUserNameMappings", null);
 exports.PowerBIMetricsController = PowerBIMetricsController = __decorate([
     (0, common_1.Controller)('powerbi-metrics'),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService])

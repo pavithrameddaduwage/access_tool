@@ -10,6 +10,9 @@ import { Between, In, Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
+import { ReportMappingService } from 'src/report-mapping/report-mapping.service';
+import { WorkspaceMappingService } from 'src/workspace-mapping/workspace-mapping.service';
+
 export interface PowerBILogEntry {
   Id: string;
   RecordType: number;
@@ -99,7 +102,9 @@ export class PowerBIMetricsService {
     @InjectRepository(PowerBILog)
     private readonly powerbiLogRepository: Repository<PowerBILog>,
     @InjectRepository(Dashboard)
-    private readonly dashboardRepository: Repository<Dashboard>
+    private readonly dashboardRepository: Repository<Dashboard>,
+    private readonly reportMappingService: ReportMappingService,
+    private readonly workspaceMappingService: WorkspaceMappingService,
   ) {}
   
 
@@ -245,7 +250,103 @@ export class PowerBIMetricsService {
     return result;
   }
 
-  public processLogEntries(entries: PowerBILogEntry[]): PowerBIMetrics {
+  // public processLogEntries(entries: PowerBILogEntry[]): PowerBIMetrics {
+  //   // Process all unique users
+  //   const users = [...new Set(entries.map(entry => entry.UserId))];
+    
+  //   // Process workspaces
+  //   const workspacesMap = new Map<string, {
+  //     id: string;
+  //     name: string;
+  //     views: number;
+  //     viewerSet: Set<string>;
+  //   }>();
+    
+  //   // Process reports
+  //   const reportsMap = new Map<string, {
+  //     id: string;
+  //     name: string;
+  //     workspaceId: string;
+  //     workspaceName: string;
+  //     views: number;
+  //     viewerSet: Set<string>;
+  //   }>();
+    
+  //   // Populate the maps
+  //   entries.forEach(entry => {
+  //     // Only count view operations
+  //     if (entry.Operation === 'ViewReport' || entry.Operation === 'ViewDashboard') {
+  //       // Update workspace metrics
+  //       if (entry.WorkspaceId) {
+  //         if (!workspacesMap.has(entry.WorkspaceId)) {
+  //           workspacesMap.set(entry.WorkspaceId, {
+  //             id: entry.WorkspaceId,
+  //             name: entry.WorkSpaceName || 'Unknown',
+  //             views: 0,
+  //             viewerSet: new Set<string>()
+  //           });
+  //         }
+          
+  //         const workspace = workspacesMap.get(entry.WorkspaceId);
+  //         workspace.views += 1;
+  //         workspace.viewerSet.add(entry.UserId);
+  //       }
+        
+  //       // Update report metrics (only for ViewReport operations)
+  //       if (entry.Operation === 'ViewReport' && entry.ReportId) {
+  //         if (!reportsMap.has(entry.ReportId)) {
+  //           reportsMap.set(entry.ReportId, {
+  //             id: entry.ReportId,
+  //             name: entry.ReportName || entry.ArtifactName || 'Unknown',
+  //             workspaceId: entry.WorkspaceId || 'Unknown',
+  //             workspaceName: entry.WorkSpaceName || 'Unknown',
+  //             views: 0,
+  //             viewerSet: new Set<string>()
+  //           });
+  //         }
+          
+  //         const report = reportsMap.get(entry.ReportId);
+  //         report.views += 1;
+  //         report.viewerSet.add(entry.UserId);
+  //       }
+  //     }
+  //   });
+    
+  //   // Convert maps to arrays for the response
+  //   const workspaces = Array.from(workspacesMap.values()).map(workspace => ({
+  //     id: workspace.id,
+  //     name: workspace.name,
+  //     views: workspace.views,
+  //     uniqueViewers: workspace.viewerSet.size
+  //   }));
+    
+  //   const reports = Array.from(reportsMap.values()).map(report => ({
+  //     id: report.id,
+  //     name: report.name,
+  //     workspaceId: report.workspaceId,
+  //     workspaceName: report.workspaceName,
+  //     views: report.views,
+  //     uniqueViewers: report.viewerSet.size
+  //   }));
+    
+  //   return {
+  //     uniqueUsers: {
+  //       count: users.length,
+  //       users
+  //     },
+  //     workspaces: {
+  //       count: workspaces.length,
+  //       workspaces
+  //     },
+  //     reports: {
+  //       count: reports.length,
+  //       reports
+  //     }
+  //   };
+  // }
+
+
+  public async processLogEntries(entries: PowerBILogEntry[]): Promise<PowerBIMetrics> {
     // Process all unique users
     const users = [...new Set(entries.map(entry => entry.UserId))];
     
@@ -267,16 +368,43 @@ export class PowerBIMetricsService {
       viewerSet: Set<string>;
     }>();
     
-    // Populate the maps
-    entries.forEach(entry => {
+    // First pass - create all mappings
+    for (const entry of entries) {
+      if (entry.Operation === 'ViewReport' || entry.Operation === 'ViewDashboard') {
+        // Create workspace mapping if needed
+        if (entry.WorkspaceId) {
+          await this.workspaceMappingService.findOrCreate(
+            entry.WorkspaceId,
+            entry.WorkSpaceName || 'Unknown'
+          );
+        }
+        
+        // Create report mapping if needed
+        if (entry.Operation === 'ViewReport' && entry.ReportId) {
+          await this.reportMappingService.findOrCreate(
+            entry.ReportId,
+            entry.ReportName || entry.ArtifactName || 'Unknown',
+            entry.WorkspaceId
+          );
+        }
+      }
+    }
+    
+    // Second pass - process metrics with mapped names
+    for (const entry of entries) {
       // Only count view operations
       if (entry.Operation === 'ViewReport' || entry.Operation === 'ViewDashboard') {
         // Update workspace metrics
         if (entry.WorkspaceId) {
+          const workspaceDisplayName = await this.workspaceMappingService.getDisplayName(
+            entry.WorkspaceId,
+            entry.WorkSpaceName
+          );
+          
           if (!workspacesMap.has(entry.WorkspaceId)) {
             workspacesMap.set(entry.WorkspaceId, {
               id: entry.WorkspaceId,
-              name: entry.WorkSpaceName || 'Unknown',
+              name: workspaceDisplayName,
               views: 0,
               viewerSet: new Set<string>()
             });
@@ -289,12 +417,24 @@ export class PowerBIMetricsService {
         
         // Update report metrics (only for ViewReport operations)
         if (entry.Operation === 'ViewReport' && entry.ReportId) {
+          const reportDisplayName = await this.reportMappingService.getDisplayName(
+            entry.ReportId,
+            entry.ReportName || entry.ArtifactName
+          );
+          
+          const workspaceDisplayName = entry.WorkspaceId 
+            ? await this.workspaceMappingService.getDisplayName(
+                entry.WorkspaceId,
+                entry.WorkSpaceName
+              )
+            : 'Unknown';
+          
           if (!reportsMap.has(entry.ReportId)) {
             reportsMap.set(entry.ReportId, {
               id: entry.ReportId,
-              name: entry.ReportName || entry.ArtifactName || 'Unknown',
+              name: reportDisplayName,
               workspaceId: entry.WorkspaceId || 'Unknown',
-              workspaceName: entry.WorkSpaceName || 'Unknown',
+              workspaceName: workspaceDisplayName,
               views: 0,
               viewerSet: new Set<string>()
             });
@@ -305,7 +445,7 @@ export class PowerBIMetricsService {
           report.viewerSet.add(entry.UserId);
         }
       }
-    });
+    }
     
     // Convert maps to arrays for the response
     const workspaces = Array.from(workspacesMap.values()).map(workspace => ({
@@ -339,9 +479,6 @@ export class PowerBIMetricsService {
       }
     };
   }
-
-
-
   async getPowerBIMetrics(startDate: Date, endDate: Date): Promise<PowerBIMetrics> {
     // First get all relevant logs
     const logs = await this.getLogsFromDatabase(startDate, endDate);
@@ -800,46 +937,46 @@ private async filterExistingLogs(logs: PowerBILogEntry[]): Promise<PowerBILogEnt
 
 
 
-async getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{id: string, name: string}[]> {
-  const query = this.powerbiLogRepository
-    .createQueryBuilder('log')
-    .select('log.workspaceId', 'id')
-    .addSelect('log.workSpaceName', 'name')
-    .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-    .andWhere("log.operation = 'ViewReport'")
-    .andWhere('log.workspaceId IS NOT NULL')
-    .distinct(true);
+// async getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{id: string, name: string}[]> {
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .select('log.workspaceId', 'id')
+//     .addSelect('log.workSpaceName', 'name')
+//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .andWhere('log.workspaceId IS NOT NULL')
+//     .distinct(true);
 
-  if (reportId) {
-    query.andWhere('log.reportId = :reportId', { reportId });
-  }
+//   if (reportId) {
+//     query.andWhere('log.reportId = :reportId', { reportId });
+//   }
 
-  const results = await query.getRawMany();
+//   const results = await query.getRawMany();
 
-  // Group by workspace name, handling PersonalWorkspace specially
-  const workspaceMap = new Map<string, {id: string, name: string}>();
+//   // Group by workspace name, handling PersonalWorkspace specially
+//   const workspaceMap = new Map<string, {id: string, name: string}>();
   
-  results.forEach(r => {
-    const name = r.name || 'Unknown Workspace';
+//   results.forEach(r => {
+//     const name = r.name || 'Unknown Workspace';
     
-    if (name === 'PersonalWorkspace') {
-      // Use a consistent ID for all PersonalWorkspace entries
-      if (!workspaceMap.has('PersonalWorkspace')) {
-        workspaceMap.set('PersonalWorkspace', {
-          id: '000000', // Use the same ID you used in the frontend
-          name: 'Personal Workspace'
-        });
-      }
-    } else {
-      workspaceMap.set(r.id, {
-        id: r.id,
-        name: name
-      });
-    }
-  });
+//     if (name === 'PersonalWorkspace') {
+//       // Use a consistent ID for all PersonalWorkspace entries
+//       if (!workspaceMap.has('PersonalWorkspace')) {
+//         workspaceMap.set('PersonalWorkspace', {
+//           id: '000000', // Use the same ID you used in the frontend
+//           name: 'Personal Workspace'
+//         });
+//       }
+//     } else {
+//       workspaceMap.set(r.id, {
+//         id: r.id,
+//         name: name
+//       });
+//     }
+//   });
   
-  return Array.from(workspaceMap.values());
-}
+//   return Array.from(workspaceMap.values());
+// }
 async getViewCountsByDate(
   startDate: Date, 
   endDate: Date, 
@@ -1051,69 +1188,69 @@ async getUserActivityTrend(
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
-async getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{id: string, name: string, workspaceId: string}[]> {
-  const query = this.powerbiLogRepository
-    .createQueryBuilder('log')
-    .select('log.reportId', 'id')
-    .addSelect('log.reportName', 'name')
-    .addSelect('log.workspaceId', 'workspaceId')
-    .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-    .andWhere("log.operation = 'ViewReport'")
-    .andWhere('log.reportId IS NOT NULL')
-    .distinct(true);
+// async getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{id: string, name: string, workspaceId: string}[]> {
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .select('log.reportId', 'id')
+//     .addSelect('log.reportName', 'name')
+//     .addSelect('log.workspaceId', 'workspaceId')
+//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .andWhere('log.reportId IS NOT NULL')
+//     .distinct(true);
 
-    if (workspaceId) {
-      if (workspaceId === '000000') {
-        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
-      } else {
-        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-      }
-    }
+//     if (workspaceId) {
+//       if (workspaceId === '000000') {
+//         query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+//       } else {
+//         query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+//       }
+//     }
 
-  const results = await query.getRawMany();
+//   const results = await query.getRawMany();
 
-  return results.map(r => ({
-    id: r.id,
-    name: r.name || 'Unknown Report',
-    workspaceId: r.workspaceId
-  }));
-}
-
-
+//   return results.map(r => ({
+//     id: r.id,
+//     name: r.name || 'Unknown Report',
+//     workspaceId: r.workspaceId
+//   }));
+// }
 
 
-async getTopReports(startDate: Date, endDate: Date, limit: number = 10, workspaceId?: string): Promise<{reportId: string, reportName: string, count: number}[]> {
-  const query = this.powerbiLogRepository
-    .createQueryBuilder('log')
-    .select("log.reportId", "reportId")
-    .addSelect("log.reportName", "reportName")
-    .addSelect("COUNT(*)", "count")
-    .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
-    .andWhere("log.operation = 'ViewReport'")
-    .andWhere("log.reportId IS NOT NULL");
 
-    if (workspaceId && workspaceId !== 'all') {
-      if (workspaceId === '000000') {
-        // Special case for PersonalWorkspace
-        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
-      } else {
-        // Normal case for regular workspaces
-        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-      }
-    }
 
-  const results = await query
-    .groupBy("log.reportId, log.reportName")
-    .orderBy("COUNT(*)", "DESC")
-    .limit(limit)
-    .getRawMany();
+// async getTopReports(startDate: Date, endDate: Date, limit: number = 10, workspaceId?: string): Promise<{reportId: string, reportName: string, count: number}[]> {
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .select("log.reportId", "reportId")
+//     .addSelect("log.reportName", "reportName")
+//     .addSelect("COUNT(*)", "count")
+//     .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .andWhere("log.reportId IS NOT NULL");
 
-  return results.map(r => ({
-    reportId: r.reportId,
-    reportName: r.reportName || 'Unknown Report',
-    count: parseInt(r.count)
-  }));
-}
+//     if (workspaceId && workspaceId !== 'all') {
+//       if (workspaceId === '000000') {
+//         // Special case for PersonalWorkspace
+//         query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+//       } else {
+//         // Normal case for regular workspaces
+//         query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+//       }
+//     }
+
+//   const results = await query
+//     .groupBy("log.reportId, log.reportName")
+//     .orderBy("COUNT(*)", "DESC")
+//     .limit(limit)
+//     .getRawMany();
+
+//   return results.map(r => ({
+//     reportId: r.reportId,
+//     reportName: r.reportName || 'Unknown Report',
+//     count: parseInt(r.count)
+//   }));
+// }
 
 async getTopUsers(startDate: Date, endDate: Date, limit: number = 10, workspaceId?: string, reportId?: string): Promise<{userId: string, count: number}[]> {
   const query = this.powerbiLogRepository
@@ -1618,4 +1755,156 @@ async getUnusedReports(
   return query.getMany();
 }
 
+
+async getUserNameMappings(userEmails: string[]): Promise<{[email: string]: string}> {
+  if (!userEmails.length) return {};
+  
+  const users = await this.userDashboardRepository
+    .createQueryBuilder('user')
+    .select(['user.email', 'user.userName'])
+    .where('user.email IN (:...emails)', { emails: userEmails })
+    .distinctOn(['user.email'])
+    .getRawMany();
+
+  const nameMap: {[email: string]: string} = {};
+  
+  users.forEach(user => {
+    if (user.user_email && user.user_userName) {
+      nameMap[user.user_email] = user.user_userName;
+    }
+  });
+
+  return nameMap;
+}
+
+
+async getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{id: string, name: string}[]> {
+  const query = this.powerbiLogRepository
+    .createQueryBuilder('log')
+    .select('log.workspaceId', 'id')
+    .addSelect('log.workSpaceName', 'originalName')
+    .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+    .andWhere("log.operation = 'ViewReport'")
+    .andWhere('log.workspaceId IS NOT NULL')
+    .distinct(true);
+
+  if (reportId) {
+    query.andWhere('log.reportId = :reportId', { reportId });
+  }
+
+  const results = await query.getRawMany();
+
+  // Process with workspace mapping
+  const workspaceMap = new Map<string, {id: string, name: string}>();
+  
+  for (const result of results) {
+    const workspaceId = result.id;
+    const originalName = result.originalName;
+    
+    // Handle PersonalWorkspace specially
+    if (originalName === 'PersonalWorkspace') {
+      workspaceMap.set('PersonalWorkspace', {
+        id: '000000',
+        name: 'Personal Workspace'
+      });
+      continue;
+    }
+
+    // Get display name from mapping service
+    const displayName = await this.workspaceMappingService.getDisplayName(
+      workspaceId, 
+      originalName
+    );
+
+    workspaceMap.set(workspaceId, {
+      id: workspaceId,
+      name: displayName
+    });
+  }
+  
+  return Array.from(workspaceMap.values());
+}
+
+// Update the getDistinctReports method
+async getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{id: string, name: string, workspaceId: string}[]> {
+  const query = this.powerbiLogRepository
+    .createQueryBuilder('log')
+    .select('log.reportId', 'id')
+    .addSelect('log.reportName', 'originalName')
+    .addSelect('log.workspaceId', 'workspaceId')
+    .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+    .andWhere("log.operation = 'ViewReport'")
+    .andWhere('log.reportId IS NOT NULL')
+    .distinct(true);
+
+  if (workspaceId) {
+    if (workspaceId === '000000') {
+      query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+    } else {
+      query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+    }
+  }
+
+  const results = await query.getRawMany();
+
+  // Process with report mapping
+  const reports = [];
+  for (const result of results) {
+    const displayName = await this.reportMappingService.getDisplayName(
+      result.id,
+      result.originalName
+    );
+
+    reports.push({
+      id: result.id,
+      name: displayName,
+      workspaceId: result.workspaceId
+    });
+  }
+
+  return reports;
+}
+
+// Update the getTopReports method
+async getTopReports(startDate: Date, endDate: Date, limit: number = 10, workspaceId?: string): Promise<{reportId: string, reportName: string, count: number}[]> {
+  const query = this.powerbiLogRepository
+    .createQueryBuilder('log')
+    .select("log.reportId", "reportId")
+    .addSelect("log.reportName", "originalName")
+    .addSelect("COUNT(*)", "count")
+    .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
+    .andWhere("log.operation = 'ViewReport'")
+    .andWhere("log.reportId IS NOT NULL");
+
+    if (workspaceId && workspaceId !== 'all') {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
+
+  const results = await query
+    .groupBy("log.reportId, log.reportName")
+    .orderBy("COUNT(*)", "DESC")
+    .limit(limit)
+    .getRawMany();
+
+  // Process with report mapping
+  const mappedResults = [];
+  for (const result of results) {
+    const displayName = await this.reportMappingService.getDisplayName(
+      result.reportId,
+      result.originalName
+    );
+
+    mappedResults.push({
+      reportId: result.reportId,
+      reportName: displayName,
+      count: parseInt(result.count)
+    });
+  }
+
+  return mappedResults;
+}
 }

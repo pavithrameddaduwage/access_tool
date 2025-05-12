@@ -20,7 +20,7 @@ import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-frame',
-  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent, DepartmentComponent, TypeComponent, ValuetypeComponent, WebtoolComponent, RolesComponent, WorkspaceComponent, DashboardComponent, GroupComponent,UserManagementComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './frame.component.html',
   providers: [DepartmentService],
   styleUrl: './frame.component.css'

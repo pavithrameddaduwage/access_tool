@@ -10,6 +10,9 @@ import { PowerBIMetricsService } from './powerbi-metrics.service';
 import { PowerBILogsCollectorTask } from './tasks/powerbi-logs-collector.task';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
+import { WorkspaceMappingModule } from 'src/workspace-mapping/workspace-mapping.module';
+import { ReportMappingModule } from 'src/report-mapping/report-mapping.module';
+
 
 @Module({
   imports: [
@@ -17,6 +20,8 @@ import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
     TypeOrmModule.forFeature([PowerBILog, UserDashboard, Dashboard]),
     HttpModule,
     ConfigModule.forRoot(),
+    WorkspaceMappingModule,  
+    ReportMappingModule,    
   ],
   controllers: [PowerBIMetricsController],
   providers: [PowerBIMetricsService, PowerBILogsCollectorTask],

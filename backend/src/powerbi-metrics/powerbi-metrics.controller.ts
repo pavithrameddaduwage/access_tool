@@ -1,5 +1,4 @@
-// src/powerbi-metrics/powerbi-metrics.controller.ts
-import { Controller, Get, Query, DefaultValuePipe, BadRequestException, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Query, DefaultValuePipe, BadRequestException, ParseIntPipe, Post, Body } from '@nestjs/common';
 import { ParseISO8601DatePipe } from './parse-date.pipe';
 import { PowerBIMetricsService } from './powerbi-metrics.service';
 
@@ -233,5 +232,10 @@ async getUnusedReports(
   @Query('workspaceId') workspaceId?: string
 ): Promise<{id: number, dashboard: string, groupId: number | null}[]> {
   return this.powerbiMetricsService.getUnusedReports(startDate, endDate, workspaceId);
+}
+
+@Post('user-name-mappings')
+async getUserNameMappings(@Body() body: { emails: string[] }) {
+  return this.powerbiMetricsService.getUserNameMappings(body.emails);
 }
 }
