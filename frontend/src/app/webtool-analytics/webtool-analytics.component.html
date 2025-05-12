@@ -3,6 +3,29 @@
   <div class="bg-white p-6 shadow-md">
     <div class="container mx-auto">
       <h1 class="text-xl font-bold text-gray-800 mb-4">Webtool Usage Analytics</h1>
+           <!-- Add the toggle here -->
+           <div class="view-toggle-container flex bg-gray-100 p-1 rounded-lg border border-gray-200">
+            <button
+              class="px-4 py-2 rounded-md transition-colors font-medium text-sm"
+              [class.bg-[#0077B6]]="activeDashboard === 'powerbi'"
+              [class.text-white]="activeDashboard === 'powerbi'"
+              [class.bg-gray-200]="activeDashboard !== 'powerbi'"
+              [class.text-gray-700]="activeDashboard !== 'powerbi'"
+              (click)="toggleDashboard('powerbi')"
+            >
+              PowerBI
+            </button>
+            <button
+              class="px-4 py-2 rounded-md transition-colors font-medium text-sm ml-1"
+              [class.bg-[#0077B6]]="activeDashboard === 'webtool'"
+              [class.text-white]="activeDashboard === 'webtool'"
+              [class.bg-gray-200]="activeDashboard !== 'webtool'"
+              [class.text-gray-700]="activeDashboard !== 'webtool'"
+              (click)="toggleDashboard('webtool')"
+            >
+              Webtool
+            </button>
+          </div>
     </div>
   </div>
 

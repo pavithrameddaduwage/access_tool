@@ -9,6 +9,7 @@ import { Role, UserWebtool, Webtool } from '../../../interfaces/webtool.interfac
 import { forkJoin } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 
+import {EventEmitter, Input, Output } from '@angular/core';
 
 
 interface ProcessedUser {
@@ -86,7 +87,13 @@ export class WebtoolAnalyticsComponent implements OnInit {
 
   userStatusData: { active: number, inactive: number } = { active: 0, inactive: 0 };
 
-  
+  @Input() activeDashboard: 'powerbi' | 'webtool' = 'webtool';
+  @Output() dashboardChange = new EventEmitter<'powerbi' | 'webtool'>();
+
+
+  toggleDashboard(dashboard: 'powerbi' | 'webtool') {
+    this.dashboardChange.emit(dashboard);
+  }
   constructor(
     private webtoolService: WebtoolService,
     private userWebtoolService: UserWebtoolService,

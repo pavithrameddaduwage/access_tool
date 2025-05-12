@@ -23,13 +23,17 @@ const typeorm_2 = require("typeorm");
 const powerbi_log_entity_1 = require("./entities/powerbi-log.entity");
 const user_dashboard_entity_1 = require("../user-dashboard/entities/user-dashboard.entity");
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
+const report_mapping_service_1 = require("../report-mapping/report-mapping.service");
+const workspace_mapping_service_1 = require("../workspace-mapping/workspace-mapping.service");
 let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsService {
-    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository) {
+    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository, reportMappingService, workspaceMappingService) {
         this.httpService = httpService;
         this.configService = configService;
         this.userDashboardRepository = userDashboardRepository;
         this.powerbiLogRepository = powerbiLogRepository;
         this.dashboardRepository = dashboardRepository;
+        this.reportMappingService = reportMappingService;
+        this.workspaceMappingService = workspaceMappingService;
         this.logger = new common_1.Logger(PowerBIMetricsService_1.name);
     }
     async getAccessToken() {
@@ -124,17 +128,28 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         return result;
     }
-    processLogEntries(entries) {
+    async processLogEntries(entries) {
         const users = [...new Set(entries.map(entry => entry.UserId))];
         const workspacesMap = new Map();
         const reportsMap = new Map();
-        entries.forEach(entry => {
+        for (const entry of entries) {
             if (entry.Operation === 'ViewReport' || entry.Operation === 'ViewDashboard') {
                 if (entry.WorkspaceId) {
+                    await this.workspaceMappingService.findOrCreate(entry.WorkspaceId, entry.WorkSpaceName || 'Unknown');
+                }
+                if (entry.Operation === 'ViewReport' && entry.ReportId) {
+                    await this.reportMappingService.findOrCreate(entry.ReportId, entry.ReportName || entry.ArtifactName || 'Unknown', entry.WorkspaceId);
+                }
+            }
+        }
+        for (const entry of entries) {
+            if (entry.Operation === 'ViewReport' || entry.Operation === 'ViewDashboard') {
+                if (entry.WorkspaceId) {
+                    const workspaceDisplayName = await this.workspaceMappingService.getDisplayName(entry.WorkspaceId, entry.WorkSpaceName);
                     if (!workspacesMap.has(entry.WorkspaceId)) {
                         workspacesMap.set(entry.WorkspaceId, {
                             id: entry.WorkspaceId,
-                            name: entry.WorkSpaceName || 'Unknown',
+                            name: workspaceDisplayName,
                             views: 0,
                             viewerSet: new Set()
                         });
@@ -144,12 +159,16 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                     workspace.viewerSet.add(entry.UserId);
                 }
                 if (entry.Operation === 'ViewReport' && entry.ReportId) {
+                    const reportDisplayName = await this.reportMappingService.getDisplayName(entry.ReportId, entry.ReportName || entry.ArtifactName);
+                    const workspaceDisplayName = entry.WorkspaceId
+                        ? await this.workspaceMappingService.getDisplayName(entry.WorkspaceId, entry.WorkSpaceName)
+                        : 'Unknown';
                     if (!reportsMap.has(entry.ReportId)) {
                         reportsMap.set(entry.ReportId, {
                             id: entry.ReportId,
-                            name: entry.ReportName || entry.ArtifactName || 'Unknown',
+                            name: reportDisplayName,
                             workspaceId: entry.WorkspaceId || 'Unknown',
-                            workspaceName: entry.WorkSpaceName || 'Unknown',
+                            workspaceName: workspaceDisplayName,
                             views: 0,
                             viewerSet: new Set()
                         });
@@ -159,7 +178,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                     report.viewerSet.add(entry.UserId);
                 }
             }
-        });
+        }
         const workspaces = Array.from(workspacesMap.values()).map(workspace => ({
             id: workspace.id,
             name: workspace.name,
@@ -509,39 +528,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const existingIdSet = new Set(existingIds.map(l => l.id));
         return logs.filter(log => !existingIdSet.has(log.Id));
     }
-    async getDistinctWorkspaces(startDate, endDate, reportId) {
-        const query = this.powerbiLogRepository
-            .createQueryBuilder('log')
-            .select('log.workspaceId', 'id')
-            .addSelect('log.workSpaceName', 'name')
-            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-            .andWhere("log.operation = 'ViewReport'")
-            .andWhere('log.workspaceId IS NOT NULL')
-            .distinct(true);
-        if (reportId) {
-            query.andWhere('log.reportId = :reportId', { reportId });
-        }
-        const results = await query.getRawMany();
-        const workspaceMap = new Map();
-        results.forEach(r => {
-            const name = r.name || 'Unknown Workspace';
-            if (name === 'PersonalWorkspace') {
-                if (!workspaceMap.has('PersonalWorkspace')) {
-                    workspaceMap.set('PersonalWorkspace', {
-                        id: '000000',
-                        name: 'Personal Workspace'
-                    });
-                }
-            }
-            else {
-                workspaceMap.set(r.id, {
-                    id: r.id,
-                    name: name
-                });
-            }
-        });
-        return Array.from(workspaceMap.values());
-    }
     async getViewCountsByDate(startDate, endDate, workspaceId, reportId) {
         console.log("date time", startDate, endDate);
         const query = this.powerbiLogRepository
@@ -610,59 +596,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             count: users.size
         }))
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    }
-    async getDistinctReports(startDate, endDate, workspaceId) {
-        const query = this.powerbiLogRepository
-            .createQueryBuilder('log')
-            .select('log.reportId', 'id')
-            .addSelect('log.reportName', 'name')
-            .addSelect('log.workspaceId', 'workspaceId')
-            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-            .andWhere("log.operation = 'ViewReport'")
-            .andWhere('log.reportId IS NOT NULL')
-            .distinct(true);
-        if (workspaceId) {
-            if (workspaceId === '000000') {
-                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
-            }
-            else {
-                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-            }
-        }
-        const results = await query.getRawMany();
-        return results.map(r => ({
-            id: r.id,
-            name: r.name || 'Unknown Report',
-            workspaceId: r.workspaceId
-        }));
-    }
-    async getTopReports(startDate, endDate, limit = 10, workspaceId) {
-        const query = this.powerbiLogRepository
-            .createQueryBuilder('log')
-            .select("log.reportId", "reportId")
-            .addSelect("log.reportName", "reportName")
-            .addSelect("COUNT(*)", "count")
-            .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
-            .andWhere("log.operation = 'ViewReport'")
-            .andWhere("log.reportId IS NOT NULL");
-        if (workspaceId && workspaceId !== 'all') {
-            if (workspaceId === '000000') {
-                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
-            }
-            else {
-                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
-            }
-        }
-        const results = await query
-            .groupBy("log.reportId, log.reportName")
-            .orderBy("COUNT(*)", "DESC")
-            .limit(limit)
-            .getRawMany();
-        return results.map(r => ({
-            reportId: r.reportId,
-            reportName: r.reportName || 'Unknown Report',
-            count: parseInt(r.count)
-        }));
     }
     async getTopUsers(startDate, endDate, limit = 10, workspaceId, reportId) {
         const query = this.powerbiLogRepository
@@ -966,6 +899,118 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         return query.getMany();
     }
+    async getUserNameMappings(userEmails) {
+        if (!userEmails.length)
+            return {};
+        const users = await this.userDashboardRepository
+            .createQueryBuilder('user')
+            .select(['user.email', 'user.userName'])
+            .where('user.email IN (:...emails)', { emails: userEmails })
+            .distinctOn(['user.email'])
+            .getRawMany();
+        const nameMap = {};
+        users.forEach(user => {
+            if (user.user_email && user.user_userName) {
+                nameMap[user.user_email] = user.user_userName;
+            }
+        });
+        return nameMap;
+    }
+    async getDistinctWorkspaces(startDate, endDate, reportId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.workspaceId', 'id')
+            .addSelect('log.workSpaceName', 'originalName')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.workspaceId IS NOT NULL')
+            .distinct(true);
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const results = await query.getRawMany();
+        const workspaceMap = new Map();
+        for (const result of results) {
+            const workspaceId = result.id;
+            const originalName = result.originalName;
+            if (originalName === 'PersonalWorkspace') {
+                workspaceMap.set('PersonalWorkspace', {
+                    id: '000000',
+                    name: 'Personal Workspace'
+                });
+                continue;
+            }
+            const displayName = await this.workspaceMappingService.getDisplayName(workspaceId, originalName);
+            workspaceMap.set(workspaceId, {
+                id: workspaceId,
+                name: displayName
+            });
+        }
+        return Array.from(workspaceMap.values());
+    }
+    async getDistinctReports(startDate, endDate, workspaceId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.reportId', 'id')
+            .addSelect('log.reportName', 'originalName')
+            .addSelect('log.workspaceId', 'workspaceId')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere('log.reportId IS NOT NULL')
+            .distinct(true);
+        if (workspaceId) {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
+        }
+        const results = await query.getRawMany();
+        const reports = [];
+        for (const result of results) {
+            const displayName = await this.reportMappingService.getDisplayName(result.id, result.originalName);
+            reports.push({
+                id: result.id,
+                name: displayName,
+                workspaceId: result.workspaceId
+            });
+        }
+        return reports;
+    }
+    async getTopReports(startDate, endDate, limit = 10, workspaceId) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select("log.reportId", "reportId")
+            .addSelect("log.reportName", "originalName")
+            .addSelect("COUNT(*)", "count")
+            .where("log.creationTime BETWEEN :startDate AND :endDate", { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere("log.reportId IS NOT NULL");
+        if (workspaceId && workspaceId !== 'all') {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
+        }
+        const results = await query
+            .groupBy("log.reportId, log.reportName")
+            .orderBy("COUNT(*)", "DESC")
+            .limit(limit)
+            .getRawMany();
+        const mappedResults = [];
+        for (const result of results) {
+            const displayName = await this.reportMappingService.getDisplayName(result.reportId, result.originalName);
+            mappedResults.push({
+                reportId: result.reportId,
+                reportName: displayName,
+                count: parseInt(result.count)
+            });
+        }
+        return mappedResults;
+    }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;
 exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 = __decorate([
@@ -977,6 +1022,8 @@ exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 
         config_1.ConfigService,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        report_mapping_service_1.ReportMappingService,
+        workspace_mapping_service_1.WorkspaceMappingService])
 ], PowerBIMetricsService);
 //# sourceMappingURL=powerbi-metrics.service.js.map

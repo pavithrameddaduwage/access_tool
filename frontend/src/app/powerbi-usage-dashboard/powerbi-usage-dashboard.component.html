@@ -87,7 +87,7 @@
   <!-- Workspace View -->
   <ng-container *ngIf="activeView === 'workspace'">
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 mb-8 mx-9">
+    <div class="grid grid-cols-1 md:grid-cols-3  mt-8 mb-8 mx-9">
       <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
         <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Views</h3>
         <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.totalViews || 0 }}</p>
@@ -103,7 +103,7 @@
     </div>
 
     <!-- Main Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-9">
+    <div class="grid grid-cols-1 lg:grid-cols-2  mx-9">
       <!-- Views Over Time -->
       <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
         <h3 class="text-lg font-semibold text-gray-700 mb-4">Views Over Time</h3>
@@ -313,7 +313,7 @@
 </div>
     <!-- Aggregate User Metrics -->
     <ng-template #userOverview>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mx-9">
+      <div class="grid grid-cols-1 md:grid-cols-2  mx-9">
         <!-- User Activity Trend Chart -->
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h3 class="text-lg font-semibold mb-4">User Activity Trend</h3>

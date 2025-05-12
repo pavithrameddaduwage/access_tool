@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
+import { ReportMappingService } from 'src/report-mapping/report-mapping.service';
+import { WorkspaceMappingService } from 'src/workspace-mapping/workspace-mapping.service';
 export interface PowerBILogEntry {
     Id: string;
     RecordType: number;
@@ -90,7 +92,9 @@ export declare class PowerBIMetricsService {
     private userDashboardRepository;
     private readonly powerbiLogRepository;
     private readonly dashboardRepository;
-    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>);
+    private readonly reportMappingService;
+    private readonly workspaceMappingService;
+    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>, reportMappingService: ReportMappingService, workspaceMappingService: WorkspaceMappingService);
     private readonly logger;
     getAccessToken(): Promise<string>;
     ensureSubscription(accessToken: string): Promise<void>;
@@ -98,7 +102,7 @@ export declare class PowerBIMetricsService {
     getWorkspaceMetrics(workspaceId: string, startDate: Date, endDate: Date): Promise<any>;
     getReportMetrics(reportId: string, startDate: Date, endDate: Date): Promise<any>;
     private getViewsByDay;
-    processLogEntries(entries: PowerBILogEntry[]): PowerBIMetrics;
+    processLogEntries(entries: PowerBILogEntry[]): Promise<PowerBIMetrics>;
     getPowerBIMetrics(startDate: Date, endDate: Date): Promise<PowerBIMetrics>;
     saveRawLogs(logs: PowerBILogEntry[]): Promise<void>;
     getUserReportViewsDistribution(userId: string, startDate: Date, endDate: Date, workspaceId?: string): Promise<{
@@ -117,26 +121,12 @@ export declare class PowerBIMetricsService {
     getContentUris(accessToken: string, startDate: Date, endDate: Date): Promise<string[]>;
     collectDailyLogs(): Promise<void>;
     private filterExistingLogs;
-    getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{
-        id: string;
-        name: string;
-    }[]>;
     getViewCountsByDate(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
         date: string;
         count: number;
     }[]>;
     getUserActivityTrend(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
         date: string;
-        count: number;
-    }[]>;
-    getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
-        id: string;
-        name: string;
-        workspaceId: string;
-    }[]>;
-    getTopReports(startDate: Date, endDate: Date, limit?: number, workspaceId?: string): Promise<{
-        reportId: string;
-        reportName: string;
         count: number;
     }[]>;
     getTopUsers(startDate: Date, endDate: Date, limit?: number, workspaceId?: string, reportId?: string): Promise<{
@@ -181,5 +171,22 @@ export declare class PowerBIMetricsService {
         id: number;
         dashboard: string;
         groupId: number | null;
+    }[]>;
+    getUserNameMappings(userEmails: string[]): Promise<{
+        [email: string]: string;
+    }>;
+    getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{
+        id: string;
+        name: string;
+    }[]>;
+    getDistinctReports(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        id: string;
+        name: string;
+        workspaceId: string;
+    }[]>;
+    getTopReports(startDate: Date, endDate: Date, limit?: number, workspaceId?: string): Promise<{
+        reportId: string;
+        reportName: string;
+        count: number;
     }[]>;
 }
