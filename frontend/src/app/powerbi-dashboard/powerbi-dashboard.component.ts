@@ -216,7 +216,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
         }],
         chart: { 
           type: 'bar', 
-          height: 400, // Increased height to accommodate two-line labels
+          height: 280, // Increased height to accommodate two-line labels
           toolbar: { show: false }
         },
         xaxis: {
@@ -740,7 +740,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       series: topReports.map(r => r.count),
       chart: {
         type: 'pie',
-        height: 400, 
+        height: 300, 
       },
       labels: topReports.map(r => r.reportName || `Report (${r.reportId.slice(0, 6)}...`),
       dataLabels: {
@@ -821,7 +821,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       series: viewsData.map(w => w.count),
       chart: {
         type: 'pie',
-        height: 350,
+        height: 250,
       },
       labels: viewsData.map(w => w.workspaceName),
       dataLabels: {
@@ -954,6 +954,22 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
 
   //   }
   // }
+
+getUserDisplayName(userId: string): string {
+  if (!userId) return '';
+  
+  // First check in regular users
+  const regularUser = this.allRegularUsers.find(u => u.id === userId);
+  if (regularUser) return regularUser.name;
+  
+  // Then check in zero view users
+  const zeroViewUser = this.allZeroViewUsers.find(u => u.id === userId);
+  if (zeroViewUser) return zeroViewUser.name;
+  
+  // Fallback to email if not found
+  return userId;
+}
+
   async loadData(days: number): Promise<void> {
     this.loading = true;
     this.error = '';
@@ -1081,7 +1097,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       series: this.userConsumptionMethods.map(m => m.count),
       chart: {
         type: 'pie',
-        height: 350,
+        height: 250,
       },
       labels: this.userConsumptionMethods.map(m => this.getConsumptionMethodDisplayName(m.method)),
       dataLabels: {

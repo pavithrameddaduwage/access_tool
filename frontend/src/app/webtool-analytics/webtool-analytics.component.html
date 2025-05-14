@@ -1,40 +1,30 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 analytics-container">
   <!-- Header Section -->
-  <div class="bg-white p-6 shadow-md">
-    <div class="container mx-auto">
-      <h1 class="text-xl font-bold text-gray-800 mb-4">Webtool Usage Analytics</h1>
-           <!-- Add the toggle here -->
-           <div class="view-toggle-container flex bg-gray-100 p-1 rounded-lg border border-gray-200">
-            <button
-              class="px-4 py-2 rounded-md transition-colors font-medium text-sm"
-              [class.bg-[#0077B6]]="activeDashboard === 'powerbi'"
-              [class.text-white]="activeDashboard === 'powerbi'"
-              [class.bg-gray-200]="activeDashboard !== 'powerbi'"
-              [class.text-gray-700]="activeDashboard !== 'powerbi'"
-              (click)="toggleDashboard('powerbi')"
-            >
-              PowerBI
-            </button>
-            <button
-              class="px-4 py-2 rounded-md transition-colors font-medium text-sm ml-1"
-              [class.bg-[#0077B6]]="activeDashboard === 'webtool'"
-              [class.text-white]="activeDashboard === 'webtool'"
-              [class.bg-gray-200]="activeDashboard !== 'webtool'"
-              [class.text-gray-700]="activeDashboard !== 'webtool'"
-              (click)="toggleDashboard('webtool')"
-            >
-              Webtool
-            </button>
-          </div>
+  <div class="bg-gradient-to-r from-[#003a8b] to-[#0077B6] shadow-lg header-section">
+    <div class="container px-4 py-4 mx-auto">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Webtool Usage Analytics</h1>
+          <p class="text-sm text-blue-100">Webtool Permissions and Access Information</p>
+        </div>
+        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Loading Indicator -->
   <ng-container *ngIf="!chartsInitialized">
     <div class="flex justify-center items-center h-64">
-      <div class="animate-pulse flex flex-col items-center">
-        <div class="w-16 h-16 bg-blue-400 rounded-full mb-4"></div>
-        <p class="text-gray-500 text-lg">Loading webtool data...</p>
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center mb-4">
+          <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
+        <p class="text-gray-600 font-medium">Loading webtool data...</p>
+        <p class="text-sm text-gray-500 mt-1">This may take a moment</p>
       </div>
     </div>
   </ng-container>
@@ -42,114 +32,195 @@
   <!-- Dashboard Content -->
   <ng-container *ngIf="chartsInitialized">
     <!-- Filter Section -->
-    <div class="bg-white p-6 shadow-md mt-4 mx-4 md:mx-8 rounded-lg">
-      <div class="flex flex-col md:flex-row gap-4 items-center">
-        <!-- Webtool Dropdown -->
-        <div class="w-full">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Select Webtool</label>
-          <select
-            [(ngModel)]="selectedWebtool"
-            (change)="filterByWebtool()"
-            class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="all">All Webtools</option>
-            <option *ngFor="let webtool of webtools" [value]="webtool.id">
-              {{ webtool.webtool }}
-            </option>
-          </select>
+    <div class="bg-white shadow-sm filter-section border-b border-gray-200">
+      <div class="container px-4 py-3 mx-auto">
+        <div class="flex flex-col md:flex-row gap-4 items-end">
+          <!-- Webtool Dropdown -->
+          <div class="w-full md:w-64">
+            <label class="block text-xs font-medium text-gray-700 mb-1 uppercase tracking-wider">Select Webtool</label>
+            <div class="relative">
+              <select
+                [(ngModel)]="selectedWebtool"
+                (change)="filterByWebtool()"
+                class="w-full p-2 pl-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
+              >
+                <option value="all">All Webtools</option>
+                <option *ngFor="let webtool of webtools" [value]="webtool.id">
+                  {{ webtool.webtool }}
+                </option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 mb-6 mx-4 md:mx-8">
-      <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-md font-semibold text-gray-700 mb-2">Total Webtools</h3>
-        <p class="text-2xl font-bold text-blue-600">{{ metrics.totalWebtools }}</p>
+    <div class="container px-4 py-4 mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 metrics-cards">
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 metric-card hover:shadow-md transition-shadow duration-200">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-blue-100 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Webtools</h3>
+              <p class="text-2xl font-bold text-gray-800">{{ metrics.totalWebtools }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-green-500 metric-card hover:shadow-md transition-shadow duration-200">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-green-100 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Users</h3>
+              <p class="text-2xl font-bold text-gray-800">{{ metrics.totalUsers }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-purple-500 metric-card hover:shadow-md transition-shadow duration-200">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-purple-100 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Sessions</h3>
+              <p class="text-2xl font-bold text-gray-800">1,248</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-amber-500 metric-card hover:shadow-md transition-shadow duration-200">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-amber-100 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Avg. Time</h3>
+              <p class="text-2xl font-bold text-gray-800">12.7m</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-md font-semibold text-gray-700 mb-2">Total Users</h3>
-        <p class="text-2xl font-bold text-blue-600">{{ metrics.totalUsers }}</p>
-      </div>
-
     </div>
 
     <!-- Main Analytics Section -->
-    <div class="space-y-6 mx-4 md:mx-8 mb-8">
-      <!-- Webtool Usage Overview -->
+    <div class="container px-4 py-2 mx-auto space-y-6">
+      <!-- Top Row - Webtool Usage + Department Distribution -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Webtool Usage Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Total Users per Webtool</h3>
-          <apx-chart
-            *ngIf="filteredWebtoolUsageChart?.series?.length"
-            [series]="filteredWebtoolUsageChart.series"
-            [chart]="filteredWebtoolUsageChart.chart"
-            [xaxis]="filteredWebtoolUsageChart.xaxis"
-            [plotOptions]="filteredWebtoolUsageChart.plotOptions"
-            [colors]="['#0077B6']">
-          </apx-chart>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Total Users per Webtool</h3>
+         
+          </div>
+          <div class="h-64">
+            <apx-chart
+              *ngIf="filteredWebtoolUsageChart?.series?.length"
+              [series]="filteredWebtoolUsageChart.series"
+              [chart]="filteredWebtoolUsageChart.chart"
+              [xaxis]="filteredWebtoolUsageChart.xaxis"
+              [plotOptions]="filteredWebtoolUsageChart.plotOptions"
+              [colors]="['#0077B6']">
+            </apx-chart>
+          </div>
         </div>
 
         <!-- Department Distribution -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Users by Department</h3>
-          <apx-chart
-            *ngIf="filteredDepartmentDistributionChart"
-            [series]="filteredDepartmentDistributionChart.series"
-            [chart]="filteredDepartmentDistributionChart.chart"
-            [labels]="filteredDepartmentDistributionChart.labels"
-            [colors]="['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF']">
-          </apx-chart>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Users by Department</h3>
+          
+          </div>
+          <div class="h-64">
+            <apx-chart
+              *ngIf="filteredDepartmentDistributionChart"
+              [series]="filteredDepartmentDistributionChart.series"
+              [chart]="filteredDepartmentDistributionChart.chart"
+              [labels]="filteredDepartmentDistributionChart.labels"
+              [colors]="['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7']">
+            </apx-chart>
+          </div>
         </div>
       </div>
 
-
-      <!-- User Access Patterns -->
+      <!-- Middle Row - User Matrix + Top Users -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- User-Webtool Matrix -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">User Webtool Access Matrix</h3>
-          <apx-chart
-            *ngIf="filteredUserWebtoolMatrix"
-            [series]="filteredUserWebtoolMatrix.series"
-            [chart]="filteredUserWebtoolMatrix.chart"
-            [dataLabels]="filteredUserWebtoolMatrix.dataLabels"
-            [colors]="['#E5E7EB', '#0077B6']"
-            [xaxis]="filteredUserWebtoolMatrix.xaxis"
-            [tooltip]="filteredUserWebtoolMatrix.tooltip">
-          </apx-chart>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">User Webtool Access Matrix</h3>
+        
+          </div>
+          <div class="h-64">
+            <apx-chart
+              *ngIf="filteredUserWebtoolMatrix"
+              [series]="filteredUserWebtoolMatrix.series"
+              [chart]="filteredUserWebtoolMatrix.chart"
+              [dataLabels]="filteredUserWebtoolMatrix.dataLabels"
+              [colors]="['#f3f4f6', '#0077B6']"
+              [xaxis]="filteredUserWebtoolMatrix.xaxis"
+              [tooltip]="filteredUserWebtoolMatrix.tooltip">
+            </apx-chart>
+          </div>
         </div>
 
         <!-- Top Users Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Top Users by Webtool Access</h3>
-          <apx-chart
-            *ngIf="filteredTopUsersChart"
-            [series]="filteredTopUsersChart.series"
-            [chart]="filteredTopUsersChart.chart"
-            [plotOptions]="filteredTopUsersChart.plotOptions"
-            [xaxis]="filteredTopUsersChart.xaxis"
-            [colors]="['#0077B6']"
-            [tooltip]="filteredTopUsersChart.tooltip">
-          </apx-chart>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Top Users by Webtool Access</h3>
+            <button class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <div class="h-64">
+            <apx-chart
+              *ngIf="filteredTopUsersChart"
+              [series]="filteredTopUsersChart.series"
+              [chart]="filteredTopUsersChart.chart"
+              [plotOptions]="filteredTopUsersChart.plotOptions"
+              [xaxis]="filteredTopUsersChart.xaxis"
+              [colors]="['#0077B6']"
+              [tooltip]="filteredTopUsersChart.tooltip">
+            </apx-chart>
+          </div>
         </div>
       </div>
 
-      <!-- Department-Specific Analytics -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Department Composition in Each Webtool</h3>
-        <apx-chart
-          *ngIf="filteredDepartmentUsageChart"
-          [series]="filteredDepartmentUsageChart.series"
-          [chart]="filteredDepartmentUsageChart.chart"
-          [xaxis]="filteredDepartmentUsageChart.xaxis"
-          [colors]="['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF']">
-        </apx-chart>
+      <!-- Bottom Row - Department-Specific Analytics -->
+      <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-semibold text-gray-800">Department Composition in Each Webtool</h3>
+        
+        </div>
+        <div class="h-60">
+          <apx-chart
+            *ngIf="filteredDepartmentUsageChart"
+            [series]="filteredDepartmentUsageChart.series"
+            [chart]="filteredDepartmentUsageChart.chart"
+            [xaxis]="filteredDepartmentUsageChart.xaxis"
+            [colors]="['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7']">
+          </apx-chart>
+        </div>
       </div>
-
-
-
     </div>
   </ng-container>
 </div>
+

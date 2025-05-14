@@ -326,8 +326,9 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .select('log.reportId', 'reportId')
-            .addSelect('log.reportName', 'reportName')
-            .addSelect('log.workSpaceName', 'workspaceName')
+            .addSelect('log.reportName', 'originalReportName')
+            .addSelect('log.workspaceId', 'workspaceId')
+            .addSelect('log.workSpaceName', 'originalWorkspaceName')
             .addSelect('log.creationTime', 'creationTime')
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', {
@@ -346,10 +347,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         const rawLogs = await query.getRawMany();
         const reportViews = new Map();
-        rawLogs.forEach(log => {
+        for (const log of rawLogs) {
+            const [reportName, workspaceName] = await Promise.all([
+                this.reportMappingService.getDisplayName(log.reportId, log.originalReportName),
+                this.workspaceMappingService.getDisplayName(log.workspaceId, log.originalWorkspaceName)
+            ]);
             const key = log.reportId;
-            const reportName = log.reportName || 'Unknown Report';
-            const workspaceName = log.workspaceName || 'Unknown Workspace';
             if (!reportViews.has(key)) {
                 reportViews.set(key, {
                     reportId: key,
@@ -359,7 +362,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 });
             }
             reportViews.get(key).count += 1;
-        });
+        }
         return Array.from(reportViews.values())
             .sort((a, b) => b.count - a.count);
     }
@@ -712,11 +715,21 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
     }
     async getUserMetrics(userId, startDate, endDate, workspaceId, reportId) {
         try {
-            const [totalViews, reports, workspaces, activityByDate] = await Promise.all([
+            const [totalViews, rawReports, rawWorkspaces, activityByDate] = await Promise.all([
                 this.getUserTotalViews(userId, startDate, endDate, workspaceId, reportId),
                 this.getUserReports(userId, startDate, endDate, workspaceId, reportId),
                 this.getUserWorkspaces(userId, startDate, endDate, reportId),
                 this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId)
+            ]);
+            const [reports, workspaces] = await Promise.all([
+                Promise.all(rawReports.map(async (r) => ({
+                    reportId: r.reportId,
+                    reportName: await this.reportMappingService.getDisplayName(r.reportId, r.reportName)
+                }))),
+                Promise.all(rawWorkspaces.map(async (w) => ({
+                    workspaceId: w.workspaceId,
+                    workspaceName: await this.workspaceMappingService.getDisplayName(w.workspaceId, w.workspaceName)
+                })))
             ]);
             return {
                 totalViews: totalViews || 0,
@@ -830,7 +843,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const query = this.powerbiLogRepository
             .createQueryBuilder('log')
             .select('log.workspaceId', 'workspaceId')
-            .addSelect('log.workSpaceName', 'workspaceName')
+            .addSelect('log.workSpaceName', 'originalName')
             .addSelect('log.creationTime', 'creationTime')
             .where('log.userId = :userId', { userId })
             .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
@@ -841,21 +854,21 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         const rawLogs = await query.getRawMany();
         const workspaceCounts = new Map();
-        rawLogs.forEach(log => {
+        for (const log of rawLogs) {
             const utcDate = new Date(log.creationTime);
             const options = { timeZone: 'America/New_York' };
             const edtDateString = utcDate.toLocaleDateString('en-US', options);
             const edtDateParts = edtDateString.split('/');
-            const key = log.workspaceId;
-            if (!workspaceCounts.has(key)) {
-                workspaceCounts.set(key, {
+            const displayName = await this.workspaceMappingService.getDisplayName(log.workspaceId, log.originalName);
+            if (!workspaceCounts.has(log.workspaceId)) {
+                workspaceCounts.set(log.workspaceId, {
                     workspaceId: log.workspaceId,
-                    workspaceName: log.workspaceName || 'Unknown Workspace',
+                    workspaceName: displayName,
                     count: 0
                 });
             }
-            workspaceCounts.get(key).count += 1;
-        });
+            workspaceCounts.get(log.workspaceId).count += 1;
+        }
         return Array.from(workspaceCounts.values())
             .sort((a, b) => b.count - a.count);
     }
