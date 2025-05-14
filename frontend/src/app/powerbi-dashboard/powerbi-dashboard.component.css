@@ -45,3 +45,225 @@
 .popup-content::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+.min-h-screen {
+  max-width: 1920px;
+  margin: 0 auto;
+  margin-top: -2.5rem !important; /* Force the -mt-10 to work */
+  position: relative;
+  z-index: 0;
+}
+
+/* Ensure consistent card heights */
+.grid .bg-white.p-4.rounded-lg.shadow-sm {
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Ensure charts maintain aspect ratio and don't overflow */
+apx-chart {
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Fix chart containers to prevent overflow */
+.h-\[350px\], .h-\[400px\] {
+  overflow: hidden !important;
+  max-width: 100% !important;
+}
+
+/* Ensure text doesn't overflow in tables */
+table td, table th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px; /* Adjust based on your needs */
+}
+
+/* Ensure responsive tables */
+.overflow-x-auto {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix pagination on small screens */
+.pagination-controls {
+  flex-wrap: wrap;
+}
+
+/* Better responsive handling for filter controls */
+@media (max-width: 768px) {
+  .view-toggle-container {
+    width: 100%;
+    margin-top: 8px;
+    justify-content: center;
+  }
+  
+  .time-duration-buttons {
+    margin-top: 8px;
+    width: 100%;
+  }
+  
+  /* Adjust chart heights on mobile for better viewing */
+  .h-\[350px\], .h-\[400px\] {
+    height: 300px !important;
+  }
+  
+  /* Stack filter controls on mobile */
+  .flex.items-center.justify-between {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  /* Make dropdowns full width on mobile */
+  select {
+    width: 100%;
+  }
+  
+  /* Better table handling on small screens */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Fix modal positioning */
+.fixed.inset-0.z-50 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.fixed.inset-0.z-50 > div {
+  width: 100%;
+  max-height: 80vh;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Prevent content from being cut off in modals */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for chart labels that might get cut off */
+:host ::ng-deep .apexcharts-xaxis-label,
+:host ::ng-deep .apexcharts-yaxis-label {
+  overflow: visible !important;
+}
+
+/* Ensure consistent button sizes */
+button {
+  min-height: 36px;
+}
+
+/* Fix for filter section on medium screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .md\:w-40 {
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+  
+  .md\:flex-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* Ensure grid items maintain proper spacing */
+.grid {
+  grid-gap: 16px !important;
+}
+
+/* Fix for summary cards to ensure consistent appearance */
+.grid.grid-cols-1.md\:grid-cols-3.gap-4 > div {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Ensure consistent heights for chart containers */
+.bg-white.p-4.rounded-lg.shadow-md, 
+.bg-white.p-2.rounded-lg.shadow-md {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Prevent content overflow in pie charts */
+:host ::ng-deep .apexcharts-pie-label {
+  width: auto !important;
+  white-space: normal !important;
+}
+
+/* Fix for bar chart labels */
+:host ::ng-deep .apexcharts-bar-series .apexcharts-datalabel {
+  width: auto !important;
+}
+
+/* Ensure proper spacing between stacked elements */
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Fix for dropdown menus */
+select {
+  text-overflow: ellipsis;
+}
+
+/* Prevent long dropdown items from breaking layout */
+option {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fix user metrics container */
+.user-metrics {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Make sure content doesn't overflow in the main container */
+.bg-white.shadow-md.rounded-lg {
+  overflow: hidden;
+}
+
+/* Fix for the time duration control */
+.w-40.pl-6 {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .w-40.pl-6 {
+    width: 10rem;
+  }
+}
+
+/* Make all chart containers have consistent padding */
+[class*="chart"] {
+  padding: 8px !important;
+}
+
+/* Ensure filter section is properly spaced */
+.flex.flex-col.md\:flex-row.gap-4 {
+  align-items: stretch;
+}
+
+/* Fix for toggle buttons */
+.view-toggle-container {
+  height: 36px;
+  align-items: center;
+}
+
+/* Make sure all buttons in filter section have same height */
+.flex.flex-col.md\:flex-row.gap-4 button,
+.flex.flex-col.md\:flex-row.gap-4 select {
+  height: 36px;
+}

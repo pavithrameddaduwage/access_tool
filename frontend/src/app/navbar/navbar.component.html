@@ -8,30 +8,37 @@
     <!-- Centered navigation tabs -->
     <div class="absolute left-1/2 transform -translate-x-1/2">
       <ng-container *ngIf="isloggedIn">
-        <div class="flex justify-center space-x-4">
+        <div class="flex justify-center space-x-2"> <!-- Reduced from space-x-4 -->
           <a
-            class="text-xs font-semibold text-slate-200 hover:text-white mx-4 transition duration-300 px-3 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/home"
             routerLinkActive="active-link"
           >
-            HOME
+            POWERBI ANALYTICS
           </a>
           <a
-            class="text-xs font-semibold text-slate-200 hover:text-white mx-4 transition duration-300 px-3 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
+            routerLink="/webtool-dashboard"
+            routerLinkActive="active-link"
+          >
+            WEBTOOL ANALYTICS
+          </a>
+          <a
+            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/dashboards"
             routerLinkActive="active-link"
           >
-            DASHBOARDS
+            DASHBOARD ACCESS
           </a>
           <a
-            class="text-xs font-semibold text-slate-200 hover:text-white mx-4 transition duration-300 px-3 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/webtool"
             routerLinkActive="active-link"
           >
-            WEB TOOLS
+            WEB TOOL ACCESS
           </a>
           <a
-            class="text-xs font-semibold text-slate-200 hover:text-white mx-4 transition duration-300 px-3 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/masterdata"
             routerLinkActive="active-link"
           >

@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-analytics',
-  imports: [CommonModule, PowerBIDashboardComponent, WebtoolAnalyticsComponent],
   standalone: true,
+  imports: [CommonModule, PowerBIDashboardComponent, WebtoolAnalyticsComponent],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.css'
 })

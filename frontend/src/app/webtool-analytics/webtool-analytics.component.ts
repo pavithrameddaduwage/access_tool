@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { WebtoolService } from '../Services/webtool.service';
 import { UserWebtoolService } from '../Services/user-webtool.service';
 import { RolesService } from '../Services/roles.service';
@@ -9,6 +9,7 @@ import { Role, UserWebtool, Webtool } from '../../../interfaces/webtool.interfac
 import { forkJoin } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 
+import {EventEmitter, Input, Output } from '@angular/core';
 
 
 interface ProcessedUser {
@@ -85,14 +86,58 @@ export class WebtoolAnalyticsComponent implements OnInit {
   selectedWebtool: string | number = 'all';
 
   userStatusData: { active: number, inactive: number } = { active: 0, inactive: 0 };
+  screenWidth: number;
 
-  
+
+  @Input() activeDashboard: 'powerbi' | 'webtool' = 'webtool';
+  @Output() dashboardChange = new EventEmitter<'powerbi' | 'webtool'>();
+
+
+  toggleDashboard(dashboard: 'powerbi' | 'webtool') {
+    this.dashboardChange.emit(dashboard);
+  }
   constructor(
     private webtoolService: WebtoolService,
     private userWebtoolService: UserWebtoolService,
     private rolesService: RolesService
-  ) {}
+  ) {
+    this.screenWidth = window.innerWidth;
 
+  }
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.screenWidth = window.innerWidth;
+    // Re-initialize charts with adjusted dimensions
+    if (this.chartsInitialized) {
+      this.adjustChartDimensions();
+      this.filterByWebtool();
+    }
+  }
+  private adjustChartDimensions() {
+    const baseHeight = this.screenWidth < 768 ? 180 : 220;
+    const matrixHeight = Math.min(baseHeight, Math.max(200, this.users.length * 15));
+    
+    // Update chart heights
+    if (this.webtoolUsageChart) {
+      this.webtoolUsageChart.chart.height = baseHeight;
+    }
+    
+    if (this.departmentDistributionChart) {
+      this.departmentDistributionChart.chart.height = baseHeight;
+    }
+    
+    if (this.departmentUsageChart) {
+      this.departmentUsageChart.chart.height = baseHeight;
+    }
+    
+    if (this.topUsersChart) {
+      this.topUsersChart.chart.height = baseHeight;
+    }
+    
+    if (this.userWebtoolMatrix) {
+      this.userWebtoolMatrix.chart.height = matrixHeight;
+    }
+  }
   async ngOnInit() {
     await this.loadData();
     this.filterByWebtool();
@@ -277,7 +322,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
         })),
         chart: {
           ...this.userWebtoolMatrix.chart,
-          height: Math.max(400, this.users.length * 20)
+          height: Math.max(230, this.users.length * 20)
         }
       };
     } else {
@@ -319,17 +364,18 @@ export class WebtoolAnalyticsComponent implements OnInit {
             y: user.webtools.has(webtoolId) ? 1 : 0
           }))
         }],
+        
         yaxis: {
           categories: [webtoolName],
           labels: {
             style: {
-              fontSize: '12px'
+              fontSize: '15px'
             }
           }
         },
         chart: {
           ...this.userWebtoolMatrix.chart,
-          height: Math.max(400, this.users.length * 20)
+          height: Math.max(180, this.users.length * 20)
         }
       };
 
@@ -385,6 +431,8 @@ export class WebtoolAnalyticsComponent implements OnInit {
   }
 
   private initCharts() {
+    const baseHeight = this.screenWidth < 768 ? 180 : 220;
+    
     this.webtoolUsageChart = {
       series: [{
         name: 'Users',
@@ -392,105 +440,121 @@ export class WebtoolAnalyticsComponent implements OnInit {
       }],
       chart: {
         type: 'bar',
-        height: 350
+        height: baseHeight,
+        toolbar: {
+          show: false
+        },
+        fontFamily: 'inherit'
       },
       plotOptions: {
         bar: {
-          borderRadius: 4,
+          borderRadius: 2,
           horizontal: true,
+          barHeight: '70%'
         }
       },
       xaxis: {
         categories: this.metrics.topWebtools.map(w => w.name),
-        title: { text: 'Number of Users' }
-      },
-      colors: ['#3B82F6']
-    };
-
-    this.roleDistributionChart = {
-      series: this.metrics.roleDistribution.map(r => r.count),
-      chart: {
-        type: 'donut',
-        height: 350
-      },
-      labels: this.metrics.roleDistribution.map(r => r.name),
-      colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
-    };
-
-    const departments = Object.keys(this.metrics.usersByDepartment);
-    this.departmentDistributionChart = {
-      series: departments.map(dept => this.metrics.usersByDepartment[dept]),
-      chart: {
-        type: 'pie',
-        height: 350
-      },
-      labels: departments,
-      colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
-    };
-
-    this.userWebtoolMatrix = {
-      series: this.webtools.map(webtool => ({
-        name: webtool.webtool,
-        data: this.users.map(user => ({ 
-          x: user.name,
-          y: user.webtools.has(webtool.id) ? 1 : 0
-        }))
-      })),  // Added closing parenthesis and bracket here
-      chart: {
-        type: 'heatmap',
-        height: Math.max(400, this.users.length * 20), 
-        toolbar: { show: false }
-      },
-      dataLabels: { enabled: false },
-      colors: ["#E5E7EB", "#0077B6"],
-      xaxis: { 
-        type: 'category', 
-        labels: { 
-          show: true,
-          rotate: -45,
-          style: {
-            fontSize: '10px'
-          }
-        } 
-      },
-      yaxis: { 
-        categories: this.webtools.map(w => w.webtool),
+        title: { text: 'Users' },
         labels: {
           style: {
             fontSize: '10px'
           }
         }
       },
-      tooltip: {
-        custom: ({ seriesIndex, dataPointIndex }: any) => {
-          const user = this.users[dataPointIndex];
-          const webtool = this.webtools[seriesIndex];
-          const access = user.webtools.has(webtool.id) ? 'Has access' : 'No access';
-          return `
-            <div class="p-2">
-              <div><strong>User:</strong> ${user.name}</div>
-              <div><strong>Webtool:</strong> ${webtool.webtool}</div>
-              <div><strong>Access:</strong> ${access}</div>
-            </div>
-          `;
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '10px'
+          }
+        }
+      },
+      colors: ['#3B82F6'],
+      grid: {
+        padding: {
+          left: 5,
+          right: 5
         }
       }
     };
 
-    this.rolesPerWebtoolChart = {
-      series: [{
-        name: 'Roles',
-        data: this.metrics.rolesPerWebtool.map(w => w.count)
-      }],
+    this.departmentDistributionChart = {
+      series: Object.values(this.metrics.usersByDepartment),
       chart: {
-        type: 'bar',
-        height: 350
+        type: 'pie',
+        height: baseHeight,
+        fontFamily: 'inherit'
       },
-      xaxis: {
-        categories: this.metrics.rolesPerWebtool.map(w => w.name)
+      labels: Object.keys(this.metrics.usersByDepartment),
+      legend: {
+        position: 'bottom',
+        fontSize: '10px',
+        itemMargin: {
+          horizontal: 5,
+          vertical: 0
+        }
       },
-      colors: ['#10B981']
+      colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+      dataLabels: {
+        enabled: false
+      }
     };
+
+    const matrixHeight = Math.min(baseHeight * 0.4, Math.max(80, this.users.length * 6)); // Reduced by ~60%
+this.userWebtoolMatrix = {
+  series: this.webtools.map(webtool => ({
+    name: webtool.webtool,
+    data: this.users.map(user => ({ 
+      x: user.name,
+      y: user.webtools.has(webtool.id) ? 1 : 0
+    }))
+  })),
+  chart: {
+    type: 'heatmap',
+    height: matrixHeight,
+    toolbar: { show: false },
+    fontFamily: 'inherit'
+  },
+  dataLabels: { enabled: false },
+  colors: ["#E5E7EB", "#0077B6"],
+  xaxis: { 
+    type: 'category', 
+    labels: { 
+      show: true,
+      rotate: -45,
+      style: {
+        fontSize: '9px', // Reduced from 8px (25% smaller)
+        cssClass: 'apexcharts-xaxis-label-small' // Added custom class
+      },
+      trim: true, // Added to prevent label overflow
+      hideOverlappingLabels: true // Added to improve readability
+    } 
+  },
+  yaxis: { 
+    categories: this.webtools.map(w => w.webtool),
+    labels: {
+      style: {
+        fontSize: '6px', // Reduced from 8px
+        cssClass: 'apexcharts-yaxis-label-small'
+      },
+      trim: true
+    }
+  },
+  tooltip: {
+    custom: ({ seriesIndex, dataPointIndex }: any) => {
+      const user = this.users[dataPointIndex];
+      const webtool = this.webtools[seriesIndex];
+      const access = user.webtools.has(webtool.id) ? 'Has access' : 'No access';
+      return `
+        <div class="p-1 text-2xs"> <!-- Changed to smaller text -->
+          <div><strong>User:</strong> ${user.name}</div>
+          <div><strong>Webtool:</strong> ${webtool.webtool}</div>
+          <div><strong>Access:</strong> ${access}</div>
+        </div>
+      `;
+    }
+  }
+};
 
     this.departmentUsageChart = {
       series: this.metrics.departmentWebtoolUsage.map(dept => ({
@@ -499,13 +563,44 @@ export class WebtoolAnalyticsComponent implements OnInit {
       })),
       chart: {
         type: 'bar',
-        height: 350,
-        stacked: true
+        height: baseHeight,
+        stacked: true,
+        toolbar: {
+          show: false
+        },
+        fontFamily: 'inherit'
       },
       xaxis: {
-        categories: this.webtools.map(w => w.webtool)
+        categories: this.webtools.map(w => w.webtool),
+        labels: {
+          style: {
+            fontSize: '10px'
+          },
+          rotate: -45
+        }
       },
-      colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '10px'
+          }
+        }
+      },
+      legend: {
+        position: 'bottom',
+        fontSize: '10px',
+        itemMargin: {
+          horizontal: 5,
+          vertical: 0
+        }
+      },
+      colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+      grid: {
+        padding: {
+          left: 5,
+          right: 5
+        }
+      }
     };
 
     this.topUsersChart = {
@@ -515,24 +610,47 @@ export class WebtoolAnalyticsComponent implements OnInit {
       }],
       chart: {
         type: 'bar',
-        height: 350
+        height: baseHeight,
+        toolbar: {
+          show: false
+        },
+        fontFamily: 'inherit'
       },
       plotOptions: {
         bar: {
-          borderRadius: 4,
+          borderRadius: 2,
           horizontal: true,
+          barHeight: '70%'
         }
       },
       xaxis: {
         categories: this.metrics.topUsers.map(u => u.name),
-        title: { text: 'Number of Webtools' }
+        title: { text: 'Webtools' },
+        labels: {
+          style: {
+            fontSize: '10px'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '10px'
+          }
+        }
       },
       colors: ['#8B5CF6'],
+      grid: {
+        padding: {
+          left: 5,
+          right: 5
+        }
+      },
       tooltip: {
         custom: ({ dataPointIndex }: any) => {
           const user = this.metrics.topUsers[dataPointIndex];
           return `
-            <div class="p-2">
+            <div class="p-1 text-xs">
               <div><strong>User:</strong> ${user.name}</div>
               <div><strong>Email:</strong> ${user.email}</div>
               <div><strong>Webtools:</strong> ${user.count}</div>
@@ -542,6 +660,12 @@ export class WebtoolAnalyticsComponent implements OnInit {
       }
     };
 
+    // Update filtered charts
+    this.filteredWebtoolUsageChart = { ...this.webtoolUsageChart };
+    this.filteredDepartmentDistributionChart = { ...this.departmentDistributionChart };
+    this.filteredUserWebtoolMatrix = { ...this.userWebtoolMatrix };
+    this.filteredDepartmentUsageChart = { ...this.departmentUsageChart };
+    this.filteredTopUsersChart = { ...this.topUsersChart };
   }
 
   private initEmptyCharts() {
@@ -567,7 +691,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
     
     this.userWebtoolMatrix = {
       series: [],
-      chart: { type: 'heatmap', height: 400 }
+      chart: { type: 'heatmap', height: 59 }
     };
   }
 }

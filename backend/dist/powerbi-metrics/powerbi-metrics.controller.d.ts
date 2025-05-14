@@ -79,4 +79,9 @@ export declare class PowerBIMetricsController {
         dashboard: string;
         groupId: number | null;
     }[]>;
+    getUserNameMappings(body: {
+        emails: string[];
+    }): Promise<{
+        [email: string]: string;
+    }>;
 }

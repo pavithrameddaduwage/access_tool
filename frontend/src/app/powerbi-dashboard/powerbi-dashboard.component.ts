@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { PowerBIMetricsService, PowerBIReport, PowerBIWorkspace } from '../Services/powerbi-metrics.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HomeService } from '../Services/home.service';
 import { ToastService } from '../Services/toast.service';
+import { NameMapperService } from '../Services/name-mapper.service';
+
 
 interface ViewCount {
   date: string;
@@ -29,8 +31,19 @@ interface DateReportView {
   workspaceName?: string;
 }
 
+// interface UserDetail {
+//   id: string;
+//   totalViews: number;
+//   reports: number;
+//   workspaces: number;
+//   lastActivity: string;
+//   activityByDate: {date: string, count: number}[];
+// }
+
 interface UserDetail {
   id: string;
+  name: string; // Add this line
+  email?: string;
   totalViews: number;
   reports: number;
   workspaces: number;
@@ -97,6 +110,9 @@ export class PowerBIDashboardComponent implements OnInit {
   selectedPeriod = 30;
   isUserListExpanded = false;
   
+  @Input() activeDashboard: 'powerbi' | 'webtool' = 'powerbi';
+  @Output() dashboardChange = new EventEmitter<'powerbi' | 'webtool'>();
+  
   // Data
   loading = false;
   error = '';
@@ -154,7 +170,8 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
     private homeService: HomeService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private nameMapper: NameMapperService
   ) {}
 
   ngOnInit(): void {
@@ -162,198 +179,76 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       this.loadData(this.selectedPeriod);
     });  }
 
+    toggleDashboard(dashboard: 'powerbi' | 'webtool') {
+      this.dashboardChange.emit(dashboard);
+    }
   
-  
-  // async loadData(days: number) {
-  //   this.loading = true;
-  //   this.error = '';
-  //   this.selectedPeriod = days;
-  
-  //   try {
-  //     const endDate = new Date();
-  //     const startDate = new Date();
-  //     startDate.setDate(endDate.getDate() - days);
-  
-  //     // Load filters first
-  //     await this.loadFilters(startDate, endDate);
-  
-  //     // Get all metrics in parallel
-  //     const [
-  //       viewsByDate = [], 
-  //       topReports = [], 
-  //       topUsers = [], 
-  //       activityTrend = [],
-  //       uniqueUserCount = 0,
-  //       uniqueReportCount = 0
-  //     ] = await Promise.all([
-  //       this.powerBIMetricsService.getViewsByDate(startDate, endDate).toPromise(),
-  //       this.powerBIMetricsService.getTopReports(startDate, endDate, 10).toPromise(),
-  //       this.powerBIMetricsService.getTopUsers(startDate, endDate, 10).toPromise(),
-  //       this.powerBIMetricsService.getUserActivityTrend(startDate, endDate).toPromise(),
-  //       this.powerBIMetricsService.getUniqueUserCount(startDate, endDate).toPromise(),
-  //       this.powerBIMetricsService.getUniqueReportCount(startDate, endDate).toPromise()
-  //     ]);
-  
-  //     // Calculate total views
-  //     const totalViews = (viewsByDate as ViewCount[]).reduce((sum, day) => sum + (day?.count || 0), 0);
-  
-  //     // Update metrics
-  //     this.metrics = {
-  //       totalViews,
-  //       uniqueUsers: uniqueUserCount as number,
-  //       uniqueReports: uniqueReportCount as number,
-  //       topReports: topReports as ReportMetric[],
-  //       topUsers: topUsers as UserMetric[],
-  //       activityTrend: activityTrend as UserActivity[],
-  //       viewsByDate: (viewsByDate as ViewCount[]).reduce((acc, day) => {
-  //         if (day?.date) {
-  //           acc[day.date] = day.count || 0;
-  //         }
-  //         return acc;
-  //       }, {} as Record<string, number>)
-  //     };
-  
-  //     // Process users and workspaces
-  //     await this.processUsers(startDate, endDate);
-  //     this.prepareCharts();
-      
-  //     this.dataLoaded = true;
-  //   } catch (error) {
-  //     console.error('Error loading data:', error);
-  //     this.error = 'Failed to load data';
-  //     this.metrics = {
-  //       totalViews: 0,
-  //       uniqueUsers: 0,
-  //       uniqueReports: 0,
-  //       topReports: [],
-  //       topUsers: [],
-  //       activityTrend: [],
-  //       viewsByDate: {}
-  //     };
-  //   } finally {
-  //     this.loading = false;
-  //   }
-  // }
+
 
   
  
 
-  private prepareTopReportsChart() {
-    // Safely access metrics with fallback for undefined cases
-    const reports = this.metrics.topReports || [];
+    private prepareTopReportsChart() {
+      const reports = this.metrics.topReports || [];
+      
+      // Function to split long labels into two lines
+      const formatLabel = (label: string): string => {
+        if (!label) return 'Unknown\nReport';
+        
+        // Split the label into words
+        const words = label.split(' ');
+        
+        // If only one word, return as is
+        if (words.length <= 2) return label;
+        
+        // Try to split roughly in the middle
+        const midPoint = Math.ceil(words.length / 2);
+        const firstLine = words.slice(0, midPoint).join(' ');
+        const secondLine = words.slice(midPoint).join(' ');
+        
+        return `${firstLine}\n${secondLine}`;
+      };
     
-    this.topReportsChartOptions = {
-      series: [{ 
-        name: 'Views', 
-        data: reports.map(r => r?.count || 0) 
-      }],
-      chart: { 
-        type: 'bar', 
-        height: 350 
-      },
-      xaxis: {
-        categories: reports.map(r => r?.reportName || 'Unknown Report'),
-        labels: {
-          style: {
-            fontSize: '11px',
-            colors: '#333'
+      this.topReportsChartOptions = {
+        series: [{ 
+          name: 'Views', 
+          data: reports.map(r => r?.count || 0) 
+        }],
+        chart: { 
+          type: 'bar', 
+          height: 280, // Increased height to accommodate two-line labels
+          toolbar: { show: false }
+        },
+        xaxis: {
+          categories: reports.map(r => formatLabel(r?.reportName || 'Unknown Report')),
+          labels: {
+            style: {
+              fontSize: '10px', // Smaller font size
+              cssClass: 'apexcharts-multiline-label'
+            },
+            formatter: undefined // Remove any previous formatter
+          }
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '45%' // Slightly wider bars
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        colors: ['#0077B6'],
+        tooltip: {
+          y: {
+            formatter: (val: number) => `${val} views`
           }
         }
-      },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '40%'
-        }
-      },
-      dataLabels: {
-        enabled: false
-      },
-      colors: ['#0077B6']
-    };
-  }
-  // private async processUsers(startDate: Date, endDate: Date) {
-  //   try {
-  //     const topUsers = await this.powerBIMetricsService.getTopUsers(startDate, endDate, 100)
-  //       .toPromise()
-  //       .catch(() => [] as UserMetric[]);
-  
-  //     if (!topUsers || topUsers.length === 0) {
-  //       this.allUsers = [];
-  //       this.filteredUsers = [];
-  //       return;
-  //     }
-  
-  //     const userPromises = topUsers.map(async user => {
-  //       try {
-  //         const metrics = await this.powerBIMetricsService.getUserMetrics(
-  //           user.userId, 
-  //           startDate, 
-  //           endDate
-  //         ).toPromise();
-  
-  //         // Provide default values if metrics is undefined
-  //         if (!metrics) {
-  //           return {
-  //             id: user.userId,
-  //             totalViews: 0,
-  //             reports: 0,
-  //             workspaces: 0,
-  //             lastActivity: 'Never',
-  //             activityByDate: []
-  //           } as UserDetail;
-  //         }
-  
-  //         return {
-  //           id: user.userId,
-  //           totalViews: metrics.totalViews,
-  //           reports: metrics.reports?.length || 0,
-  //           workspaces: metrics.workspaces?.length || 0,
-  //           lastActivity: metrics.activityByDate?.length > 0 
-  //             ? metrics.activityByDate[metrics.activityByDate.length - 1].date 
-  //             : 'Never',
-  //           activityByDate: metrics.activityByDate || []
-  //         } as UserDetail;
-  //       } catch (error) {
-  //         console.error(`Error processing user ${user.userId}:`, error);
-  //         return {
-  //           id: user.userId,
-  //           totalViews: 0,
-  //           reports: 0,
-  //           workspaces: 0,
-  //           lastActivity: 'Never',
-  //           activityByDate: []
-  //         } as UserDetail;
-  //       }
-  //     });
-  
-  //     const users = await Promise.all(userPromises);
-  //     this.allUsers = users;
-  //     this.filteredUsers = [...this.allUsers];
-  //   } catch (error) {
-  //     console.error('Error processing users:', error);
-  //     this.allUsers = [];
-  //     this.filteredUsers = [];
-  //   }
-  // }
-  private processWorkspaces() {
-    // Get unique workspaces from the reports
-    const workspaceSet = new Set<string>();
-    this.metrics.topReports.forEach(report => {
-      const workspace = this.workspaces.find(w => w.id === report.reportId?.split('/')[0]);
-      if (workspace) {
-        workspaceSet.add(workspace.id);
-      }
-    });
-    
-    this.workspaces = Array.from(workspaceSet).map(id => ({
-      id,
-      name: this.workspaces.find(w => w.id === id)?.name || id
-    }));
-    
-    // Add "All Workspaces" option
-    this.workspaces = [{ id: 'all', name: 'All Workspaces' }, ...this.workspaces];
-  }
+      };
+    }
+
+    private processWorkspaces() {
+    }
 
   private prepareCharts() {
     this.prepareViewsChart();
@@ -380,7 +275,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       }],
       chart: {
         type: 'area',
-        height: 350,
+        height: 300,
       },
       xaxis: {
         type: 'datetime',
@@ -417,6 +312,12 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
 
 
   private prepareTopUsersChart() {
+    // Get name mappings for top users
+    const nameMappings = this.allRegularUsers.reduce((acc, user) => {
+      acc[user.id] = user.name;
+      return acc;
+    }, {} as {[email: string]: string});
+  
     this.topUsersChartOptions = {
       series: [{ 
         name: 'Views', 
@@ -424,7 +325,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       }],
       chart: {
         type: 'bar',
-        height: 350,
+        height: 300,
         events: {
           dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
             this.onTopUserChartClick(config.dataPointIndex);
@@ -432,7 +333,9 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
         }
       },
       xaxis: {
-        categories: this.metrics.topUsers.map(u => u.userId.split('@')[0]),
+        categories: this.metrics.topUsers.map(u => {
+          return nameMappings[u.userId] || u.userId.split('@')[0];
+        }),
         labels: {
           rotate: -45,
           style: {
@@ -510,7 +413,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       }],
       chart: {
         type: 'bar',
-        height: 350,
+        height: 300,
         events: {
           dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
             const clickedDate = allDates[config.dataPointIndex];
@@ -563,7 +466,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       }],
       chart: { 
         type: 'line',
-        height: 350,
+        height: 300,
         toolbar: { 
           show: false 
         } 
@@ -801,6 +704,28 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       console.error('Error loading user metrics:', error);
     }
   }
+  private transformDisplayName(name: string | undefined): string {
+    if (!name) return 'Unknown';
+    
+    // Remove "HGU" prefix (case insensitive)
+    let transformed = name.replace(/^HGU\s*-\s*/i, '')
+                         .replace(/^HGU/i, '');
+    
+    // Remove "Dashboard" suffix (case insensitive)
+    transformed = transformed.replace(/\s*-\s*Dashboard$/i, '')
+                            .replace(/Dashboard$/i, '');
+    
+    // Trim any remaining whitespace
+    return transformed.trim() || 'Unknown';
+  }
+  
+  private extractWorkspaceName(reportName: string | undefined): string | undefined {
+    if (!reportName) return undefined;
+    
+    // Simple extraction logic - adjust as needed for your naming patterns
+    const match = reportName.match(/^(.*?)\s*-\s*/);
+    return match ? match[1] : undefined;
+  }
   private prepareUserReportViewsChart() {
     if (!this.userReportViews || this.userReportViews.length === 0) {
       this.userReportViewsChartOptions = null;
@@ -815,7 +740,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       series: topReports.map(r => r.count),
       chart: {
         type: 'pie',
-        height: 400, 
+        height: 300, 
       },
       labels: topReports.map(r => r.reportName || `Report (${r.reportId.slice(0, 6)}...`),
       dataLabels: {
@@ -844,7 +769,6 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7', '#5E8CBE', '#4A7FB7', '#3672B0', '#2365A9'],
     };
   }
-
   private generateDailyActivityData(startDate: Date, endDate: Date, activityData: {date: string, count: number}[]): any[] {
     const activityMap = new Map<string, number>();
     activityData.forEach(item => {
@@ -897,7 +821,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       series: viewsData.map(w => w.count),
       chart: {
         type: 'pie',
-        height: 350,
+        height: 250,
       },
       labels: viewsData.map(w => w.workspaceName),
       dataLabels: {
@@ -919,6 +843,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       colors: this.blueGradientColors,
     };
   }
+
 
   onTopUserChartClick(dataPointIndex: number) {
     const selectedUserId = this.metrics.topUsers[dataPointIndex]?.userId;
@@ -1029,6 +954,22 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
 
   //   }
   // }
+
+getUserDisplayName(userId: string): string {
+  if (!userId) return '';
+  
+  // First check in regular users
+  const regularUser = this.allRegularUsers.find(u => u.id === userId);
+  if (regularUser) return regularUser.name;
+  
+  // Then check in zero view users
+  const zeroViewUser = this.allZeroViewUsers.find(u => u.id === userId);
+  if (zeroViewUser) return zeroViewUser.name;
+  
+  // Fallback to email if not found
+  return userId;
+}
+
   async loadData(days: number): Promise<void> {
     this.loading = true;
     this.error = '';
@@ -1156,7 +1097,7 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       series: this.userConsumptionMethods.map(m => m.count),
       chart: {
         type: 'pie',
-        height: 350,
+        height: 250,
       },
       labels: this.userConsumptionMethods.map(m => this.getConsumptionMethodDisplayName(m.method)),
       dataLabels: {
@@ -1282,92 +1223,100 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
   //     this.filteredUsers = [];
   //   }
   // }
-  private async processUsers(
-    startDate: Date, 
-    endDate: Date,
-    workspaceId?: string,
-    reportId?: string
-  ): Promise<void> {
-    try {
-      const topUsers = await this.powerBIMetricsService.getTopUsers(
-        startDate, 
-        endDate, 
-        1000,
-        workspaceId || undefined,
-        reportId || undefined
-      ).toPromise().catch(() => [] as UserMetric[]);
-  
-      if (!topUsers || topUsers.length === 0) {
-        this.allRegularUsers = [];
-        this.allZeroViewUsers = [];
-        this.filteredUsers = [];
-        return;
-      }
-  
-      const userPromises = topUsers.map(async user => {
-        try {
-          const metrics = await this.powerBIMetricsService.getUserMetrics(
-            user.userId, 
-            startDate, 
-            endDate,
-            workspaceId || undefined,
-            reportId || undefined
-          ).toPromise();
-  
-          return {
-            id: user.userId,
-            totalViews: metrics?.totalViews || 0,
-            reports: metrics?.reports?.length || 0,
-            workspaces: metrics?.workspaces?.length || 0,
-            lastActivity: metrics?.activityByDate && metrics.activityByDate.length > 0 
-              ? metrics.activityByDate[metrics.activityByDate.length - 1].date 
-              : 'Never',
-            activityByDate: metrics?.activityByDate || []
-          } as UserDetail;
-        } catch (error) {
-          console.error(`Error processing user ${user.userId}:`, error);
-          return {
-            id: user.userId,
-            totalViews: 0,
-            reports: 0,
-            workspaces: 0,
-            lastActivity: 'Never',
-            activityByDate: []
-          } as UserDetail;
-        }
-      });
-  
-      let databaseUsers: any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(
-        this.workspaceOptions.find((w) => w.id === workspaceId)?.name ?? '',
-        this.reportOptions.find((r) => r.id === reportId)?.name ?? ''
-      ).toPromise().catch(() => [] as any[]);
-      
-      databaseUsers = databaseUsers.map((user: any) => user.user_email);
-      
-      const users = await Promise.all(userPromises);
-      const userEmails = users.map((user: any) => user.id);
-      const difference = databaseUsers.filter((item: any) => !userEmails.includes(item));
-      
-      this.allRegularUsers = users;
-      this.allZeroViewUsers = difference.map((user: any) => {
+private async processUsers(
+  startDate: Date, 
+  endDate: Date,
+  workspaceId?: string,
+  reportId?: string
+): Promise<void> {
+  try {
+    const topUsers = await this.powerBIMetricsService.getTopUsers(
+      startDate, 
+      endDate, 
+      1000,
+      workspaceId || undefined,
+      reportId || undefined
+    ).toPromise().catch(() => [] as UserMetric[]);
+
+    if (!topUsers || topUsers.length === 0) {
+      this.allRegularUsers = [];
+      this.allZeroViewUsers = [];
+      this.filteredUsers = [];
+      return;
+    }
+
+    // Get name mappings for all users
+    const nameMappings = await this.powerBIMetricsService.getUserNameMappings(
+      topUsers.map(u => u.userId)
+    ).toPromise() || {};
+
+    const userPromises = topUsers.map(async user => {
+      try {
+        const metrics = await this.powerBIMetricsService.getUserMetrics(
+          user.userId, 
+          startDate, 
+          endDate,
+          workspaceId || undefined,
+          reportId || undefined
+        ).toPromise();
+
         return {
-          id: user,
+          id: user.userId,
+          name: nameMappings[user.userId] || user.userId.split('@')[0], // Fallback to email prefix if no name
+          totalViews: metrics?.totalViews || 0,
+          reports: metrics?.reports?.length || 0,
+          workspaces: metrics?.workspaces?.length || 0,
+          lastActivity: metrics?.activityByDate && metrics.activityByDate.length > 0 
+            ? metrics.activityByDate[metrics.activityByDate.length - 1].date 
+            : 'Never',
+          activityByDate: metrics?.activityByDate || []
+        } as UserDetail;
+      } catch (error) {
+        console.error(`Error processing user ${user.userId}:`, error);
+        return {
+          id: user.userId,
+          name: nameMappings[user.userId] || user.userId.split('@')[0],
           totalViews: 0,
           reports: 0,
           workspaces: 0,
           lastActivity: 'Never',
           activityByDate: []
-        }
-      });
-      
-      this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
-    } catch (error) {
-      console.error('Error processing users:', error);
-      this.allRegularUsers = [];
-      this.allZeroViewUsers = [];
-      this.filteredUsers = [];
-    }
+        } as UserDetail;
+      }
+    });
+
+    let databaseUsers: any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(
+      this.workspaceOptions.find((w) => w.id === workspaceId)?.name ?? '',
+      this.reportOptions.find((r) => r.id === reportId)?.name ?? ''
+    ).toPromise().catch(() => [] as any[]);
+    
+    databaseUsers = databaseUsers.map((user: any) => user.user_email);
+    
+    const users = await Promise.all(userPromises);
+    const userEmails = users.map((user: any) => user.id);
+    const difference = databaseUsers.filter((item: any) => !userEmails.includes(item));
+    
+    this.allRegularUsers = users;
+    this.allZeroViewUsers = difference.map((user: any) => {
+      return {
+        id: user,
+        name: nameMappings[user] || user.split('@')[0],
+        totalViews: 0,
+        reports: 0,
+        workspaces: 0,
+        lastActivity: 'Never',
+        activityByDate: []
+      }
+    });
+    
+    this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
+  } catch (error) {
+    console.error('Error processing users:', error);
+    this.allRegularUsers = [];
+    this.allZeroViewUsers = [];
+    this.filteredUsers = [];
   }
+}
   changePage(page: number): void {
     this.currentPage = page;
   }
@@ -1608,7 +1557,6 @@ getWorkspaceName(workspaceId: string): string {
   const workspace = this.workspaceOptions.find(w => w.id === workspaceId);
   return workspace ? workspace.name : 'Unknown Workspace';
 }
-
 
 showDatePopup = false;
 selectedDateReports: DateReportView[] = [];
