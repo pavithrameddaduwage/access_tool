@@ -2,19 +2,22 @@
   <!-- Main Container -->
   <div class="bg-white shadow-md rounded-lg mx-9 mt-5 p-6">
    <!-- Header Section - Single Line Layout -->
+<!-- Header Section - Responsive Layout -->
 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-  <!-- Title on the left -->
-  <h1 class="text-xl font-bold text-gray-800 whitespace-nowrap">Power BI Usage Analytics</h1>
+  <!-- Title on the left - takes full width on mobile, auto on desktop -->
+  <div class="w-full md:w-auto">
+    <h1 class="text-xl font-bold mt-8 text-gray-800 whitespace-nowrap">Power BI Usage Analytics</h1>
+  </div>
   
-  <!-- Filters and Workspace/User Toggle in the middle -->
-  <div class="flex flex-col md:flex-row gap-4 flex-1 mx-4">
+  <!-- Filters in the middle - full width on mobile, flex-1 on desktop -->
+  <div class="flex flex-col md:flex-row gap-4 w-full md:flex-1 md:max-w-2xl">
     <!-- Workspace Dropdown -->
-    <div class="w-full md:w-56">
+    <div class="w-full md:w-40">
       <label class="block text-sm font-medium text-gray-700 mb-1.5">Workspace</label>
       <select
         [(ngModel)]="selectedWorkspace"
         (change)="onWorkspaceChange()"
-        class="w-full p-2.5 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        class="w-full p-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
       >
         <option *ngFor="let ws of workspaceOptions" [value]="ws.id">
           {{ ws.name }}
@@ -23,12 +26,12 @@
     </div>
 
     <!-- Report Dropdown -->
-    <div class="w-full md:w-56">
+    <div class="w-full md:w-40">
       <label class="block text-sm font-medium text-gray-700 mb-1.5">Report</label>
       <select
         [(ngModel)]="selectedReport"
         (change)="onReportChange()"
-        class="w-full p-2.5 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        class="w-full p-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
         [disabled]="!reportOptions.length"
       >
         <option [ngValue]="null">All Reports</option>
@@ -38,64 +41,31 @@
       </select>
     </div>
 
-    <!-- Time Duration Buttons -->
-    <div class="w-full md:w-72">
-      <label class="block text-sm font-medium text-gray-700 mb-1.5">Time Duration</label>
-      <div class="flex gap-2.5">
-        <button
-          *ngFor="let period of timePeriods"
-          (click)="loadData(period.days)"
-          class="flex-1 px-3.5 py-2 text-sm font-medium rounded-md transition-all duration-200"
-          [ngClass]="{
-            'bg-[#556FB5] text-white hover:bg-blue-600 shadow-md': selectedPeriod === period.days,
-            'bg-white text-gray-700 hover:bg-gray-50 shadow-sm': selectedPeriod !== period.days
-          }"
-        >
-          {{ period.label }}
-        </button>
-      </div>
-    </div>
+<!-- Time Duration Buttons - Compact Single Line -->
+<!-- Time Duration Buttons - Fixed Width to Match Dropdowns -->
+<div class="w-40 pl-6">
+  <label class="block text-sm font-medium text-gray-700 mb-1.5">Time Duration</label>
+  <div class="flex gap-1">
+    <button
+      *ngFor="let period of timePeriods"
+      (click)="loadData(period.days)"
+      class="w-full px-2 py-1.5 text-sm font-medium rounded transition-all duration-200 whitespace-nowrap"
+      [ngClass]="{
+        'bg-[#556FB5] text-white hover:bg-blue-600': selectedPeriod === period.days,
+        'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300': selectedPeriod !== period.days
+      }"
+    >
+      {{ period.label }}
+    </button>
+  </div>
+</div>
   </div>
   
-  <!-- Toggles on the right - Stacked vertically -->
-  <div class="flex flex-col items-end gap-2 flex-shrink-0">
-    <!-- PowerBI/Webtool Toggle - Top
-    <div class="relative">
-      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full blur-sm opacity-20"></div>
-      <div class="relative flex bg-gray-100 p-1 rounded-full border border-gray-200 shadow-inner">
-        <button
-          class="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200"
-          [class.bg-gradient-to-r]="activeDashboard === 'powerbi'"
-          [class.from-blue-500]="activeDashboard === 'powerbi'"
-          [class.to-blue-600]="activeDashboard === 'powerbi'"
-          [class.text-white]="activeDashboard === 'powerbi'"
-          [class.shadow-md]="activeDashboard === 'powerbi'"
-          [class.text-gray-600]="activeDashboard !== 'powerbi'"
-          [class.hover:text-gray-800]="activeDashboard !== 'powerbi'"
-          (click)="toggleDashboard('powerbi')"
-        >
-          PowerBI
-        </button>
-        <button
-          class="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200"
-          [class.bg-gradient-to-r]="activeDashboard === 'webtool'"
-          [class.from-blue-500]="activeDashboard === 'webtool'"
-          [class.to-blue-600]="activeDashboard === 'webtool'"
-          [class.text-white]="activeDashboard === 'webtool'"
-          [class.shadow-md]="activeDashboard === 'webtool'"
-          [class.text-gray-600]="activeDashboard !== 'webtool'"
-          [class.hover:text-gray-800]="activeDashboard !== 'webtool'"
-          (click)="toggleDashboard('webtool')"
-        >
-          Webtool
-        </button>
-      </div>
-    </div>
-     -->
-    <!-- Workspace/User Toggle - Bottom -->
+  <!-- Toggles on the right - smaller and more compact -->
+  <div class="w-full md:w-auto flex justify-end">
     <div class="view-toggle-container flex bg-gray-100 p-1 rounded-lg">
       <button
-        class="px-3 py-1 rounded-md transition-colors font-medium text-xs"
+        class="px-2 py-1 md:px-3 md:py-1 rounded-md transition-colors font-medium text-xs"
         [class.bg-[#0077B6]]="activeView === 'workspace'"
         [class.text-white]="activeView === 'workspace'"
         [class.bg-gray-200]="activeView !== 'workspace'"
@@ -105,7 +75,7 @@
         Workspace
       </button>
       <button
-        class="px-3 py-1 rounded-md transition-colors font-medium text-xs ml-1"
+        class="px-2 py-1 md:px-3 md:py-1 rounded-md transition-colors font-medium text-xs ml-1"
         [class.bg-[#0077B6]]="activeView === 'user'"
         [class.text-white]="activeView === 'user'"
         [class.bg-gray-200]="activeView !== 'user'"
@@ -117,7 +87,6 @@
     </div>
   </div>
 </div>
-
     <!-- Loading State -->
     <div *ngIf="loading" class="flex justify-center items-center h-64">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -132,18 +101,20 @@
     <!-- Workspace View -->
     <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
       <!-- Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 mb-2">
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg text-opacity-70 font-semibold text-gray-700 mb-2">Total Views</h3>
-          <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.totalViews || 0 }}</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 mb-2">
+        <!-- Total Views -->
+        <div class="bg-white p-4 rounded-lg transition-shadow" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);" onmouseover="this.style.boxShadow='0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.12)'" onmouseout="this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'">          <h3 class="text-sm font-medium text-gray-600 mb-1">Total Views</h3>
+          <p class="text-xl font-bold" style="color: #0077B6;">{{ metrics.totalViews || 0 }}</p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg text-opacity-70  font-semibold text-gray-700 mb-2">Unique Users</h3>
-          <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsers || 0 }}</p>
+        
+        <!-- Unique Users -->
+        <div class="bg-white p-4 rounded-lg transition-shadow" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);" onmouseover="this.style.boxShadow='0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.12)'" onmouseout="this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'">          <h3 class="text-sm font-medium text-gray-600 mb-1">Unique Users</h3>
+          <p class="text-xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsers || 0 }}</p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-lg text-opacity-70 font-semibold text-gray-700 mb-2">Unique Reports</h3>
-          <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueReports || 0 }}</p>
+        
+        <!-- Unique Reports -->
+        <div class="bg-white p-4 rounded-lg transition-shadow" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);" onmouseover="this.style.boxShadow='0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.12)'" onmouseout="this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'">          <h3 class="text-sm font-medium text-gray-600 mb-1">Unique Reports</h3>
+          <p class="text-xl font-bold" style="color: #0077B6;">{{ metrics.uniqueReports || 0 }}</p>
         </div>
       </div>
 
