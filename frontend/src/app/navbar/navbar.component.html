@@ -2,43 +2,43 @@
   <nav class="flex items-center w-full py-4 px-4 relative">
     <div class="flex items-center">
       <img src="assets/horizontal-blue-hgu-logo.png" class="h-8 pl-10" alt="Logo" />
-      <a href="/home" class="text-lg font-bold text-white mr-5 pl-10 hover:text-sky-200 transition duration-300">User Access Tool</a>
+      <a href="/home" class="text-lg font-bold text-white mr-5 pl-10 hover:text-sky-200 transition duration-300 ">User Access Tool</a>
     </div>
 
     <!-- Centered navigation tabs -->
-    <div class="absolute left-1/2 transform -translate-x-1/2">
+    <div class="absolute left-1/2 transform -translate-x-1/2 pl-5">
       <ng-container *ngIf="isloggedIn">
         <div class="flex justify-center space-x-2"> <!-- Reduced from space-x-4 -->
           <a
-            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[clamp(0.4rem,1vw,0.65rem)] font-semibold text-slate-200 hover:text-white mx-2 transition -pr-2 duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/home"
             routerLinkActive="active-link"
           >
             POWERBI ANALYTICS
           </a>
           <a
-            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[clamp(0.4rem,1vw,0.65rem)] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/webtool-dashboard"
             routerLinkActive="active-link"
           >
             WEBTOOL ANALYTICS
           </a>
           <a
-            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[clamp(0.4rem,1vw,0.65rem)] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/dashboards"
             routerLinkActive="active-link"
           >
             DASHBOARD ACCESS
           </a>
           <a
-            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[clamp(0.4rem,1vw,0.65rem)] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/webtool"
             routerLinkActive="active-link"
           >
             WEB TOOL ACCESS
           </a>
           <a
-            class="text-[0.55rem] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
+            class="text-[clamp(0.4rem,1vw,0.65rem)] font-semibold text-slate-200 hover:text-white mx-2 transition duration-300 px-2 py-1 rounded-md hover:bg-[#1a4b7c]"
             routerLink="/masterdata"
             routerLinkActive="active-link"
           >
