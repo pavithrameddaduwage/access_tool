@@ -82,6 +82,17 @@ export declare class PowerBIMetricsController {
     getUserNameMappings(body: {
         emails: string[];
     }): Promise<{
-        [email: string]: string;
+        names: {
+            [email: string]: string;
+        };
+        departments: {
+            [email: string]: string;
+        };
+    }>;
+    getUserCounts(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
+        totalUsers: number;
+        totalViews: number;
+        zeroViewUsers: number;
+        lowActivityUsers: number;
     }>;
 }

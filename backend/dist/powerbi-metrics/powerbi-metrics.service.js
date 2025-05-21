@@ -25,8 +25,9 @@ const user_dashboard_entity_1 = require("../user-dashboard/entities/user-dashboa
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
 const report_mapping_service_1 = require("../report-mapping/report-mapping.service");
 const workspace_mapping_service_1 = require("../workspace-mapping/workspace-mapping.service");
+const user_dashboard_service_1 = require("../user-dashboard/user-dashboard.service");
 let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsService {
-    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository, reportMappingService, workspaceMappingService) {
+    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository, reportMappingService, workspaceMappingService, userDashboardService) {
         this.httpService = httpService;
         this.configService = configService;
         this.userDashboardRepository = userDashboardRepository;
@@ -34,6 +35,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         this.dashboardRepository = dashboardRepository;
         this.reportMappingService = reportMappingService;
         this.workspaceMappingService = workspaceMappingService;
+        this.userDashboardService = userDashboardService;
         this.logger = new common_1.Logger(PowerBIMetricsService_1.name);
     }
     async getAccessToken() {
@@ -912,23 +914,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         return query.getMany();
     }
-    async getUserNameMappings(userEmails) {
-        if (!userEmails.length)
-            return {};
-        const users = await this.userDashboardRepository
-            .createQueryBuilder('user')
-            .select(['user.email', 'user.userName'])
-            .where('user.email IN (:...emails)', { emails: userEmails })
-            .distinctOn(['user.email'])
-            .getRawMany();
-        const nameMap = {};
-        users.forEach(user => {
-            if (user.user_email && user.user_userName) {
-                nameMap[user.user_email] = user.user_userName;
-            }
-        });
-        return nameMap;
-    }
     async getDistinctWorkspaces(startDate, endDate, reportId) {
         const query = this.powerbiLogRepository
             .createQueryBuilder('log')
@@ -1024,6 +1009,66 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         }
         return mappedResults;
     }
+    async getUserCounts(startDate, endDate, workspaceId, reportId) {
+        let workspaceName;
+        let reportName;
+        if (workspaceId && workspaceId !== 'all') {
+            workspaceName = await this.workspaceMappingService.getDisplayName(workspaceId);
+        }
+        if (reportId) {
+            reportName = await this.reportMappingService.getDisplayName(reportId);
+        }
+        const permittedUsers = await this.userDashboardService.getPermittedUsers(workspaceName, reportName);
+        const totalUsers = permittedUsers.length;
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .select('log.userId', 'userId')
+            .addSelect('COUNT(*)', 'count')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .groupBy('log.userId');
+        if (workspaceId && workspaceId !== 'all') {
+            if (workspaceId === '000000') {
+                query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+            }
+        }
+        if (reportId) {
+            query.andWhere('log.reportId = :reportId', { reportId });
+        }
+        const activeUsers = await query.getRawMany();
+        const totalViews = activeUsers.reduce((sum, user) => sum + parseInt(user.count), 0);
+        const activeUserIds = activeUsers.map(u => u.userId);
+        const zeroViewUsers = permittedUsers.filter(email => !activeUserIds.includes(email)).length;
+        const lowActivityUsers = activeUsers.filter(u => parseInt(u.count) < 5).length;
+        return {
+            totalUsers,
+            totalViews,
+            zeroViewUsers,
+            lowActivityUsers
+        };
+    }
+    async getUserNameMappings(emails) {
+        const users = await this.userDashboardRepository
+            .createQueryBuilder('user')
+            .where('user.email IN (:...emails)', { emails })
+            .select(['user.email', 'user.userName', 'user.department'])
+            .getRawMany();
+        const nameMap = {};
+        const departmentMap = {};
+        users.forEach(user => {
+            if (user.user_email) {
+                nameMap[user.user_email] = user.user_userName || user.user_email.split('@')[0];
+                departmentMap[user.user_email] = user.user_department || 'Unknown';
+            }
+        });
+        return {
+            names: nameMap,
+            departments: departmentMap,
+        };
+    }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;
 exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 = __decorate([
@@ -1037,6 +1082,7 @@ exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 
         typeorm_2.Repository,
         typeorm_2.Repository,
         report_mapping_service_1.ReportMappingService,
-        workspace_mapping_service_1.WorkspaceMappingService])
+        workspace_mapping_service_1.WorkspaceMappingService,
+        user_dashboard_service_1.UserDashboardService])
 ], PowerBIMetricsService);
 //# sourceMappingURL=powerbi-metrics.service.js.map

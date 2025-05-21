@@ -23,6 +23,7 @@ exports.UserDashboardModule = UserDashboardModule = __decorate([
         controllers: [user_dashboard_controller_1.UserDashboardController],
         imports: [typeorm_1.TypeOrmModule.forFeature([user_dashboard_entity_1.UserDashboard, dashboard_entity_1.Dashboard, workspace_entity_1.Workspace, dashboard_workspace_entity_1.DashboardWorkspace])],
         providers: [user_dashboard_service_1.UserDashboardService],
+        exports: [user_dashboard_service_1.UserDashboardService, UserDashboardModule],
     })
 ], UserDashboardModule);
 //# sourceMappingURL=user-dashboard.module.js.map

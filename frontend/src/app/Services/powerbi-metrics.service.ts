@@ -430,12 +430,45 @@ export class PowerBIMetricsService {
     return this.http.get<ReportMetric[]>(`${this.apiUrl}/top-reports`, { params });
   }
 
-  getUserNameMappings(userEmails: string[]): Observable<{[email: string]: string}> {
-    return this.http.post<{[email: string]: string}>(
+  // getUserNameMappings(userEmails: string[]): Observable<{[email: string]: string}> {
+  //   return this.http.post<{[email: string]: string}>(
+  //     `${this.apiUrl}/user-name-mappings`,
+  //     { emails: userEmails }
+  //   ).pipe(
+  //     catchError(() => of({}))
+  //   );
+  // }
+
+  getUserNameMappings(userEmails: string[]): Observable<{names: {[email: string]: string}, departments: {[email: string]: string}}> {
+    return this.http.post<{
+      names: {[email: string]: string}, 
+      departments: {[email: string]: string}
+    }>(
       `${this.apiUrl}/user-name-mappings`,
       { emails: userEmails }
     ).pipe(
-      catchError(() => of({}))
+      catchError(() => of({names: {}, departments: {}}))
     );
   }
+  // for user count
+  getUserCounts(
+  startDate: Date, 
+  endDate: Date,
+  workspaceId?: string,
+  reportId?: string
+): Observable<{
+  totalUsers: number;
+  totalViews: number;
+  zeroViewUsers: number;
+  lowActivityUsers: number;
+}> {
+  const params: any = {
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString()
+  };
+  if (workspaceId) params.workspaceId = workspaceId;
+  if (reportId) params.reportId = reportId;
+  
+  return this.http.get<any>(`${this.apiUrl}/user-counts`, { params });
+}
 }

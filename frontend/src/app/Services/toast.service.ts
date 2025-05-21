@@ -40,4 +40,8 @@ export class ToastService {
     this.toastsSubject.next([]);
   }
 
+  showError(message: string) {
+    this.show(message, 'error');
+  }
+  
 }

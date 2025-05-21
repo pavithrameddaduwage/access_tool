@@ -1,10 +1,13 @@
 import { Controller, Get, Query, DefaultValuePipe, BadRequestException, ParseIntPipe, Post, Body } from '@nestjs/common';
 import { ParseISO8601DatePipe } from './parse-date.pipe';
 import { PowerBIMetricsService } from './powerbi-metrics.service';
+import { Repository } from 'typeorm';
+import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 
 @Controller('powerbi-metrics')
 export class PowerBIMetricsController {
-  constructor(private readonly powerbiMetricsService: PowerBIMetricsService) {}
+  constructor(private readonly powerbiMetricsService: PowerBIMetricsService
+  ) {}
 
   @Get()
   async getMetrics(
@@ -234,8 +237,30 @@ async getUnusedReports(
   return this.powerbiMetricsService.getUnusedReports(startDate, endDate, workspaceId);
 }
 
+// @Post('user-name-mappings')
+// async getUserNameMappings(@Body() body: { emails: string[] }) {
+//   return this.powerbiMetricsService.getUserNameMappings(body.emails);
+// }
 @Post('user-name-mappings')
 async getUserNameMappings(@Body() body: { emails: string[] }) {
   return this.powerbiMetricsService.getUserNameMappings(body.emails);
 }
+
+
+@Get('user-counts')
+async getUserCounts(
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getUserCounts(
+    startDate, 
+    endDate,
+    workspaceId,
+    reportId
+  );
+}
+
+
 }

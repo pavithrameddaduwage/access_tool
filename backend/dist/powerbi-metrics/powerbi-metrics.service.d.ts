@@ -6,6 +6,7 @@ import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { ReportMappingService } from 'src/report-mapping/report-mapping.service';
 import { WorkspaceMappingService } from 'src/workspace-mapping/workspace-mapping.service';
+import { UserDashboardService } from 'src/user-dashboard/user-dashboard.service';
 export interface PowerBILogEntry {
     Id: string;
     RecordType: number;
@@ -94,7 +95,8 @@ export declare class PowerBIMetricsService {
     private readonly dashboardRepository;
     private readonly reportMappingService;
     private readonly workspaceMappingService;
-    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>, reportMappingService: ReportMappingService, workspaceMappingService: WorkspaceMappingService);
+    private readonly userDashboardService;
+    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>, reportMappingService: ReportMappingService, workspaceMappingService: WorkspaceMappingService, userDashboardService: UserDashboardService);
     private readonly logger;
     getAccessToken(): Promise<string>;
     ensureSubscription(accessToken: string): Promise<void>;
@@ -172,9 +174,6 @@ export declare class PowerBIMetricsService {
         dashboard: string;
         groupId: number | null;
     }[]>;
-    getUserNameMappings(userEmails: string[]): Promise<{
-        [email: string]: string;
-    }>;
     getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{
         id: string;
         name: string;
@@ -189,4 +188,18 @@ export declare class PowerBIMetricsService {
         reportName: string;
         count: number;
     }[]>;
+    getUserCounts(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<{
+        totalUsers: number;
+        totalViews: number;
+        zeroViewUsers: number;
+        lowActivityUsers: number;
+    }>;
+    getUserNameMappings(emails: string[]): Promise<{
+        names: {
+            [email: string]: string;
+        };
+        departments: {
+            [email: string]: string;
+        };
+    }>;
 }

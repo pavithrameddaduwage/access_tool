@@ -11,5 +11,6 @@ import { DashboardWorkspace } from 'src/dashboard/entities/dashboard-workspace.e
   controllers: [UserDashboardController],
   imports: [TypeOrmModule.forFeature([UserDashboard, Dashboard, Workspace, DashboardWorkspace])],
   providers: [UserDashboardService],
+  exports: [UserDashboardService, UserDashboardModule],
 })
 export class UserDashboardModule {}

@@ -12,6 +12,7 @@ import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { ReportMappingService } from 'src/report-mapping/report-mapping.service';
 import { WorkspaceMappingService } from 'src/workspace-mapping/workspace-mapping.service';
+import { UserDashboardService } from 'src/user-dashboard/user-dashboard.service';
 
 export interface PowerBILogEntry {
   Id: string;
@@ -105,6 +106,8 @@ export class PowerBIMetricsService {
     private readonly dashboardRepository: Repository<Dashboard>,
     private readonly reportMappingService: ReportMappingService,
     private readonly workspaceMappingService: WorkspaceMappingService,
+    private readonly userDashboardService: UserDashboardService,
+
   ) {}
   
 
@@ -1921,26 +1924,26 @@ async getUnusedReports(
 }
 
 
-async getUserNameMappings(userEmails: string[]): Promise<{[email: string]: string}> {
-  if (!userEmails.length) return {};
+// async getUserNameMappings(userEmails: string[]): Promise<{[email: string]: string}> {
+//   if (!userEmails.length) return {};
   
-  const users = await this.userDashboardRepository
-    .createQueryBuilder('user')
-    .select(['user.email', 'user.userName'])
-    .where('user.email IN (:...emails)', { emails: userEmails })
-    .distinctOn(['user.email'])
-    .getRawMany();
+//   const users = await this.userDashboardRepository
+//     .createQueryBuilder('user')
+//     .select(['user.email', 'user.userName'])
+//     .where('user.email IN (:...emails)', { emails: userEmails })
+//     .distinctOn(['user.email'])
+//     .getRawMany();
 
-  const nameMap: {[email: string]: string} = {};
+//   const nameMap: {[email: string]: string} = {};
   
-  users.forEach(user => {
-    if (user.user_email && user.user_userName) {
-      nameMap[user.user_email] = user.user_userName;
-    }
-  });
+//   users.forEach(user => {
+//     if (user.user_email && user.user_userName) {
+//       nameMap[user.user_email] = user.user_userName;
+//     }
+//   });
 
-  return nameMap;
-}
+//   return nameMap;
+// }
 
 
 async getDistinctWorkspaces(startDate: Date, endDate: Date, reportId?: string): Promise<{id: string, name: string}[]> {
@@ -2071,5 +2074,99 @@ async getTopReports(startDate: Date, endDate: Date, limit: number = 10, workspac
   }
 
   return mappedResults;
+}
+
+
+
+async getUserCounts(
+  startDate: Date, 
+  endDate: Date,
+  workspaceId?: string,
+  reportId?: string
+): Promise<{
+  totalUsers: number;
+  totalViews: number;
+  zeroViewUsers: number;
+  lowActivityUsers: number;
+}> {
+  // Get all permitted users based on filters
+  let workspaceName: string | undefined;
+  let reportName: string | undefined;
+  
+  if (workspaceId && workspaceId !== 'all') {
+    workspaceName = await this.workspaceMappingService.getDisplayName(workspaceId);
+  }
+  
+  if (reportId) {
+    reportName = await this.reportMappingService.getDisplayName(reportId);
+  }
+  
+  const permittedUsers = await this.userDashboardService.getPermittedUsers(workspaceName, reportName);
+  const totalUsers = permittedUsers.length;
+
+  // Get active users from Power BI logs with view counts
+  const query = this.powerbiLogRepository
+    .createQueryBuilder('log')
+    .select('log.userId', 'userId')
+    .addSelect('COUNT(*)', 'count')
+    .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+    .andWhere("log.operation = 'ViewReport'")
+    .groupBy('log.userId');
+
+  if (workspaceId && workspaceId !== 'all') {
+    if (workspaceId === '000000') {
+      query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+    } else {
+      query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+    }
+  }
+
+  if (reportId) {
+    query.andWhere('log.reportId = :reportId', { reportId });
+  }
+
+  const activeUsers = await query.getRawMany();
+
+  // Calculate metrics
+  const totalViews = activeUsers.reduce((sum, user) => sum + parseInt(user.count), 0);
+  
+  // Get users with zero views (permitted but not in active users)
+  const activeUserIds = activeUsers.map(u => u.userId);
+  const zeroViewUsers = permittedUsers.filter(email => !activeUserIds.includes(email)).length;
+  
+  // Get users with less than 5 views
+  const lowActivityUsers = activeUsers.filter(u => parseInt(u.count) < 5).length;
+
+  return {
+    totalUsers,
+    totalViews,
+    zeroViewUsers,
+    lowActivityUsers
+  };
+}
+async getUserNameMappings(emails: string[]): Promise<{
+  names: { [email: string]: string };
+  departments: { [email: string]: string };
+}> {
+  const users = await this.userDashboardRepository
+    .createQueryBuilder('user')
+    .where('user.email IN (:...emails)', { emails })
+    .select(['user.email', 'user.userName', 'user.department'])
+    .getRawMany();
+
+  const nameMap: { [email: string]: string } = {};
+  const departmentMap: { [email: string]: string } = {};
+
+  users.forEach(user => {
+    if (user.user_email) {
+      nameMap[user.user_email] = user.user_userName || user.user_email.split('@')[0];
+      departmentMap[user.user_email] = user.user_department || 'Unknown';
+    }
+  });
+
+  return {
+    names: nameMap,
+    departments: departmentMap,
+  };
 }
 }

@@ -20,6 +20,7 @@ const user_dashboard_entity_1 = require("../user-dashboard/entities/user-dashboa
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
 const workspace_mapping_module_1 = require("../workspace-mapping/workspace-mapping.module");
 const report_mapping_module_1 = require("../report-mapping/report-mapping.module");
+const user_dashboard_module_1 = require("../user-dashboard/user-dashboard.module");
 let PowerBIMetricsModule = class PowerBIMetricsModule {
 };
 exports.PowerBIMetricsModule = PowerBIMetricsModule;
@@ -32,6 +33,7 @@ exports.PowerBIMetricsModule = PowerBIMetricsModule = __decorate([
             config_1.ConfigModule.forRoot(),
             workspace_mapping_module_1.WorkspaceMappingModule,
             report_mapping_module_1.ReportMappingModule,
+            user_dashboard_module_1.UserDashboardModule,
         ],
         controllers: [powerbi_metrics_controller_1.PowerBIMetricsController],
         providers: [powerbi_metrics_service_1.PowerBIMetricsService, powerbi_logs_collector_task_1.PowerBILogsCollectorTask],

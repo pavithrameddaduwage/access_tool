@@ -188,220 +188,262 @@
       </div>
     </ng-container>
 
-    <!-- User View -->
     <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
       <!-- User List Section -->
       <div class="mb-8 bg-white p-2 rounded-lg shadow-md mt-5">
-        <!-- Accordion Header -->
-        <div class="flex justify-between items-center cursor-pointer" (click)="toggleUserListAccordion()">
-          <h3 class="text-lg font-semibold text-gray-700">User List</h3>
-          <span class="text-gray-600">
-            {{ isUserListExpanded ? '▼' : '▶' }}
-          </span>
-        </div>
-
-        <!-- Accordion Content -->
-        <div *ngIf="isUserListExpanded" class="mt-4">
-          <!-- Search and Export Section -->
-          <div class="flex justify-between items-center mb-4">
-            <!-- Search Input -->
-            <input
-              type="text"
-              placeholder="Search users..."
-              class="w-full p-2 border rounded-lg mr-4"
-              [(ngModel)]="userSearchQuery"
-              (input)="filterUsers()"
-            />
-
-            <!-- Export Icon -->
-            <button
-              class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
-              (click)="exportUserListToCSV()"
-              title="Export to CSV"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- User Table (left side) -->
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-700">User List</h3>
+              <!-- Export Icon -->
+              <button
+                class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                (click)="exportUserListToCSV()"
+                title="Export to CSV"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+              </button>
+            </div>
+            
+            <!-- Search Input -->
+            <div class="mb-4">
+              <input
+                type="text"
+                placeholder="Search users..."
+                class="w-full p-2 border rounded-lg"
+                [(ngModel)]="userSearchQuery"
+                (input)="filterUsers()"
+              />
+            </div>
+            
+            <!-- User Table -->
+            <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+              <table class="min-w-full divide-y divide-gray-200">
+                <!-- Table Headers -->
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Department
+                    </th>
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Views
+                    </th>
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Last Seen
+                    </th>
+                  </tr>
+                </thead>
+    
+                <!-- Table Body -->
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr *ngFor="let user of getPaginatedUsers()"
+                      class="hover:bg-gray-50 cursor-pointer transition-colors"
+                      [class.bg-blue-50]="selectedUserId === user.id"
+                      (click)="selectUser(user.id)">
+                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
+                      {{ user.name }}
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
+                      {{ user.department }}
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">
+                      {{ user.totalViews }}
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">
+                      {{ user.lastActivity }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="pagination-controls mt-4 flex justify-center gap-2">
+              <button
+                *ngFor="let page of getPageNumbers()"
+                (click)="changePage(page)"
+                class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
+                [class.bg-blue-500.text-white]="currentPage === page"
+              >
+                {{ page }}
+              </button>
+            </div>
           </div>
-          
-          <!-- User Table -->
-          <div class="overflow-hidden rounded-xl shadow-sm border border-gray-200 bg-white">
-            <table class="w-full">
-              <!-- Table Headers -->
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    Name
-                  </th>
-                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    Views
-                  </th>
-                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    Last Seen
-                  </th>
-                </tr>
-              </thead>
-
-              <!-- Table Body -->
-              <tbody class="bg-white divide-y divide-gray-100">
-                <tr *ngFor="let user of getPaginatedUsers()"
-                class="transition-colors duration-150 ease-in-out hover:bg-gray-50 cursor-pointer"
-                [class.bg-blue-50]="selectedUserId === user.id"
-                (click)="selectUser(user.id)">
-              <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-800">
-                {{ user.name }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">
-                {{ user.totalViews }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">
-                {{ user.lastActivity }}
-              </td>
-            </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Pagination Controls -->
-          <div class="pagination-controls mt-4 flex justify-center gap-2">
-            <button
-              *ngFor="let page of getPageNumbers()"
-              (click)="changePage(page)"
-              class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
-              [class.bg-blue-500.text-white]="currentPage === page"
-            >
-              {{ page }}
-            </button>
+    
+          <!-- User Metrics Tiles (right side) -->
+          <div class="grid grid-cols-2 gap-4 h-fit">
+            <!-- Total Users Tile -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" (click)="openUserListModal('all')">
+              <h3 class="text-sm font-medium text-gray-600 mb-2">Total Users</h3>
+              <p class="text-3xl font-bold text-blue-600">{{ metrics.uniqueUsers || 0 }}</p>
+              <p class="text-xs text-gray-500 mt-1">All users in the system</p>
+            </div>
+    
+            <!-- Total Views Tile -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+              <h3 class="text-sm font-medium text-gray-600 mb-2">Total Views</h3>
+              <p class="text-3xl font-bold text-green-600">{{ userCounts.totalViews }}</p>
+              <p class="text-xs text-gray-500 mt-1">Across all reports</p>
+            </div>
+    
+            <!-- Zero View Users Tile -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" (click)="openUserListModal('zero')">
+              <h3 class="text-sm font-medium text-gray-600 mb-2">Zero View Users</h3>
+              <p class="text-3xl font-bold text-orange-600">{{ userCounts.zeroViewUsers }}</p>
+              <p class="text-xs text-gray-500 mt-1">No views in selected period</p>
+            </div>
+    
+            <!-- Low Activity Users Tile -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" (click)="openUserListModal('low')">
+              <h3 class="text-sm font-medium text-gray-600 mb-2">Low Activity Users</h3>
+              <p class="text-3xl font-bold text-purple-600">{{ userCounts.lowActivityUsers }}</p>
+              <p class="text-xs text-gray-500 mt-1">Less than 5 views</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- User Metrics -->
-      <div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6">
-        <!-- Selected User Header -->
-        <div class="bg-white p-2 rounded-lg shadow-md">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold text-gray-800">{{ getUserDisplayName(selectedUserId) }}</h2>
-            <button 
-              class="text-blue-600 hover:text-blue-800 font-medium"
-              (click)="selectedUserId = null"
-            >
-              ← Back to all users
-            </button>
-          </div>
+<!-- User Metrics -->
+<div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6">
+  <!-- Selected User Header -->
+  <div class="bg-white p-2 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-gray-800">{{ getUserDisplayName(selectedUserId) }}</h2>
+      <button 
+        class="text-blue-600 hover:text-blue-800 font-medium"
+        (click)="selectedUserId = null"
+      >
+        ← Back to all users
+      </button>
+    </div>
 
-          <!-- Metrics Tiles -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-gray-50 p-4 rounded-lg text-center">
-              <h3 class="text-sm text-gray-600">Total Views</h3>
-              <p class="text-2xl font-bold text-blue-600">{{ userMetrics.totalViews || 0 }}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg text-center">
-              <h3 class="text-sm text-gray-600">Reports Viewed</h3>
-              <p class="text-2xl font-bold text-green-600">{{ userMetrics.reports?.length || 0 }}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg text-center">
-              <h3 class="text-sm text-gray-600">Workspaces</h3>
-              <p class="text-2xl font-bold text-purple-600">{{ userMetrics.workspaces?.length || 0 }}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg text-center">
-              <h3 class="text-sm text-gray-600">Active Days</h3>
-              <p class="text-2xl font-bold text-yellow-600">{{ userMetrics.activityByDate?.length || 0 }}</p>
-            </div>
-          </div>
+    <!-- Metrics Tiles -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-gray-50 p-4 rounded-lg text-center">
+        <h3 class="text-sm text-gray-600">Total Views</h3>
+        <p class="text-2xl font-bold text-blue-600">{{ userMetrics.totalViews || 0 }}</p>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg text-center">
+        <h3 class="text-sm text-gray-600">Reports Viewed</h3>
+        <p class="text-2xl font-bold text-green-600">{{ userMetrics.reports?.length || 0 }}</p>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg text-center">
+        <h3 class="text-sm text-gray-600">Workspaces</h3>
+        <p class="text-2xl font-bold text-purple-600">{{ userMetrics.workspaces?.length || 0 }}</p>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg text-center">
+        <h3 class="text-sm text-gray-600">Active Days</h3>
+        <p class="text-2xl font-bold text-yellow-600">{{ userMetrics.activityByDate?.length || 0 }}</p>
+      </div>
+    </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <!-- Workspace Views Pie Chart -->
-            <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 h-[350px]">
-              <h3 class="text-lg font-semibold mb-2 text-gray-800">Workspace Views</h3>
-              <div class="h-[calc(100%-40px)]">
-                <apx-chart
-                  *ngIf="userWorkspacePieChartOptions"
-                  [series]="userWorkspacePieChartOptions.series"
-                  [chart]="userWorkspacePieChartOptions.chart"
-                  [labels]="userWorkspacePieChartOptions.labels"
-                  [colors]="userWorkspacePieChartOptions.colors"
-                  [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-                  [tooltip]="userWorkspacePieChartOptions.tooltip"
-                  height="100%"
-                ></apx-chart>
-              </div>
-            </div>
-            
-            <!-- Consumption Methods Pie Chart -->
-            <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 h-[350px]">
-              <h3 class="text-lg font-semibold mb-2 text-gray-800">Consumption Methods</h3>
-              <div class="h-[calc(100%-40px)]">
-                <apx-chart
-                  *ngIf="userConsumptionChartOptions"
-                  [series]="userConsumptionChartOptions.series"
-                  [chart]="userConsumptionChartOptions.chart"
-                  [labels]="userConsumptionChartOptions.labels"
-                  [colors]="userConsumptionChartOptions.colors"
-                  [dataLabels]="userConsumptionChartOptions.dataLabels"
-                  [tooltip]="userConsumptionChartOptions.tooltip"
-                  height="100%"
-                ></apx-chart>
-                
-                <div *ngIf="!userConsumptionChartOptions" class="flex flex-col items-center justify-center h-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <h4 class="text-xl font-medium text-gray-700 mb-1">No Consumption Data</h4>
-                  <p class="text-gray-500 text-center max-w-xs">This user has no recorded consumption methods.</p>
-                </div>
-              </div>
-            </div>
+    <!-- Three Pie Charts in One Row - Adjusted container -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"> <!-- Increased gap to 6 and mb-8 -->
+      <!-- Workspace Views Pie Chart -->
+      <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 flex flex-col" style="min-height: 380px;">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Workspace Views</h3>
+        <div class="flex-grow relative">
+          <apx-chart
+            *ngIf="userWorkspacePieChartOptions"
+            [series]="userWorkspacePieChartOptions.series"
+            [chart]="userWorkspacePieChartOptions.chart"
+            [labels]="userWorkspacePieChartOptions.labels"
+            [colors]="userWorkspacePieChartOptions.colors"
+            [dataLabels]="userWorkspacePieChartOptions.dataLabels"
+            [tooltip]="userWorkspacePieChartOptions.tooltip"
+            class="absolute inset-0 w-full h-full"
+          ></apx-chart>
+          <div *ngIf="!userWorkspacePieChartOptions" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
+            <p class="text-xs text-gray-500 text-center">No workspace views recorded</p>
           </div>
-
-          <!-- Report Views Pie Chart (Full Width) -->
-          <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 mb-6 h-[400px]">
-            <h3 class="text-lg font-semibold mb-2 text-gray-800">Top 10 Report Views</h3>
-            <div class="h-[calc(100%-40px)]">
-              <apx-chart
-                *ngIf="userReportViewsChartOptions"
-                [series]="userReportViewsChartOptions.series"
-                [chart]="userReportViewsChartOptions.chart"
-                [labels]="userReportViewsChartOptions.labels"
-                [colors]="userReportViewsChartOptions.colors"
-                [dataLabels]="userReportViewsChartOptions.dataLabels"
-                [tooltip]="userReportViewsChartOptions.tooltip"
-                [legend]="userReportViewsChartOptions.legend"
-                height="100%"
-              ></apx-chart>
-              <div *ngIf="!userReportViewsChartOptions" class="text-center text-gray-500 h-full flex items-center justify-center">
-                No report view data available for this user
-              </div>
-            </div>
+        </div>
+      </div>
+      
+      <!-- Consumption Methods Pie Chart -->
+      <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 flex flex-col" style="min-height: 380px;">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Consumption Methods</h3>
+        <div class="flex-grow relative">
+          <apx-chart
+            *ngIf="userConsumptionChartOptions"
+            [series]="userConsumptionChartOptions.series"
+            [chart]="userConsumptionChartOptions.chart"
+            [labels]="userConsumptionChartOptions.labels"
+            [colors]="userConsumptionChartOptions.colors"
+            [dataLabels]="userConsumptionChartOptions.dataLabels"
+            [tooltip]="userConsumptionChartOptions.tooltip"
+            class="absolute inset-0 w-full h-full"
+          ></apx-chart>
+          <div *ngIf="!userConsumptionChartOptions" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
+            <p class="text-xs text-gray-500 text-center">No consumption methods recorded</p>
           </div>
+        </div>
+      </div>
 
-          <!-- Activity Chart (Full Width) -->
-          <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 h-[400px]">
-            <h3 class="text-lg font-semibold mb-2 text-gray-800">Activity Timeline</h3>
-            <div class="h-[calc(100%-40px)]">
-              <apx-chart
-                *ngIf="activityTimelineChartOptions"
-                [series]="activityTimelineChartOptions.series"
-                [chart]="activityTimelineChartOptions.chart"
-                [xaxis]="activityTimelineChartOptions.xaxis"
-                [colors]="activityTimelineChartOptions.colors"
-                height="100%"
-              ></apx-chart>
-            </div>
+      <!-- Report Views Pie Chart -->
+      <div class="bg-white shadow-sm p-4 rounded-lg border border-gray-100 flex flex-col" style="min-height: 380px;">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Top Reports</h3>
+        <div class="flex-grow relative">
+          <apx-chart
+            *ngIf="userReportViewsChartOptions"
+            [series]="userReportViewsChartOptions.series"
+            [chart]="userReportViewsChartOptions.chart"
+            [labels]="userReportViewsChartOptions.labels"
+            [colors]="userReportViewsChartOptions.colors"
+            [dataLabels]="userReportViewsChartOptions.dataLabels"
+            [tooltip]="userReportViewsChartOptions.tooltip"
+            [legend]="userReportViewsChartOptions.legend"
+            class="absolute inset-0 w-full h-full"
+          ></apx-chart>
+          <div *ngIf="!userReportViewsChartOptions" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
+            <p class="text-xs text-gray-500 text-center">No report views recorded</p>
           </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Activity Chart (Full Width) - With more spacing -->
+    <div class="mt-8 bg-white shadow-sm p-4 rounded-lg border border-gray-100" style="height: 420px;">
+      <h3 class="text-lg font-semibold mb-4 text-gray-800">Activity Timeline</h3>
+      <div class="h-[calc(100%-40px)]">
+        <apx-chart
+          *ngIf="activityTimelineChartOptions"
+          [series]="activityTimelineChartOptions.series"
+          [chart]="activityTimelineChartOptions.chart"
+          [xaxis]="activityTimelineChartOptions.xaxis"
+          [colors]="activityTimelineChartOptions.colors"
+          height="100%"
+        ></apx-chart>
+      </div>
+    </div>
           <div *ngIf="showDatePopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
               <!-- Header -->
@@ -541,4 +583,61 @@
       </ng-template>
     </ng-container>
   </div>
+
+
+  <div *ngIf="showUserListModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b p-4">
+        <h3 class="text-lg font-semibold text-gray-800">
+          {{ modalTitle }}
+        </h3>
+        <button 
+          (click)="closeUserListModal()"
+          class="text-gray-500 hover:text-gray-700 focus:outline-none"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto">
+        <div *ngIf="modalUsers.length > 0" class="divide-y divide-gray-200">
+          <div *ngFor="let user of modalUsers" class="p-4 hover:bg-gray-50 transition-colors">
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-medium text-gray-900">{{ user.name || user.id }}</h4>
+                <p *ngIf="user.totalViews !== undefined" class="text-sm text-gray-500 mt-1">
+                  Views: {{ user.totalViews }}
+                </p>
+              </div>
+              <span *ngIf="user.lastActivity" class="text-sm text-gray-500">
+                Last active: {{ user.lastActivity === 'Never' ? 'Never' : (user.lastActivity | date:'mediumDate') }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="modalUsers.length === 0" class="p-8 text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h4 class="mt-4 font-medium text-gray-900">No users found</h4>
+          <p class="mt-1 text-gray-500">There are no users matching this criteria</p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="border-t p-4 flex justify-end">
+        <button
+          (click)="closeUserListModal()"
+          class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
