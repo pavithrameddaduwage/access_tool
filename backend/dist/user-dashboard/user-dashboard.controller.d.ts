@@ -37,4 +37,10 @@ export declare class UserDashboardController {
         workspaceName: string;
         reportName: string;
     }): Promise<UserMetric[]>;
+    getLastDeactivatedUsers(limit?: number): Promise<{
+        email: string;
+        userName: string;
+        department: string;
+        lastActiveAt?: Date;
+    }[]>;
 }

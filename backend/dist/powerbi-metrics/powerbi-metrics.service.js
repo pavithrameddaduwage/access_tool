@@ -1043,11 +1043,30 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const activeUserIds = activeUsers.map(u => u.userId);
         const zeroViewUsers = permittedUsers.filter(email => !activeUserIds.includes(email)).length;
         const lowActivityUsers = activeUsers.filter(u => parseInt(u.count) < 5).length;
+        const deactivatedUsers = await this.userDashboardService.getLastDeactivatedUsers(5);
+        const userEmails = deactivatedUsers.map(u => u.email);
+        let nameMappings = {};
+        if (userEmails.length > 0) {
+            try {
+                const nameResponse = await this.getUserNameMappings(userEmails);
+                nameMappings = nameResponse?.names || {};
+            }
+            catch (error) {
+                console.warn('Failed to get name mappings:', error);
+            }
+        }
         return {
             totalUsers,
             totalViews,
             zeroViewUsers,
-            lowActivityUsers
+            lowActivityUsers,
+            deactivatedUsers: deactivatedUsers.length,
+            lastDeactivatedUsers: deactivatedUsers.map(u => ({
+                email: u.email,
+                name: nameMappings[u.email] || u.email.split('@')[0],
+                department: u.department || 'Unknown',
+                deactivatedAt: u.lastActiveAt
+            }))
         };
     }
     async getUserNameMappings(emails) {

@@ -58,4 +58,9 @@ async getDatabaseUsersByWorkspaceAndReportID(@Body() data: { workspaceName: stri
 ): Promise<UserMetric[]> {
   return this.userDashboardService.getDatabaseUsersByWorkspaceAndReportID(data.workspaceName, data.reportName);
 }
+
+@Get('last-deactivated')
+async getLastDeactivatedUsers(@Query('limit') limit: number = 5) {
+  return this.userDashboardService.getLastDeactivatedUsers(limit);
+}
 }

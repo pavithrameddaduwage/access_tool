@@ -94,5 +94,12 @@ export declare class PowerBIMetricsController {
         totalViews: number;
         zeroViewUsers: number;
         lowActivityUsers: number;
+        deactivatedUsers: number;
+        lastDeactivatedUsers: {
+            email: string;
+            name: string;
+            department: string;
+            deactivatedAt: Date;
+        }[];
     }>;
 }

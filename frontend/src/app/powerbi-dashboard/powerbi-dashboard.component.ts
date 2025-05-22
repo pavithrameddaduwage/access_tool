@@ -101,6 +101,7 @@ interface User {
   templateUrl: './powerbi-dashboard.component.html',
   styleUrls: ['./powerbi-dashboard.component.css'],
   imports: [CommonModule, NgApexchartsModule, ReactiveFormsModule, FormsModule],
+
   standalone: true
 })
 export class PowerBIDashboardComponent implements OnInit {
@@ -166,13 +167,20 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
     { label: '90 Days', days: 90 }
   ];
 
-  userCounts = {
-    totalUsers: 0,
-    totalViews: 0,
-    zeroViewUsers: 0,
-    lowActivityUsers: 0
-  };
-
+  // userCounts = {
+  //   totalUsers: 0,
+  //   totalViews: 0,
+  //   zeroViewUsers: 0,
+  //   lowActivityUsers: 0
+  // };
+userCounts = {
+  totalUsers: 0,
+  totalViews: 0,
+  zeroViewUsers: 0,
+  lowActivityUsers: 0,
+  deactivatedUsers: 0,
+  lastDeactivatedUsers: [] as {email: string, name: string, department: string, deactivatedAt: Date}[]
+};
   
 
   constructor(
@@ -285,17 +293,33 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
       }],
       chart: {
         type: 'area',
-        height: 300,
+        height: 280,
       },
       xaxis: {
         type: 'datetime',
         labels: {
           datetimeUTC: true,
-          format: 'dd MMM' // More readable date format
+          format: 'dd MMM', // More readable date format
+          rotate: -45, // Rotate labels to prevent overlap
+          rotateAlways: false,
+          hideOverlappingLabels: true,
+          trim: false, // Don't trim labels
+          maxHeight: 120, // Give more space for rotated labels,
+          showDuplicates: false,
+          
+        },
+        // Add padding to ensure last label is visible
+        axisBorder: {
+          show: true
+        },
+        axisTicks: {
+          show: true
         }
       },
       yaxis: {
-        title: { text: 'Views' },
+        title: {
+          text: 'Views'
+        },
         min: 0 // Always start at 0
       },
       stroke: {
@@ -314,6 +338,19 @@ userReportViews: {reportId: string, reportName: string, count: number}[] = [];
           shadeIntensity: 1,
           opacityFrom: 0.7,
           opacityTo: 0.3,
+        }
+      },
+      // Add padding to the chart to ensure labels fit
+      plotOptions: {
+        area: {
+          fillTo: 'end'
+        }
+      },
+      // Ensure there's enough margin for labels
+      grid: {
+        padding: {
+          right: 20,
+          left: 20
         }
       }
     };
@@ -1090,7 +1127,142 @@ getUserDisplayName(userId: string): string {
   //   }
   // }
 
-  async loadData(days: number): Promise<void> {
+
+
+
+
+
+  // new one
+  // async loadData(days: number): Promise<void> {
+  //   this.loading = true;
+  //   this.error = '';
+  //   this.selectedPeriod = days;
+  
+  //   try {
+  //     const endDate = new Date();
+  //     const startDate = new Date();
+  //     startDate.setDate(endDate.getDate() - days);
+  //     this.loadingUnusedReports = true;
+  
+  //     // Handle workspace and report filters
+  //     const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
+  //       ? undefined 
+  //       : this.selectedWorkspace as string;
+      
+  //     const reportId = this.selectedReport === null 
+  //       ? undefined 
+  //       : this.selectedReport as string;
+  
+  //     this.unusedReports = await this.powerBIMetricsService.getUnusedReports(
+  //       startDate, 
+  //       endDate,
+  //       workspaceId
+  //     ).toPromise() || [];
+  
+  //     // Get all metrics in parallel with filters applied
+  //     const [
+  //       viewsByDate, 
+  //       topReports, 
+  //       topUsers, 
+  //       activityTrend,
+  //       uniqueUserCount,
+  //       counts
+  //     ] = await Promise.all([
+  //       this.powerBIMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId).toPromise(),
+  //       reportId 
+  //         ? this.powerBIMetricsService.getDistinctReports(startDate, endDate, workspaceId)
+  //             .toPromise()
+  //             .then(reports => {
+  //               if (!reports) return [];
+  //               return reports.filter(r => r.id === reportId)
+  //                 .map(r => ({
+  //                   reportId: r.id,
+  //                   reportName: r.name,
+  //                   count: 0 // Will be updated from viewsByDate
+  //                 }));
+  //             })
+  //         : this.powerBIMetricsService.getTopReports(startDate, endDate, 10, workspaceId).toPromise(),
+  //       this.powerBIMetricsService.getTopUsers(startDate, endDate, 10, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId).toPromise(),
+  //       this.powerBIMetricsService.getUserCounts(startDate, endDate, workspaceId, reportId).toPromise()
+  //     ]);
+  
+  //     // Store user counts data
+  //     this.userCounts = counts || {
+  //       totalUsers: 0,
+  //       totalViews: 0,
+  //       zeroViewUsers: 0,
+  //       lowActivityUsers: 0
+  //     };
+  
+  //     // Handle unique report count separately
+  //     const uniqueReportCount = reportId 
+  //       ? 1 
+  //       : await this.powerBIMetricsService.getUniqueReportCount(startDate, endDate, workspaceId).toPromise();
+  
+  //     // If a report is selected, update its count from viewsByDate
+  //     if (reportId && topReports && topReports.length > 0 && viewsByDate) {
+  //       const totalViews = viewsByDate.reduce((sum, day) => sum + (day?.count || 0), 0);
+  //       topReports[0].count = totalViews;
+  //     }
+  
+  //     // Calculate total views
+  //     const totalViews = (viewsByDate || []).reduce((sum, day) => sum + (day?.count || 0), 0);
+  
+  //     // Update metrics
+  //     this.metrics = {
+  //       totalViews,
+  //       uniqueUsers: uniqueUserCount || 0,
+  //       uniqueReports: uniqueReportCount || 0,
+  //       topReports: topReports || [],
+  //       topUsers: topUsers || [],
+  //       activityTrend: activityTrend || [],
+  //       viewsByDate: (viewsByDate || []).reduce((acc, day) => {
+  //         if (day?.date) {
+  //           acc[day.date] = day.count || 0;
+  //         }
+  //         return acc;
+  //       }, {} as Record<string, number>)
+  //     };
+  
+  //     // Process users and workspaces
+  //     await this.processUsers(startDate, endDate, workspaceId, reportId);
+  //     this.prepareCharts();
+      
+  //     // If a user is selected, refresh their data with the new filters
+  //     if (this.selectedUserId) {
+  //       await this.selectUser(this.selectedUserId);
+  //     }
+      
+  //     this.dataLoaded = true;
+  //   } catch (error) {
+  //     console.error('Error loading data:', error);
+  //     this.unusedReports = [];
+  //     this.error = 'Failed to load data';
+  //     this.metrics = {
+  //       totalViews: 0,
+  //       uniqueUsers: 0,
+  //       uniqueReports: 0,
+  //       topReports: [],
+  //       topUsers: [],
+  //       activityTrend: [],
+  //       viewsByDate: {}
+  //     };
+  //     // Reset user counts data on error
+  //     this.userCounts = {
+  //       totalUsers: 0,
+  //       totalViews: 0,
+  //       zeroViewUsers: 0,
+  //       lowActivityUsers: 0
+  //     };
+  //   } finally {
+  //     this.loading = false;
+  //     this.loadingUnusedReports = false;
+  //   }
+  // }
+
+async loadData(days: number): Promise<void> {
     this.loading = true;
     this.error = '';
     this.selectedPeriod = days;
@@ -1100,7 +1272,7 @@ getUserDisplayName(userId: string): string {
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - days);
       this.loadingUnusedReports = true;
-  
+
       // Handle workspace and report filters
       const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
         ? undefined 
@@ -1145,12 +1317,14 @@ getUserDisplayName(userId: string): string {
         this.powerBIMetricsService.getUserCounts(startDate, endDate, workspaceId, reportId).toPromise()
       ]);
   
-      // Store user counts data
-      this.userCounts = counts || {
-        totalUsers: 0,
-        totalViews: 0,
-        zeroViewUsers: 0,
-        lowActivityUsers: 0
+      // Store user counts data with deactivated users
+      this.userCounts = {
+        totalUsers: counts?.totalUsers || 0,
+        totalViews: counts?.totalViews || 0,
+        zeroViewUsers: counts?.zeroViewUsers || 0,
+        lowActivityUsers: counts?.lowActivityUsers || 0,
+        deactivatedUsers: counts?.deactivatedUsers || 0,
+        lastDeactivatedUsers: counts?.lastDeactivatedUsers || []
       };
   
       // Handle unique report count separately
@@ -1211,13 +1385,16 @@ getUserDisplayName(userId: string): string {
         totalUsers: 0,
         totalViews: 0,
         zeroViewUsers: 0,
-        lowActivityUsers: 0
+        lowActivityUsers: 0,
+        deactivatedUsers: 0,
+        lastDeactivatedUsers: []
       };
     } finally {
       this.loading = false;
       this.loadingUnusedReports = false;
     }
   }
+
   private prepareUserConsumptionChart() {
     // Check if there are no consumption methods or all counts are 0
     if (!this.userConsumptionMethods || this.userConsumptionMethods.length === 0 || 
@@ -1484,6 +1661,18 @@ private async processUsers(
   //   );
   //   this.currentPage = 1;
   // }
+  // filterUsers() {
+  //   if (!this.userSearchQuery) {
+  //     this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
+  //     return;
+  //   }
+  
+  //   const query = this.userSearchQuery.toLowerCase();
+  //   this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers].filter(user => 
+  //     user.id.toLowerCase().includes(query)
+  //   );
+  //   this.currentPage = 1;
+  // }
   filterUsers() {
     if (!this.userSearchQuery) {
       this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
@@ -1492,7 +1681,8 @@ private async processUsers(
   
     const query = this.userSearchQuery.toLowerCase();
     this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers].filter(user => 
-      user.id.toLowerCase().includes(query)
+      user.id.toLowerCase().includes(query) || 
+      (user.name && user.name.toLowerCase().includes(query))
     );
     this.currentPage = 1;
   }
@@ -1723,7 +1913,7 @@ modalTitle = '';
 modalUsers: UserDetail[] = [];
 
 // Add these methods to your component class
-openUserListModal(type: 'all' | 'zero' | 'low' | 'active') {
+openUserListModal(type: 'all' | 'zero' | 'low' | 'active' | 'deactivated') {
   switch (type) {
     case 'all':
       this.modalTitle = 'All Users (' + this.metrics.uniqueUsers + ')';
@@ -1742,6 +1932,19 @@ openUserListModal(type: 'all' | 'zero' | 'low' | 'active') {
     case 'active':
       this.modalTitle = 'Active Users (' + (this.metrics.uniqueUsers - this.userCounts.zeroViewUsers) + ')';
       this.modalUsers = this.allRegularUsers;
+      break;
+      case 'deactivated':
+      this.modalTitle = 'Last Deactivated Users (' + this.userCounts.deactivatedUsers + ')';
+      this.modalUsers = this.userCounts.lastDeactivatedUsers.map(u => ({
+        id: u.email,
+        name: u.name,
+        department: u.department,
+        totalViews: 0,
+        reports: 0,
+        workspaces: 0,
+        lastActivity: u.deactivatedAt ? new Date(u.deactivatedAt).toLocaleDateString() : 'Never',
+        activityByDate: []
+      }));
       break;
   }
   this.showUserListModal = true;

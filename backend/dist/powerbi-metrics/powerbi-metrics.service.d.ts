@@ -193,6 +193,13 @@ export declare class PowerBIMetricsService {
         totalViews: number;
         zeroViewUsers: number;
         lowActivityUsers: number;
+        deactivatedUsers: number;
+        lastDeactivatedUsers: {
+            email: string;
+            name: string;
+            department: string;
+            deactivatedAt: Date;
+        }[];
     }>;
     getUserNameMappings(emails: string[]): Promise<{
         names: {

@@ -39,4 +39,10 @@ export declare class UserDashboardService {
     getDatabaseUsers(): Promise<UserMetric[]>;
     getDatabaseUsersByWorkspaceAndReportID(workspaceName: string, reportName: string): Promise<UserMetric[]>;
     getPermittedUsers(workspaceName?: string, reportName?: string): Promise<string[]>;
+    getLastDeactivatedUsers(limit?: number): Promise<{
+        email: string;
+        userName: string;
+        department: string;
+        lastActiveAt?: Date;
+    }[]>;
 }

@@ -2078,6 +2078,73 @@ async getTopReports(startDate: Date, endDate: Date, limit: number = 10, workspac
 
 
 
+// async getUserCounts(
+//   startDate: Date, 
+//   endDate: Date,
+//   workspaceId?: string,
+//   reportId?: string
+// ): Promise<{
+//   totalUsers: number;
+//   totalViews: number;
+//   zeroViewUsers: number;
+//   lowActivityUsers: number;
+// }> {
+//   // Get all permitted users based on filters
+//   let workspaceName: string | undefined;
+//   let reportName: string | undefined;
+  
+//   if (workspaceId && workspaceId !== 'all') {
+//     workspaceName = await this.workspaceMappingService.getDisplayName(workspaceId);
+//   }
+  
+//   if (reportId) {
+//     reportName = await this.reportMappingService.getDisplayName(reportId);
+//   }
+  
+//   const permittedUsers = await this.userDashboardService.getPermittedUsers(workspaceName, reportName);
+//   const totalUsers = permittedUsers.length;
+
+  
+//   // Get active users from Power BI logs with view counts
+//   const query = this.powerbiLogRepository
+//     .createQueryBuilder('log')
+//     .select('log.userId', 'userId')
+//     .addSelect('COUNT(*)', 'count')
+//     .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+//     .andWhere("log.operation = 'ViewReport'")
+//     .groupBy('log.userId');
+
+//   if (workspaceId && workspaceId !== 'all') {
+//     if (workspaceId === '000000') {
+//       query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+//     } else {
+//       query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+//     }
+//   }
+
+//   if (reportId) {
+//     query.andWhere('log.reportId = :reportId', { reportId });
+//   }
+
+//   const activeUsers = await query.getRawMany();
+
+//   // Calculate metrics
+//   const totalViews = activeUsers.reduce((sum, user) => sum + parseInt(user.count), 0);
+  
+//   // Get users with zero views (permitted but not in active users)
+//   const activeUserIds = activeUsers.map(u => u.userId);
+//   const zeroViewUsers = permittedUsers.filter(email => !activeUserIds.includes(email)).length;
+  
+//   // Get users with less than 5 views
+//   const lowActivityUsers = activeUsers.filter(u => parseInt(u.count) < 5).length;
+
+//   return {
+//     totalUsers,
+//     totalViews,
+//     zeroViewUsers,
+//     lowActivityUsers
+//   };
+// }
 async getUserCounts(
   startDate: Date, 
   endDate: Date,
@@ -2088,6 +2155,8 @@ async getUserCounts(
   totalViews: number;
   zeroViewUsers: number;
   lowActivityUsers: number;
+  deactivatedUsers: number;
+  lastDeactivatedUsers: {email: string, name: string, department: string, deactivatedAt: Date}[];
 }> {
   // Get all permitted users based on filters
   let workspaceName: string | undefined;
@@ -2137,11 +2206,35 @@ async getUserCounts(
   // Get users with less than 5 views
   const lowActivityUsers = activeUsers.filter(u => parseInt(u.count) < 5).length;
 
+  // Get last deactivated users
+  const deactivatedUsers = await this.userDashboardService.getLastDeactivatedUsers(5);
+  
+  // Get name mappings for deactivated users
+  const userEmails = deactivatedUsers.map(u => u.email);
+  let nameMappings: { [key: string]: string } = {};
+  
+  if (userEmails.length > 0) {
+    try {
+      const nameResponse = await this.getUserNameMappings(userEmails);
+      nameMappings = nameResponse?.names || {};
+    } catch (error) {
+      // Handle error gracefully, use default names
+      console.warn('Failed to get name mappings:', error);
+    }
+  }
+
   return {
     totalUsers,
     totalViews,
     zeroViewUsers,
-    lowActivityUsers
+    lowActivityUsers,
+    deactivatedUsers: deactivatedUsers.length,
+    lastDeactivatedUsers: deactivatedUsers.map(u => ({
+      email: u.email,
+      name: nameMappings[u.email] || u.email.split('@')[0],
+      department: u.department || 'Unknown',
+      deactivatedAt: u.lastActiveAt
+    }))
   };
 }
 async getUserNameMappings(emails: string[]): Promise<{

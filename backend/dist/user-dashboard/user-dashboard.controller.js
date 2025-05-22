@@ -45,6 +45,9 @@ let UserDashboardController = class UserDashboardController {
     async getDatabaseUsersByWorkspaceAndReportID(data) {
         return this.userDashboardService.getDatabaseUsersByWorkspaceAndReportID(data.workspaceName, data.reportName);
     }
+    async getLastDeactivatedUsers(limit = 5) {
+        return this.userDashboardService.getLastDeactivatedUsers(limit);
+    }
 };
 exports.UserDashboardController = UserDashboardController;
 __decorate([
@@ -103,6 +106,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserDashboardController.prototype, "getDatabaseUsersByWorkspaceAndReportID", null);
+__decorate([
+    (0, common_1.Get)('last-deactivated'),
+    __param(0, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UserDashboardController.prototype, "getLastDeactivatedUsers", null);
 exports.UserDashboardController = UserDashboardController = __decorate([
     (0, common_1.Controller)('user-dashboards'),
     __metadata("design:paramtypes", [user_dashboard_service_1.UserDashboardService])

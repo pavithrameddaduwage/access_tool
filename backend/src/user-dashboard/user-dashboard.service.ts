@@ -263,5 +263,18 @@ async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
 
   return results.map(r => r.email);
 }
+// user-dashboard.service.ts
+
+async getLastDeactivatedUsers(limit: number = 5): Promise<{email: string, userName: string, department: string, lastActiveAt?: Date}[]> {
+  return this.userDashboardRepository.query(`
+    SELECT DISTINCT ON (email) email, "userName", department, "lastActiveAt"
+    FROM user_dashboard 
+    WHERE "isActive" = false 
+    ORDER BY email, "lastActiveAt" DESC 
+    LIMIT $1
+  `, [limit]);
+}
+
+
 
 }

@@ -190,135 +190,158 @@
 
     <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
       <!-- User List Section -->
-      <div class="mb-8 bg-white p-2 rounded-lg shadow-md mt-5">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- User Table (left side) -->
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold text-gray-700">User List</h3>
-              <!-- Export Icon -->
-              <button
-                class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
-                (click)="exportUserListToCSV()"
-                title="Export to CSV"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-              </button>
-            </div>
-            
-            <!-- Search Input -->
-            <div class="mb-4">
-              <input
-                type="text"
-                placeholder="Search users..."
-                class="w-full p-2 border rounded-lg"
-                [(ngModel)]="userSearchQuery"
-                (input)="filterUsers()"
-              />
-            </div>
-            
-            <!-- User Table -->
-            <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
-              <table class="min-w-full divide-y divide-gray-200">
-                <!-- Table Headers -->
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Department
-                    </th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Views
-                    </th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Last Seen
-                    </th>
-                  </tr>
-                </thead>
-    
-                <!-- Table Body -->
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <tr *ngFor="let user of getPaginatedUsers()"
-                      class="hover:bg-gray-50 cursor-pointer transition-colors"
-                      [class.bg-blue-50]="selectedUserId === user.id"
-                      (click)="selectUser(user.id)">
-                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
-                      {{ user.name }}
-                    </td>
-                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
-                      {{ user.department }}
-                    </td>
-                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">
-                      {{ user.totalViews }}
-                    </td>
-                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">
-                      {{ user.lastActivity }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
-            <!-- Pagination Controls -->
-            <div class="pagination-controls mt-4 flex justify-center gap-2">
-              <button
-                *ngFor="let page of getPageNumbers()"
-                (click)="changePage(page)"
-                class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
-                [class.bg-blue-500.text-white]="currentPage === page"
-              >
-                {{ page }}
-              </button>
-            </div>
-          </div>
-    
-          <!-- User Metrics Tiles (right side) -->
-          <div class="grid grid-cols-2 gap-4 h-fit">
-            <!-- Total Users Tile -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" (click)="openUserListModal('all')">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">Total Users</h3>
-              <p class="text-3xl font-bold text-blue-600">{{ metrics.uniqueUsers || 0 }}</p>
-              <p class="text-xs text-gray-500 mt-1">All users in the system</p>
-            </div>
-    
-            <!-- Total Views Tile -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">Total Views</h3>
-              <p class="text-3xl font-bold text-green-600">{{ userCounts.totalViews }}</p>
-              <p class="text-xs text-gray-500 mt-1">Across all reports</p>
-            </div>
-    
-            <!-- Zero View Users Tile -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" (click)="openUserListModal('zero')">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">Zero View Users</h3>
-              <p class="text-3xl font-bold text-orange-600">{{ userCounts.zeroViewUsers }}</p>
-              <p class="text-xs text-gray-500 mt-1">No views in selected period</p>
-            </div>
-    
-            <!-- Low Activity Users Tile -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" (click)="openUserListModal('low')">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">Low Activity Users</h3>
-              <p class="text-3xl font-bold text-purple-600">{{ userCounts.lowActivityUsers }}</p>
-              <p class="text-xs text-gray-500 mt-1">Less than 5 views</p>
-            </div>
-          </div>
+<!-- User List Section with properly aligned tiles -->
+<div class="mb-8 bg-white p-2 rounded-lg shadow-md mt-5">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- User Table (left side) -->
+    <div class="flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-700">User List</h3>
+        <!-- Export Icon -->
+        <button
+          class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+          (click)="exportUserListToCSV()"
+          title="Export to CSV"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- This container will define the height for both columns -->
+      <div class="flex-1 flex flex-col">
+        <!-- Search Input -->
+        <div class="mb-4">
+          <input
+            type="text"
+            placeholder="Search users..."
+            class="w-full p-2 border rounded-lg"
+            [(ngModel)]="userSearchQuery"
+            (input)="filterUsers()"
+          />
+        </div>
+        
+        <!-- User Table -->
+        <div class="flex-1 overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <table class="min-w-full divide-y divide-gray-200 h-full">
+            <!-- Table Headers -->
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Department
+                </th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Views
+                </th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Last Seen
+                </th>
+              </tr>
+            </thead>
+
+            <!-- Table Body -->
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let user of getPaginatedUsers()"
+                  class="hover:bg-gray-50 cursor-pointer transition-colors"
+                  [class.bg-blue-50]="selectedUserId === user.id"
+                  (click)="selectUser(user.id)">
+                <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
+                  {{ user.name }}
+                </td>
+                <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
+                  {{ user.department }}
+                </td>
+                <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">
+                  {{ user.totalViews }}
+                </td>
+                <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">
+                  {{ user.lastActivity }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div class="pagination-controls mt-4 flex justify-center gap-2">
+          <button
+            *ngFor="let page of getPageNumbers()"
+            (click)="changePage(page)"
+            class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
+            [class.bg-blue-500.text-white]="currentPage === page"
+          >
+            {{ page }}
+          </button>
         </div>
       </div>
+    </div>
+
+    <!-- User Metrics Tiles (right side) - Now properly aligned -->
+    <div class="lg:col-span-1">
+      <!-- Empty div to align with the header + export button on the left -->
+      <div class="h-10 mb-4"></div>
+      
+      <!-- Container that matches the height of search + table + pagination -->
+      <div class="flex flex-col gap-4 h-full">
+        <!-- First Row: Total Users + Total Views -->
+        <div class="grid grid-cols-2 gap-1">
+          <!-- Total Users Tile -->
+          <div class="bg-white p-5 rounded-lg shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 hover:shadow-xl transition-all duration-200" style="height: 140px;" (click)="openUserListModal('all')">
+            <h3 class="text-base font-medium text-gray-600 mb-2">Total Users</h3>
+            <p class="text-3xl font-bold text-blue-600 mb-2">{{ metrics.uniqueUsers || 0 }}</p>
+            <p class="text-sm text-gray-500">All users in the system</p>
+          </div>
+      
+          <!-- Total Views Tile -->
+          <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-200" style="height: 140px;">
+            <h3 class="text-base font-medium text-gray-600 mb-2">Total Views</h3>
+            <p class="text-3xl font-bold text-green-600 mb-2">{{ userCounts.totalViews }}</p>
+            <p class="text-sm text-gray-500">Across all reports</p>
+          </div>
+        </div>
+  
+        <!-- Second Row: Zero View Users + Low Activity Users -->
+        <div class="grid grid-cols-2 gap-1">
+          <!-- Zero View Users Tile -->
+          <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 hover:shadow-xl transition-all duration-200" style="height: 140px;" (click)="openUserListModal('zero')">
+            <h3 class="text-base font-medium text-gray-600 mb-2">Zero View Users</h3>
+            <p class="text-3xl font-bold text-orange-600 mb-2">{{ userCounts.zeroViewUsers }}</p>
+            <p class="text-sm text-gray-500">No views in selected period</p>
+          </div>
+      
+          <!-- Low Activity Users Tile -->
+          <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 hover:shadow-xl transition-all duration-200" style="height: 140px;" (click)="openUserListModal('low')">
+            <h3 class="text-base font-medium text-gray-600 mb-2">Low Activity Users</h3>
+            <p class="text-3xl font-bold text-purple-600 mb-2">{{ userCounts.lowActivityUsers }}</p>
+            <p class="text-sm text-gray-500">Less than 5 views</p>
+          </div>
+        </div>
+  
+        <!-- Third Row: Deactivated Users (single tile) -->
+        <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 hover:shadow-xl transition-all duration-200" style="height: 140px;" (click)="openUserListModal('deactivated')">
+          <h3 class="text-base font-medium text-gray-600 mb-2">Deactivated Users</h3>
+          <p class="text-3xl font-bold text-red-600 mb-2">{{ userCounts.deactivatedUsers }}</p>
+          <p class="text-sm text-gray-500">Last 5 Deactivated users</p>
+        </div>
+      </div>
+  </div>
+  </div>
+</div>
 
 <!-- User Metrics -->
 <div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6">
@@ -586,53 +609,61 @@
 
 
   <div *ngIf="showUserListModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[80vh] flex flex-col overflow-hidden border border-gray-100">
       <!-- Header -->
-      <div class="flex justify-between items-center border-b p-4">
+      <div class="flex justify-between items-center border-b border-gray-100 px-5 py-3 bg-gray-50">
         <h3 class="text-lg font-semibold text-gray-800">
-          {{ modalTitle }}
+          {{ modalTitle }} <span *ngIf="modalUsers.length > 0" class="text-gray-500 font-normal">({{modalUsers.length}})</span>
         </h3>
         <button 
           (click)="closeUserListModal()"
-          class="text-gray-500 hover:text-gray-700 focus:outline-none"
+          class="text-gray-400 hover:text-gray-600 transition-colors duration-150 focus:outline-none"
+          aria-label="Close modal"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
-      
+
       <!-- Content -->
       <div class="flex-1 overflow-y-auto">
-        <div *ngIf="modalUsers.length > 0" class="divide-y divide-gray-200">
-          <div *ngFor="let user of modalUsers" class="p-4 hover:bg-gray-50 transition-colors">
+        <div *ngIf="modalUsers.length > 0" class="divide-y divide-gray-100">
+          <div *ngFor="let user of modalUsers" class="px-4 py-2.5 hover:bg-gray-50 transition-colors duration-150">
             <div class="flex justify-between items-center">
-              <div>
-                <h4 class="font-medium text-gray-900">{{ user.name || user.id }}</h4>
-                <p *ngIf="user.totalViews !== undefined" class="text-sm text-gray-500 mt-1">
-                  Views: {{ user.totalViews }}
-                </p>
+              <div class="flex items-center space-x-3 min-w-0">
+                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-xs font-medium">
+                  {{ (user.name || user.id).charAt(0).toUpperCase() }}
+                </div>
+                <div class="min-w-0">
+                  <h4 class="text-sm font-medium text-gray-900 truncate">{{ user.name || user.id }}</h4>
+                  <p *ngIf="user.totalViews !== undefined" class="text-xs text-gray-500 mt-0.5">
+                    {{ user.totalViews }} views
+                  </p>
+                </div>
               </div>
-              <span *ngIf="user.lastActivity" class="text-sm text-gray-500">
-                Last active: {{ user.lastActivity === 'Never' ? 'Never' : (user.lastActivity | date:'mediumDate') }}
+              <span *ngIf="user.lastActivity" class="text-xs text-gray-500 whitespace-nowrap pl-2">
+                {{ user.lastActivity === 'Never' ? 'Never active' : (user.lastActivity | date:'shortDate') }}
               </span>
             </div>
           </div>
         </div>
         <div *ngIf="modalUsers.length === 0" class="p-8 text-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h4 class="mt-4 font-medium text-gray-900">No users found</h4>
-          <p class="mt-1 text-gray-500">There are no users matching this criteria</p>
+          <div class="mx-auto h-16 w-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h4 class="text-base font-medium text-gray-900">No users found</h4>
+          <p class="mt-1 text-sm text-gray-500 max-w-md mx-auto">There are currently no users matching this criteria</p>
         </div>
       </div>
-      
+
       <!-- Footer -->
-      <div class="border-t p-4 flex justify-end">
+      <div class="border-t border-gray-100 px-4 py-2.5 bg-gray-50 flex justify-end">
         <button
           (click)="closeUserListModal()"
-          class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="px-4 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-200 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-sm transition-colors duration-150"
         >
           Close
         </button>

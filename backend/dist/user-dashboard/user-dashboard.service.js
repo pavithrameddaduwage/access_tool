@@ -151,6 +151,15 @@ let UserDashboardService = class UserDashboardService {
             .getRawMany();
         return results.map(r => r.email);
     }
+    async getLastDeactivatedUsers(limit = 5) {
+        return this.userDashboardRepository.query(`
+    SELECT DISTINCT ON (email) email, "userName", department, "lastActiveAt"
+    FROM user_dashboard 
+    WHERE "isActive" = false 
+    ORDER BY email, "lastActiveAt" DESC 
+    LIMIT $1
+  `, [limit]);
+    }
 };
 exports.UserDashboardService = UserDashboardService;
 exports.UserDashboardService = UserDashboardService = __decorate([
