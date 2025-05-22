@@ -1916,7 +1916,7 @@ modalUsers: UserDetail[] = [];
 openUserListModal(type: 'all' | 'zero' | 'low' | 'active' | 'deactivated') {
   switch (type) {
     case 'all':
-      this.modalTitle = 'All Users (' + this.metrics.uniqueUsers + ')';
+      this.modalTitle = 'All Users';
       this.modalUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
       break;
     case 'zero':

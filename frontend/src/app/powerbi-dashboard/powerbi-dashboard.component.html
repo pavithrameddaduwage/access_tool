@@ -109,7 +109,7 @@
         
         <!-- Unique Users -->
         <div class="bg-white p-4 rounded-lg transition-shadow" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);" onmouseover="this.style.boxShadow='0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.12)'" onmouseout="this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'">          <h3 class="text-sm font-medium text-gray-600 mb-1">Unique Users</h3>
-          <p class="text-xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsers || 0 }}</p>
+          <p class="text-xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsers + userCounts.zeroViewUsers }}</p>
         </div>
         
         <!-- Unique Reports -->
@@ -303,7 +303,7 @@
           <!-- Total Users Tile -->
           <div class="bg-white p-5 rounded-lg shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 hover:shadow-xl transition-all duration-200" style="height: 140px;" (click)="openUserListModal('all')">
             <h3 class="text-base font-medium text-gray-600 mb-2">Total Users</h3>
-            <p class="text-3xl font-bold text-blue-600 mb-2">{{ metrics.uniqueUsers || 0 }}</p>
+            <p class="text-3xl font-bold text-blue-600 mb-2">{{ metrics.uniqueUsers +  userCounts.zeroViewUsers|| 0 }}</p>
             <p class="text-sm text-gray-500">All users in the system</p>
           </div>
       
@@ -613,7 +613,7 @@
       <!-- Header -->
       <div class="flex justify-between items-center border-b border-gray-100 px-5 py-3 bg-gray-50">
         <h3 class="text-lg font-semibold text-gray-800">
-          {{ modalTitle }} <span *ngIf="modalUsers.length > 0" class="text-gray-500 font-normal">({{modalUsers.length}})</span>
+          {{ modalTitle }} <span *ngIf="modalUsers.length > 0" class="text-gray-500 font-normal"></span>
         </h3>
         <button 
           (click)="closeUserListModal()"
