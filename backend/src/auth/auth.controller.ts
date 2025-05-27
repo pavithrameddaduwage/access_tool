@@ -45,6 +45,7 @@ export class AuthController {
 
 
   @Post('searchUsers')
+  @Public()
   async searchUsers(@Body() data: any) {
     try {
       const users = await this.authService.searchUsers(data.searchkey);

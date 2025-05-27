@@ -48,6 +48,9 @@ let UserDashboardController = class UserDashboardController {
     async getLastDeactivatedUsers(limit = 5) {
         return this.userDashboardService.getLastDeactivatedUsers(limit);
     }
+    async syncDepartments() {
+        return await this.userDashboardService.syncDepartmentsManually();
+    }
 };
 exports.UserDashboardController = UserDashboardController;
 __decorate([
@@ -113,6 +116,12 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserDashboardController.prototype, "getLastDeactivatedUsers", null);
+__decorate([
+    (0, common_1.Post)('sync-departments'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserDashboardController.prototype, "syncDepartments", null);
 exports.UserDashboardController = UserDashboardController = __decorate([
     (0, common_1.Controller)('user-dashboards'),
     __metadata("design:paramtypes", [user_dashboard_service_1.UserDashboardService])

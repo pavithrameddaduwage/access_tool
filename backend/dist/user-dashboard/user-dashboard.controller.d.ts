@@ -43,4 +43,17 @@ export declare class UserDashboardController {
         department: string;
         lastActiveAt?: Date;
     }[]>;
+    syncDepartments(): Promise<{
+        success: boolean;
+        message: string;
+        totalUsersChecked: number;
+        usersUpdated: number;
+        error?: undefined;
+    } | {
+        success: boolean;
+        message: string;
+        error: any;
+        totalUsersChecked?: undefined;
+        usersUpdated?: undefined;
+    }>;
 }

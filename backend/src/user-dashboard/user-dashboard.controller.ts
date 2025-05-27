@@ -63,4 +63,9 @@ async getDatabaseUsersByWorkspaceAndReportID(@Body() data: { workspaceName: stri
 async getLastDeactivatedUsers(@Query('limit') limit: number = 5) {
   return this.userDashboardService.getLastDeactivatedUsers(limit);
 }
+
+@Post('sync-departments')
+  async syncDepartments() {
+    return await this.userDashboardService.syncDepartmentsManually();
+  }
 }

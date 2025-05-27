@@ -9,6 +9,7 @@ import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { UserMetric } from 'src/powerbi-metrics/powerbi-metrics.service';
 import { DashboardWorkspace } from 'src/dashboard/entities/dashboard-workspace.entity';
 import { Workspace } from 'src/workspace/entities/workspace.entity';
+import { SyncUserDepartmentsService } from './sync-user-departments.service';
 
 @Injectable()
 export class UserDashboardService {
@@ -19,6 +20,8 @@ export class UserDashboardService {
    private dashboardRepository: Repository<Dashboard>,
    @InjectRepository(DashboardWorkspace)
     private dashboardWorkspaceRepository: Repository<DashboardWorkspace>,
+    private syncUserDepartmentsService: SyncUserDepartmentsService,
+
  ) {}
 
  // Update findAll() method
@@ -263,7 +266,6 @@ async update(email: string, updateUserDashboardDto: UpdateUserDashboardDto) {
 
   return results.map(r => r.email);
 }
-// user-dashboard.service.ts
 
 async getLastDeactivatedUsers(limit: number = 5): Promise<{email: string, userName: string, department: string, lastActiveAt?: Date}[]> {
   return this.userDashboardRepository.query(`
@@ -273,6 +275,23 @@ async getLastDeactivatedUsers(limit: number = 5): Promise<{email: string, userNa
     ORDER BY email, "lastActiveAt" DESC 
     LIMIT $1
   `, [limit]);
+}
+async syncDepartmentsManually() {
+  try {
+    const result = await this.syncUserDepartmentsService.syncDepartments();
+    return {
+      success: true,
+      message: 'Department synchronization completed successfully',
+      totalUsersChecked: result.totalUsersChecked,
+      usersUpdated: result.usersUpdated,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Department synchronization failed',
+      error: error.message,
+    };
+  }
 }
 
 
