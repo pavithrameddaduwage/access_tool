@@ -32,7 +32,7 @@ export class UserWebtool {
   role: Role;
 
 
-  @Column()
+  @Column({default:true})
   isActive: boolean;
 
   @Column({ nullable: true })
