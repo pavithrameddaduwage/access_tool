@@ -40,8 +40,8 @@ import { ReportMappingModule } from './report-mapping/report-mapping.module';
       host: 'localhost', 
       port: 5432,
       username: 'postgres', 
-      password: '12345', 
-      // password:"M!SAppsTest",
+      // password: '12345', 
+      password:"M!SAppsTest",
  
       database: 'user-access',
       entities: [Type,  Dashboard,
