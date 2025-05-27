@@ -20,11 +20,13 @@ const user_dashboard_entity_1 = require("./entities/user-dashboard.entity");
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
 const dashboard_workspace_entity_1 = require("../dashboard/entities/dashboard-workspace.entity");
 const workspace_entity_1 = require("../workspace/entities/workspace.entity");
+const sync_user_departments_service_1 = require("./sync-user-departments.service");
 let UserDashboardService = class UserDashboardService {
-    constructor(userDashboardRepository, dashboardRepository, dashboardWorkspaceRepository) {
+    constructor(userDashboardRepository, dashboardRepository, dashboardWorkspaceRepository, syncUserDepartmentsService) {
         this.userDashboardRepository = userDashboardRepository;
         this.dashboardRepository = dashboardRepository;
         this.dashboardWorkspaceRepository = dashboardWorkspaceRepository;
+        this.syncUserDepartmentsService = syncUserDepartmentsService;
     }
     async findAll() {
         const results = await this.userDashboardRepository.find({
@@ -160,6 +162,24 @@ let UserDashboardService = class UserDashboardService {
     LIMIT $1
   `, [limit]);
     }
+    async syncDepartmentsManually() {
+        try {
+            const result = await this.syncUserDepartmentsService.syncDepartments();
+            return {
+                success: true,
+                message: 'Department synchronization completed successfully',
+                totalUsersChecked: result.totalUsersChecked,
+                usersUpdated: result.usersUpdated,
+            };
+        }
+        catch (error) {
+            return {
+                success: false,
+                message: 'Department synchronization failed',
+                error: error.message,
+            };
+        }
+    }
 };
 exports.UserDashboardService = UserDashboardService;
 exports.UserDashboardService = UserDashboardService = __decorate([
@@ -169,6 +189,7 @@ exports.UserDashboardService = UserDashboardService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(dashboard_workspace_entity_1.DashboardWorkspace)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        sync_user_departments_service_1.SyncUserDepartmentsService])
 ], UserDashboardService);
 //# sourceMappingURL=user-dashboard.service.js.map
