@@ -17,13 +17,14 @@ const users_module_1 = require("../users/users.module");
 const role_master_entity_1 = require("../users/entities/role_master.entity");
 const user_roles_entity_1 = require("../users/entities/user_roles.entity");
 const user_entity_1 = require("../users/entities/user.entity");
+const analytics_module_1 = require("../analytics/analytics.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            users_module_1.UsersModule,
+            users_module_1.UsersModule, analytics_module_1.AnalyticsModule,
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, role_master_entity_1.RoleMaster, user_roles_entity_1.UserRoles]),
             jwt_1.JwtModule.register({
                 global: true,

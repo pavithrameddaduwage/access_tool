@@ -36,4 +36,13 @@ __decorate([
     (0, class_validator_1.IsNumber)({}, { each: true }),
     __metadata("design:type", Array)
 ], ExternalWebtoolAssignmentDto.prototype, "roleIds", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], ExternalWebtoolAssignmentDto.prototype, "isActive", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Date)
+], ExternalWebtoolAssignmentDto.prototype, "lastActiveAt", void 0);
 //# sourceMappingURL=external-webtool-assignment.dto.js.map

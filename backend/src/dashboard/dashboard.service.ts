@@ -114,6 +114,79 @@ export class DashboardService {
     });
   }
 
+  // async update(id: number, updateDashboardDto: UpdateDashboardDto) {
+  //   const dashboard = await this.dashboardRepository.findOne({
+  //     where: { id },
+  //     relations: ['dashboardTypes', 'dashboardValuetypes', 'dashboardWorkspaces']
+  //   });
+    
+  //   if (!dashboard) {
+  //     throw new NotFoundException(`Dashboard with ID ${id} not found`);
+  //   }
+
+  //   // Check for duplicate name if name is being updated
+  //   if (updateDashboardDto.dashboard && updateDashboardDto.dashboard !== dashboard.dashboard) {
+  //     const existingDashboard = await this.dashboardRepository.findOne({
+  //       where: { dashboard: updateDashboardDto.dashboard }
+  //     });
+
+  //     if (existingDashboard && existingDashboard.id !== id) {
+  //       throw new ConflictException(`Dashboard "${updateDashboardDto.dashboard}" already exists`);
+  //     }
+  //   }
+
+  //   try {
+  //     // Update dashboard name and group
+  //     if (updateDashboardDto.dashboard || updateDashboardDto.groupId !== undefined) {
+  //       Object.assign(dashboard, {
+  //         dashboard: updateDashboardDto.dashboard || dashboard.dashboard,
+  //         groupId: updateDashboardDto.groupId !== undefined ? updateDashboardDto.groupId : dashboard.groupId
+  //       });
+  //       await this.dashboardRepository.save(dashboard);
+  //     }
+
+  //     // Update relationships
+  //     await this.updateRelationships(id, updateDashboardDto);
+
+  //     return this.findOne(id);
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Failed to update dashboard');
+  //   }
+  // }
+
+  // private async updateRelationships(id: number, updateDashboardDto: UpdateDashboardDto) {
+  //   const { typeIds, valueTypeIds, workspaceIds } = updateDashboardDto;
+
+  //   if (typeIds?.length > 0) {
+  //     await this.dashboardTypeRepository.delete({ dashboard: { id } });
+  //     await Promise.all(typeIds.map(typeId => 
+  //       this.dashboardTypeRepository.save({
+  //         dashboard: { id },
+  //         typeId
+  //       })
+  //     ));
+  //   }
+
+  //   if (valueTypeIds?.length > 0) {
+  //     await this.dashboardValuetypeRepository.delete({ dashboard: { id } });
+  //     await Promise.all(valueTypeIds.map(valueTypeId =>
+  //       this.dashboardValuetypeRepository.save({
+  //         dashboard: { id },
+  //         valueTypeId
+  //       })
+  //     ));
+  //   }
+
+  //   if (workspaceIds?.length > 0) {
+  //     await this.dashboardWorkspaceRepository.delete({ dashboard: { id } });
+  //     await Promise.all(workspaceIds.map(workspaceId =>
+  //       this.dashboardWorkspaceRepository.save({
+  //         dashboard: { id },
+  //         workspaceId
+  //       })
+  //     ));
+  //   }
+  // }
   async update(id: number, updateDashboardDto: UpdateDashboardDto) {
     const dashboard = await this.dashboardRepository.findOne({
       where: { id },
@@ -123,18 +196,18 @@ export class DashboardService {
     if (!dashboard) {
       throw new NotFoundException(`Dashboard with ID ${id} not found`);
     }
-
+  
     // Check for duplicate name if name is being updated
     if (updateDashboardDto.dashboard && updateDashboardDto.dashboard !== dashboard.dashboard) {
       const existingDashboard = await this.dashboardRepository.findOne({
         where: { dashboard: updateDashboardDto.dashboard }
       });
-
+  
       if (existingDashboard && existingDashboard.id !== id) {
         throw new ConflictException(`Dashboard "${updateDashboardDto.dashboard}" already exists`);
       }
     }
-
+  
     try {
       // Update dashboard name and group
       if (updateDashboardDto.dashboard || updateDashboardDto.groupId !== undefined) {
@@ -144,50 +217,56 @@ export class DashboardService {
         });
         await this.dashboardRepository.save(dashboard);
       }
-
+  
       // Update relationships
       await this.updateRelationships(id, updateDashboardDto);
-
+  
       return this.findOne(id);
     } catch (error) {
       throw new InternalServerErrorException('Failed to update dashboard');
     }
   }
-
+  
   private async updateRelationships(id: number, updateDashboardDto: UpdateDashboardDto) {
     const { typeIds, valueTypeIds, workspaceIds } = updateDashboardDto;
-
-    if (typeIds?.length > 0) {
+  
+    // Only update relationships if they are provided in the DTO
+    if (typeIds !== undefined) {
       await this.dashboardTypeRepository.delete({ dashboard: { id } });
-      await Promise.all(typeIds.map(typeId => 
-        this.dashboardTypeRepository.save({
-          dashboard: { id },
-          typeId
-        })
-      ));
+      if (typeIds.length > 0) {
+        await Promise.all(typeIds.map(typeId => 
+          this.dashboardTypeRepository.save({
+            dashboard: { id },
+            typeId
+          })
+        ));
+      }
     }
-
-    if (valueTypeIds?.length > 0) {
+  
+    if (valueTypeIds !== undefined) {
       await this.dashboardValuetypeRepository.delete({ dashboard: { id } });
-      await Promise.all(valueTypeIds.map(valueTypeId =>
-        this.dashboardValuetypeRepository.save({
-          dashboard: { id },
-          valueTypeId
-        })
-      ));
+      if (valueTypeIds.length > 0) {
+        await Promise.all(valueTypeIds.map(valueTypeId =>
+          this.dashboardValuetypeRepository.save({
+            dashboard: { id },
+            valueTypeId
+          })
+        ));
+      }
     }
-
-    if (workspaceIds?.length > 0) {
+  
+    if (workspaceIds !== undefined) {
       await this.dashboardWorkspaceRepository.delete({ dashboard: { id } });
-      await Promise.all(workspaceIds.map(workspaceId =>
-        this.dashboardWorkspaceRepository.save({
-          dashboard: { id },
-          workspaceId
-        })
-      ));
+      if (workspaceIds.length > 0) {
+        await Promise.all(workspaceIds.map(workspaceId =>
+          this.dashboardWorkspaceRepository.save({
+            dashboard: { id },
+            workspaceId
+          })
+        ));
+      }
     }
   }
-
   async remove(id: number) {
     try {
       await this.userDashboardRepository.delete({ dashboardId: id });

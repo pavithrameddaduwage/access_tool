@@ -37,6 +37,7 @@ const user_mappings_module_1 = require("./user-mappings/user-mappings.module");
 const powerbi_metrics_module_1 = require("./powerbi-metrics/powerbi-metrics.module");
 const workspace_mapping_module_1 = require("./workspace-mapping/workspace-mapping.module");
 const report_mapping_module_1 = require("./report-mapping/report-mapping.module");
+const analytics_module_1 = require("./analytics/analytics.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -80,6 +81,7 @@ exports.AppModule = AppModule = __decorate([
             powerbi_metrics_module_1.PowerBIMetricsModule,
             workspace_mapping_module_1.WorkspaceMappingModule,
             report_mapping_module_1.ReportMappingModule,
+            analytics_module_1.AnalyticsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -91,7 +93,7 @@ exports.AppModule = AppModule = __decorate([
             {
                 provide: core_1.APP_GUARD,
                 useClass: auth_guard_1.AuthGuard,
-            }
+            },
         ],
     })
 ], AppModule);

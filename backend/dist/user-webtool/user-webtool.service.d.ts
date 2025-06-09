@@ -29,6 +29,7 @@ export declare class UserWebtoolService {
                 name: string;
             }[];
             isActive: boolean;
+            lastActiveAt: Date;
         };
     }>;
     deleteExternalAssignment(dto: ExternalDeleteAssignmentDto): Promise<{

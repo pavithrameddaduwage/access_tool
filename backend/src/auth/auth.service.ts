@@ -1,8 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ADUser } from './interfaces/ad-user.interface';
-
+import { LoginTrackingService } from 'src/analytics/login-tracking.service';
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 
 const ActiveDirectory = require('activedirectory2').promiseWrapper;
 
@@ -40,7 +42,9 @@ const ad = new ActiveDirectory(config);
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(private usersService: UsersService, private jwtService: JwtService,
+    private loginTrackingService: LoginTrackingService,
+    @Inject(REQUEST) private request: Request,   ) {}
 
 
   async authenticateuser(username: string, password: string): Promise<boolean> {
@@ -120,6 +124,15 @@ async signIn(username: string, pass: string): Promise<any> {
     throw new UnauthorizedException('Your account has been deactivated. Please contact your administrator.');
   }
 
+  const loginEvent = await this.loginTrackingService.recordLogin(
+    email,
+    'User Access Tool', 
+    this.request,
+    aduser.department,
+    aduser.location,
+  );
+
+
   // console.log('Creating JWT token...');
   const payload = {
     email: email,
@@ -195,4 +208,8 @@ async signIn(username: string, pass: string): Promise<any> {
       }, 15000);
     });
   }
+
+
+
+  
 }

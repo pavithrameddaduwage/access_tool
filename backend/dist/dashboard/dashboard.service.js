@@ -133,26 +133,32 @@ let DashboardService = class DashboardService {
     }
     async updateRelationships(id, updateDashboardDto) {
         const { typeIds, valueTypeIds, workspaceIds } = updateDashboardDto;
-        if (typeIds?.length > 0) {
+        if (typeIds !== undefined) {
             await this.dashboardTypeRepository.delete({ dashboard: { id } });
-            await Promise.all(typeIds.map(typeId => this.dashboardTypeRepository.save({
-                dashboard: { id },
-                typeId
-            })));
+            if (typeIds.length > 0) {
+                await Promise.all(typeIds.map(typeId => this.dashboardTypeRepository.save({
+                    dashboard: { id },
+                    typeId
+                })));
+            }
         }
-        if (valueTypeIds?.length > 0) {
+        if (valueTypeIds !== undefined) {
             await this.dashboardValuetypeRepository.delete({ dashboard: { id } });
-            await Promise.all(valueTypeIds.map(valueTypeId => this.dashboardValuetypeRepository.save({
-                dashboard: { id },
-                valueTypeId
-            })));
+            if (valueTypeIds.length > 0) {
+                await Promise.all(valueTypeIds.map(valueTypeId => this.dashboardValuetypeRepository.save({
+                    dashboard: { id },
+                    valueTypeId
+                })));
+            }
         }
-        if (workspaceIds?.length > 0) {
+        if (workspaceIds !== undefined) {
             await this.dashboardWorkspaceRepository.delete({ dashboard: { id } });
-            await Promise.all(workspaceIds.map(workspaceId => this.dashboardWorkspaceRepository.save({
-                dashboard: { id },
-                workspaceId
-            })));
+            if (workspaceIds.length > 0) {
+                await Promise.all(workspaceIds.map(workspaceId => this.dashboardWorkspaceRepository.save({
+                    dashboard: { id },
+                    workspaceId
+                })));
+            }
         }
     }
     async remove(id) {

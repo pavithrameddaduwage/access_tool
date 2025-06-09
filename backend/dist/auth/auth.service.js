@@ -8,11 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
 const jwt_1 = require("@nestjs/jwt");
+const login_tracking_service_1 = require("../analytics/login-tracking.service");
+const core_1 = require("@nestjs/core");
 const ActiveDirectory = require('activedirectory2').promiseWrapper;
 const config = {
     url: 'ldap://HGUNBXDC01VM.Horizongroupusa.com',
@@ -31,9 +36,11 @@ const config = {
 };
 const ad = new ActiveDirectory(config);
 let AuthService = class AuthService {
-    constructor(usersService, jwtService) {
+    constructor(usersService, jwtService, loginTrackingService, request) {
         this.usersService = usersService;
         this.jwtService = jwtService;
+        this.loginTrackingService = loginTrackingService;
+        this.request = request;
     }
     async authenticateuser(username, password) {
         try {
@@ -99,6 +106,7 @@ let AuthService = class AuthService {
             console.log('User is inactive - access denied');
             throw new common_1.UnauthorizedException('Your account has been deactivated. Please contact your administrator.');
         }
+        const loginEvent = await this.loginTrackingService.recordLogin(email, 'User Access Tool', this.request, aduser.department, aduser.location);
         const payload = {
             email: email,
             name: dbUser.name,
@@ -162,6 +170,8 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [users_service_1.UsersService, jwt_1.JwtService])
+    __param(3, (0, common_1.Inject)(core_1.REQUEST)),
+    __metadata("design:paramtypes", [users_service_1.UsersService, jwt_1.JwtService,
+        login_tracking_service_1.LoginTrackingService, Object])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

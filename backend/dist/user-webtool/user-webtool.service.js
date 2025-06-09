@@ -138,14 +138,16 @@ let UserWebtoolService = class UserWebtoolService {
             email: dto.email,
             webtoolId: dto.webtoolId
         });
+        const isActive = dto.isActive !== undefined ? dto.isActive : true;
+        const lastActiveAt = isActive ? null : new Date();
         const userWebtools = dto.roleIds.map(roleId => this.userWebtoolRepository.create({
             email: dto.email,
             userName: dto.userName,
             department: dto.department,
             webtoolId: dto.webtoolId,
             roleId: roleId,
-            isActive: true,
-            lastActiveAt: new Date()
+            isActive: isActive,
+            lastActiveAt: lastActiveAt
         }));
         const saved = await this.userWebtoolRepository.save(userWebtools);
         return {
@@ -159,7 +161,8 @@ let UserWebtoolService = class UserWebtoolService {
                     id: role.id,
                     name: role.roles
                 })),
-                isActive: true
+                isActive: isActive,
+                lastActiveAt: lastActiveAt
             }
         };
     }

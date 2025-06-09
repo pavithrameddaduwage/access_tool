@@ -23,6 +23,7 @@ export declare class UserWebtoolController {
                 name: string;
             }[];
             isActive: boolean;
+            lastActiveAt: Date;
         };
     }>;
     deleteExternalAssignment(dto: ExternalDeleteAssignmentDto): Promise<{

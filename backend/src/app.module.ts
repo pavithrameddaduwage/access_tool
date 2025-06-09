@@ -30,6 +30,7 @@ import { UserMappingsModule } from './user-mappings/user-mappings.module';
 import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
 import { WorkspaceMappingModule } from './workspace-mapping/workspace-mapping.module';
 import { ReportMappingModule } from './report-mapping/report-mapping.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [ ConfigModule.forRoot({
@@ -40,8 +41,8 @@ import { ReportMappingModule } from './report-mapping/report-mapping.module';
       host: 'localhost', 
       port: 5432,
       username: 'postgres', 
-      // password: '12345', 
-      password:"M!SAppsTest",
+      password: '12345', 
+      // password:"M!SAppsTest",
  
       database: 'user-access',
       entities: [Type,  Dashboard,
@@ -74,6 +75,7 @@ import { ReportMappingModule } from './report-mapping/report-mapping.module';
     PowerBIMetricsModule,
     WorkspaceMappingModule,
     ReportMappingModule,
+    AnalyticsModule,
     ],
   controllers: [AppController],
   providers: [
@@ -85,7 +87,8 @@ import { ReportMappingModule } from './report-mapping/report-mapping.module';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    }
+    },
+    
   ],
 })
 export class AppModule {}

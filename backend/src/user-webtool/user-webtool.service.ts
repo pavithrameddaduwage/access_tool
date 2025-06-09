@@ -239,7 +239,69 @@ export class UserWebtoolService {
   //     }
   //   };
   // }
+
+
+  // new recent one
   
+  // async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
+  //   // Validate webtool exists
+  //   const webtool = await this.webtoolRepository.findOne({
+  //     where: { id: dto.webtoolId }
+  //   });
+  
+  //   if (!webtool) {
+  //     throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+  //   }
+  
+  //   // Validate roles exist and belong to the webtool
+  //   const roles = await this.roleRepository.find({
+  //     where: { 
+  //       id: In(dto.roleIds),
+  //       webtool: { id: dto.webtoolId }
+  //     },
+  //     relations: ['webtool']
+  //   });
+  
+  //   if (roles.length !== dto.roleIds.length) {
+  //     throw new NotFoundException('Some roles were not found or do not belong to this webtool');
+  //   }
+  
+  //   // Delete existing assignments for this user-webtool combination
+  //   await this.userWebtoolRepository.delete({
+  //     email: dto.email,
+  //     webtoolId: dto.webtoolId
+  //   });
+  
+  //   // Create new assignments with isActive=true by default
+  //   const userWebtools = dto.roleIds.map(roleId => 
+  //     this.userWebtoolRepository.create({
+  //       email: dto.email,
+  //       userName: dto.userName,
+  //       department: dto.department,
+  //       webtoolId: dto.webtoolId,
+  //       roleId: roleId,
+  //       isActive: true, // Always active for external assignments
+  //       lastActiveAt: new Date() // Set current timestamp
+  //     })
+  //   );
+  
+  //   const saved = await this.userWebtoolRepository.save(userWebtools);
+  
+  //   return {
+  //     success: true,
+  //     message: 'User assignments created successfully',
+  //     data: {
+  //       email: dto.email,
+  //       userName: dto.userName,
+  //       webtool: webtool.webtool,
+  //       roles: roles.map(role => ({
+  //         id: role.id,
+  //         name: role.roles
+  //       })),
+  //       isActive: true // Explicitly showing active status in response
+  //     }
+  //   };
+  // }
   async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
     // Validate webtool exists
     const webtool = await this.webtoolRepository.findOne({
@@ -269,7 +331,11 @@ export class UserWebtoolService {
       webtoolId: dto.webtoolId
     });
   
-    // Create new assignments with isActive=true by default
+    // Determine the active status (default to true if not provided)
+    const isActive = dto.isActive !== undefined ? dto.isActive : true;
+    const lastActiveAt = isActive ? null : new Date();
+  
+    // Create new assignments with proper active status
     const userWebtools = dto.roleIds.map(roleId => 
       this.userWebtoolRepository.create({
         email: dto.email,
@@ -277,8 +343,8 @@ export class UserWebtoolService {
         department: dto.department,
         webtoolId: dto.webtoolId,
         roleId: roleId,
-        isActive: true, // Always active for external assignments
-        lastActiveAt: new Date() // Set current timestamp
+        isActive: isActive,
+        lastActiveAt: lastActiveAt
       })
     );
   
@@ -295,7 +361,8 @@ export class UserWebtoolService {
           id: role.id,
           name: role.roles
         })),
-        isActive: true // Explicitly showing active status in response
+        isActive: isActive,
+        lastActiveAt: lastActiveAt
       }
     };
   }

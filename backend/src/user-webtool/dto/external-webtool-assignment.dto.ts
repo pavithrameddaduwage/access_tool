@@ -1,4 +1,5 @@
-import { IsEmail, IsNumber, IsString, IsArray } from 'class-validator';
+// src/user-webtool/dto/external-webtool-assignment.dto.ts
+import { IsEmail, IsNumber, IsString, IsArray, IsBoolean, IsOptional } from 'class-validator';
 
 export class ExternalWebtoolAssignmentDto {
   @IsString()
@@ -17,4 +18,11 @@ export class ExternalWebtoolAssignmentDto {
   @IsArray()
   @IsNumber({}, { each: true })
   roleIds: number[];
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean; 
+
+  @IsOptional()
+  lastActiveAt?: Date; 
 }

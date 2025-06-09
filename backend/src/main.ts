@@ -14,10 +14,11 @@ async function bootstrap() {
 app.enableCors({
   origin: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: 'Content-Type,Authorization',
+  allowedHeaders: 'Content-Type,Authorization, timezone',
   exposedHeaders: 'Content-Range,X-Content-Range'
-});  app.useGlobalPipes(new ValidationPipe());
-  // await app.listen(process.env.PORT ?? 3000); //change this to 3000 later
-  await app.listen(process.env.PORT ?? 4006)
+});  
+app.useGlobalPipes(new ValidationPipe());
+  await app.listen(process.env.PORT ?? 3000); //change this to 3000 later
+  // await app.listen(process.env.PORT ?? 4006)
 }
 bootstrap();

@@ -8,10 +8,23 @@ import { FormsModule } from '@angular/forms';
 import { Role, UserWebtool, Webtool } from '../../../interfaces/webtool.interfaces';
 import { forkJoin } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
+import { LoginAnalyticsService } from '../Services/login-analytics.service';
+import { ApexChart, ApexOptions } from 'ng-apexcharts';
 
 import {EventEmitter, Input, Output } from '@angular/core';
 
+interface LoginChartData {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  colors: string[];
+}
 
+interface LoginCharts {
+  dailyLoginsChart: LoginChartData;
+  hourlyLoginsChart: LoginChartData;
+  dayOfWeekChart: LoginChartData;
+}
 interface ProcessedUser {
   email: string;
   name: string;
@@ -26,6 +39,21 @@ interface MetricItem {
   count: number;
 }
 
+// interface DashboardMetrics {
+//   totalUsers: number;
+//   totalWebtools: number;
+//   totalRoles: number;
+//   topUsers: { name: string; count: number; email: string }[];
+//   avgWebtoolsPerUser: number;
+//   usersByDepartment: { [key: string]: number };
+//   topWebtools: MetricItem[];
+//   roleDistribution: MetricItem[];
+//   rolesPerWebtool: MetricItem[];
+//   departmentWebtoolUsage: {
+//     department: string;
+//     webtools: { name: string; count: number }[];
+//   }[];
+// }
 interface DashboardMetrics {
   totalUsers: number;
   totalWebtools: number;
@@ -40,8 +68,13 @@ interface DashboardMetrics {
     department: string;
     webtools: { name: string; count: number }[];
   }[];
+  loginStats?: { // Make it optional with ?
+    totalLogins: number;
+    activeUsers: number;
+    avgDailyLogins: number;
+    peakHour: number;
+  };
 }
-
 @Component({
   selector: 'app-webtool-analytics',
   templateUrl: './webtool-analytics.component.html',
@@ -67,6 +100,15 @@ export class WebtoolAnalyticsComponent implements OnInit {
     topUsers: []
   };
 
+  timeRangeOptions = [
+    { label: 'Last 7 Days', value: 7 },
+    { label: 'Last 30 Days', value: 30 },
+    { label: 'Last 90 Days', value: 90 }
+  ];
+  selectedTimeRange = 30; 
+
+  public peakHour: string = 'N/A';
+
   chartsInitialized = false;
   webtoolUsageChart: any = null;
   roleDistributionChart: any = null;
@@ -85,9 +127,22 @@ export class WebtoolAnalyticsComponent implements OnInit {
 
   selectedWebtool: string | number = 'all';
 
+  private currentWebtoolFilter: string | undefined;
+private currentTimeRange: number = 30;
+
+
   userStatusData: { active: number, inactive: number } = { active: 0, inactive: 0 };
   screenWidth: number;
 
+  loginMetrics: any = {
+    totalLogins: 0,
+    activeUsers: 0,
+    dailyLogins: [],
+    loginsByHour: [],
+    loginsByDay: []
+  };
+  
+  loadingLoginMetrics = false;
 
   @Input() activeDashboard: 'powerbi' | 'webtool' = 'webtool';
   @Output() dashboardChange = new EventEmitter<'powerbi' | 'webtool'>();
@@ -99,7 +154,8 @@ export class WebtoolAnalyticsComponent implements OnInit {
   constructor(
     private webtoolService: WebtoolService,
     private userWebtoolService: UserWebtoolService,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private loginAnalyticsService: LoginAnalyticsService
   ) {
     this.screenWidth = window.innerWidth;
 
@@ -113,6 +169,33 @@ export class WebtoolAnalyticsComponent implements OnInit {
       this.filterByWebtool();
     }
   }
+  // async loadLoginMetrics() {
+  //   this.loadingLoginMetrics = true;
+  //   try {
+  //     const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
+  //       firstValueFrom(this.loginAnalyticsService.getSummary(this.selectedTimeRange)),
+  //       firstValueFrom(this.loginAnalyticsService.getDailyLogins(this.selectedTimeRange)),
+  //       firstValueFrom(this.loginAnalyticsService.getLoginsByHour()),
+  //       firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek())
+  //     ]);
+  
+  //     this.loginMetrics = {
+  //       ...summary,
+  //       dailyLogins,
+  //       loginsByHour,
+  //       loginsByDay
+  //     };
+  
+  //     this.calculatePeakHour();
+  //   } catch (error) {
+  //     console.error('Error loading login metrics:', error);
+  //   } finally {
+  //     this.loadingLoginMetrics = false;
+  //   }
+  // }
+
+  
+ 
   private adjustChartDimensions() {
     const baseHeight = this.screenWidth < 768 ? 180 : 220;
     const matrixHeight = Math.min(baseHeight, Math.max(200, this.users.length * 15));
@@ -140,8 +223,142 @@ export class WebtoolAnalyticsComponent implements OnInit {
   }
   async ngOnInit() {
     await this.loadData();
+    this.loadLoginMetrics();
     this.filterByWebtool();
   }
+
+  // async loadLoginMetrics() {
+  //   this.loadingLoginMetrics = true;
+  //   try {
+  //     const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
+  //       firstValueFrom(this.loginAnalyticsService.getSummary()),
+  //       firstValueFrom(this.loginAnalyticsService.getDailyLogins()),
+  //       firstValueFrom(this.loginAnalyticsService.getLoginsByHour()),
+  //       firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek())
+  //     ]);
+  
+  //     this.loginMetrics = {
+  //       ...summary,
+  //       dailyLogins,
+  //       loginsByHour,
+  //       loginsByDay
+  //     };
+  
+  //     // Calculate peak hour after data loads
+  //     this.calculatePeakHour();
+  //   } catch (error) {
+  //     console.error('Error loading login metrics:', error);
+  //   } finally {
+  //     this.loadingLoginMetrics = false;
+  //   }
+  // }
+  private calculatePeakHour(): void {
+    if (!this.loginMetrics.loginsByHour?.length) {
+      this.peakHour = 'N/A';
+      return;
+    }
+    
+    const peak = this.loginMetrics.loginsByHour.reduce((prev: {hour: number, count: number}, current: {hour: number, count: number}) => 
+      (prev.count > current.count) ? prev : current, 
+      {hour: 0, count: 0}
+    );
+    this.peakHour = `${peak.hour}:00`;
+}
+public initLoginCharts(): LoginCharts {
+  const emptySeries = [{ name: 'Logins', data: [] }];
+  const emptyChart: ApexChart = { 
+    type: 'line', 
+    height: 220, 
+    toolbar: { show: false },
+    foreColor: '#999' // Gray color for empty state
+  };
+  const emptyXaxis: ApexXAxis = { 
+    type: 'category', 
+    categories: [], 
+    labels: { 
+      style: { 
+        fontSize: '10px',
+        colors: '#999' // Gray color for empty state
+      } 
+    } 
+  };
+
+  // Helper to check if we should show empty state
+  const shouldShowEmpty = (data: any[]) => {
+    return !data || data.length === 0 || data.every(item => item.count === 0);
+  };
+
+  return {
+    dailyLoginsChart: {
+      series: shouldShowEmpty(this.loginMetrics.dailyLogins) 
+        ? emptySeries
+        : [{
+            name: 'Logins',
+            data: this.loginMetrics.dailyLogins.map((day: any) => day.count)
+          }],
+      chart: shouldShowEmpty(this.loginMetrics.dailyLogins)
+        ? emptyChart
+        : { 
+            type: 'line', 
+            height: 220, 
+            toolbar: { show: false } 
+          },
+      xaxis: shouldShowEmpty(this.loginMetrics.dailyLogins)
+        ? emptyXaxis
+        : {
+            categories: this.loginMetrics.dailyLogins.map((day: any) => {
+              const date = new Date(day.date);
+              return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+            }),
+            labels: { 
+              style: { fontSize: '10px' },
+              formatter: function(value) {
+                return value;
+              }
+            }
+          },
+      colors: ['#0077B6']
+    },
+
+    hourlyLoginsChart: {
+      series: shouldShowEmpty(this.loginMetrics.loginsByHour)
+        ? emptySeries
+        : [{
+            name: 'Logins',
+            data: this.loginMetrics.loginsByHour.map((hour: any) => hour.count)
+          }],
+      chart: shouldShowEmpty(this.loginMetrics.loginsByHour)
+        ? emptyChart
+        : { type: 'bar', height: 220, toolbar: { show: false } },
+      xaxis: shouldShowEmpty(this.loginMetrics.loginsByHour)
+        ? emptyXaxis
+        : {
+            categories: this.loginMetrics.loginsByHour.map((hour: any) => `${hour.hour}:00`),
+            labels: { style: { fontSize: '10px' } }
+          },
+      colors: ['#00B4D8']
+    },
+
+    dayOfWeekChart: {
+      series: shouldShowEmpty(this.loginMetrics.loginsByDay)
+        ? emptySeries
+        : [{
+            name: 'Logins',
+            data: this.loginMetrics.loginsByDay.map((day: any) => day.count)
+          }],
+      chart: shouldShowEmpty(this.loginMetrics.loginsByDay)
+        ? emptyChart
+        : { type: 'bar', height: 220, toolbar: { show: false } },
+      xaxis: shouldShowEmpty(this.loginMetrics.loginsByDay)
+        ? emptyXaxis
+        : {
+            categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            labels: { style: { fontSize: '10px' } }
+          },
+      colors: ['#90E0EF']
+    }
+  };
+}
 
   async loadData() {
     try {
@@ -198,6 +415,94 @@ export class WebtoolAnalyticsComponent implements OnInit {
     return Array.from(userMap.values());
   }
 
+  // private calculateMetrics() {
+  //   // Basic counts
+  //   this.metrics.totalUsers = this.users.length;
+  //   this.metrics.totalWebtools = this.webtools.length;
+  //   this.metrics.totalRoles = this.roles.length;
+    
+  //   // Average webtools per user
+  //   const totalWebtoolAssignments = this.users.reduce((sum, user) => sum + user.webtools.size, 0);
+  //   this.metrics.avgWebtoolsPerUser = this.metrics.totalUsers > 0 
+  //     ? totalWebtoolAssignments / this.metrics.totalUsers 
+  //     : 0;
+    
+  //   // Users by department
+  //   this.metrics.usersByDepartment = this.users.reduce((acc, user) => {
+  //     const dept = user.department || 'Unknown';
+  //     acc[dept] = (acc[dept] || 0) + 1;
+  //     return acc;
+  //   }, {} as { [key: string]: number });
+
+  //   // Top webtools by user count
+  //   const webtoolUsage = new Map<number, number>();
+  //   this.webtools.forEach(webtool => {
+  //     const count = this.rawData.filter(r => r.webtoolId === webtool.id).length;
+  //     webtoolUsage.set(webtool.id, count);
+  //   });
+    
+  //   this.metrics.topWebtools = Array.from(webtoolUsage.entries())
+  //     .map(([id, count]) => ({
+  //       id,
+  //       name: this.webtools.find(w => w.id === id)?.webtool || `Webtool ${id}`,
+  //       count
+  //     }))
+  //     .sort((a, b) => b.count - a.count);
+
+  //   // Roles per Webtool
+  //   this.metrics.rolesPerWebtool = this.webtools.map(webtool => {
+  //     const roleCounts = new Set<number>();
+  //     this.users.forEach(user => {
+  //       if (user.webtools.has(webtool.id)) {
+  //         user.roles.forEach(roleId => roleCounts.add(roleId));
+  //       }
+  //     });
+  //     this.metrics.loginStats = {
+  //       totalLogins: this.loginMetrics.totalLogins,
+  //       activeUsers: this.loginMetrics.activeUsers,
+  //       avgDailyLogins: this.loginMetrics.totalLogins / 30,
+  //       peakHour: this.loginMetrics.loginsByHour?.reduce((prev: any, current: any) => 
+  //         (prev.count > current.count) ? prev : current, {hour: 0, count: 0}
+  //       ).hour
+  //     };
+  //     return {
+  //       id: webtool.id,
+  //       name: webtool.webtool,
+  //       count: roleCounts.size
+  //     };
+  //   }).sort((a, b) => b.count - a.count);
+
+  //   // Department vs Webtool Usage
+  //   const departmentMap = new Map<string, Map<string, number>>();
+  //   this.users.forEach(user => {
+  //     if (!departmentMap.has(user.department)) {
+  //       departmentMap.set(user.department, new Map<string, number>());
+  //     }
+  //     const deptWebtools = departmentMap.get(user.department)!;
+  //     user.webtools.forEach(webtoolId => {
+  //       const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
+  //       deptWebtools.set(webtoolName, (deptWebtools.get(webtoolName) || 0) + 1);
+  //     });
+  //   });
+    
+  //   this.metrics.departmentWebtoolUsage = Array.from(departmentMap.entries())
+  //     .map(([department, webtoolCounts]) => ({
+  //       department,
+  //       webtools: Array.from(webtoolCounts.entries())
+  //         .map(([name, count]) => ({ name, count }))
+  //         .sort((a, b) => b.count - a.count)
+  //     }));
+
+  //   // Top Users
+  //   this.metrics.topUsers = this.users
+  //     .map(user => ({
+  //       name: user.name,
+  //       email: user.email,
+  //       count: user.webtools.size
+  //     }))
+  //     .sort((a, b) => b.count - a.count)
+  //     .slice(0, 5);
+  // }
   private calculateMetrics() {
     // Basic counts
     this.metrics.totalUsers = this.users.length;
@@ -216,7 +521,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
       acc[dept] = (acc[dept] || 0) + 1;
       return acc;
     }, {} as { [key: string]: number });
-
+  
     // Top webtools by user count
     const webtoolUsage = new Map<number, number>();
     this.webtools.forEach(webtool => {
@@ -231,7 +536,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
         count
       }))
       .sort((a, b) => b.count - a.count);
-
+  
     // Roles per Webtool
     this.metrics.rolesPerWebtool = this.webtools.map(webtool => {
       const roleCounts = new Set<number>();
@@ -246,7 +551,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
         count: roleCounts.size
       };
     }).sort((a, b) => b.count - a.count);
-
+  
     // Department vs Webtool Usage
     const departmentMap = new Map<string, Map<string, number>>();
     this.users.forEach(user => {
@@ -267,7 +572,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
           .map(([name, count]) => ({ name, count }))
           .sort((a, b) => b.count - a.count)
       }));
-
+  
     // Top Users
     this.metrics.topUsers = this.users
       .map(user => ({
@@ -277,10 +582,230 @@ export class WebtoolAnalyticsComponent implements OnInit {
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
+  
+    // Login Stats
+    if (this.loginMetrics) {
+      this.metrics.loginStats = {
+        totalLogins: this.loginMetrics.totalLogins || 0,
+        activeUsers: this.loginMetrics.activeUsers || 0,
+        avgDailyLogins: this.loginMetrics.totalLogins ? this.loginMetrics.totalLogins / 30 : 0,
+        peakHour: this.peakHourNumber
+      };
+    }
   }
-
+  
+  get peakHourNumber(): number {
+    if (!this.loginMetrics.loginsByHour?.length) return 0;
+    return this.loginMetrics.loginsByHour.reduce((prev: {hour: number, count: number}, current: {hour: number, count: number}) => 
+      (prev.count > current.count) ? prev : current, 
+      {hour: 0, count: 0}
+    ).hour;
+}
+  getPeakHour(): string {
+    if (!this.loginMetrics.loginsByHour?.length) return 'N/A';
+    
+    const peak = this.loginMetrics.loginsByHour.reduce(
+      (prev: {hour: number, count: number}, current: {hour: number, count: number}) => 
+        (prev.count > current.count) ? prev : current, 
+      { hour: 0, count: 0 }
+    );
+    return `${peak.hour}:00`;
+  }
+  // filterByWebtool() {
+  //   // Get the selected webtool details
+  //   const selectedWebtool = this.selectedWebtool === 'all' 
+  //     ? undefined 
+  //     : this.webtools.find(w => w.id === this.selectedWebtool);
+    
+  //   const webtoolName = selectedWebtool?.webtool;
+  //   const webtoolId = selectedWebtool?.id;
+  
+  //   // Filter the webtool analytics charts (top section)
+  //   if (this.selectedWebtool === 'all') {
+  //     // All webtools selected - show aggregated data
+  //     this.filteredWebtoolUsageChart = {
+  //       ...this.webtoolUsageChart,
+  //       series: [{
+  //         name: 'Users',
+  //         data: this.metrics.topWebtools.map(w => w.count)
+  //       }]
+  //     };
+      
+  //     this.filteredDepartmentDistributionChart = {
+  //       ...this.departmentDistributionChart,
+  //       series: Object.values(this.metrics.usersByDepartment),
+  //       labels: Object.keys(this.metrics.usersByDepartment)
+  //     };
+      
+  //     this.filteredDepartmentUsageChart = {
+  //       ...this.departmentUsageChart,
+  //       series: this.metrics.departmentWebtoolUsage.map(dept => ({
+  //         name: dept.department,
+  //         data: dept.webtools.map(w => w.count)
+  //       }))
+  //     };
+      
+  //     this.filteredTopUsersChart = {
+  //       ...this.topUsersChart,
+  //       series: [{
+  //         name: 'Webtools',
+  //         data: this.metrics.topUsers.map(u => u.count)
+  //       }]
+  //     };
+      
+  //     this.filteredUserWebtoolMatrix = {
+  //       ...this.userWebtoolMatrix,
+  //       series: this.webtools.map(webtool => ({
+  //         name: webtool.webtool,
+  //         data: this.users.map(user => ({
+  //           x: user.name,
+  //           y: user.webtools.has(webtool.id) ? 1 : 0
+  //         }))
+  //       })),
+  //       chart: {
+  //         ...this.userWebtoolMatrix.chart,
+  //         height: Math.max(230, this.users.length * 20)
+  //       }
+  //     };
+  //   } else if (webtoolId && webtoolName) {
+  //     // Specific webtool selected - filter top charts
+  //     const usersWithAccess = this.users.filter(u => u.webtools.has(webtoolId));
+      
+  //     // Webtool Usage Chart
+  //     this.filteredWebtoolUsageChart = {
+  //       ...this.webtoolUsageChart,
+  //       series: [{
+  //         name: 'Users',
+  //         data: [usersWithAccess.length]
+  //       }],
+  //       xaxis: {
+  //         ...this.webtoolUsageChart.xaxis,
+  //         categories: [webtoolName]
+  //       }
+  //     };
+      
+  //     // Department Distribution Chart
+  //     const deptCounts = usersWithAccess.reduce((acc, user) => {
+  //       const dept = user.department || 'Unknown';
+  //       acc[dept] = (acc[dept] || 0) + 1;
+  //       return acc;
+  //     }, {} as { [key: string]: number });
+      
+  //     this.filteredDepartmentDistributionChart = {
+  //       ...this.departmentDistributionChart,
+  //       series: Object.values(deptCounts),
+  //       labels: Object.keys(deptCounts),
+  //       colors: this.generateColorPalette(Object.keys(deptCounts).length)
+  //     };
+      
+  //     // User Webtool Matrix
+  //     this.filteredUserWebtoolMatrix = {
+  //       ...this.userWebtoolMatrix,
+  //       series: [{
+  //         name: webtoolName,
+  //         data: this.users.map(user => ({
+  //           x: user.name,
+  //           y: user.webtools.has(webtoolId) ? 1 : 0
+  //         }))
+  //       }],
+  //       yaxis: {
+  //         categories: [webtoolName],
+  //         labels: {
+  //           style: {
+  //             fontSize: '15px'
+  //           }
+  //         }
+  //       },
+  //       chart: {
+  //         ...this.userWebtoolMatrix.chart,
+  //         height: Math.max(180, this.users.length * 20)
+  //       }
+  //     };
+  
+  //     // Department Usage Chart
+  //     const selectedWebtoolData = this.metrics.departmentWebtoolUsage
+  //       .map(dept => ({
+  //         department: dept.department,
+  //         count: dept.webtools.find(w => w.name === webtoolName)?.count || 0
+  //       }))
+  //       .filter(dept => dept.count > 0)
+  //       .sort((a, b) => b.count - a.count);
+      
+  //     this.filteredDepartmentUsageChart = {
+  //       ...this.departmentUsageChart,
+  //       series: [{
+  //         name: webtoolName,
+  //         data: selectedWebtoolData.map(d => d.count)
+  //       }],
+  //       xaxis: {
+  //         ...this.departmentUsageChart.xaxis,
+  //         categories: selectedWebtoolData.map(d => d.department)
+  //       },
+  //       colors: this.generateColorPalette(selectedWebtoolData.length)
+  //     };
+      
+  //     // Top Users Chart
+  //     const topUsers = usersWithAccess
+  //       .map(user => ({
+  //         name: user.name,
+  //         email: user.email,
+  //         count: 1 
+  //       }))
+  //       .slice(0, 5);
+      
+  //     this.filteredTopUsersChart = {
+  //       ...this.topUsersChart,
+  //       series: [{
+  //         name: 'Access Count',
+  //         data: topUsers.map(u => u.count)
+  //       }],
+  //       xaxis: {
+  //         ...this.topUsersChart.xaxis,
+  //         categories: topUsers.map(u => u.name)
+  //       }
+  //     };
+  //   }
+  
+  //   // Reset login metrics when changing webtool filter
+  //   this.loginMetrics = {
+  //     totalLogins: 0,
+  //     activeUsers: 0,
+  //     dailyLogins: [],
+  //     loginsByHour: [],
+  //     loginsByDay: []
+  //   };
+  
+  //   // Load login metrics with the webtool filter
+  //   if (webtoolName) {
+  //     // Only load if we have a specific webtool selected
+  //     this.loadLoginMetrics(webtoolName);
+  //   } else {
+  //     // For 'all' webtools, ensure charts are cleared
+  //     this.loadingLoginMetrics = false;
+  //   }
+  // }
   filterByWebtool() {
-    if (this.selectedWebtool === 'all') {
+    // For UserWebtool charts (manual assignments)
+    const selectedWebtool = this.selectedWebtool === 'all' 
+      ? undefined 
+      : this.webtools.find(w => w.id === this.selectedWebtool);
+    
+    this.currentWebtoolFilter = selectedWebtool?.webtool;
+  
+    // Filter UserWebtool charts (existing logic remains the same)
+    this.filterUserWebtoolCharts(selectedWebtool);
+  
+    // Load login metrics with both filters
+    this.loadLoginMetrics();
+  }
+  private filterUserWebtoolCharts(selectedWebtool?: { id: number; webtool: string }) {
+    // Remove the duplicate declaration and use the parameter directly
+    const webtoolName = selectedWebtool?.webtool;
+    const webtoolId = selectedWebtool?.id;
+  
+    // Filter the webtool analytics charts (top section)
+    if (!selectedWebtool) {
+      // All webtools selected - show aggregated data
       this.filteredWebtoolUsageChart = {
         ...this.webtoolUsageChart,
         series: [{
@@ -325,11 +850,11 @@ export class WebtoolAnalyticsComponent implements OnInit {
           height: Math.max(230, this.users.length * 20)
         }
       };
-    } else {
-      const webtoolId = Number(this.selectedWebtool);
-      const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
+    } else if (webtoolId && webtoolName) {
+      // Specific webtool selected - filter top charts
       const usersWithAccess = this.users.filter(u => u.webtools.has(webtoolId));
       
+      // Webtool Usage Chart
       this.filteredWebtoolUsageChart = {
         ...this.webtoolUsageChart,
         series: [{
@@ -342,6 +867,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
         }
       };
       
+      // Department Distribution Chart
       const deptCounts = usersWithAccess.reduce((acc, user) => {
         const dept = user.department || 'Unknown';
         acc[dept] = (acc[dept] || 0) + 1;
@@ -355,6 +881,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
         colors: this.generateColorPalette(Object.keys(deptCounts).length)
       };
       
+      // User Webtool Matrix
       this.filteredUserWebtoolMatrix = {
         ...this.userWebtoolMatrix,
         series: [{
@@ -364,7 +891,6 @@ export class WebtoolAnalyticsComponent implements OnInit {
             y: user.webtools.has(webtoolId) ? 1 : 0
           }))
         }],
-        
         yaxis: {
           categories: [webtoolName],
           labels: {
@@ -378,7 +904,8 @@ export class WebtoolAnalyticsComponent implements OnInit {
           height: Math.max(180, this.users.length * 20)
         }
       };
-
+  
+      // Department Usage Chart
       const selectedWebtoolData = this.metrics.departmentWebtoolUsage
         .map(dept => ({
           department: dept.department,
@@ -400,6 +927,7 @@ export class WebtoolAnalyticsComponent implements OnInit {
         colors: this.generateColorPalette(selectedWebtoolData.length)
       };
       
+      // Top Users Chart
       const topUsers = usersWithAccess
         .map(user => ({
           name: user.name,
@@ -421,6 +949,63 @@ export class WebtoolAnalyticsComponent implements OnInit {
       };
     }
   }
+  onTimeRangeChange() {
+    this.currentTimeRange = this.selectedTimeRange;
+    this.loadLoginMetrics();
+  }  
+
+// webtool-analytics.component.ts
+
+async loadLoginMetrics(): Promise<void> {
+  this.loadingLoginMetrics = true;
+  
+  try {
+    const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
+      firstValueFrom(this.loginAnalyticsService.getSummary(this.currentTimeRange, this.currentWebtoolFilter)),
+      firstValueFrom(this.loginAnalyticsService.getDailyLogins(this.currentTimeRange, this.currentWebtoolFilter)),
+      firstValueFrom(this.loginAnalyticsService.getLoginsByHour(this.currentWebtoolFilter, this.currentTimeRange)),
+      firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek(this.currentWebtoolFilter, this.currentTimeRange))
+    ]);
+
+    // Check if we have a webtool filter but no data exists
+    const noDataForWebtool = this.currentWebtoolFilter && 
+      (dailyLogins.length === 0 && loginsByHour.length === 0 && loginsByDay.length === 0);
+
+    if (noDataForWebtool) {
+      this.loginMetrics = {
+        totalLogins: 0,
+        activeUsers: 0,
+        dailyLogins: [],
+        loginsByHour: [],
+        loginsByDay: [],
+        noData: true // Add flag to indicate no data
+      };
+    } else {
+      this.loginMetrics = {
+        totalLogins: summary?.totalLogins || 0,
+        activeUsers: summary?.activeUsers || 0,
+        dailyLogins: dailyLogins || [],
+        loginsByHour: loginsByHour || [],
+        loginsByDay: loginsByDay || [],
+        noData: false
+      };
+    }
+
+    this.calculatePeakHour();
+  } catch (error) {
+    console.error('Error loading login metrics:', error);
+    this.loginMetrics = {
+      totalLogins: 0,
+      activeUsers: 0,
+      dailyLogins: [],
+      loginsByHour: [],
+      loginsByDay: [],
+      noData: true
+    };
+  } finally {
+    this.loadingLoginMetrics = false;
+  }
+}
 
   private generateColorPalette(count: number): string[] {
     const baseColors = ['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF'];

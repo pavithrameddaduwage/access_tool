@@ -32,7 +32,10 @@ let SyncDepartmentsTask = SyncDepartmentsTask_1 = class SyncDepartmentsTask {
 };
 exports.SyncDepartmentsTask = SyncDepartmentsTask;
 __decorate([
-    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_DAY_AT_2AM),
+    (0, schedule_1.Cron)('0 2 * * *', {
+        name: 'department-sync',
+        timeZone: 'America/New_York'
+    }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

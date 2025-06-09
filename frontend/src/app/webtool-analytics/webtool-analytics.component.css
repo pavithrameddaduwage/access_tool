@@ -16,7 +16,19 @@
   font-size: 11px;
   color: #6b7280;
 }
+.time-range-btn {
+  transition: all 0.2s ease;
+}
 
+.time-range-btn.active {
+  background-color: #0077B6;
+  color: white;
+  border-color: #0077B6;
+}
+
+.time-range-btn:not(.active):hover {
+  background-color: #f0f7ff;
+}
 .apexcharts-yaxis-label {
   font-size: 11px;
   color: #6b7280;

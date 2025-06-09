@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { SyncUserDepartmentsService } from '../sync-user-departments.service';
 
 @Injectable()
@@ -10,7 +10,10 @@ export class SyncDepartmentsTask {
     private syncService: SyncUserDepartmentsService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  @Cron('0 2 * * *', {
+    name: 'department-sync',
+    timeZone: 'America/New_York'
+  })
   async handleCron() {
     this.logger.log('Starting department synchronization from AD...');
     

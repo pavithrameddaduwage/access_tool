@@ -8,14 +8,16 @@ import { UsersModule } from 'src/users/users.module';
 import { RoleMaster } from 'src/users/entities/role_master.entity';
 import { UserRoles } from 'src/users/entities/user_roles.entity';
 import { User } from 'src/users/entities/user.entity';
+import { LoginTrackingService } from 'src/analytics/login-tracking.service';
+import { AnalyticsModule } from 'src/analytics/analytics.module';
 
 @Module({
   imports: [
-    UsersModule,
+    UsersModule, AnalyticsModule,
     TypeOrmModule.forFeature([User, RoleMaster, UserRoles]), 
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,  // Use the same secret
+      secret: jwtConstants.secret,  
       signOptions: { expiresIn: '24h' },
     }),
   ],

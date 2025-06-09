@@ -397,45 +397,85 @@ searchTerm: string = '';
     this.selectedGroup = row.group || ''; 
     this.isFormOpen = true;
   }
-  saveEditedRow(): void {
-    if (this.selectedRowIndex !== null) {
-      const typeIds = this.getSelectedIds(this.selectedTypes, this.typeOptions);
-      const valueTypeIds = this.getSelectedIds(this.selectedValueTypes, this.valueTypeOptions);
-      const workspaceId = this.getWorkspaceId();
-      const groupId = this.getGroupId();
+  // saveEditedRow(): void {
+  //   if (this.selectedRowIndex !== null) {
+  //     const typeIds = this.getSelectedIds(this.selectedTypes, this.typeOptions);
+  //     const valueTypeIds = this.getSelectedIds(this.selectedValueTypes, this.valueTypeOptions);
+  //     const workspaceId = this.getWorkspaceId();
+  //     const groupId = this.getGroupId();
 
-      if (!workspaceId) {
-        this.toastService.show('Workspace is required', 'error');
-        return;
-      }
+  //     if (!workspaceId) {
+  //       this.toastService.show('Workspace is required', 'error');
+  //       return;
+  //     }
 
-      const dashboardData = {
-        dashboard: this.editForm.dashboard,
-        typeIds,
-        valueTypeIds,
-        workspaceIds: [workspaceId],
-        groupId
-      };
+  //     const dashboardData = {
+  //       dashboard: this.editForm.dashboard,
+  //       typeIds,
+  //       valueTypeIds,
+  //       workspaceIds: [workspaceId],
+  //       groupId
+  //     };
 
-      const id = this.tableData[this.selectedRowIndex].id;
+  //     const id = this.tableData[this.selectedRowIndex].id;
       
-      this.dashboardService.updateDashboard(id, dashboardData).subscribe({
-        next: () => {
-          this.loadDashboards();
-          this.resetForm();
-          this.toastService.show('Dashboard updated successfully', 'success');
-        },
-        error: (error) => {
-          console.error('Error updating dashboard:', error);
-          if (error.status === 409) {
-            this.toastService.show(error.error.message || 'A dashboard with this name already exists', 'error');
-          } else {
-            this.toastService.show('Failed to update dashboard', 'error');
-          }
-        }
-      });
+  //     this.dashboardService.updateDashboard(id, dashboardData).subscribe({
+  //       next: () => {
+  //         this.loadDashboards();
+  //         this.resetForm();
+  //         this.toastService.show('Dashboard updated successfully', 'success');
+  //       },
+  //       error: (error) => {
+  //         console.error('Error updating dashboard:', error);
+  //         if (error.status === 409) {
+  //           this.toastService.show(error.error.message || 'A dashboard with this name already exists', 'error');
+  //         } else {
+  //           this.toastService.show('Failed to update dashboard', 'error');
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
+  // Update the saveEditedRow method
+saveEditedRow(): void {
+  if (this.selectedRowIndex !== null) {
+    const typeIds = this.getSelectedIds(this.selectedTypes, this.typeOptions);
+    const valueTypeIds = this.getSelectedIds(this.selectedValueTypes, this.valueTypeOptions);
+    const workspaceId = this.getWorkspaceId();
+    const groupId = this.getGroupId();
+
+    if (!workspaceId) {
+      this.toastService.show('Workspace is required', 'error');
+      return;
     }
+
+    const dashboardData = {
+      dashboard: this.editForm.dashboard,
+      typeIds,
+      valueTypeIds,
+      workspaceIds: [workspaceId],
+      groupId
+    };
+
+    const id = this.tableData[this.selectedRowIndex].id;
+    
+    this.dashboardService.updateDashboard(id, dashboardData).subscribe({
+      next: () => {
+        this.loadDashboards();
+        this.resetForm();
+        this.toastService.show('Dashboard updated successfully', 'success');
+      },
+      error: (error) => {
+        console.error('Error updating dashboard:', error);
+        if (error.status === 409) {
+          this.toastService.show(error.error.message || 'A dashboard with this name already exists', 'error');
+        } else {
+          this.toastService.show('Failed to update dashboard', 'error');
+        }
+      }
+    });
   }
+}
 
   private getSelectedIds(selectedItems: string[], options: any[]): number[] {
     return selectedItems

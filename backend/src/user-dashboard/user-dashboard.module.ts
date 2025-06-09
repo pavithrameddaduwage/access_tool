@@ -9,10 +9,11 @@ import { DashboardWorkspace } from 'src/dashboard/entities/dashboard-workspace.e
 import { SyncDepartmentsTask } from './tasks/sync-departments.task';
 import { SyncUserDepartmentsService } from './sync-user-departments.service';
 import { HttpModule } from '@nestjs/axios';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   controllers: [UserDashboardController],
-  imports: [TypeOrmModule.forFeature([UserDashboard, Dashboard, Workspace, DashboardWorkspace]), HttpModule],
+  imports: [TypeOrmModule.forFeature([UserDashboard, Dashboard, Workspace, DashboardWorkspace]), HttpModule, ScheduleModule.forRoot()],
   providers: [UserDashboardService, SyncDepartmentsTask, SyncUserDepartmentsService],
   exports: [UserDashboardService, UserDashboardModule],
 })
