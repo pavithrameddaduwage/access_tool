@@ -19,4 +19,5 @@ export declare class AnalyticsService {
         totalLogins: number;
         activeUsers: number;
     }>;
+    getLoginEvents(): Promise<LoginEvent[]>;
 }

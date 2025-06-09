@@ -18,4 +18,5 @@ export declare class AnalyticsController {
         totalLogins: number;
         activeUsers: number;
     }>;
+    getLoginEvents(): Promise<import("./entities/login-event.entity").LoginEvent[]>;
 }

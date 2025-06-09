@@ -35,7 +35,7 @@ export class AnalyticsService {
     console.log(`Daily logins query result:`, result);
     return result;
   }
-  
+
   async getLoginsByHour(webtool?: string): Promise<{ hour: number; count: number }[]> {
     const query = this.loginEventRepository.createQueryBuilder('login')
       .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
@@ -88,5 +88,13 @@ export class AnalyticsService {
       totalLogins,
       activeUsers
     };
+  }
+
+  async getLoginEvents() {
+    return this.loginEventRepository.find({
+      order: {
+        loginTime: 'DESC'
+      }
+    });
   }
 }

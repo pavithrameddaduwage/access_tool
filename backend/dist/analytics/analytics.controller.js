@@ -32,6 +32,9 @@ let AnalyticsController = class AnalyticsController {
     async getSummary(days = 30, webtool) {
         return this.analyticsService.getSummary(days, webtool);
     }
+    async getLoginEvents() {
+        return this.analyticsService.getLoginEvents();
+    }
 };
 exports.AnalyticsController = AnalyticsController;
 __decorate([
@@ -64,6 +67,12 @@ __decorate([
     __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getSummary", null);
+__decorate([
+    (0, common_1.Get)('login-events'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getLoginEvents", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

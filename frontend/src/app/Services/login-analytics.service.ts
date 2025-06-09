@@ -54,4 +54,13 @@ getLoginsByDayOfWeek(webtool?: string): Observable<any> {
   
   return this.http.get(`${this.apiUrl}logins-by-day`, { params });
 }
+
+getLoginEvents(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}login-events`).pipe(
+    catchError(error => {
+      console.error('Error fetching login events:', error);
+      return of([]);
+    })
+  );
+}
 }

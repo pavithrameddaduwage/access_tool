@@ -35,4 +35,8 @@ export class AnalyticsController {
     return this.analyticsService.getSummary(days, webtool);
   }
 
+  @Get('login-events')
+async getLoginEvents() {
+  return this.analyticsService.getLoginEvents();
+}
 }

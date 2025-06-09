@@ -85,6 +85,13 @@ let AnalyticsService = class AnalyticsService {
             activeUsers
         };
     }
+    async getLoginEvents() {
+        return this.loginEventRepository.find({
+            order: {
+                loginTime: 'DESC'
+            }
+        });
+    }
 };
 exports.AnalyticsService = AnalyticsService;
 exports.AnalyticsService = AnalyticsService = __decorate([

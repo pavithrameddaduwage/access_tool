@@ -11,7 +11,7 @@
           
           <!-- Webtool Dropdown -->
           <div class="w-48">
-            <div class="relative">
+            <div class="relative ml-9">
               <select
                 [(ngModel)]="selectedWebtool"
                 (change)="filterByWebtool()"
@@ -28,275 +28,413 @@
             </div>
           </div>
         </div>
-
-        <!-- Time Range Selector -->
-        <div class="flex items-center gap-2 bg-blue-700/30 px-3 py-1 rounded-lg">
-          <span class="text-xs text-blue-100">Time Range:</span>
-          <div class="flex space-x-1">
-            <button 
-              *ngFor="let option of timeRangeOptions"
-              [class.bg-white]="selectedTimeRange === option.value"
-              [class.text-blue-800]="selectedTimeRange === option.value"
-              [class.bg-transparent]="selectedTimeRange !== option.value"
-              [class.text-blue-100]="selectedTimeRange !== option.value"
-              class="px-2 py-1 text-xs rounded-md hover:bg-blue-600 transition-colors"
-              (click)="selectedTimeRange = option.value; onTimeRangeChange()">
-              {{ option.label }}
-            </button>
+  
+        <!-- Combined Controls: View Toggle and Time Range -->
+        <div class="flex items-center gap-3">
+          <!-- View Toggle -->
+          <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+            <div class="flex space-x-1 bg-white/15 rounded-lg p-1">
+              <button 
+                [class]="activeView === 'webtool' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-white text-blue-800 shadow-lg transition-all duration-300 transform hover:scale-105' : 'px-3 py-1.5 text-xs font-medium rounded-md bg-transparent text-white/90 hover:bg-white/20 hover:text-white transition-all duration-300'"
+                (click)="onViewChange('webtool')">
+                Webtool View
+              </button>
+              <button 
+                [class]="activeView === 'user' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-white text-blue-800 shadow-lg transition-all duration-300 transform hover:scale-105' : 'px-3 py-1.5 text-xs font-medium rounded-md bg-transparent text-white/90 hover:bg-white/20 hover:text-white transition-all duration-300'"
+                (click)="onViewChange('user')">
+                User View
+              </button>
+            </div>
+          </div>
+  
+          <!-- Time Range Selector -->
+          <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+            <span class="text-xs font-medium text-white/90">Time Range:</span>
+            <div class="flex space-x-1 bg-white/15 rounded-lg p-1">
+              <button 
+                *ngFor="let option of timeRangeOptions"
+                [class]="selectedTimeRange === option.value ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-white text-blue-800 shadow-lg transition-all duration-300 transform hover:scale-105' : 'px-3 py-1.5 text-xs font-medium rounded-md bg-transparent text-white/90 hover:bg-white/20 hover:text-white transition-all duration-300'"
+                (click)="selectedTimeRange = option.value; onTimeRangeChange()">
+                {{ option.label }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Loading Indicator -->
-  <ng-container *ngIf="!chartsInitialized">
-    <div class="flex justify-center items-center h-64">
-      <div class="text-center">
-        <div class="inline-flex items-center justify-center mb-4">
-          <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
-        </div>
-        <p class="text-gray-600 font-medium">Loading webtool data...</p>
-        <p class="text-sm text-gray-500 mt-1">This may take a moment</p>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- Dashboard Content -->
-  <ng-container *ngIf="chartsInitialized">
-    <!-- Combined Summary Cards -->
-    <div class="container px-4 py-6 mx-auto">
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 metrics-cards">
-        <!-- Webtools Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 metric-card hover:shadow-md transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Webtools</h3>
-              <p class="text-2xl font-bold text-gray-800">{{ metrics.totalWebtools }}</p>
-            </div>
+  
+    <!-- Loading Indicator -->
+    <ng-container *ngIf="!chartsInitialized">
+      <div class="flex justify-center items-center h-64">
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center mb-4">
+            <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
           </div>
-        </div>
-        
-        <!-- Users Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-green-500 metric-card hover:shadow-md transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Users</h3>
-              <p class="text-2xl font-bold text-gray-800">{{ metrics.totalUsers }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Total Logins Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 metric-card hover:shadow-md transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Logins</h3>
-              <p class="text-2xl font-bold text-gray-800">{{ loginMetrics.totalLogins | number }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Active Users Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-green-500 metric-card hover:shadow-md transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Users (30d)</h3>
-              <p class="text-2xl font-bold text-gray-800">{{ loginMetrics.activeUsers | number }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Avg Logins Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-purple-500 metric-card hover:shadow-md transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-purple-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Avg. Logins/Day</h3>
-              <p class="text-2xl font-bold text-gray-800">
-                {{ (loginMetrics.totalLogins / 30) | number:'1.1-1' }}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Peak Hour Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-amber-500 metric-card hover:shadow-md transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-amber-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Peak Hour</h3>
-              <p class="text-2xl font-bold text-gray-800">
-                {{ peakHour }}
-              </p>
-            </div>
-          </div>
+          <p class="text-gray-600 font-medium">Loading webtool data...</p>
+          <p class="text-sm text-gray-500 mt-1">This may take a moment</p>
         </div>
       </div>
-    </div>
-
-    <!-- Main Analytics Section -->
-    <div class="container px-4 py-2 mx-auto space-y-6">
-      <!-- Top Row - Webtool Usage + Department Distribution -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Webtool Usage Chart -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Total Users per Webtool</h3>
-          </div>
-          <div class="h-64">
-            <apx-chart
-              *ngIf="filteredWebtoolUsageChart?.series?.length"
-              [series]="filteredWebtoolUsageChart.series"
-              [chart]="filteredWebtoolUsageChart.chart"
-              [xaxis]="filteredWebtoolUsageChart.xaxis"
-              [plotOptions]="filteredWebtoolUsageChart.plotOptions"
-              [colors]="['#0077B6']">
-            </apx-chart>
-          </div>
-        </div>
-
-        <!-- Department Distribution -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Users by Department</h3>
-          </div>
-          <div class="h-64">
-            <apx-chart
-              *ngIf="filteredDepartmentDistributionChart"
-              [series]="filteredDepartmentDistributionChart.series"
-              [chart]="filteredDepartmentDistributionChart.chart"
-              [labels]="filteredDepartmentDistributionChart.labels"
-              [colors]="['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7']">
-            </apx-chart>
-          </div>
-        </div>
-      </div>
-
-      <!-- Department-Specific Analytics -->
-      <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 chart-container">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-base font-semibold text-gray-800">Department Composition in Each Webtool</h3>
-        </div>
-        <div class="h-60">
-          <apx-chart
-            *ngIf="filteredDepartmentUsageChart"
-            [series]="filteredDepartmentUsageChart.series"
-            [chart]="filteredDepartmentUsageChart.chart"
-            [xaxis]="filteredDepartmentUsageChart.xaxis"
-            [colors]="['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7']">
-          </apx-chart>
-        </div>
-      </div>
-
-      <!-- Login Analytics Section -->
-      <div class="space-y-6">
-        <h2 class="text-xl font-bold text-gray-800">Login Analytics</h2>
-        
-        <!-- Full-width Daily Logins Chart -->
-<!-- For each chart in your login analytics section, update like this: -->
-<!-- Daily Logins Chart -->
-<div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="text-base font-semibold text-gray-800">Daily Logins (Last {{selectedTimeRange}} Days)</h3>
-  </div>
-  <div class="h-80 relative">
-    <apx-chart
-      *ngIf="!loadingLoginMetrics && initLoginCharts().dailyLoginsChart.series[0].data.length > 0"
-      [series]="initLoginCharts().dailyLoginsChart.series"
-      [chart]="initLoginCharts().dailyLoginsChart.chart"
-      [xaxis]="initLoginCharts().dailyLoginsChart.xaxis"
-      [colors]="initLoginCharts().dailyLoginsChart.colors">
-    </apx-chart>
-    
-    <!-- Empty state -->
-    <div *ngIf="!loadingLoginMetrics && initLoginCharts().dailyLoginsChart.series[0].data.length === 0" 
-         class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
-      <div class="text-center p-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h4 class="mt-2 text-sm font-medium text-gray-600">No data available</h4>
-        <p class="mt-1 text-xs text-gray-500">No login records found for the selected webtool</p>
-      </div>
-    </div>
-    
-    <!-- Loading state -->
-    <div *ngIf="loadingLoginMetrics" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-    </div>
-  </div>
-</div>
-        <!-- Side-by-side Hour and Day of Week Charts -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Hourly Logins Chart -->
-          <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-semibold text-gray-800">Logins by Hour of Day</h3>
-            </div>
-            <div class="h-64">
-              <apx-chart
-                *ngIf="!loadingLoginMetrics"
-                [series]="initLoginCharts().hourlyLoginsChart.series"
-                [chart]="initLoginCharts().hourlyLoginsChart.chart"
-                [xaxis]="initLoginCharts().hourlyLoginsChart.xaxis"
-                [colors]="initLoginCharts().hourlyLoginsChart.colors">
-              </apx-chart>
-              <div *ngIf="loadingLoginMetrics" class="flex items-center justify-center h-full">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+    </ng-container>
+  
+    <!-- Dashboard Content -->
+    <ng-container *ngIf="chartsInitialized">
+      <!-- Combined Summary Cards -->
+      <div class="container px-4 py-4 mx-auto">
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 metrics-cards">
+          <!-- Webtools Card -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-blue-500 metric-card transition-shadow duration-200">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Webtools</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ metrics.totalWebtools }}</p>
               </div>
             </div>
           </div>
-
-          <!-- Day of Week Chart -->
-          <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-semibold text-gray-800">Logins by Day of Week</h3>
+          
+          <!-- Users Card -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-green-500 metric-card transition-shadow duration-200">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-green-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Users</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ metrics.totalUsers }}</p>
+              </div>
             </div>
-            <div class="h-64">
-              <apx-chart
-                *ngIf="!loadingLoginMetrics"
-                [series]="initLoginCharts().dayOfWeekChart.series"
-                [chart]="initLoginCharts().dayOfWeekChart.chart"
-                [xaxis]="initLoginCharts().dayOfWeekChart.xaxis"
-                [colors]="initLoginCharts().dayOfWeekChart.colors">
-              </apx-chart>
-              <div *ngIf="loadingLoginMetrics" class="flex items-center justify-center h-full">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+          
+          <!-- Total Logins Card -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-blue-500 metric-card transition-shadow duration-200">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Logins</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ loginMetrics.totalLogins | number }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Active Users Card -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-green-500 metric-card transition-shadow duration-200">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-green-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Users</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ loginMetrics.activeUsers | number }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Avg Logins Card -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-purple-500 metric-card transition-shadow duration-200">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-purple-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Avg. Logins/Day</h3>
+                <p class="text-2xl font-bold text-gray-800">
+                  {{ (loginMetrics.totalLogins / 30) | number:'1.1-1' }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Peak Hour Card -->
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-amber-500 metric-card transition-shadow duration-200">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-amber-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Peak Hour</h3>
+                <p class="text-2xl font-bold text-gray-800">
+                  {{ peakHour }}
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-</div>
+  
+      <!-- User View Content -->
+      <ng-container *ngIf="activeView === 'user'">
+        <div class="container px-4 pb-4 mx-auto">
+          <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+            <!-- Table Header -->
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <h3 class="text-lg font-medium text-gray-900">User Login Activity</h3>
+              <p class="mt-1 text-sm text-gray-500">Showing {{(currentPage - 1) * itemsPerPage + 1}} - 
+                {{Math.min(currentPage * itemsPerPage, userLoginData.length)}} of {{userLoginData.length}} users</p>
+            </div>
+            
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Username
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Department
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Last Login
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Most Used Application
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr *ngFor="let user of paginatedUserData">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{{user.username}}</div>
+                      <div class="text-sm text-gray-500">{{user.email}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {{user.department || 'Unknown'}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {{user.lastLogin | date:'medium'}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        {{user.mostUsedWebtool || 'N/A'}}
+                      </span>
+                    </td>
+                  </tr>
+                  
+                  <!-- Empty state -->
+                  <tr *ngIf="userLoginData.length === 0">
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                      No user login data available
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+              <div class="flex-1 flex justify-between sm:hidden">
+                <button 
+                  (click)="onPageChange(currentPage - 1)"
+                  [disabled]="currentPage === 1"
+                  class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Previous
+                </button>
+                <button 
+                  (click)="onPageChange(currentPage + 1)"
+                  [disabled]="currentPage * itemsPerPage >= userLoginData.length"
+                  class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Next
+                </button>
+              </div>
+              <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm text-gray-700">
+                    Showing <span class="font-medium">{{(currentPage - 1) * itemsPerPage + 1}}</span> to 
+                    <span class="font-medium">{{Math.min(currentPage * itemsPerPage, userLoginData.length)}}</span> of 
+                    <span class="font-medium">{{userLoginData.length}}</span> results
+                  </p>
+                </div>
+                <div>
+                  <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <button 
+                      (click)="onPageChange(currentPage - 1)"
+                      [disabled]="currentPage === 1"
+                      class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                      <span class="sr-only">Previous</span>
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                    
+                    <button *ngFor="let page of [1, 2, 3]" 
+                      (click)="onPageChange(page)"
+                      [class.bg-blue-50 border-blue-500 text-blue-600]="currentPage === page"
+                      [class.bg-white border-gray-300 text-gray-500 hover:bg-gray-50]="currentPage !== page"
+                      class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                      {{page}}
+                    </button>
+                    
+                    <button 
+                      (click)="onPageChange(currentPage + 1)"
+                      [disabled]="currentPage * itemsPerPage >= userLoginData.length"
+                      class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                      <span class="sr-only">Next</span>
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+  
+      <!-- Existing Webtool View Content -->
+      <ng-container *ngIf="activeView === 'webtool' && chartsInitialized">
+        <!-- Main Analytics Section -->
+        <div class="container px-4 pb-4 mx-auto space-y-4">
+          <!-- Top Row - Webtool Usage + Department Distribution -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Webtool Usage Chart -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 border border-gray-100 chart-container">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-800">Total Users per Webtool</h3>
+              </div>
+              <div class="h-64">
+                <apx-chart
+                  *ngIf="filteredWebtoolUsageChart?.series?.length"
+                  [series]="filteredWebtoolUsageChart.series"
+                  [chart]="filteredWebtoolUsageChart.chart"
+                  [xaxis]="filteredWebtoolUsageChart.xaxis"
+                  [plotOptions]="filteredWebtoolUsageChart.plotOptions"
+                  [colors]="['#0077B6']">
+                </apx-chart>
+              </div>
+            </div>
+  
+            <!-- Department Distribution -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 border border-gray-100 chart-container">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-800">Users by Department</h3>
+              </div>
+              <div class="h-64">
+                <apx-chart
+                  *ngIf="filteredDepartmentDistributionChart"
+                  [series]="filteredDepartmentDistributionChart.series"
+                  [chart]="filteredDepartmentDistributionChart.chart"
+                  [labels]="filteredDepartmentDistributionChart.labels"
+                  [colors]="['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7']">
+                </apx-chart>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Department-Specific Analytics -->
+          <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 border border-gray-100 chart-container">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-semibold text-gray-800">Department Composition in Each Webtool</h3>
+            </div>
+            <div class="h-60">
+              <apx-chart
+                *ngIf="filteredDepartmentUsageChart"
+                [series]="filteredDepartmentUsageChart.series"
+                [chart]="filteredDepartmentUsageChart.chart"
+                [xaxis]="filteredDepartmentUsageChart.xaxis"
+                [colors]="['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7']">
+              </apx-chart>
+            </div>
+          </div>
+  
+          <!-- Login Analytics Section -->
+          <div class="space-y-4">
+            <h2 class="text-xl font-bold text-gray-800">Login Analytics</h2>
+            
+            <!-- Full-width Daily Logins Chart -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 border border-gray-100">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-800">Daily Logins (Last {{selectedTimeRange}} Days)</h3>
+              </div>
+              <div class="h-80 relative">
+                <apx-chart
+                  *ngIf="!loadingLoginMetrics && initLoginCharts().dailyLoginsChart.series[0].data.length > 0"
+                  [series]="initLoginCharts().dailyLoginsChart.series"
+                  [chart]="initLoginCharts().dailyLoginsChart.chart"
+                  [xaxis]="initLoginCharts().dailyLoginsChart.xaxis"
+                  [colors]="initLoginCharts().dailyLoginsChart.colors"
+                  [stroke]="initLoginCharts().dailyLoginsChart.stroke || { width: 1, curve: 'smooth' }">
+                </apx-chart>
+                
+                <!-- Empty state -->
+                <div *ngIf="!loadingLoginMetrics && initLoginCharts().dailyLoginsChart.series[0].data.length === 0" 
+                     class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+                  <div class="text-center p-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h4 class="mt-2 text-sm font-medium text-gray-600">No data available</h4>
+                    <p class="mt-1 text-xs text-gray-500">No login records found for the selected webtool</p>
+                  </div>
+                </div>
+                
+                <!-- Loading state -->
+                <div *ngIf="loadingLoginMetrics" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Side-by-side Hour and Day of Week Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <!-- Hourly Logins Chart -->
+              <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-base font-semibold text-gray-800">Logins by Hour of Day</h3>
+                </div>
+                <div class="h-64">
+                  <apx-chart
+                    *ngIf="!loadingLoginMetrics"
+                    [series]="initLoginCharts().hourlyLoginsChart.series"
+                    [chart]="initLoginCharts().hourlyLoginsChart.chart"
+                    [xaxis]="initLoginCharts().hourlyLoginsChart.xaxis"
+                    [colors]="initLoginCharts().hourlyLoginsChart.colors">
+                  </apx-chart>
+                  <div *ngIf="loadingLoginMetrics" class="flex items-center justify-center h-full">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Day of Week Chart -->
+              <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-base font-semibold text-gray-800">Logins by Day of Week</h3>
+                </div>
+                <div class="h-64">
+                  <apx-chart
+                    *ngIf="!loadingLoginMetrics"
+                    [series]="initLoginCharts().dayOfWeekChart.series"
+                    [chart]="initLoginCharts().dayOfWeekChart.chart"
+                    [xaxis]="initLoginCharts().dayOfWeekChart.xaxis"
+                    [colors]="initLoginCharts().dayOfWeekChart.colors">
+                  </apx-chart>
+                  <div *ngIf="loadingLoginMetrics" class="flex items-center justify-center h-full">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
