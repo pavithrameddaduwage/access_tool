@@ -51,7 +51,7 @@ __decorate([
     __metadata("design:type", role_entity_1.Role)
 ], UserWebtool.prototype, "role", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], UserWebtool.prototype, "isActive", void 0);
 __decorate([
