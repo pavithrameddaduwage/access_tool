@@ -20,31 +20,20 @@ let AnalyticsController = class AnalyticsController {
     constructor(analyticsService) {
         this.analyticsService = analyticsService;
     }
-    async getSummary(days = 30, webtool) {
-        return this.analyticsService.getSummary(days, webtool);
-    }
     async getDailyLoginStats(days = 30, webtool) {
         return this.analyticsService.getDailyLogins(days, webtool);
     }
-    async getUserStats(email) {
-        return this.analyticsService.getUserLoginStats(email);
-    }
     async getLoginsByHour(webtool) {
-        return this.analyticsService.getLoginsByHour('America/New_York', webtool);
+        return this.analyticsService.getLoginsByHour(webtool);
     }
     async getLoginsByDayOfWeek(webtool) {
-        return this.analyticsService.getLoginsByDayOfWeek('America/New_York', webtool);
+        return this.analyticsService.getLoginsByDayOfWeek(webtool);
+    }
+    async getSummary(days = 30, webtool) {
+        return this.analyticsService.getSummary(days, webtool);
     }
 };
 exports.AnalyticsController = AnalyticsController;
-__decorate([
-    (0, common_1.Get)('summary'),
-    __param(0, (0, common_1.Query)('days')),
-    __param(1, (0, common_1.Query)('webtool')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getSummary", null);
 __decorate([
     (0, common_1.Get)('daily-logins'),
     __param(0, (0, common_1.Query)('days')),
@@ -53,13 +42,6 @@ __decorate([
     __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getDailyLoginStats", null);
-__decorate([
-    (0, common_1.Get)('user-stats'),
-    __param(0, (0, common_1.Query)('email')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getUserStats", null);
 __decorate([
     (0, common_1.Get)('logins-by-hour'),
     __param(0, (0, common_1.Query)('webtool')),
@@ -74,6 +56,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getLoginsByDayOfWeek", null);
+__decorate([
+    (0, common_1.Get)('summary'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getSummary", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
