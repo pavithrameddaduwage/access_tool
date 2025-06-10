@@ -176,30 +176,7 @@ public itemsPerPage = 5;
       this.filterByWebtool();
     }
   }
-  // async loadLoginMetrics() {
-  //   this.loadingLoginMetrics = true;
-  //   try {
-  //     const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
-  //       firstValueFrom(this.loginAnalyticsService.getSummary(this.selectedTimeRange)),
-  //       firstValueFrom(this.loginAnalyticsService.getDailyLogins(this.selectedTimeRange)),
-  //       firstValueFrom(this.loginAnalyticsService.getLoginsByHour()),
-  //       firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek())
-  //     ]);
-  
-  //     this.loginMetrics = {
-  //       ...summary,
-  //       dailyLogins,
-  //       loginsByHour,
-  //       loginsByDay
-  //     };
-  
-  //     this.calculatePeakHour();
-  //   } catch (error) {
-  //     console.error('Error loading login metrics:', error);
-  //   } finally {
-  //     this.loadingLoginMetrics = false;
-  //   }
-  // }
+
 
   async loadUserLoginData() {
     try {
