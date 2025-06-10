@@ -149,6 +149,10 @@ public itemsPerPage = 5;
     loginsByDay: []
   };
   
+  public searchQuery: string = '';
+public filteredUserLoginData: any[] = [];
+
+
   loadingLoginMetrics = false;
 
   @Input() activeDashboard: 'powerbi' | 'webtool' = 'webtool';
@@ -178,66 +182,180 @@ public itemsPerPage = 5;
   }
 
 
-  async loadUserLoginData() {
-    try {
-      // Get all login events
-      const loginEvents = await firstValueFrom(
-        this.loginAnalyticsService.getLoginEvents()
-      );
+  // async loadUserLoginData() {
+  //   try {
+  //     // Get all login events
+  //     const loginEvents = await firstValueFrom(
+  //       this.loginAnalyticsService.getLoginEvents()
+  //     );
       
-      // Get all user webtools to map emails to user info
-      const userWebtools = await firstValueFrom(
-        this.userWebtoolService.getAllActiveUserWebtools()
-      );
+  //     // Get all user webtools to map emails to user info
+  //     const userWebtools = await firstValueFrom(
+  //       this.userWebtoolService.getAllActiveUserWebtools()
+  //     );
       
-      // Create a map of email to user info (take the first record for each email)
-      const userMap = new Map<string, {username: string, department: string}>();
-      userWebtools.forEach(user => {
-        if (!userMap.has(user.email)) {
-          userMap.set(user.email, {
-            username: user.userName || user.email, // Fallback to email if no username
-            department: user.department || 'Unknown'
-          });
-        }
-      });
+  //     // Create a map of email to user info (take the first record for each email)
+  //     const userMap = new Map<string, {username: string, department: string}>();
+  //     userWebtools.forEach(user => {
+  //       if (!userMap.has(user.email)) {
+  //         userMap.set(user.email, {
+  //           username: user.userName || user.email, // Fallback to email if no username
+  //           department: user.department || 'Unknown'
+  //         });
+  //       }
+  //     });
       
-      // Process login events and merge with user data
-      this.userLoginData = loginEvents.map(event => {
-        const userInfo = userMap.get(event.email) || {
-          username: event.email, // Use email as fallback username
-          department: event.department || 'Unknown'
-        };
+  //     // Process login events and merge with user data
+  //     this.userLoginData = loginEvents.map(event => {
+  //       const userInfo = userMap.get(event.email) || {
+  //         username: event.email, // Use email as fallback username
+  //         department: event.department || 'Unknown'
+  //       };
         
-        return {
-          username: userInfo.username,
-          email: event.email,
-          department: userInfo.department,
-          lastLogin: new Date(event.loginTime),
-          mostUsedWebtool: event.webtool // Use the webtool from the login event
-        };
-      });
+  //       return {
+  //         username: userInfo.username,
+  //         email: event.email,
+  //         department: userInfo.department,
+  //         lastLogin: new Date(event.loginTime),
+  //         mostUsedWebtool: event.webtool // Use the webtool from the login event
+  //       };
+  //     });
       
-      // Remove duplicates (keep only the most recent login per user)
-      const uniqueUsers = new Map<string, any>();
-      this.userLoginData.forEach(user => {
-        if (!uniqueUsers.has(user.email) || 
-            user.lastLogin > uniqueUsers.get(user.email).lastLogin) {
-          uniqueUsers.set(user.email, user);
-        }
-      });
+  //     // Remove duplicates (keep only the most recent login per user)
+  //     const uniqueUsers = new Map<string, any>();
+  //     this.userLoginData.forEach(user => {
+  //       if (!uniqueUsers.has(user.email) || 
+  //           user.lastLogin > uniqueUsers.get(user.email).lastLogin) {
+  //         uniqueUsers.set(user.email, user);
+  //       }
+  //     });
       
-      this.userLoginData = Array.from(uniqueUsers.values())
-        .sort((a, b) => b.lastLogin.getTime() - a.lastLogin.getTime());
+  //     this.userLoginData = Array.from(uniqueUsers.values())
+  //       .sort((a, b) => b.lastLogin.getTime() - a.lastLogin.getTime());
       
-      console.log('Processed user login data:', this.userLoginData);
+  //     console.log('Processed user login data:', this.userLoginData);
       
-    } catch (error) {
-      console.error('Error loading user login data:', error);
-      this.userLoginData = []; // Ensure it's always an array
-    }
+  //   } catch (error) {
+  //     console.error('Error loading user login data:', error);
+  //     this.userLoginData = []; // Ensure it's always an array
+  //   }
+  // }
+
+async loadUserLoginData() {
+  try {
+    // Get all login events and user webtools in parallel
+    const [loginEvents, userWebtools] = await Promise.all([
+      firstValueFrom(this.loginAnalyticsService.getLoginEvents()),
+      firstValueFrom(this.userWebtoolService.getAllActiveUserWebtools())
+    ]);
+
+    // Create a map of email to user info (take the first record for each email)
+    // Normalize emails to lowercase to avoid case sensitivity issues
+    const userMap = new Map<string, {username: string, department: string}>();
+    userWebtools.forEach(user => {
+      const normalizedEmail = user.email.toLowerCase().trim();
+      if (!userMap.has(normalizedEmail)) {
+        userMap.set(normalizedEmail, {
+          username: user.userName || user.email.split('@')[0], // Fallback to email prefix if no username
+          department: user.department || 'Unknown'
+        });
+      }
+    });
+
+    // Create maps to count logins per user and track most recent login
+    const loginCountMap = new Map<string, number>();
+    const lastLoginMap = new Map<string, Date>();
+    const webtoolUsageMap = new Map<string, Record<string, number>>();
+
+    loginEvents.forEach(event => {
+      const normalizedEmail = event.email.toLowerCase().trim();
+      
+      // Count logins
+      loginCountMap.set(normalizedEmail, (loginCountMap.get(normalizedEmail) || 0) + 1);
+      
+      // Track most recent login
+      const eventDate = new Date(event.loginTime);
+      if (!lastLoginMap.has(normalizedEmail)) {
+        lastLoginMap.set(normalizedEmail, eventDate);
+      } else if (eventDate > lastLoginMap.get(normalizedEmail)!) {
+        lastLoginMap.set(normalizedEmail, eventDate);
+      }
+      
+      // Track webtool usage
+      if (!webtoolUsageMap.has(normalizedEmail)) {
+        webtoolUsageMap.set(normalizedEmail, {});
+      }
+      const userWebtools = webtoolUsageMap.get(normalizedEmail)!;
+      userWebtools[event.webtool] = (userWebtools[event.webtool] || 0) + 1;
+    });
+
+    // Process all users from userWebtools (including those with 0 logins)
+    const allUsers = Array.from(userMap.entries()).map(([email, userInfo]) => {
+      const loginCount = loginCountMap.get(email) || 0;
+      const lastLogin = lastLoginMap.get(email);
+      
+      // Find most used webtool
+      let mostUsedWebtool = 'N/A';
+      if (webtoolUsageMap.has(email)) {
+        const webtools = webtoolUsageMap.get(email)!;
+        mostUsedWebtool = Object.entries(webtools)
+          .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+      }
+
+      return {
+        username: userInfo.username,
+        email: email, // This will be the normalized lowercase email
+        department: userInfo.department,
+        lastLogin: lastLogin,
+        mostUsedWebtool: mostUsedWebtool,
+        loginCount: loginCount
+      };
+    });
+
+    // Sort by login count descending, then by last login date
+    this.userLoginData = allUsers.sort((a, b) => {
+      if (b.loginCount !== a.loginCount) {
+        return b.loginCount - a.loginCount;
+      }
+      const aTime = a.lastLogin?.getTime() || 0;
+      const bTime = b.lastLogin?.getTime() || 0;
+      return bTime - aTime;
+    });
+
+    // Initialize filtered data
+    this.filteredUserLoginData = [...this.userLoginData];
+    
+    console.log('Processed user login data:', this.userLoginData);
+    
+  } catch (error) {
+    console.error('Error loading user login data:', error);
+    this.userLoginData = [];
+    this.filteredUserLoginData = [];
+  }
+}
+
+applySearch() {
+  if (!this.searchQuery) {
+    this.filteredUserLoginData = [...this.userLoginData];
+    return;
   }
 
-  
+  const query = this.searchQuery.toLowerCase();
+  this.filteredUserLoginData = this.userLoginData.filter(user => 
+    user.username.toLowerCase().includes(query) ||
+    user.email.toLowerCase().includes(query) ||
+    user.department.toLowerCase().includes(query) ||
+    user.mostUsedWebtool.toLowerCase().includes(query)
+  );
+  this.currentPage = 1; // Reset to first page when searching
+}
+
+// Update paginatedUserData getter to use filtered data
+get paginatedUserData() {
+  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  return this.filteredUserLoginData.slice(startIndex, startIndex + this.itemsPerPage);
+}
+
   async loadLoginMetrics(webtool?: string): Promise<void> {
     console.log('Loading login metrics with webtool:', webtool);
     this.loadingLoginMetrics = true;
@@ -497,10 +615,10 @@ public initLoginCharts(): LoginCharts {
     }
   }
   
-  get paginatedUserData() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.userLoginData.slice(startIndex, startIndex + this.itemsPerPage);
-  }
+  // get paginatedUserData() {
+  //   const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  //   return this.userLoginData.slice(startIndex, startIndex + this.itemsPerPage);
+  // }
   Math = Math;
 
   onPageChange(page: number) {

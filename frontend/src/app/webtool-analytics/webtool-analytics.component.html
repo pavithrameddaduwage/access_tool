@@ -183,61 +183,86 @@
       <ng-container *ngIf="activeView === 'user'">
         <div class="container px-4 pb-4 mx-auto">
           <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-            <!-- Table Header -->
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-              <h3 class="text-lg font-medium text-gray-900">User Login Activity</h3>
-              <p class="mt-1 text-sm text-gray-500">Showing {{(currentPage - 1) * itemsPerPage + 1}} - 
-                {{Math.min(currentPage * itemsPerPage, userLoginData.length)}} of {{userLoginData.length}} users</p>
-            </div>
-            
-            <!-- Table -->
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Username
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Department
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Last Login
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Most Used Application
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <tr *ngFor="let user of paginatedUserData">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-medium text-gray-900">{{user.username}}</div>
-                      <div class="text-sm text-gray-500">{{user.email}}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {{user.department || 'Unknown'}}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {{user.lastLogin | date:'medium'}}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                        {{user.mostUsedWebtool || 'N/A'}}
-                      </span>
-                    </td>
-                  </tr>
-                  
-                  <!-- Empty state -->
-                  <tr *ngIf="userLoginData.length === 0">
-                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-                      No user login data available
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
+    <!-- Table Header -->
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <h3 class="text-lg font-medium text-gray-900">User Login Activity</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        Showing {{(currentPage - 1) * itemsPerPage + 1}} - 
+        {{Math.min(currentPage * itemsPerPage, filteredUserLoginData.length)}} of {{filteredUserLoginData.length}} users
+      </p>
+    </div>
+      <div class="mb-4">
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <input 
+        [(ngModel)]="searchQuery"
+        (input)="applySearch()"
+        type="search" 
+        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+        placeholder="Search users...">
+    </div>
+  </div>
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Username
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Department
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Last Login
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Most Used Application
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Total Logins
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let user of paginatedUserData">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{user.username}}</div>
+              <div class="text-sm text-gray-500">{{user.email}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{user.department || 'Unknown'}}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{user.lastLogin ? (user.lastLogin | date:'medium') : 'Never'}}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                {{user.mostUsedWebtool || 'N/A'}}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                {{user.loginCount > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}}">
+                {{user.loginCount}}
+              </span>
+            </td>
+          </tr>
+          
+          <!-- Empty state -->
+          <tr *ngIf="filteredUserLoginData.length === 0">
+            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+              No users found matching your search
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
             <!-- Pagination -->
             <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
               <div class="flex-1 flex justify-between sm:hidden">
