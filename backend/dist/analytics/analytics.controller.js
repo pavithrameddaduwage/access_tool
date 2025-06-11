@@ -20,59 +20,142 @@ let AnalyticsController = class AnalyticsController {
     constructor(analyticsService) {
         this.analyticsService = analyticsService;
     }
-    async getDailyLoginStats(days = 30, webtool) {
-        return this.analyticsService.getDailyLogins(days, webtool);
-    }
-    async getLoginsByHour(webtool) {
-        return this.analyticsService.getLoginsByHour(webtool);
-    }
-    async getLoginsByDayOfWeek(webtool) {
-        return this.analyticsService.getLoginsByDayOfWeek(webtool);
-    }
-    async getSummary(days = 30, webtool) {
-        return this.analyticsService.getSummary(days, webtool);
-    }
     async getLoginEvents() {
         return this.analyticsService.getLoginEvents();
     }
+    async getUserStats(email) {
+        const [totalLogins, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
+            this.analyticsService.loginEventRepository.count({ where: { email } }),
+            this.analyticsService.getDailyLogins(30, undefined, email),
+            this.analyticsService.getLoginsByHour(undefined, email),
+            this.analyticsService.getLoginsByDayOfWeek(undefined, email)
+        ]);
+        const webtoolUsage = await this.analyticsService.loginEventRepository
+            .createQueryBuilder('login')
+            .select('login.webtool', 'webtool')
+            .addSelect('COUNT(*)', 'count')
+            .where('login.email = :email', { email })
+            .groupBy('login.webtool')
+            .orderBy('count', 'DESC')
+            .getRawOne();
+        const lastLogin = await this.analyticsService.loginEventRepository.findOne({
+            where: { email },
+            order: { loginTime: 'DESC' }
+        });
+        const peakHourData = await this.analyticsService.loginEventRepository
+            .createQueryBuilder('login')
+            .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
+            .addSelect('COUNT(*)', 'count')
+            .where('login.email = :email', { email })
+            .groupBy('EXTRACT(HOUR FROM login.loginTime)')
+            .orderBy('count', 'DESC')
+            .getRawOne();
+        return {
+            totalLogins,
+            mostUsedWebtool: webtoolUsage?.webtool || 'N/A',
+            lastLogin: lastLogin?.loginTime || null,
+            peakHour: peakHourData ? `${peakHourData.hour}:00` : 'N/A',
+            dailyLogins,
+            loginsByHour,
+            loginsByDay
+        };
+    }
+    async getDailyLoginStats(days = 30, webtool, email) {
+        return this.analyticsService.getDailyLogins(days, webtool, email);
+    }
+    async getLoginsByHour(days = 30, webtool, email) {
+        return this.analyticsService.getLoginsByHour(days, webtool, email);
+    }
+    async getLoginsByDayOfWeek(days = 30, webtool, email) {
+        return this.analyticsService.getLoginsByDayOfWeek(days, webtool, email);
+    }
+    async getSummary(days = 30, webtool, email) {
+        return this.analyticsService.getSummary(days, webtool, email);
+    }
+    async getDepartmentLoginStats(days = 30, webtool) {
+        return this.analyticsService.getDepartmentLoginStats(days, webtool);
+    }
+    async getDepartmentHourlyLogins(days = 30, webtool) {
+        return this.analyticsService.getDepartmentHourlyLogins(days, webtool);
+    }
+    async getDepartmentDailyLogins(days = 30, webtool) {
+        return this.analyticsService.getDepartmentDailyLogins(days, webtool);
+    }
 };
 exports.AnalyticsController = AnalyticsController;
-__decorate([
-    (0, common_1.Get)('daily-logins'),
-    __param(0, (0, common_1.Query)('days')),
-    __param(1, (0, common_1.Query)('webtool')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getDailyLoginStats", null);
-__decorate([
-    (0, common_1.Get)('logins-by-hour'),
-    __param(0, (0, common_1.Query)('webtool')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getLoginsByHour", null);
-__decorate([
-    (0, common_1.Get)('logins-by-day'),
-    __param(0, (0, common_1.Query)('webtool')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getLoginsByDayOfWeek", null);
-__decorate([
-    (0, common_1.Get)('summary'),
-    __param(0, (0, common_1.Query)('days')),
-    __param(1, (0, common_1.Query)('webtool')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
-    __metadata("design:returntype", Promise)
-], AnalyticsController.prototype, "getSummary", null);
 __decorate([
     (0, common_1.Get)('login-events'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getLoginEvents", null);
+__decorate([
+    (0, common_1.Get)('user-stats/:email'),
+    __param(0, (0, common_1.Param)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getUserStats", null);
+__decorate([
+    (0, common_1.Get)('daily-logins'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getDailyLoginStats", null);
+__decorate([
+    (0, common_1.Get)('logins-by-hour'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getLoginsByHour", null);
+__decorate([
+    (0, common_1.Get)('logins-by-day'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getLoginsByDayOfWeek", null);
+__decorate([
+    (0, common_1.Get)('summary'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getSummary", null);
+__decorate([
+    (0, common_1.Get)('department-logins'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getDepartmentLoginStats", null);
+__decorate([
+    (0, common_1.Get)('department-hourly-logins'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getDepartmentHourlyLogins", null);
+__decorate([
+    (0, common_1.Get)('department-daily-logins'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getDepartmentDailyLogins", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

@@ -20,10 +20,29 @@ interface LoginChartData {
   colors: string[];
   stroke?: { 
     width?: number;  
-    curve?: "straight" | "smooth" | "stepline" | "monotoneCubic";  // Use specific string literals
+    curve?: "straight" | "smooth" | "stepline" | "monotoneCubic";  
+  };
+}
+interface UserKPIs {
+  name: string;
+  department: string;
+  webtools: any[];
+  loginStats: {
+    totalLogins: number;
+    mostUsedWebtool: string;
+    lastLogin: Date | null;
+    webtoolUsage: { webtool: string; count: number }[];
   };
 }
 
+interface User {
+  email: string;
+  username: string;  // Changed from 'name' to 'username' to match your data structure
+  department?: string;
+  lastLogin?: Date;
+  mostUsedWebtool?: string;
+  loginCount?: number;
+}
 
 interface LoginCharts {
   dailyLoginsChart: LoginChartData;
@@ -112,8 +131,24 @@ export class WebtoolAnalyticsComponent implements OnInit {
   ];
   selectedTimeRange = 30; 
 
+  public departmentLoginStats: any[] = [];
+public departmentHourlyLogins: any[] = [];
+public departmentDailyLogins: any[] = [];
+public loadingDepartmentStats = false;
+
+public selectedUser: string | null = null;
+public selectedUserData: User | null = null;
+
+public userKPIs: {
+  name: string;
+  department: string;
+  webtools: any[];
+  loginStats: any;
+} | null = null;
+
   public peakHour: string = 'N/A';
 
+  
   chartsInitialized = false;
   webtoolUsageChart: any = null;
   roleDistributionChart: any = null;
@@ -136,6 +171,11 @@ export class WebtoolAnalyticsComponent implements OnInit {
 public userLoginData: any[] = [];
 public currentPage = 1;
 public itemsPerPage = 5;
+
+public userDetailsLoading = false;
+public userWebtoolsData: any[] = [];
+public userLoginStats: any = null;
+
 
 
   userStatusData: { active: number, inactive: number } = { active: 0, inactive: 0 };
@@ -181,65 +221,236 @@ public filteredUserLoginData: any[] = [];
     }
   }
 
+async onSelectUser(user: User) {
+  if (this.selectedUser === user.email) {
+    this.selectedUser = null;
+    this.selectedUserData = null;
+  } else {
+    this.selectedUser = user.email;
+    this.selectedUserData = user;
+    await this.loadUserDetails();
+  }
+}
 
-  // async loadUserLoginData() {
-  //   try {
-  //     // Get all login events
-  //     const loginEvents = await firstValueFrom(
-  //       this.loginAnalyticsService.getLoginEvents()
-  //     );
-      
-  //     // Get all user webtools to map emails to user info
-  //     const userWebtools = await firstValueFrom(
-  //       this.userWebtoolService.getAllActiveUserWebtools()
-  //     );
-      
-  //     // Create a map of email to user info (take the first record for each email)
-  //     const userMap = new Map<string, {username: string, department: string}>();
-  //     userWebtools.forEach(user => {
-  //       if (!userMap.has(user.email)) {
-  //         userMap.set(user.email, {
-  //           username: user.userName || user.email, // Fallback to email if no username
-  //           department: user.department || 'Unknown'
-  //         });
-  //       }
-  //     });
-      
-  //     // Process login events and merge with user data
-  //     this.userLoginData = loginEvents.map(event => {
-  //       const userInfo = userMap.get(event.email) || {
-  //         username: event.email, // Use email as fallback username
-  //         department: event.department || 'Unknown'
-  //       };
-        
-  //       return {
-  //         username: userInfo.username,
-  //         email: event.email,
-  //         department: userInfo.department,
-  //         lastLogin: new Date(event.loginTime),
-  //         mostUsedWebtool: event.webtool // Use the webtool from the login event
-  //       };
-  //     });
-      
-  //     // Remove duplicates (keep only the most recent login per user)
-  //     const uniqueUsers = new Map<string, any>();
-  //     this.userLoginData.forEach(user => {
-  //       if (!uniqueUsers.has(user.email) || 
-  //           user.lastLogin > uniqueUsers.get(user.email).lastLogin) {
-  //         uniqueUsers.set(user.email, user);
-  //       }
-  //     });
-      
-  //     this.userLoginData = Array.from(uniqueUsers.values())
-  //       .sort((a, b) => b.lastLogin.getTime() - a.lastLogin.getTime());
-      
-  //     console.log('Processed user login data:', this.userLoginData);
-      
-  //   } catch (error) {
-  //     console.error('Error loading user login data:', error);
-  //     this.userLoginData = []; // Ensure it's always an array
-  //   }
-  // }
+
+
+async loadDepartmentStats() {
+  console.log('Loading department stats for time range:', this.selectedTimeRange);
+  
+  this.loadingDepartmentStats = true;
+  try {
+    const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
+      this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+    
+    const [stats, hourly, daily] = await Promise.all([
+      firstValueFrom(this.loginAnalyticsService.getDepartmentLoginStats(this.selectedTimeRange, webtoolFilter)),
+      firstValueFrom(this.loginAnalyticsService.getDepartmentHourlyLogins(this.selectedTimeRange, webtoolFilter)),
+      firstValueFrom(this.loginAnalyticsService.getDepartmentDailyLogins(this.selectedTimeRange, webtoolFilter))
+    ]);
+
+    console.log('Received department stats:', { stats, hourly, daily });
+
+    this.departmentLoginStats = stats;
+    this.departmentHourlyLogins = hourly;
+    this.departmentDailyLogins = daily;
+  } catch (error) {
+    console.error('Error loading department stats:', error);
+  } finally {
+    this.loadingDepartmentStats = false;
+  }
+}
+
+getDepartmentCharts() {
+  console.log('Generating department charts for time range:', this.selectedTimeRange);
+  
+  // Department Login Distribution (Pie Chart)
+  const departmentDistribution = {
+    series: this.departmentLoginStats.map(d => d.logins),
+    chart: {
+      type: 'pie' as const,
+      height: 250,
+      toolbar: { show: false }
+    },
+    labels: this.departmentLoginStats.map(d => d.department || 'Unknown'),
+    colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'],
+    legend: {
+      position: 'bottom' as const
+    },
+    dataLabels: {
+      enabled: false
+    }
+  };
+
+  // Department Hourly Logins (Heatmap)
+  const uniqueHours = Array.from({length: 24}, (_, i) => i);
+  const departmentHourlyHeatmap = {
+    series: this.departmentLoginStats.map(department => {
+      const departmentData = this.departmentHourlyLogins
+        .filter(d => d.department === department.department)
+        .reduce((acc, curr) => {
+          acc[curr.hour] = curr.count;
+          return acc;
+        }, {} as Record<number, number>);
+
+      return {
+        name: department.department || 'Unknown',
+        data: uniqueHours.map(hour => ({
+          x: `${hour}:00`,
+          y: departmentData[hour] || 0
+        }))
+      };
+    }),
+    chart: {
+      type: 'heatmap' as const,
+      height: 400,
+      toolbar: { show: false }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    colors: ["#E5E7EB", "#0077B6"],
+    xaxis: {
+      type: 'category' as const,
+      categories: uniqueHours.map(h => `${h}:00`)
+    },
+    plotOptions: {
+      heatmap: {
+        colorScale: {
+          ranges: [
+            { from: 0, to: 0, color: "#E5E7EB", name: "No Logins" },
+            { from: 1, to: 5, color: "#90E0EF", name: "Low" },
+            { from: 6, to: 15, color: "#00B4D8", name: "Medium" },
+            { from: 16, to: 1000, color: "#0077B6", name: "High" }
+          ]
+        }
+      }
+    }
+  };
+
+  // Department Daily Logins (Line Chart)
+  const allDates = [...new Set(this.departmentDailyLogins.map(d => d.date))].sort();
+  const departmentDailyLine = {
+    series: this.departmentLoginStats.map(department => {
+      const departmentData = this.departmentDailyLogins
+        .filter(d => d.department === department.department)
+        .reduce((acc, curr) => {
+          acc[curr.date] = curr.count;
+          return acc;
+        }, {} as Record<string, number>);
+
+      return {
+        name: department.department || 'Unknown',
+        data: allDates.map(date => departmentData[date] || 0)
+      };
+    }),
+    chart: {
+      type: 'line' as const,
+      height: 300,
+      toolbar: { show: false },
+      stacked: false
+    },
+    stroke: {
+      width: 2,
+      curve: 'smooth' as const
+    },
+    xaxis: {
+      categories: allDates.map(date => {
+        const d = new Date(date);
+        return `${d.getDate()}/${d.getMonth()+1}`;
+      }),
+      labels: {
+        rotate: -45
+      }
+    },
+    colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'],
+    legend: {
+      position: 'bottom' as const
+    }
+  };
+
+  console.log('Generated department charts:', {
+    departmentDistribution,
+    departmentHourlyHeatmap,
+    departmentDailyLine
+  });
+
+  return {
+    departmentDistribution,
+    departmentHourlyHeatmap,
+    departmentDailyLine
+  };
+}
+
+
+async loadUserDetails() {
+  if (!this.selectedUser) return;
+
+  this.userDetailsLoading = true;
+  
+  try {
+    const [webtools, loginStats] = await Promise.all([
+      firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(this.selectedUser)),
+      firstValueFrom(this.loginAnalyticsService.getUserStats(this.selectedUser))
+    ]);
+
+    this.userWebtoolsData = webtools;
+    this.userLoginStats = loginStats;
+    
+  } catch (error) {
+    console.error('Error loading user details:', error);
+  } finally {
+    this.userDetailsLoading = false;
+  }
+}
+
+public getUserLoginCharts(): LoginCharts {
+  if (!this.userLoginStats) {
+    return this.initLoginCharts(); 
+  }
+
+  return {
+    dailyLoginsChart: {
+      series: [{
+        name: 'Logins',
+        data: this.userLoginStats.dailyLogins.map((day: any) => day.count)
+      }],
+      chart: { type: 'line', height: 220, toolbar: { show: false } },
+      xaxis: {
+        categories: this.userLoginStats.dailyLogins.map((day: any) => {
+          const date = new Date(day.date);
+          return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}`;
+        }),
+        labels: { style: { fontSize: '10px' } }
+      },
+      colors: ['#FFA500'],
+      stroke: { width: 1.5, curve: 'straight' }
+    },
+    hourlyLoginsChart: {
+      series: [{
+        name: 'Logins',
+        data: this.userLoginStats.loginsByHour.map((hour: any) => hour.count)
+      }],
+      chart: { type: 'bar', height: 220, toolbar: { show: false } },
+      xaxis: {
+        categories: this.userLoginStats.loginsByHour.map((hour: any) => `${hour.hour}:00`),
+        labels: { style: { fontSize: '10px' } }
+      },
+      colors: ['#00B4D8']
+    },
+    dayOfWeekChart: {
+      series: [{
+        name: 'Logins',
+        data: this.userLoginStats.loginsByDay.map((day: any) => day.count)
+      }],
+      chart: { type: 'bar', height: 220, toolbar: { show: false } },
+      xaxis: {
+        categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        labels: { style: { fontSize: '10px' } }
+      },
+      colors: ['#90E0EF']
+    }
+  };
+}
 
 async loadUserLoginData() {
   try {
@@ -356,44 +567,62 @@ get paginatedUserData() {
   return this.filteredUserLoginData.slice(startIndex, startIndex + this.itemsPerPage);
 }
 
-  async loadLoginMetrics(webtool?: string): Promise<void> {
-    console.log('Loading login metrics with webtool:', webtool);
-    this.loadingLoginMetrics = true;
+async loadLoginMetrics(webtool?: string, userEmail?: string): Promise<void> {
+  console.log('Loading login metrics with params:', { 
+    days: this.selectedTimeRange, 
+    webtool, 
+    userEmail 
+  });
+  
+  this.loadingLoginMetrics = true;
+  
+  try {
+    let params: any = { days: this.selectedTimeRange.toString() }; // Convert to string
+    if (webtool) params.webtool = webtool;
+    if (userEmail) params.email = userEmail;
     
-    try {
-      const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
-        firstValueFrom(this.loginAnalyticsService.getSummary(this.selectedTimeRange, webtool)),
-        firstValueFrom(this.loginAnalyticsService.getDailyLogins(this.selectedTimeRange, webtool)),
-        firstValueFrom(this.loginAnalyticsService.getLoginsByHour(webtool)),
-        firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek(webtool))
-      ]);
-  
-      console.log('Login metrics data received:', {
-        summary,
-        dailyLogins,
-        loginsByHour,
-        loginsByDay
-      });
-  
-      this.loginMetrics = {
-        ...summary,
-        dailyLogins,
-        loginsByHour,
-        loginsByDay
-      };
-  
-      this.calculatePeakHour();
-    } catch (error) {
-      console.error('Error loading login metrics:', error);
-    } finally {
-      this.loadingLoginMetrics = false;
-      console.log('Login metrics loading completed');
-    }
+    const [summary, dailyLogins, loginsByHour, loginsByDay, departmentStats] = await Promise.all([
+      firstValueFrom(this.loginAnalyticsService.getSummary(params.days, params.webtool, params.email)),
+      firstValueFrom(this.loginAnalyticsService.getDailyLogins(params.days, params.webtool, params.email)),
+      firstValueFrom(this.loginAnalyticsService.getLoginsByHour(params.days, params.webtool, params.email)), // Add days here
+      firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek(params.days, params.webtool, params.email)), // Add days here
+      firstValueFrom(this.loginAnalyticsService.getDepartmentLoginStats(params.days, params.webtool))
+    ]);
+
+    console.log('Received data:', {
+      summary,
+      dailyLogins,
+      loginsByHour,
+      loginsByDay,
+      departmentStats
+    });
+
+    this.loginMetrics = {
+      ...summary,
+      dailyLogins,
+      loginsByHour,
+      loginsByDay
+    };
+
+    this.departmentLoginStats = departmentStats;
+    this.calculatePeakHour();
+  } catch (error) {
+    console.error('Error loading login metrics:', error);
+  } finally {
+    this.loadingLoginMetrics = false;
   }
+}
+onTimeRangeChange() {
+  console.log('Time range changed to:', this.selectedTimeRange);
   
-  onTimeRangeChange() {
-    this.loadLoginMetrics();
-  }
+  const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
+    this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+  
+  console.log('Reloading data with webtool filter:', webtoolFilter);
+  
+  this.loadLoginMetrics(webtoolFilter, this.selectedUser || undefined);
+  this.loadDepartmentStats();
+}
   private adjustChartDimensions() {
     const baseHeight = this.screenWidth < 768 ? 180 : 220;
     const matrixHeight = Math.min(baseHeight, Math.max(200, this.users.length * 15));
@@ -423,10 +652,10 @@ get paginatedUserData() {
     await this.loadData();
     this.loadLoginMetrics();
     this.filterByWebtool();
+    this.loadUserLoginData();
+      this.loadDepartmentStats();
 
-    if (this.activeView === 'user') {
-      this.loadUserLoginData();
-    }
+
   }
 
   // async loadLoginMetrics() {
@@ -466,6 +695,89 @@ get paginatedUserData() {
     );
     this.peakHour = `${peak.hour}:00`;
 }
+
+getUserListForFilter(): User[] {
+  return this.userLoginData
+    .filter(user => user.loginCount > 0)
+    .map(user => ({
+      email: user.email,
+      username: user.username,  // Changed from 'name' to 'username'
+      department: user.department,
+      lastLogin: user.lastLogin,
+      mostUsedWebtool: user.mostUsedWebtool,
+      loginCount: user.loginCount
+    }));
+}
+
+
+async onUserFilterChange(email: string | null) {
+  this.selectedUser = email;
+  
+  if (email) {
+    // Find the full user object
+    const user = this.getUserListForFilter().find(u => u.email === email);
+    
+    if (user) {
+      // Load user-specific data
+      const [webtools, loginStats] = await Promise.all([
+        firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(email)),
+        firstValueFrom(this.loginAnalyticsService.getUserStats(email))
+      ]);
+      
+      // Process webtool usage data
+      const webtoolUsage = await this.getWebtoolUsageForUser(email);
+      
+      this.userKPIs = {
+        name: user.username,
+        department: user.department || 'Unknown',
+        webtools: webtools,
+        loginStats: {
+          ...loginStats,
+          webtoolUsage: webtoolUsage
+        }
+      };
+      
+      // Filter login metrics for this user
+      this.loadLoginMetrics(
+        this.selectedWebtool === 'all' ? undefined : 
+          this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool, 
+        email
+      );
+    }
+  } else {
+    this.userKPIs = null;
+    this.loadLoginMetrics(
+      this.selectedWebtool === 'all' ? undefined : 
+        this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool
+    );
+  }
+}
+
+async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: number }[]> {
+  try {
+    const loginEvents = await firstValueFrom(
+      this.loginAnalyticsService.getLoginEvents()
+    );
+    
+    // Filter events for this user
+    const userEvents = loginEvents.filter(event => event.email === email);
+    
+    // Count webtool usage with proper typing
+    const webtoolCounts = userEvents.reduce((acc: Record<string, number>, event) => {
+      acc[event.webtool] = (acc[event.webtool] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    // Convert to array and sort by count descending
+    return Object.entries(webtoolCounts)
+      .map(([webtool, count]) => ({ webtool, count }))
+      .sort((a, b) => b.count - a.count);
+  } catch (error) {
+    console.error('Error getting webtool usage:', error);
+    return [];
+  }
+}
+
 public initLoginCharts(): LoginCharts {
   console.log('Initializing login charts with data:', this.loginMetrics);
   
@@ -734,154 +1046,17 @@ public initLoginCharts(): LoginCharts {
     );
     return `${peak.hour}:00`;
   }
-  filterByWebtool() {
-    if (this.selectedWebtool === 'all') {
-      this.filteredWebtoolUsageChart = {
-        ...this.webtoolUsageChart,
-        series: [{
-          name: 'Users',
-          data: this.metrics.topWebtools.map(w => w.count)
-        }]
-      };
-      
-      this.filteredDepartmentDistributionChart = {
-        ...this.departmentDistributionChart,
-        series: Object.values(this.metrics.usersByDepartment),
-        labels: Object.keys(this.metrics.usersByDepartment)
-      };
-      
-      this.filteredDepartmentUsageChart = {
-        ...this.departmentUsageChart,
-        series: this.metrics.departmentWebtoolUsage.map(dept => ({
-          name: dept.department,
-          data: dept.webtools.map(w => w.count)
-        }))
-      };
-      
-      this.filteredTopUsersChart = {
-        ...this.topUsersChart,
-        series: [{
-          name: 'Webtools',
-          data: this.metrics.topUsers.map(u => u.count)
-        }]
-      };
-      
-      this.filteredUserWebtoolMatrix = {
-        ...this.userWebtoolMatrix,
-        series: this.webtools.map(webtool => ({
-          name: webtool.webtool,
-          data: this.users.map(user => ({
-            x: user.name,
-            y: user.webtools.has(webtool.id) ? 1 : 0
-          }))
-        })),  
-        chart: {
-          ...this.userWebtoolMatrix.chart,
-          height: Math.max(230, this.users.length * 20)
-        }
-      };
-    } else {
-      const webtoolId = Number(this.selectedWebtool);
-      const webtoolName = this.webtools.find(w => w.id === webtoolId)?.webtool || '';
-      const usersWithAccess = this.users.filter(u => u.webtools.has(webtoolId));
-      console.log('Selected webtool name:', webtoolName);
-
-      this.filteredWebtoolUsageChart = {
-        ...this.webtoolUsageChart,
-        series: [{
-          name: 'Users',
-          data: [usersWithAccess.length]
-        }],
-        xaxis: {
-          ...this.webtoolUsageChart.xaxis,
-          categories: [webtoolName]
-        }
-      };
-      
-      const deptCounts = usersWithAccess.reduce((acc, user) => {
-        const dept = user.department || 'Unknown';
-        acc[dept] = (acc[dept] || 0) + 1;
-        return acc;
-      }, {} as { [key: string]: number });
-      
-      this.filteredDepartmentDistributionChart = {
-        ...this.departmentDistributionChart,
-        series: Object.values(deptCounts),
-        labels: Object.keys(deptCounts),
-        colors: this.generateColorPalette(Object.keys(deptCounts).length)
-      };
-      
-      this.filteredUserWebtoolMatrix = {
-        ...this.userWebtoolMatrix,
-        series: [{
-          name: webtoolName,
-          data: this.users.map(user => ({
-            x: user.name,
-            y: user.webtools.has(webtoolId) ? 1 : 0
-          }))
-        }],
-        yaxis: {
-          categories: [webtoolName],
-          labels: {
-            style: {
-              fontSize: '15px'
-            }
-          }
-        },
-        chart: {
-          ...this.userWebtoolMatrix.chart,
-          height: Math.max(180, this.users.length * 20)
-        }
-      };
+filterByWebtool() {
+  console.log('Filtering by webtool:', this.selectedWebtool);
   
-      const selectedWebtoolData = this.metrics.departmentWebtoolUsage
-        .map(dept => ({
-          department: dept.department,
-          count: dept.webtools.find(w => w.name === webtoolName)?.count || 0
-        }))
-        .filter(dept => dept.count > 0)
-        .sort((a, b) => b.count - a.count);
-      
-      this.filteredDepartmentUsageChart = {
-        ...this.departmentUsageChart,
-        series: [{
-          name: webtoolName,
-          data: selectedWebtoolData.map(d => d.count)
-        }],
-        xaxis: {
-          ...this.departmentUsageChart.xaxis,
-          categories: selectedWebtoolData.map(d => d.department)
-        },
-        colors: this.generateColorPalette(selectedWebtoolData.length)
-      };
-      
-      const topUsers = usersWithAccess
-        .map(user => ({
-          name: user.name,
-          email: user.email,
-          count: 1 
-        }))
-        .slice(0, 5);
-      
-      this.filteredTopUsersChart = {
-        ...this.topUsersChart,
-        series: [{
-          name: 'Access Count',
-          data: topUsers.map(u => u.count)
-        }],
-        xaxis: {
-          ...this.topUsersChart.xaxis,
-          categories: topUsers.map(u => u.name)
-        }
-      };
-    }
-  
-    const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
+  const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
     this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+  
   console.log('Loading login metrics with webtool filter:', webtoolFilter);
   
-  this.loadLoginMetrics(webtoolFilter);
-  }
+  this.loadLoginMetrics(webtoolFilter, this.selectedUser || undefined);
+  this.loadDepartmentStats();
+}
 
   private generateColorPalette(count: number): string[] {
     const baseColors = ['#0077B6', '#556FB5', '#3B82F6', '#1D4ED8', '#1E40AF'];
