@@ -19,7 +19,6 @@ export class LoginTrackingService {
     department?: string,
     location?: string,
   ): Promise<LoginEvent> {
-    // Try to get timezone from frontend (if available)
     const timezone = req.headers['timezone']?.toString() || 'UTC';
     
     const loginEvent = this.loginEventRepository.create({

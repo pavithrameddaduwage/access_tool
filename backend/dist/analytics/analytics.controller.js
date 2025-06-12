@@ -16,9 +16,12 @@ exports.AnalyticsController = void 0;
 const common_1 = require("@nestjs/common");
 const analytics_service_1 = require("./analytics.service");
 const auth_guard_1 = require("../auth/guards/auth.guard");
+const login_tracking_service_1 = require("./login-tracking.service");
+const public_decorator_1 = require("../auth/decorators/public.decorator");
 let AnalyticsController = class AnalyticsController {
-    constructor(analyticsService) {
+    constructor(analyticsService, loginTrackingService) {
         this.analyticsService = analyticsService;
+        this.loginTrackingService = loginTrackingService;
     }
     async getLoginEvents() {
         return this.analyticsService.getLoginEvents();
@@ -80,6 +83,9 @@ let AnalyticsController = class AnalyticsController {
     }
     async getDepartmentDailyLogins(days = 30, webtool) {
         return this.analyticsService.getDepartmentDailyLogins(days, webtool);
+    }
+    async recordLogin(data, req) {
+        return this.loginTrackingService.recordLogin(data.email, data.webtool, req, data.department, data.location);
     }
 };
 exports.AnalyticsController = AnalyticsController;
@@ -156,9 +162,18 @@ __decorate([
     __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getDepartmentDailyLogins", null);
+__decorate([
+    (0, common_1.Post)('record-login'),
+    (0, public_decorator_1.Public)(),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "recordLogin", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    __metadata("design:paramtypes", [analytics_service_1.AnalyticsService])
+    __metadata("design:paramtypes", [analytics_service_1.AnalyticsService, login_tracking_service_1.LoginTrackingService])
 ], AnalyticsController);
 //# sourceMappingURL=analytics.controller.js.map

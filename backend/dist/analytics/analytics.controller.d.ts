@@ -1,7 +1,10 @@
 import { AnalyticsService } from './analytics.service';
+import { LoginTrackingService } from './login-tracking.service';
+import { Request } from 'express';
 export declare class AnalyticsController {
     private readonly analyticsService;
-    constructor(analyticsService: AnalyticsService);
+    private loginTrackingService;
+    constructor(analyticsService: AnalyticsService, loginTrackingService: LoginTrackingService);
     getLoginEvents(): Promise<import("./entities/login-event.entity").LoginEvent[]>;
     getUserStats(email: string): Promise<{
         totalLogins: number;
@@ -33,4 +36,10 @@ export declare class AnalyticsController {
         date: string;
         count: number;
     }[]>;
+    recordLogin(data: {
+        email: string;
+        webtool: string;
+        department?: string;
+        location?: string;
+    }, req: Request): Promise<import("./entities/login-event.entity").LoginEvent>;
 }

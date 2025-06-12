@@ -1,39 +1,17 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { LoginTrackingService } from './login-tracking.service';
+import { Request } from 'express'; // Make sure this import is correct
+import { publicDecrypt } from 'crypto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('analytics')
 @UseGuards(AuthGuard)
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(private readonly analyticsService: AnalyticsService, private loginTrackingService: LoginTrackingService ) {}
 
- 
-  // @Get('daily-logins')
-  // async getDailyLoginStats(
-  //   @Query('days') days: number = 30,
-  //   @Query('webtool') webtool?: string
-  // ) {
-  //   return this.analyticsService.getDailyLogins(days, webtool);
-  // }
-
-  // @Get('logins-by-hour')
-  // async getLoginsByHour(@Query('webtool') webtool?: string) {
-  //   return this.analyticsService.getLoginsByHour(webtool);
-  // }
-
-  // @Get('logins-by-day')
-  // async getLoginsByDayOfWeek(@Query('webtool') webtool?: string) {
-  //   return this.analyticsService.getLoginsByDayOfWeek(webtool);
-  // }
-
-  // @Get('summary')
-  // async getSummary(
-  //   @Query('days') days: number = 30,
-  //   @Query('webtool') webtool?: string
-  // ) {
-  //   return this.analyticsService.getSummary(days, webtool);
-  // }
 
   @Get('login-events')
 async getLoginEvents() {
@@ -145,5 +123,26 @@ async getDepartmentDailyLogins(
   @Query('webtool') webtool?: string
 ) {
   return this.analyticsService.getDepartmentDailyLogins(days, webtool);
+}
+
+
+@Post('record-login')
+@Public()
+async recordLogin(
+  @Body() data: {
+    email: string;
+    webtool: string;
+    department?: string;
+    location?: string;
+  },
+  @Req() req: Request
+) {
+  return this.loginTrackingService.recordLogin(
+    data.email,
+    data.webtool,
+    req,
+    data.department,
+    data.location
+  );
 }
 }

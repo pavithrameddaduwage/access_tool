@@ -139,13 +139,7 @@ public loadingDepartmentStats = false;
 public selectedUser: string | null = null;
 public selectedUserData: User | null = null;
 
-public userKPIs: {
-  name: string;
-  department: string;
-  webtools: any[];
-  loginStats: any;
-} | null = null;
-
+userKPIs: any;
   public peakHour: string = 'N/A';
 
   

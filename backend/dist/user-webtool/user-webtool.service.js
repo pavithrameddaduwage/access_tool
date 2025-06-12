@@ -204,6 +204,41 @@ let UserWebtoolService = class UserWebtoolService {
             relations: ['webtool', 'role']
         });
     }
+    async updateExternalAssignment(dto) {
+        const webtool = await this.webtoolRepository.findOne({
+            where: { id: dto.webtoolId }
+        });
+        if (!webtool) {
+            throw new common_1.NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+        }
+        const updateData = {};
+        if (dto.isActive !== undefined) {
+            updateData.isActive = dto.isActive;
+            updateData.lastActiveAt = dto.isActive ? null : new Date();
+        }
+        if (dto.lastActiveAt !== undefined) {
+            updateData.lastActiveAt = dto.lastActiveAt;
+        }
+        await this.userWebtoolRepository.update({ email: dto.email, webtoolId: dto.webtoolId }, updateData);
+        const updatedAssignments = await this.userWebtoolRepository.find({
+            where: { email: dto.email, webtoolId: dto.webtoolId },
+            relations: ['webtool', 'role']
+        });
+        return {
+            success: true,
+            message: 'User assignments updated successfully',
+            data: {
+                email: dto.email,
+                webtool: webtool.webtool,
+                assignments: updatedAssignments.map(assignment => ({
+                    id: assignment.id,
+                    roleId: assignment.roleId,
+                    isActive: assignment.isActive,
+                    lastActiveAt: assignment.lastActiveAt
+                }))
+            }
+        };
+    }
 };
 exports.UserWebtoolService = UserWebtoolService;
 exports.UserWebtoolService = UserWebtoolService = __decorate([

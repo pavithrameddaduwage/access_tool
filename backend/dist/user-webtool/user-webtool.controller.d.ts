@@ -2,6 +2,7 @@ import { UserWebtoolService } from './user-webtool.service';
 import { CreateUserWebtoolDto } from './dto/create-user-webtool.dto';
 import { ExternalWebtoolAssignmentDto } from './dto/external-webtool-assignment.dto';
 import { ExternalDeleteAssignmentDto } from './dto/external-delete-assignment.dto';
+import { ExternalUpdateAssignmentDto } from './dto/external-update-assignment.dto';
 export declare class UserWebtoolController {
     private readonly userWebtoolService;
     constructor(userWebtoolService: UserWebtoolService);
@@ -38,4 +39,18 @@ export declare class UserWebtoolController {
         isActive: boolean;
     }): Promise<void>;
     getAllRawUserWebtools(): Promise<import("./entities/user-webtool.entity").UserWebtool[]>;
+    updateExternalAssignment(dto: ExternalUpdateAssignmentDto): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            webtool: string;
+            assignments: {
+                id: number;
+                roleId: number;
+                isActive: boolean;
+                lastActiveAt: Date;
+            }[];
+        };
+    }>;
 }

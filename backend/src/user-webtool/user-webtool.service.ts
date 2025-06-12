@@ -8,6 +8,7 @@ import { Role } from "../roles/entities/role.entity"; // Add this
 import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.dto";
 import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 import { UpdateUserWebtoolDto } from "./dto/update-user-webtool.dto";
+import { ExternalUpdateAssignmentDto } from "./dto/external-update-assignment.dto";
 
 
 @Injectable()
@@ -417,7 +418,55 @@ export class UserWebtoolService {
   }
 
 
+  async updateExternalAssignment(dto: ExternalUpdateAssignmentDto) {
+  // Validate webtool exists
+  const webtool = await this.webtoolRepository.findOne({
+    where: { id: dto.webtoolId }
+  });
+
+  if (!webtool) {
+    throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+  }
+
+  // Prepare update data
+  const updateData: any = {};
   
+  if (dto.isActive !== undefined) {
+    updateData.isActive = dto.isActive;
+    updateData.lastActiveAt = dto.isActive ? null : new Date();
+  }
+
+  if (dto.lastActiveAt !== undefined) {
+    updateData.lastActiveAt = dto.lastActiveAt;
+  }
+
+  // Update all assignments for this user-webtool combination
+  await this.userWebtoolRepository.update(
+    { email: dto.email, webtoolId: dto.webtoolId },
+    updateData
+  );
+
+  // Return the updated assignments
+  const updatedAssignments = await this.userWebtoolRepository.find({
+    where: { email: dto.email, webtoolId: dto.webtoolId },
+    relations: ['webtool', 'role']
+  });
+
+  return {
+    success: true,
+    message: 'User assignments updated successfully',
+    data: {
+      email: dto.email,
+      webtool: webtool.webtool,
+      assignments: updatedAssignments.map(assignment => ({
+        id: assignment.id,
+        roleId: assignment.roleId,
+        isActive: assignment.isActive,
+        lastActiveAt: assignment.lastActiveAt
+      }))
+    }
+  };
+}
   
 }
 
