@@ -19,6 +19,7 @@ const create_user_webtool_dto_1 = require("./dto/create-user-webtool.dto");
 const external_webtool_assignment_dto_1 = require("./dto/external-webtool-assignment.dto");
 const external_webtool_guard_1 = require("../auth/guards/external-webtool.guard");
 const external_delete_assignment_dto_1 = require("./dto/external-delete-assignment.dto");
+const external_update_assignment_dto_1 = require("./dto/external-update-assignment.dto");
 let UserWebtoolController = class UserWebtoolController {
     constructor(userWebtoolService) {
         this.userWebtoolService = userWebtoolService;
@@ -52,6 +53,9 @@ let UserWebtoolController = class UserWebtoolController {
     }
     async getAllRawUserWebtools() {
         return this.userWebtoolService.findAllRaw();
+    }
+    async updateExternalAssignment(dto) {
+        return this.userWebtoolService.updateExternalAssignment(dto);
     }
 };
 exports.UserWebtoolController = UserWebtoolController;
@@ -133,6 +137,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "getAllRawUserWebtools", null);
+__decorate([
+    (0, common_1.Patch)('external-assignment'),
+    (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [external_update_assignment_dto_1.ExternalWebtoolUpdateDto]),
+    __metadata("design:returntype", Promise)
+], UserWebtoolController.prototype, "updateExternalAssignment", null);
 exports.UserWebtoolController = UserWebtoolController = __decorate([
     (0, common_1.Controller)('user-webtools'),
     __metadata("design:paramtypes", [user_webtool_service_1.UserWebtoolService])

@@ -6,6 +6,7 @@ import { Role } from "../roles/entities/role.entity";
 import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.dto";
 import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 import { UpdateUserWebtoolDto } from "./dto/update-user-webtool.dto";
+import { ExternalWebtoolUpdateDto } from "./dto/external-update-assignment.dto";
 export declare class UserWebtoolService {
     private userWebtoolRepository;
     private webtoolRepository;
@@ -43,4 +44,17 @@ export declare class UserWebtoolService {
     updateActiveStatus(email: string, webtoolId: number, isActive: boolean): Promise<void>;
     update(id: number, updateDto: UpdateUserWebtoolDto): Promise<UserWebtool>;
     findAllRaw(): Promise<UserWebtool[]>;
+    updateExternalAssignment(dto: ExternalWebtoolUpdateDto): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            webtool: string;
+            roles: {
+                id: number;
+                name: string;
+            }[];
+            isActive: boolean;
+        };
+    }>;
 }

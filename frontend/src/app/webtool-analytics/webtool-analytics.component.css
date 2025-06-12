@@ -24,7 +24,24 @@
   background-color: #0077B6;
   color: white;
   border-color: #0077B6;
+}/* Add to your component's CSS file */
+.user-kpis-section {
+  animation: fadeIn 0.3s ease-in-out;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.metric-card {
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+}
+
 
 .time-range-btn:not(.active):hover {
   background-color: #f0f7ff;

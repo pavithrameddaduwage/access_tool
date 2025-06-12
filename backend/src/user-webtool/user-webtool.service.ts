@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { UserWebtool } from "./entities/user-webtool.entity";
@@ -8,6 +8,7 @@ import { Role } from "../roles/entities/role.entity"; // Add this
 import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.dto";
 import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 import { UpdateUserWebtoolDto } from "./dto/update-user-webtool.dto";
+import {  ExternalWebtoolUpdateDto } from "./dto/external-update-assignment.dto";
 
 
 @Injectable()
@@ -417,7 +418,111 @@ export class UserWebtoolService {
   }
 
 
-  
+async updateExternalAssignment(dto: ExternalWebtoolUpdateDto) {
+  // Validate webtool exists
+  const webtool = await this.webtoolRepository.findOne({
+    where: { id: dto.webtoolId }
+  });
+
+  if (!webtool) {
+    throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+  }
+
+  // Get existing user details if we need to add roles
+  let existingUserDetails: { userName: string, department: string } | null = null;
+  if (dto.roleIdsToAdd?.length) {
+    const existingAssignment = await this.userWebtoolRepository.findOne({
+      where: { email: dto.email, webtoolId: dto.webtoolId },
+      select: ['userName', 'department']
+    });
+    
+    if (existingAssignment) {
+      existingUserDetails = {
+        userName: existingAssignment.userName,
+        department: existingAssignment.department
+      };
+    } else if (!dto.userName || !dto.department) {
+      throw new BadRequestException(
+        'userName and department are required when adding roles to a new user-webtool assignment'
+      );
+    }
+  }
+
+  // Handle role additions if specified
+  if (dto.roleIdsToAdd && dto.roleIdsToAdd.length > 0) {
+    // Validate roles exist and belong to the webtool
+    const rolesToAdd = await this.roleRepository.find({
+      where: { 
+        id: In(dto.roleIdsToAdd),
+        webtool: { id: dto.webtoolId }
+      },
+      relations: ['webtool']
+    });
+
+    if (rolesToAdd.length !== dto.roleIdsToAdd.length) {
+      throw new NotFoundException('Some roles to add were not found or do not belong to this webtool');
+    }
+
+    // Use provided details or existing details
+    const userName = dto.userName || existingUserDetails?.userName;
+    const department = dto.department || existingUserDetails?.department;
+
+    // Create new assignments
+    const userWebtoolsToAdd = dto.roleIdsToAdd.map(roleId => 
+      this.userWebtoolRepository.create({
+        email: dto.email,
+        userName: userName,
+        department: department,
+        webtoolId: dto.webtoolId,
+        roleId: roleId,
+        isActive: dto.isActive !== undefined ? dto.isActive : true,
+        lastActiveAt: dto.isActive === false ? new Date() : null
+      })
+    );
+
+    await this.userWebtoolRepository.save(userWebtoolsToAdd);
+  }
+
+  // Handle role removals if specified
+  if (dto.roleIdsToRemove && dto.roleIdsToRemove.length > 0) {
+    await this.userWebtoolRepository.delete({
+      email: dto.email,
+      webtoolId: dto.webtoolId,
+      roleId: In(dto.roleIdsToRemove)
+    });
+  }
+
+  // Handle status update if specified
+  if (dto.isActive !== undefined) {
+    await this.userWebtoolRepository.update(
+      { email: dto.email, webtoolId: dto.webtoolId },
+      { 
+        isActive: dto.isActive,
+        lastActiveAt: dto.isActive ? null : new Date()
+      }
+    );
+  }
+
+  // Get updated assignments to return
+  const updatedAssignments = await this.userWebtoolRepository.find({
+    where: { email: dto.email, webtoolId: dto.webtoolId },
+    relations: ['webtool', 'role']
+  });
+
+  return {
+    success: true,
+    message: 'User assignments updated successfully',
+    data: {
+      email: dto.email,
+      webtool: webtool.webtool,
+      roles: updatedAssignments.map(uw => ({
+        id: uw.role.id,
+        name: uw.role.roles
+      })),
+      isActive: dto.isActive !== undefined ? dto.isActive : undefined
+    }
+  };
+}
   
 }
 
