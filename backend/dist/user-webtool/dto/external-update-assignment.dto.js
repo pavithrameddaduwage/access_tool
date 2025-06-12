@@ -9,26 +9,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExternalUpdateAssignmentDto = void 0;
+exports.ExternalWebtoolUpdateDto = void 0;
 const class_validator_1 = require("class-validator");
-class ExternalUpdateAssignmentDto {
+class ExternalWebtoolUpdateDto {
 }
-exports.ExternalUpdateAssignmentDto = ExternalUpdateAssignmentDto;
+exports.ExternalWebtoolUpdateDto = ExternalWebtoolUpdateDto;
 __decorate([
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], ExternalUpdateAssignmentDto.prototype, "email", void 0);
+], ExternalWebtoolUpdateDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
-], ExternalUpdateAssignmentDto.prototype, "webtoolId", void 0);
+], ExternalWebtoolUpdateDto.prototype, "webtoolId", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsNumber)({}, { each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], ExternalWebtoolUpdateDto.prototype, "roleIdsToAdd", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsNumber)({}, { each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], ExternalWebtoolUpdateDto.prototype, "roleIdsToRemove", void 0);
 __decorate([
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
-], ExternalUpdateAssignmentDto.prototype, "isActive", void 0);
+], ExternalWebtoolUpdateDto.prototype, "isActive", void 0);
 __decorate([
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Date)
-], ExternalUpdateAssignmentDto.prototype, "lastActiveAt", void 0);
+    __metadata("design:type", String)
+], ExternalWebtoolUpdateDto.prototype, "userName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ExternalWebtoolUpdateDto.prototype, "department", void 0);
 //# sourceMappingURL=external-update-assignment.dto.js.map

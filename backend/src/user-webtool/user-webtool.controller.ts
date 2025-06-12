@@ -4,7 +4,7 @@ import { CreateUserWebtoolDto } from './dto/create-user-webtool.dto';
 import { ExternalWebtoolAssignmentDto } from './dto/external-webtool-assignment.dto';
 import { ExternalWebtoolGuard } from 'src/auth/guards/external-webtool.guard';
 import { ExternalDeleteAssignmentDto } from './dto/external-delete-assignment.dto';
-import { ExternalUpdateAssignmentDto } from './dto/external-update-assignment.dto';
+import {  ExternalWebtoolUpdateDto } from './dto/external-update-assignment.dto';
 
 @Controller('user-webtools')
 export class UserWebtoolController {
@@ -87,7 +87,7 @@ async getAllRawUserWebtools() {
 @Patch('external-assignment')
 @UseGuards(ExternalWebtoolGuard)
 async updateExternalAssignment(
-  @Body() dto: ExternalUpdateAssignmentDto
+  @Body() dto: ExternalWebtoolUpdateDto
 ) {
   return this.userWebtoolService.updateExternalAssignment(dto);
 }

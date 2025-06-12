@@ -142,7 +142,7 @@ __decorate([
     (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [external_update_assignment_dto_1.ExternalUpdateAssignmentDto]),
+    __metadata("design:paramtypes", [external_update_assignment_dto_1.ExternalWebtoolUpdateDto]),
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "updateExternalAssignment", null);
 exports.UserWebtoolController = UserWebtoolController = __decorate([

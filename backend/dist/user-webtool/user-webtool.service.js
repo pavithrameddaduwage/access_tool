@@ -211,15 +211,59 @@ let UserWebtoolService = class UserWebtoolService {
         if (!webtool) {
             throw new common_1.NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
         }
-        const updateData = {};
+        let existingUserDetails = null;
+        if (dto.roleIdsToAdd?.length) {
+            const existingAssignment = await this.userWebtoolRepository.findOne({
+                where: { email: dto.email, webtoolId: dto.webtoolId },
+                select: ['userName', 'department']
+            });
+            if (existingAssignment) {
+                existingUserDetails = {
+                    userName: existingAssignment.userName,
+                    department: existingAssignment.department
+                };
+            }
+            else if (!dto.userName || !dto.department) {
+                throw new common_1.BadRequestException('userName and department are required when adding roles to a new user-webtool assignment');
+            }
+        }
+        if (dto.roleIdsToAdd && dto.roleIdsToAdd.length > 0) {
+            const rolesToAdd = await this.roleRepository.find({
+                where: {
+                    id: (0, typeorm_2.In)(dto.roleIdsToAdd),
+                    webtool: { id: dto.webtoolId }
+                },
+                relations: ['webtool']
+            });
+            if (rolesToAdd.length !== dto.roleIdsToAdd.length) {
+                throw new common_1.NotFoundException('Some roles to add were not found or do not belong to this webtool');
+            }
+            const userName = dto.userName || existingUserDetails?.userName;
+            const department = dto.department || existingUserDetails?.department;
+            const userWebtoolsToAdd = dto.roleIdsToAdd.map(roleId => this.userWebtoolRepository.create({
+                email: dto.email,
+                userName: userName,
+                department: department,
+                webtoolId: dto.webtoolId,
+                roleId: roleId,
+                isActive: dto.isActive !== undefined ? dto.isActive : true,
+                lastActiveAt: dto.isActive === false ? new Date() : null
+            }));
+            await this.userWebtoolRepository.save(userWebtoolsToAdd);
+        }
+        if (dto.roleIdsToRemove && dto.roleIdsToRemove.length > 0) {
+            await this.userWebtoolRepository.delete({
+                email: dto.email,
+                webtoolId: dto.webtoolId,
+                roleId: (0, typeorm_2.In)(dto.roleIdsToRemove)
+            });
+        }
         if (dto.isActive !== undefined) {
-            updateData.isActive = dto.isActive;
-            updateData.lastActiveAt = dto.isActive ? null : new Date();
+            await this.userWebtoolRepository.update({ email: dto.email, webtoolId: dto.webtoolId }, {
+                isActive: dto.isActive,
+                lastActiveAt: dto.isActive ? null : new Date()
+            });
         }
-        if (dto.lastActiveAt !== undefined) {
-            updateData.lastActiveAt = dto.lastActiveAt;
-        }
-        await this.userWebtoolRepository.update({ email: dto.email, webtoolId: dto.webtoolId }, updateData);
         const updatedAssignments = await this.userWebtoolRepository.find({
             where: { email: dto.email, webtoolId: dto.webtoolId },
             relations: ['webtool', 'role']
@@ -230,12 +274,11 @@ let UserWebtoolService = class UserWebtoolService {
             data: {
                 email: dto.email,
                 webtool: webtool.webtool,
-                assignments: updatedAssignments.map(assignment => ({
-                    id: assignment.id,
-                    roleId: assignment.roleId,
-                    isActive: assignment.isActive,
-                    lastActiveAt: assignment.lastActiveAt
-                }))
+                roles: updatedAssignments.map(uw => ({
+                    id: uw.role.id,
+                    name: uw.role.roles
+                })),
+                isActive: dto.isActive !== undefined ? dto.isActive : undefined
             }
         };
     }

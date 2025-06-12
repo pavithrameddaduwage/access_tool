@@ -131,6 +131,9 @@ export class WebtoolAnalyticsComponent implements OnInit {
   ];
   selectedTimeRange = 30; 
 
+  public isUserSelected = false;
+
+
   public departmentLoginStats: any[] = [];
 public departmentHourlyLogins: any[] = [];
 public departmentDailyLogins: any[] = [];
@@ -704,40 +707,79 @@ getUserListForFilter(): User[] {
 }
 
 
+// async onUserFilterChange(email: string | null) {
+//   this.selectedUser = email;
+  
+//   if (email) {
+//     // Find the full user object
+//     const user = this.getUserListForFilter().find(u => u.email === email);
+    
+//     if (user) {
+//       // Load user-specific data
+//       const [webtools, loginStats] = await Promise.all([
+//         firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(email)),
+//         firstValueFrom(this.loginAnalyticsService.getUserStats(email))
+//       ]);
+      
+//       // Process webtool usage data
+//       const webtoolUsage = await this.getWebtoolUsageForUser(email);
+      
+//       this.userKPIs = {
+//         name: user.username,
+//         department: user.department || 'Unknown',
+//         webtools: webtools,
+//         loginStats: {
+//           ...loginStats,
+//           webtoolUsage: webtoolUsage
+//         }
+//       };
+      
+//       // Filter login metrics for this user
+//       this.loadLoginMetrics(
+//         this.selectedWebtool === 'all' ? undefined : 
+//           this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool, 
+//         email
+//       );
+//     }
+//   } else {
+//     this.userKPIs = null;
+//     this.loadLoginMetrics(
+//       this.selectedWebtool === 'all' ? undefined : 
+//         this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool
+//     );
+//   }
+// }
 async onUserFilterChange(email: string | null) {
   this.selectedUser = email;
+  this.isUserSelected = !!email;
   
   if (email) {
-    // Find the full user object
-    const user = this.getUserListForFilter().find(u => u.email === email);
+    // Load user-specific data
+    const [webtools, loginStats] = await Promise.all([
+      firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(email)),
+      firstValueFrom(this.loginAnalyticsService.getUserStats(email))
+    ]);
     
-    if (user) {
-      // Load user-specific data
-      const [webtools, loginStats] = await Promise.all([
-        firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(email)),
-        firstValueFrom(this.loginAnalyticsService.getUserStats(email))
-      ]);
-      
-      // Process webtool usage data
-      const webtoolUsage = await this.getWebtoolUsageForUser(email);
-      
-      this.userKPIs = {
-        name: user.username,
-        department: user.department || 'Unknown',
-        webtools: webtools,
-        loginStats: {
-          ...loginStats,
-          webtoolUsage: webtoolUsage
-        }
-      };
-      
-      // Filter login metrics for this user
-      this.loadLoginMetrics(
-        this.selectedWebtool === 'all' ? undefined : 
-          this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool, 
-        email
-      );
-    }
+    // Process webtool usage data
+    const webtoolUsage = await this.getWebtoolUsageForUser(email);
+    
+    this.userKPIs = {
+      name: loginStats?.username || email.split('@')[0],
+      email: email,
+      department: loginStats?.department || 'Unknown',
+      lastLogin: loginStats?.lastLogin || null,
+      mostUsedWebtool: loginStats?.mostUsedWebtool || 'N/A',
+      totalLogins: loginStats?.totalLogins || 0,
+      webtoolUsage: webtoolUsage,
+      peakHour: loginStats?.peakHour || 'N/A'
+    };
+    
+    // Filter login metrics for this user
+    this.loadLoginMetrics(
+      this.selectedWebtool === 'all' ? undefined : 
+        this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool, 
+      email
+    );
   } else {
     this.userKPIs = null;
     this.loadLoginMetrics(
@@ -747,6 +789,63 @@ async onUserFilterChange(email: string | null) {
   }
 }
 
+// Add this method to get user-specific charts
+public getUserSpecificCharts(): any {
+  if (!this.userKPIs) return null;
+
+  // Webtool Usage Pie Chart
+  const webtoolUsageChart = {
+    series: this.userKPIs.webtoolUsage.map((w: any) => w.count),
+    chart: {
+      type: 'pie',
+      height: 300,
+      toolbar: { show: false }
+    },
+    labels: this.userKPIs.webtoolUsage.map((w: any) => w.webtool),
+    colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'],
+    legend: {
+      position: 'bottom'
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function(val: number) {
+        return Math.round(val) + '%';
+      }
+    }
+  };
+
+  // Peak Hours Bar Chart
+  const peakHoursChart = {
+    series: [{
+      name: 'Logins',
+      data: this.userLoginStats?.loginsByHour?.map((h: any) => h.count) || []
+    }],
+    chart: {
+      type: 'bar',
+      height: 300,
+      toolbar: { show: false }
+    },
+    xaxis: {
+      categories: this.userLoginStats?.loginsByHour?.map((h: any) => `${h.hour}:00`) || [],
+      title: { text: 'Hour of Day' }
+    },
+    yaxis: {
+      title: { text: 'Login Count' }
+    },
+    colors: ['#0077B6'],
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+        horizontal: false
+      }
+    }
+  };
+
+  return {
+    webtoolUsageChart,
+    peakHoursChart
+  };
+}
 async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: number }[]> {
   try {
     const loginEvents = await firstValueFrom(

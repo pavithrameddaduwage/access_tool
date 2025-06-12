@@ -1,6 +1,9 @@
-export declare class ExternalUpdateAssignmentDto {
+export declare class ExternalWebtoolUpdateDto {
     email: string;
     webtoolId: number;
+    roleIdsToAdd?: number[];
+    roleIdsToRemove?: number[];
     isActive?: boolean;
-    lastActiveAt?: Date;
+    userName?: string;
+    department?: string;
 }
