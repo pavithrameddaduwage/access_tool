@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule } from '@angular/forms';
 import { Role, UserWebtool, Webtool } from '../../../interfaces/webtool.interfaces';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 import { LoginAnalyticsService } from '../Services/login-analytics.service';
 import { ApexChart, ApexOptions } from 'ng-apexcharts';
@@ -164,7 +164,6 @@ userKPIs: any;
 
   selectedWebtool: string | number = 'all';
 
-  public activeView: 'webtool' | 'user' = 'webtool';
 public userLoginData: any[] = [];
 public currentPage = 1;
 public itemsPerPage = 5;
@@ -195,6 +194,114 @@ public filteredUserLoginData: any[] = [];
   @Input() activeDashboard: 'powerbi' | 'webtool' = 'webtool';
   @Output() dashboardChange = new EventEmitter<'powerbi' | 'webtool'>();
 
+  // Add this at the top of your component
+private log = {
+  debug: (...args: any[]) => console.debug('[DEBUG]', ...args),
+  error: (...args: any[]) => console.error('[ERROR]', ...args)
+};
+
+async onUserFilterChange(email: string | null) {
+  this.log.debug('onUserFilterChange called with:', email);
+  
+  // Clear previous user data
+  this.userKPIs = null;
+  this.isUserSelected = false;
+  
+  // If no user selected, load general metrics
+  if (!email) {
+    this.loadLoginMetrics();
+    this.loadDepartmentStats();
+    return;
+  }
+  
+  // User selected - load user-specific data
+  this.selectedUser = email.toLowerCase().trim();
+  this.isUserSelected = true;
+  
+  const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
+    this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+
+  try {
+    this.log.debug('Loading user data for:', this.selectedUser);
+    
+    const userStats = await firstValueFrom(
+      this.loginAnalyticsService.getUserStats(this.selectedUser, webtoolFilter, this.selectedTimeRange)
+    );
+    
+    this.log.debug('User stats:', userStats);
+    
+    this.userKPIs = {
+      name: userStats.username,
+      email: this.selectedUser,
+      department: userStats.department,
+      lastLogin: userStats.lastLogin,
+      mostUsedWebtool: userStats.mostUsedWebtool,
+      totalLogins: userStats.totalLogins,
+      webtoolUsage: userStats.webtoolUsage,
+      peakHour: userStats.peakHour,
+      dailyLogins: userStats.dailyLogins,
+      loginsByHour: userStats.loginsByHour,
+      loginsByDay: userStats.loginsByDay
+    };
+    
+    // Update login metrics with user-specific data
+    this.loginMetrics = {
+      totalLogins: userStats.totalLogins,
+      activeUsers: 1,
+      dailyLogins: userStats.dailyLogins,
+      loginsByHour: userStats.loginsByHour,
+      loginsByDay: userStats.loginsByDay
+    };
+    
+  } catch (error) {
+    this.log.error('Error loading user data:', error);
+    this.userKPIs = null;
+    this.loginMetrics = {
+      totalLogins: 0,
+      activeUsers: 0,
+      dailyLogins: [],
+      loginsByHour: [],
+      loginsByDay: []
+    };
+  }
+  
+  this.initLoginCharts();
+}
+
+async loadLoginMetrics(webtool?: string, userEmail?: string): Promise<void> {
+  this.log.debug('loadLoginMetrics called with:', { webtool, userEmail });
+  this.loadingLoginMetrics = true;
+  
+  try {
+    let params: any = { days: this.selectedTimeRange.toString() };
+    if (webtool) params.webtool = webtool;
+    if (userEmail) params.email = userEmail;
+    
+    this.log.debug('Making API calls with params:', params);
+    
+    const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
+      firstValueFrom(this.loginAnalyticsService.getSummary(params.days, params.webtool, params.email)),
+      firstValueFrom(this.loginAnalyticsService.getDailyLogins(params.days, params.webtool, params.email)),
+      firstValueFrom(this.loginAnalyticsService.getLoginsByHour(params.days, params.webtool, params.email)),
+      firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek(params.days, params.webtool, params.email))
+    ]);
+
+    this.log.debug('API responses:', { summary, dailyLogins, loginsByHour, loginsByDay });
+
+    this.loginMetrics = {
+      ...summary,
+      dailyLogins,
+      loginsByHour,
+      loginsByDay
+    };
+
+    this.calculatePeakHour();
+  } catch (error) {
+    this.log.error('Error loading login metrics:', error);
+  } finally {
+    this.loadingLoginMetrics = false;
+  }
+}
 
   toggleDashboard(dashboard: 'powerbi' | 'webtool') {
     this.dashboardChange.emit(dashboard);
@@ -451,26 +558,35 @@ public getUserLoginCharts(): LoginCharts {
 
 async loadUserLoginData() {
   try {
-    // Get all login events and user webtools in parallel
-    const [loginEvents, userWebtools] = await Promise.all([
-      firstValueFrom(this.loginAnalyticsService.getLoginEvents()),
-      firstValueFrom(this.userWebtoolService.getAllActiveUserWebtools())
-    ]);
+    // Get the webtool filter if one is selected
+    const webtoolFilter = this.selectedWebtool === 'all' 
+      ? undefined 
+      : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+// Fetch data in parallel
+const [loginEvents, userWebtools] = await Promise.all([
+  firstValueFrom(
+    webtoolFilter
+      ? this.loginAnalyticsService.getLoginEvents().pipe(
+          map(events => events.filter(e => e.webtool === webtoolFilter))
+        )
+      : this.loginAnalyticsService.getLoginEvents()
+  ),
+  firstValueFrom(this.userWebtoolService.getAllActiveUserWebtools())
+]);
 
-    // Create a map of email to user info (take the first record for each email)
-    // Normalize emails to lowercase to avoid case sensitivity issues
+    // Create a normalized email map (lowercase)
     const userMap = new Map<string, {username: string, department: string}>();
     userWebtools.forEach(user => {
       const normalizedEmail = user.email.toLowerCase().trim();
       if (!userMap.has(normalizedEmail)) {
         userMap.set(normalizedEmail, {
-          username: user.userName || user.email.split('@')[0], // Fallback to email prefix if no username
+          username: user.userName || user.email.split('@')[0],
           department: user.department || 'Unknown'
         });
       }
     });
 
-    // Create maps to count logins per user and track most recent login
+    // Process login counts with normalized emails
     const loginCountMap = new Map<string, number>();
     const lastLoginMap = new Map<string, Date>();
     const webtoolUsageMap = new Map<string, Record<string, number>>();
@@ -497,48 +613,45 @@ async loadUserLoginData() {
       userWebtools[event.webtool] = (userWebtools[event.webtool] || 0) + 1;
     });
 
-    // Process all users from userWebtools (including those with 0 logins)
-    const allUsers = Array.from(userMap.entries()).map(([email, userInfo]) => {
-      const loginCount = loginCountMap.get(email) || 0;
-      const lastLogin = lastLoginMap.get(email);
+    // Create user data with normalized emails
+    this.userLoginData = Array.from(userMap.entries()).map(([email, userInfo]) => {
+      const userWebtools = webtoolUsageMap.get(email) || {};
+      const sortedWebtools = Object.entries(userWebtools).sort((a, b) => b[1] - a[1]);
       
-      // Find most used webtool
-      let mostUsedWebtool = 'N/A';
-      if (webtoolUsageMap.has(email)) {
-        const webtools = webtoolUsageMap.get(email)!;
-        mostUsedWebtool = Object.entries(webtools)
-          .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
-      }
-
       return {
         username: userInfo.username,
-        email: email, // This will be the normalized lowercase email
+        email: email,
         department: userInfo.department,
-        lastLogin: lastLogin,
-        mostUsedWebtool: mostUsedWebtool,
-        loginCount: loginCount
+        lastLogin: lastLoginMap.get(email),
+        mostUsedWebtool: sortedWebtools[0]?.[0] || 'N/A',
+        loginCount: loginCountMap.get(email) || 0,
+        // Include all webtools for this user if needed
+        webtools: sortedWebtools.map(([webtool, count]) => ({ webtool, count }))
       };
-    });
-
-    // Sort by login count descending, then by last login date
-    this.userLoginData = allUsers.sort((a, b) => {
+    }).sort((a, b) => {
+      // Sort by login count (descending), then by last login (newest first)
       if (b.loginCount !== a.loginCount) {
         return b.loginCount - a.loginCount;
       }
-      const aTime = a.lastLogin?.getTime() || 0;
-      const bTime = b.lastLogin?.getTime() || 0;
-      return bTime - aTime;
+      return (b.lastLogin?.getTime() || 0) - (a.lastLogin?.getTime() || 0);
     });
 
     // Initialize filtered data
     this.filteredUserLoginData = [...this.userLoginData];
     
-    console.log('Processed user login data:', this.userLoginData);
+    // Log success
+    this.log.debug(`Loaded ${this.userLoginData.length} users with login data`, {
+      webtoolFilter,
+      totalLogins: loginEvents.length
+    });
     
   } catch (error) {
-    console.error('Error loading user login data:', error);
+    this.log.error('Error loading user login data:', error);
     this.userLoginData = [];
     this.filteredUserLoginData = [];
+    
+    // Optionally show a user-friendly error message
+    // this.notificationService.showError('Failed to load user login data');
   }
 }
 
@@ -564,51 +677,41 @@ get paginatedUserData() {
   return this.filteredUserLoginData.slice(startIndex, startIndex + this.itemsPerPage);
 }
 
-async loadLoginMetrics(webtool?: string, userEmail?: string): Promise<void> {
-  console.log('Loading login metrics with params:', { 
-    days: this.selectedTimeRange, 
-    webtool, 
-    userEmail 
-  });
+// async loadLoginMetrics(webtool?: string, userEmail?: string): Promise<void> {
+//   console.log('Loading login metrics with params:', { 
+//     days: this.selectedTimeRange, 
+//     webtool, 
+//     userEmail 
+//   });
   
-  this.loadingLoginMetrics = true;
+//   this.loadingLoginMetrics = true;
   
-  try {
-    let params: any = { days: this.selectedTimeRange.toString() }; // Convert to string
-    if (webtool) params.webtool = webtool;
-    if (userEmail) params.email = userEmail;
+//   try {
+//     let params: any = { days: this.selectedTimeRange.toString() };
+//     if (webtool) params.webtool = webtool;
+//     if (userEmail) params.email = userEmail;
     
-    const [summary, dailyLogins, loginsByHour, loginsByDay, departmentStats] = await Promise.all([
-      firstValueFrom(this.loginAnalyticsService.getSummary(params.days, params.webtool, params.email)),
-      firstValueFrom(this.loginAnalyticsService.getDailyLogins(params.days, params.webtool, params.email)),
-      firstValueFrom(this.loginAnalyticsService.getLoginsByHour(params.days, params.webtool, params.email)), // Add days here
-      firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek(params.days, params.webtool, params.email)), // Add days here
-      firstValueFrom(this.loginAnalyticsService.getDepartmentLoginStats(params.days, params.webtool))
-    ]);
+//     const [summary, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
+//       firstValueFrom(this.loginAnalyticsService.getSummary(params.days, params.webtool, params.email)),
+//       firstValueFrom(this.loginAnalyticsService.getDailyLogins(params.days, params.webtool, params.email)),
+//       firstValueFrom(this.loginAnalyticsService.getLoginsByHour(params.days, params.webtool, params.email)),
+//       firstValueFrom(this.loginAnalyticsService.getLoginsByDayOfWeek(params.days, params.webtool, params.email))
+//     ]);
 
-    console.log('Received data:', {
-      summary,
-      dailyLogins,
-      loginsByHour,
-      loginsByDay,
-      departmentStats
-    });
+//     this.loginMetrics = {
+//       ...summary,
+//       dailyLogins,
+//       loginsByHour,
+//       loginsByDay
+//     };
 
-    this.loginMetrics = {
-      ...summary,
-      dailyLogins,
-      loginsByHour,
-      loginsByDay
-    };
-
-    this.departmentLoginStats = departmentStats;
-    this.calculatePeakHour();
-  } catch (error) {
-    console.error('Error loading login metrics:', error);
-  } finally {
-    this.loadingLoginMetrics = false;
-  }
-}
+//     this.calculatePeakHour();
+//   } catch (error) {
+//     console.error('Error loading login metrics:', error);
+//   } finally {
+//     this.loadingLoginMetrics = false;
+//   }
+// }
 onTimeRangeChange() {
   console.log('Time range changed to:', this.selectedTimeRange);
   
@@ -697,7 +800,7 @@ getUserListForFilter(): User[] {
   return this.userLoginData
     .filter(user => user.loginCount > 0)
     .map(user => ({
-      email: user.email,
+      email: user.email.toLowerCase(),
       username: user.username,  // Changed from 'name' to 'username'
       department: user.department,
       lastLogin: user.lastLogin,
@@ -749,46 +852,54 @@ getUserListForFilter(): User[] {
 //     );
 //   }
 // }
-async onUserFilterChange(email: string | null) {
-  this.selectedUser = email;
-  this.isUserSelected = !!email;
+// async onUserFilterChange(email: string | null) {
+//   this.selectedUser = email ? email.toLowerCase() : null;
+//   this.isUserSelected = !!this.selectedUser;
   
-  if (email) {
-    // Load user-specific data
-    const [webtools, loginStats] = await Promise.all([
-      firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(email)),
-      firstValueFrom(this.loginAnalyticsService.getUserStats(email))
-    ]);
-    
-    // Process webtool usage data
-    const webtoolUsage = await this.getWebtoolUsageForUser(email);
-    
-    this.userKPIs = {
-      name: loginStats?.username || email.split('@')[0],
-      email: email,
-      department: loginStats?.department || 'Unknown',
-      lastLogin: loginStats?.lastLogin || null,
-      mostUsedWebtool: loginStats?.mostUsedWebtool || 'N/A',
-      totalLogins: loginStats?.totalLogins || 0,
-      webtoolUsage: webtoolUsage,
-      peakHour: loginStats?.peakHour || 'N/A'
-    };
-    
-    // Filter login metrics for this user
-    this.loadLoginMetrics(
-      this.selectedWebtool === 'all' ? undefined : 
-        this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool, 
-      email
-    );
-  } else {
-    this.userKPIs = null;
-    this.loadLoginMetrics(
-      this.selectedWebtool === 'all' ? undefined : 
-        this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool
-    );
-  }
-}
-
+//   if (this.selectedUser) {
+//     try {
+//       // Load user-specific data using lowercase email
+//       const [webtools, loginStats] = await Promise.all([
+//         firstValueFrom(this.userWebtoolService.getUserWebtoolsByUser(this.selectedUser)),
+//         firstValueFrom(this.loginAnalyticsService.getUserStats(this.selectedUser))
+//       ]);
+      
+//       // Process webtool usage data
+//       const webtoolUsage = await this.getWebtoolUsageForUser(this.selectedUser);
+      
+//       this.userKPIs = {
+//         name: loginStats?.username || this.selectedUser.split('@')[0],
+//         email: this.selectedUser,
+//         department: loginStats?.department || 'Unknown',
+//         lastLogin: loginStats?.lastLogin || null,
+//         mostUsedWebtool: loginStats?.mostUsedWebtool || 'N/A',
+//         totalLogins: loginStats?.totalLogins || 0,
+//         webtoolUsage: webtoolUsage,
+//         peakHour: loginStats?.peakHour || 'N/A'
+//       };
+      
+//       // Filter all metrics for this user
+//       await this.loadLoginMetrics(
+//         this.selectedWebtool === 'all' ? undefined : 
+//           this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool, 
+//         this.selectedUser
+//       );
+      
+//       // Force charts to update
+//       this.initLoginCharts();
+      
+//     } catch (error) {
+//       console.error('Error loading user data:', error);
+//     }
+//   } else {
+//     this.userKPIs = null;
+//     this.loadLoginMetrics(
+//       this.selectedWebtool === 'all' ? undefined : 
+//         this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool
+//     );
+//     this.initLoginCharts();
+//   }
+// }
 // Add this method to get user-specific charts
 public getUserSpecificCharts(): any {
   if (!this.userKPIs) return null;
@@ -852,16 +963,18 @@ async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: n
       this.loginAnalyticsService.getLoginEvents()
     );
     
-    // Filter events for this user
-    const userEvents = loginEvents.filter(event => event.email === email);
+    // Filter events for this user (case-insensitive)
+    const normalizedEmail = email.toLowerCase().trim();
+    const userEvents = loginEvents.filter(event => 
+      event.email.toLowerCase().trim() === normalizedEmail
+    );
     
-    // Count webtool usage with proper typing
+    // Count webtool usage
     const webtoolCounts = userEvents.reduce((acc: Record<string, number>, event) => {
       acc[event.webtool] = (acc[event.webtool] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
     
-    // Convert to array and sort by count descending
     return Object.entries(webtoolCounts)
       .map(([webtool, count]) => ({ webtool, count }))
       .sort((a, b) => b.count - a.count);
@@ -872,87 +985,70 @@ async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: n
 }
 
 public initLoginCharts(): LoginCharts {
-  console.log('Initializing login charts with data:', this.loginMetrics);
-  
-  const emptySeries = [{ name: 'Logins', data: [] }];
-  const emptyChart: ApexChart = { 
-    type: 'line', 
-    height: 220, 
-    toolbar: { show: false } 
-  };
-  const emptyXaxis: ApexXAxis = { 
-    type: 'category', 
-    categories: [], 
-    labels: { style: { fontSize: '10px' } } 
-  };
+  // Use user-specific data if available, otherwise use general metrics
+  const dailyData = this.isUserSelected && this.userKPIs?.dailyLogins 
+    ? this.userKPIs.dailyLogins 
+    : this.loginMetrics.dailyLogins || [];
+    
+  const hourlyData = this.isUserSelected && this.userKPIs?.loginsByHour 
+    ? this.userKPIs.loginsByHour 
+    : this.loginMetrics.loginsByHour || [];
+    
+  const dayOfWeekData = this.isUserSelected && this.userKPIs?.loginsByDay 
+    ? this.userKPIs.loginsByDay 
+    : this.loginMetrics.loginsByDay || [];
 
   return {
-  dailyLoginsChart: {
-      series: this.loginMetrics.dailyLogins?.length 
-        ? [{
-            name: 'Logins',
-            data: this.loginMetrics.dailyLogins.map((day: any) => day.count)
-          }]
-        : emptySeries,
-      chart: this.loginMetrics.dailyLogins?.length
-        ? { type: 'line', height: 220, toolbar: { show: false } }
-        : emptyChart,
-      stroke: {
-        width: 1.5,  // Makes the line thinner (default is usually 2-3)
-        curve: 'straight'  // Optional: makes the line smooth
+    dailyLoginsChart: {
+      series: [{
+        name: 'Logins',
+        data: dailyData.map((day: any) => day.count)
+      }],
+      chart: { 
+        type: 'line', 
+        height: 220, 
+        toolbar: { show: false } 
       },
-      xaxis: this.loginMetrics.dailyLogins?.length
-        ? {
-            categories: this.loginMetrics.dailyLogins.map((day: any) => {
-              const date = new Date(day.date);
-              return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
-            }),
-            labels: { 
-              style: { fontSize: '10px' },
-              formatter: function(value) {
-                return value;
-              }
-            }
-          }
-        : emptyXaxis,
+      xaxis: {
+        categories: dailyData.map((day: any) => {
+          const date = new Date(day.date);
+          return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}`;
+        }),
+        labels: { style: { fontSize: '10px' } }
+      },
       colors: ['#FFA500'],
+      stroke: { width: 1.5, curve: 'straight' }
     },
-
     hourlyLoginsChart: {
-      series: this.loginMetrics.loginsByHour?.length
-        ? [{
-            name: 'Logins',
-            data: this.loginMetrics.loginsByHour.map((hour: any) => hour.count)
-          }]
-        : emptySeries,
-      chart: this.loginMetrics.loginsByHour?.length
-        ? { type: 'bar', height: 220, toolbar: { show: false } }
-        : emptyChart,
-      xaxis: this.loginMetrics.loginsByHour?.length
-        ? {
-            categories: this.loginMetrics.loginsByHour.map((hour: any) => `${hour.hour}:00`),
-            labels: { style: { fontSize: '10px' } }
-          }
-        : emptyXaxis,
+      series: [{
+        name: 'Logins',
+        data: hourlyData.map((hour: any) => hour.count)
+      }],
+      chart: { 
+        type: 'bar', 
+        height: 220, 
+        toolbar: { show: false } 
+      },
+      xaxis: {
+        categories: hourlyData.map((hour: any) => `${hour.hour}:00`),
+        labels: { style: { fontSize: '10px' } }
+      },
       colors: ['#00B4D8']
     },
-
     dayOfWeekChart: {
-      series: this.loginMetrics.loginsByDay?.length
-        ? [{
-            name: 'Logins',
-            data: this.loginMetrics.loginsByDay.map((day: any) => day.count)
-          }]
-        : emptySeries,
-      chart: this.loginMetrics.loginsByDay?.length
-        ? { type: 'bar', height: 220, toolbar: { show: false } }
-        : emptyChart,
-      xaxis: this.loginMetrics.loginsByDay?.length
-        ? {
-            categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            labels: { style: { fontSize: '10px' } }
-          }
-        : emptyXaxis,
+      series: [{
+        name: 'Logins',
+        data: dayOfWeekData.map((day: any) => day.count)
+      }],
+      chart: { 
+        type: 'bar', 
+        height: 220, 
+        toolbar: { show: false } 
+      },
+      xaxis: {
+        categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        labels: { style: { fontSize: '10px' } }
+      },
       colors: ['#90E0EF']
     }
   };
@@ -1013,17 +1109,8 @@ public initLoginCharts(): LoginCharts {
     return Array.from(userMap.values());
   }
 
-  onViewChange(view: 'webtool' | 'user') {
-    this.activeView = view;
-    if (view === 'user') {
-      this.loadUserLoginData();
-    }
-  }
   
-  // get paginatedUserData() {
-  //   const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-  //   return this.userLoginData.slice(startIndex, startIndex + this.itemsPerPage);
-  // }
+ 
   Math = Math;
 
   onPageChange(page: number) {
@@ -1140,15 +1227,18 @@ public initLoginCharts(): LoginCharts {
     return `${peak.hour}:00`;
   }
 filterByWebtool() {
-  console.log('Filtering by webtool:', this.selectedWebtool);
+  this.log.debug('Filtering by webtool:', this.selectedWebtool);
   
   const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
     this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
   
-  console.log('Loading login metrics with webtool filter:', webtoolFilter);
-  
-  this.loadLoginMetrics(webtoolFilter, this.selectedUser || undefined);
-  this.loadDepartmentStats();
+  if (this.selectedUser) {
+    // Reload user stats with the new webtool filter
+    this.onUserFilterChange(this.selectedUser);
+  } else {
+    this.loadLoginMetrics(webtoolFilter);
+    this.loadDepartmentStats();
+  }
 }
 
   private generateColorPalette(count: number): string[] {

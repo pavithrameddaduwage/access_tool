@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,50 +10,27 @@ export class LoginAnalyticsService {
   private apiUrl = `${environment.apiUrl}analytics/`;
 
   constructor(private http: HttpClient) {}
+  private log = {
+    debug: (...args: any[]) => console.debug('[DEBUG]', ...args),
+    error: (...args: any[]) => console.error('[ERROR]', ...args)
+  };
 
-//   getSummary(days: number = 30, webtool?: string): Observable<any> {
-//     let params: any = { days };
-//     if (webtool) {
-//       params.webtool = webtool;
-//     }
-    
-//     return this.http.get(`${this.apiUrl}summary`, { 
-//       params 
-//     });
-//   }
+
+getUserStats(email: string, webtool?: string, days: number = 30): Observable<any> {
+  this.log.debug(`getUserStats called for email: ${email}, webtool: ${webtool}, days: ${days}`);
+  let params: any = { days };
+  if (webtool) params.webtool = webtool;
   
-//   getDailyLogins(days: number = 30, webtool?: string): Observable<any> {
-//     let params: any = { days };
-//     if (webtool) {
-//       params.webtool = webtool;
-//     }
-    
-//     return this.http.get(`${this.apiUrl}daily-logins`, {
-//       params
-//     });
-//   }
-  getUserStats(email: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}user-stats?email=${email}`);
-  }
+  return this.http.get(`${this.apiUrl}user-stats/${email}`, { params }).pipe(
+    tap(response => this.log.debug('getUserStats response:', response)),
+    catchError(error => {
+      this.log.error('getUserStats error:', error);
+      return throwError(() => error);
+    })
+  );
+}
 
 
-// getLoginsByHour(webtool?: string): Observable<any> {
-//   let params: any = {};
-//   if (webtool) {
-//     params.webtool = webtool;
-//   }
-  
-//   return this.http.get(`${this.apiUrl}logins-by-hour`, { params });
-// }
-
-// getLoginsByDayOfWeek(webtool?: string): Observable<any> {
-//   let params: any = {};
-//   if (webtool) {
-//     params.webtool = webtool;
-//   }
-  
-//   return this.http.get(`${this.apiUrl}logins-by-day`, { params });
-// }
 
 getLoginEvents(): Observable<any[]> {
   return this.http.get<any[]>(`${this.apiUrl}login-events`).pipe(

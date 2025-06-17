@@ -76,3 +76,33 @@
   color: #6b7280 !important;
 }
 
+/* Smooth transitions for interactive elements */
+.user-stat-card {
+  transition: all 0.3s ease;
+}
+
+.user-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Better tooltip styling */
+.apexcharts-tooltip {
+  background: #ffffff !important;
+  color: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .user-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-stats-grid > div {
+    border-left: none;
+    border-right: none;
+  }
+}

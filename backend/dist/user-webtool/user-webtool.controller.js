@@ -17,9 +17,9 @@ const common_1 = require("@nestjs/common");
 const user_webtool_service_1 = require("./user-webtool.service");
 const create_user_webtool_dto_1 = require("./dto/create-user-webtool.dto");
 const external_webtool_assignment_dto_1 = require("./dto/external-webtool-assignment.dto");
-const external_webtool_guard_1 = require("../auth/guards/external-webtool.guard");
 const external_delete_assignment_dto_1 = require("./dto/external-delete-assignment.dto");
 const external_update_assignment_dto_1 = require("./dto/external-update-assignment.dto");
+const public_decorator_1 = require("../auth/decorators/public.decorator");
 let UserWebtoolController = class UserWebtoolController {
     constructor(userWebtoolService) {
         this.userWebtoolService = userWebtoolService;
@@ -106,7 +106,7 @@ __decorate([
 ], UserWebtoolController.prototype, "removeRole", null);
 __decorate([
     (0, common_1.Post)('external-assignment'),
-    (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
+    (0, public_decorator_1.Public)(),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -116,7 +116,7 @@ __decorate([
 ], UserWebtoolController.prototype, "createExternalAssignment", null);
 __decorate([
     (0, common_1.Delete)('external-assignment'),
-    (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
+    (0, public_decorator_1.Public)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [external_delete_assignment_dto_1.ExternalDeleteAssignmentDto]),
@@ -139,7 +139,7 @@ __decorate([
 ], UserWebtoolController.prototype, "getAllRawUserWebtools", null);
 __decorate([
     (0, common_1.Patch)('external-assignment'),
-    (0, common_1.UseGuards)(external_webtool_guard_1.ExternalWebtoolGuard),
+    (0, public_decorator_1.Public)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [external_update_assignment_dto_1.ExternalWebtoolUpdateDto]),

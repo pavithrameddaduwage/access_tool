@@ -1,7 +1,7 @@
 // analytics.service.ts
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThanOrEqual } from 'typeorm';
+import { Repository, MoreThanOrEqual, ILike } from 'typeorm';
 import { LoginEvent } from './entities/login-event.entity';
 import { subDays } from 'date-fns';
 
@@ -24,71 +24,70 @@ export class AnalyticsService {
 
 
 
+  async getUserStats(email: string, webtool?: string, days: number = 30) {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    try {
+      const [totalLogins, dailyLogins, loginsByHour, loginsByDay, webtoolUsage, lastLogin, peakHourData] = await Promise.all([
+        this.loginEventRepository.count({ 
+          where: { 
+            email: ILike(normalizedEmail),
+            ...(webtool && { webtool })
+          } 
+        }),
+        this.getDailyLogins(days, webtool, normalizedEmail),
+        this.getLoginsByHour(days, webtool, normalizedEmail),
+        this.getLoginsByDayOfWeek(days, webtool, normalizedEmail),
+        this.loginEventRepository
+          .createQueryBuilder('login')
+          .select('login.webtool', 'webtool')
+          .addSelect('COUNT(*)', 'count')
+          .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
+          .andWhere(webtool ? 'login.webtool = :webtool' : '1=1', { webtool })
+          .groupBy('login.webtool')
+          .orderBy('count', 'DESC')
+          .getRawMany(),
+        this.loginEventRepository.findOne({
+          where: { 
+            email: ILike(normalizedEmail),
+            ...(webtool && { webtool })
+          },
+          order: { loginTime: 'DESC' }
+        }),
+        this.loginEventRepository
+          .createQueryBuilder('login')
+          .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
+          .addSelect('COUNT(*)', 'count')
+          .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
+          .andWhere(webtool ? 'login.webtool = :webtool' : '1=1', { webtool })
+          .groupBy('EXTRACT(HOUR FROM login.loginTime)')
+          .orderBy('count', 'DESC')
+          .limit(1)
+          .getRawOne()
+      ]);
 
-  async getDailyLogins(days: number = 30, webtool?: string, email?: string) {
-  const startDate = subDays(new Date(), days);
-  
-  const query = this.loginEventRepository.createQueryBuilder('login')
-    .select("DATE(login.loginTime)", "date")
-    .addSelect('COUNT(*)', 'count')
-    .where('login.loginTime >= :startDate', { startDate });
-
-  if (webtool) {
-    query.andWhere('login.webtool = :webtool', { webtool });
+      return {
+        username: normalizedEmail.split('@')[0],
+        email: normalizedEmail,
+        department: lastLogin?.department || 'Unknown',
+        totalLogins,
+        mostUsedWebtool: webtoolUsage[0]?.webtool || 'N/A',
+        lastLogin: lastLogin?.loginTime || null,
+        peakHour: peakHourData ? `${peakHourData.hour}:00` : 'N/A',
+        dailyLogins,
+        loginsByHour,
+        loginsByDay,
+        webtoolUsage
+      };
+    } catch (error) {
+      console.error('Error in getUserStats:', error);
+      throw new HttpException('Failed to get user stats', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  if (email) {
-    query.andWhere('login.email = :email', { email });
-  }
 
-  return query
-    .groupBy("DATE(login.loginTime)")
-    .orderBy("DATE(login.loginTime)", "ASC")
-    .getRawMany();
-}
-async getLoginsByHour(days: number = 30, webtool?: string, email?: string) {
-  const startDate = subDays(new Date(), days);
-  
-  const query = this.loginEventRepository.createQueryBuilder('login')
-    .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
-    .addSelect('COUNT(*)', 'count')
-    .where('login.loginTime >= :startDate', { startDate });
 
-  if (webtool) {
-    query.andWhere('login.webtool = :webtool', { webtool });
-  }
 
-  if (email) {
-    query.andWhere('login.email = :email', { email });
-  }
-
-  return query
-    .groupBy('EXTRACT(HOUR FROM login.loginTime)')
-    .orderBy('EXTRACT(HOUR FROM login.loginTime)', 'ASC')
-    .getRawMany();
-}
-
-async getLoginsByDayOfWeek(days: number = 30, webtool?: string, email?: string) {
-  const startDate = subDays(new Date(), days);
-  
-  const query = this.loginEventRepository.createQueryBuilder('login')
-    .select('EXTRACT(DOW FROM login.loginTime)', 'day')
-    .addSelect('COUNT(*)', 'count')
-    .where('login.loginTime >= :startDate', { startDate });
-
-  if (webtool) {
-    query.andWhere('login.webtool = :webtool', { webtool });
-  }
-
-  if (email) {
-    query.andWhere('login.email = :email', { email });
-  }
-
-  return query
-    .groupBy('EXTRACT(DOW FROM login.loginTime)')
-    .orderBy('EXTRACT(DOW FROM login.loginTime)', 'ASC')
-    .getRawMany();
-}
 
 async getSummary(days: number = 30, webtool?: string, email?: string) {
   const startDate = subDays(new Date(), days);
@@ -168,6 +167,74 @@ async getDepartmentDailyLogins(days: number = 30, webtool?: string): Promise<{de
   return query
     .groupBy('login.department, DATE(login.loginTime)')
     .orderBy('department, date')
+    .getRawMany();
+}
+
+// In your AnalyticsService
+
+async getDailyLogins(days: number = 30, webtool?: string, email?: string) {
+  const startDate = subDays(new Date(), days);
+  
+  const query = this.loginEventRepository.createQueryBuilder('login')
+    .select("DATE(login.loginTime)", "date")
+    .addSelect('COUNT(*)', 'count')
+    .where('login.loginTime >= :startDate', { startDate });
+
+  if (webtool) {
+    query.andWhere('login.webtool = :webtool', { webtool });
+  }
+
+  if (email) {
+    query.andWhere('LOWER(login.email) = LOWER(:email)', { email }); // Case-insensitive comparison
+  }
+
+  return query
+    .groupBy("DATE(login.loginTime)")
+    .orderBy("DATE(login.loginTime)", "ASC")
+    .getRawMany();
+}
+
+async getLoginsByHour(days: number = 30, webtool?: string, email?: string) {
+  const startDate = subDays(new Date(), days);
+  
+  const query = this.loginEventRepository.createQueryBuilder('login')
+    .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
+    .addSelect('COUNT(*)', 'count')
+    .where('login.loginTime >= :startDate', { startDate });
+
+  if (webtool) {
+    query.andWhere('login.webtool = :webtool', { webtool });
+  }
+
+  if (email) {
+    query.andWhere('LOWER(login.email) = LOWER(:email)', { email }); // Case-insensitive comparison
+  }
+
+  return query
+    .groupBy('EXTRACT(HOUR FROM login.loginTime)')
+    .orderBy('EXTRACT(HOUR FROM login.loginTime)', 'ASC')
+    .getRawMany();
+}
+
+async getLoginsByDayOfWeek(days: number = 30, webtool?: string, email?: string) {
+  const startDate = subDays(new Date(), days);
+  
+  const query = this.loginEventRepository.createQueryBuilder('login')
+    .select('EXTRACT(DOW FROM login.loginTime)', 'day')
+    .addSelect('COUNT(*)', 'count')
+    .where('login.loginTime >= :startDate', { startDate });
+
+  if (webtool) {
+    query.andWhere('login.webtool = :webtool', { webtool });
+  }
+
+  if (email) {
+    query.andWhere('LOWER(login.email) = LOWER(:email)', { email }); // Case-insensitive comparison
+  }
+
+  return query
+    .groupBy('EXTRACT(DOW FROM login.loginTime)')
+    .orderBy('EXTRACT(DOW FROM login.loginTime)', 'ASC')
     .getRawMany();
 }
 }
