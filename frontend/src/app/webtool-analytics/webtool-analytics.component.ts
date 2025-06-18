@@ -426,6 +426,7 @@ public selectedUser: string = 'All';
       // 2. Department Distribution Chart
       this.departmentDistributionChart = {
         series: Object.values(this.metrics.usersByDepartment),
+        labels: Object.keys(this.metrics.usersByDepartment),
         chart: {
           type: 'pie',
           height: baseHeight,
@@ -941,16 +942,76 @@ public initLoginCharts(): LoginCharts {
 
   // Filtering and Selection
 
-  
-filterByWebtool(): void {
+private updateFilteredCharts(): void {
+  // Update Webtool Usage Chart
+  if (this.selectedWebtool !== 'all') {
+    const selected = this.webtools.find(w => w.id === Number(this.selectedWebtool));
+    
+    // Add null check
+    if (!selected) {
+      console.warn('Selected webtool not found');
+      return;
+    }
+    
+    this.filteredWebtoolUsageChart = {
+      ...this.webtoolUsageChart,
+      series: [{
+        name: 'Users',
+        data: [this.rawData.filter(r => r.webtoolId === selected.id).length]
+      }],
+      xaxis: {
+        ...this.webtoolUsageChart.xaxis,
+        categories: [selected.webtool]
+      }
+    };
+  } else {
+    this.filteredWebtoolUsageChart = { ...this.webtoolUsageChart };
+  }
+
+  // Update Department Distribution Chart
+  if (this.selectedWebtool !== 'all') {
+    const selectedId = Number(this.selectedWebtool);
+    const departmentCounts = this.rawData
+      .filter(r => r.webtoolId === selectedId)
+      .reduce((acc, curr) => {
+        acc[curr.department] = (acc[curr.department] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+    const departments = Object.keys(departmentCounts);
+    const counts = departments.map(d => departmentCounts[d]);
+
+    this.filteredDepartmentDistributionChart = {
+      ...this.departmentDistributionChart,
+      series: counts,
+      labels: departments,
+      chart: {
+        ...this.departmentDistributionChart.chart,
+        type: 'pie'
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (val: number) => `${Math.round(val)}%`
+      }
+    };
+  } else {
+    this.filteredDepartmentDistributionChart = { ...this.departmentDistributionChart };
+  }
+
+  this.cdr.detectChanges();
+}
+async filterByWebtool(): Promise<void> {
   try {
     const webtoolFilter = this.selectedWebtool === 'all' 
       ? undefined 
       : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
     
     if (this.selectedUser === 'All') {
-      this.loadLoginMetrics(webtoolFilter);
-      this.loadDepartmentStats();
+      await this.loadLoginMetrics(webtoolFilter);
+      await this.loadDepartmentStats();
+      
+      // Update the charts based on the webtool filter
+      this.updateFilteredCharts();
     } else if (this.selectedUser) {
       this.onUserFilterChange({ target: { value: this.selectedUser } } as unknown as Event);
     }
