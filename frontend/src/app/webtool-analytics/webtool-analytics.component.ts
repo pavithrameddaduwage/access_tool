@@ -1014,6 +1014,9 @@ async filterByWebtool(): Promise<void> {
       this.updateFilteredCharts();
     } else if (this.selectedUser) {
       this.onUserFilterChange({ target: { value: this.selectedUser } } as unknown as Event);
+      await this.loadDepartmentStats();
+          this.departmentChartOptions = this.getDepartmentCharts();
+
     }
   } catch (error) {
     console.error('Error in filterByWebtool:', error);
@@ -1024,6 +1027,7 @@ async onUserFilterChange(event: Event): Promise<void> {
     const selectElement = event.target as HTMLSelectElement;
     const selectedValue = selectElement?.value || 'All';
     this.selectedUser = selectedValue;
+    console.log('User filter changed to:', this.selectedUser);
 
     const webtoolFilter = this.selectedWebtool === 'all' 
       ? undefined 
@@ -1034,7 +1038,9 @@ async onUserFilterChange(event: Event): Promise<void> {
     } else {
       await this.loadUserData(selectedValue, webtoolFilter);
     }
-    
+      await this.loadDepartmentStats();
+          this.departmentChartOptions = this.getDepartmentCharts();
+
     this.chartOptions = this.initLoginCharts();
   } catch (error) {
     console.error('Error in onUserFilterChange:', error);
@@ -1212,31 +1218,41 @@ async loadLoginMetrics(webtool?: string, userEmail?: string): Promise<void> {
   }
 }
 
-    async loadDepartmentStats() {
-    console.log('Loading department stats for time range:', this.selectedTimeRange);
+async loadDepartmentStats() {
+  console.log('Loading department stats with filters:', {
+    timeRange: this.selectedTimeRange,
+    webtool: this.selectedWebtool,
+    user: this.selectedUser
+  });  
+  this.loadingDepartmentStats = true;
+  try {
+    const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
+      this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
     
-    this.loadingDepartmentStats = true;
-    try {
-      const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
-        this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
-      
-      const [stats, hourly, daily] = await Promise.all([
-        firstValueFrom(this.loginAnalyticsService.getDepartmentLoginStats(this.selectedTimeRange, webtoolFilter)),
-        firstValueFrom(this.loginAnalyticsService.getDepartmentHourlyLogins(this.selectedTimeRange, webtoolFilter)),
-        firstValueFrom(this.loginAnalyticsService.getDepartmentDailyLogins(this.selectedTimeRange, webtoolFilter))
-      ]);
+    const emailFilter = this.selectedUser === 'All' ? undefined : this.selectedUser;
+       console.log('Actual filters being sent:', {
+      days: this.selectedTimeRange,
+      webtool: webtoolFilter,
+      email: emailFilter
+    });
 
-      console.log('Received department stats:', { stats, hourly, daily });
+    const [stats, hourly, daily] = await Promise.all([
+      firstValueFrom(this.loginAnalyticsService.getDepartmentLoginStats(this.selectedTimeRange, webtoolFilter, emailFilter)),
+      firstValueFrom(this.loginAnalyticsService.getDepartmentHourlyLogins(this.selectedTimeRange, webtoolFilter, emailFilter)),
+      firstValueFrom(this.loginAnalyticsService.getDepartmentDailyLogins(this.selectedTimeRange, webtoolFilter, emailFilter))
+    ]);
 
-      this.departmentLoginStats = stats;
-      this.departmentHourlyLogins = hourly;
-      this.departmentDailyLogins = daily;
-    } catch (error) {
-      console.error('Error loading department stats:', error);
-    } finally {
-      this.loadingDepartmentStats = false;
-    }
+    console.log('Received department stats:', { stats, hourly, daily });
+
+    this.departmentLoginStats = stats;
+    this.departmentHourlyLogins = hourly;
+    this.departmentDailyLogins = daily;
+  } catch (error) {
+    console.error('Error loading department stats:', error);
+  } finally {
+    this.loadingDepartmentStats = false;
   }
+}
 
 async loadUserLoginData() {
   try {

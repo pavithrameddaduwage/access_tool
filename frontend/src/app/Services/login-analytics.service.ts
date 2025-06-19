@@ -73,23 +73,48 @@ getLoginsByDayOfWeek(days: number = 30, webtool?: string, email?: string): Obser
   return this.http.get(`${this.apiUrl}logins-by-day`, { params });
 }
 
-getDepartmentLoginStats(days: number = 30, webtool?: string): Observable<any> {
+// getDepartmentLoginStats(days: number = 30, webtool?: string): Observable<any> {
+//   let params: any = { days };
+//   if (webtool) params.webtool = webtool;
+  
+//   return this.http.get(`${this.apiUrl}department-logins`, { params });
+// }
+
+// getDepartmentHourlyLogins(days: number = 30, webtool?: string): Observable<any> {
+//   let params: any = { days };
+//   if (webtool) params.webtool = webtool;
+  
+//   return this.http.get(`${this.apiUrl}department-hourly-logins`, { params });
+// }
+
+// getDepartmentDailyLogins(days: number = 30, webtool?: string): Observable<any> {
+//   let params: any = { days };
+//   if (webtool) params.webtool = webtool;
+  
+//   return this.http.get(`${this.apiUrl}department-daily-logins`, { params });
+// }
+
+
+getDepartmentLoginStats(days: number = 30, webtool?: string, email?: string): Observable<any> {
   let params: any = { days };
   if (webtool) params.webtool = webtool;
+  if (email) params.email = email;
   
   return this.http.get(`${this.apiUrl}department-logins`, { params });
 }
 
-getDepartmentHourlyLogins(days: number = 30, webtool?: string): Observable<any> {
+getDepartmentHourlyLogins(days: number = 30, webtool?: string, email?: string): Observable<any> {
   let params: any = { days };
   if (webtool) params.webtool = webtool;
+  if (email) params.email = email;
   
   return this.http.get(`${this.apiUrl}department-hourly-logins`, { params });
 }
 
-getDepartmentDailyLogins(days: number = 30, webtool?: string): Observable<any> {
+getDepartmentDailyLogins(days: number = 30, webtool?: string, email?: string): Observable<any> {
   let params: any = { days };
   if (webtool) params.webtool = webtool;
+  if (email) params.email = email;
   
   return this.http.get(`${this.apiUrl}department-daily-logins`, { params });
 }

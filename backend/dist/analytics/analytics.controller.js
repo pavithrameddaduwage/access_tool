@@ -38,14 +38,14 @@ let AnalyticsController = class AnalyticsController {
     async getSummary(days = 30, webtool, email) {
         return this.analyticsService.getSummary(days, webtool, email);
     }
-    async getDepartmentLoginStats(days = 30, webtool) {
-        return this.analyticsService.getDepartmentLoginStats(days, webtool);
+    async getDepartmentLoginStats(days = 30, webtool, email) {
+        return this.analyticsService.getDepartmentLoginStats(days, webtool, email);
     }
-    async getDepartmentHourlyLogins(days = 30, webtool) {
-        return this.analyticsService.getDepartmentHourlyLogins(days, webtool);
+    async getDepartmentHourlyLogins(days = 30, webtool, email) {
+        return this.analyticsService.getDepartmentHourlyLogins(days, webtool, email);
     }
-    async getDepartmentDailyLogins(days = 30, webtool) {
-        return this.analyticsService.getDepartmentDailyLogins(days, webtool);
+    async getDepartmentDailyLogins(days = 30, webtool, email) {
+        return this.analyticsService.getDepartmentDailyLogins(days, webtool, email);
     }
     async recordLogin(data, req) {
         return this.loginTrackingService.recordLogin(data.email, data.webtool, req, data.department, data.location);
@@ -101,24 +101,27 @@ __decorate([
     (0, common_1.Get)('department-logins'),
     __param(0, (0, common_1.Query)('days')),
     __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Number, String, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getDepartmentLoginStats", null);
 __decorate([
     (0, common_1.Get)('department-hourly-logins'),
     __param(0, (0, common_1.Query)('days')),
     __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Number, String, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getDepartmentHourlyLogins", null);
 __decorate([
     (0, common_1.Get)('department-daily-logins'),
     __param(0, (0, common_1.Query)('days')),
     __param(1, (0, common_1.Query)('webtool')),
+    __param(2, (0, common_1.Query)('email')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Number, String, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getDepartmentDailyLogins", null);
 __decorate([

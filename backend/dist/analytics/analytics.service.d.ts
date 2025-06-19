@@ -21,21 +21,18 @@ export declare class AnalyticsService {
         totalLogins: number;
         activeUsers: number;
     }>;
-    getDepartmentLoginStats(days?: number, webtool?: string): Promise<{
-        department: string;
-        logins: number;
-    }[]>;
-    getDepartmentHourlyLogins(days?: number, webtool?: string): Promise<{
+    getDailyLogins(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getLoginsByHour(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getDepartmentLoginStats(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getDepartmentHourlyLogins(days?: number, webtool?: string, email?: string): Promise<{
         department: string;
         hour: number;
         count: number;
     }[]>;
-    getDepartmentDailyLogins(days?: number, webtool?: string): Promise<{
+    getDepartmentDailyLogins(days?: number, webtool?: string, email?: string): Promise<{
         department: string;
         date: string;
         count: number;
     }[]>;
-    getDailyLogins(days?: number, webtool?: string, email?: string): Promise<any[]>;
-    getLoginsByHour(days?: number, webtool?: string, email?: string): Promise<any[]>;
-    getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<any[]>;
 }
