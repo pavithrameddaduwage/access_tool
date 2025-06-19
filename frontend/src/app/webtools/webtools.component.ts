@@ -141,8 +141,8 @@ export class WebtoolsComponent implements OnInit {
   userViewHeaders = [
     { name: 'actions', display_name: 'Actions', width: '10%' },
     { name: 'userName', display_name: 'User', width: '25%' },
-    { name: 'department', display_name: 'Department', width: '15%' },
     { name: 'email', display_name: 'Email', width: '20%' },
+        { name: 'department', display_name: 'Department', width: '15%' },
     { name: 'isActive', display_name: 'Status', width: '15%' }, // New column
     { name: 'webtools', display_name: 'Webtools', width: '15%' }
   ];
