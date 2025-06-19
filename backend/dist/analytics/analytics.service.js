@@ -31,62 +31,52 @@ let AnalyticsService = class AnalyticsService {
     }
     async getUserStats(email, webtool, days = 30) {
         const normalizedEmail = email.toLowerCase().trim();
-        try {
-            const [totalLogins, dailyLogins, loginsByHour, loginsByDay, webtoolUsage, lastLogin, peakHourData] = await Promise.all([
-                this.loginEventRepository.count({
-                    where: {
-                        email: (0, typeorm_2.ILike)(normalizedEmail),
-                        ...(webtool && { webtool })
-                    }
-                }),
-                this.getDailyLogins(days, webtool, normalizedEmail),
-                this.getLoginsByHour(days, webtool, normalizedEmail),
-                this.getLoginsByDayOfWeek(days, webtool, normalizedEmail),
-                this.loginEventRepository
-                    .createQueryBuilder('login')
-                    .select('login.webtool', 'webtool')
-                    .addSelect('COUNT(*)', 'count')
-                    .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
-                    .andWhere(webtool ? 'login.webtool = :webtool' : '1=1', { webtool })
-                    .groupBy('login.webtool')
-                    .orderBy('count', 'DESC')
-                    .getRawMany(),
-                this.loginEventRepository.findOne({
-                    where: {
-                        email: (0, typeorm_2.ILike)(normalizedEmail),
-                        ...(webtool && { webtool })
-                    },
-                    order: { loginTime: 'DESC' }
-                }),
-                this.loginEventRepository
-                    .createQueryBuilder('login')
-                    .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
-                    .addSelect('COUNT(*)', 'count')
-                    .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
-                    .andWhere(webtool ? 'login.webtool = :webtool' : '1=1', { webtool })
-                    .groupBy('EXTRACT(HOUR FROM login.loginTime)')
-                    .orderBy('count', 'DESC')
-                    .limit(1)
-                    .getRawOne()
-            ]);
-            return {
-                username: normalizedEmail.split('@')[0],
-                email: normalizedEmail,
-                department: lastLogin?.department || 'Unknown',
-                totalLogins,
-                mostUsedWebtool: webtoolUsage[0]?.webtool || 'N/A',
-                lastLogin: lastLogin?.loginTime || null,
-                peakHour: peakHourData ? `${peakHourData.hour}:00` : 'N/A',
-                dailyLogins,
-                loginsByHour,
-                loginsByDay,
-                webtoolUsage
-            };
+        const startDate = (0, date_fns_1.subDays)(new Date(), days);
+        const baseQuery = this.loginEventRepository
+            .createQueryBuilder('login')
+            .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
+            .andWhere('login.loginTime >= :startDate', { startDate });
+        if (webtool) {
+            baseQuery.andWhere('login.webtool = :webtool', { webtool });
         }
-        catch (error) {
-            console.error('Error in getUserStats:', error);
-            throw new common_1.HttpException('Failed to get user stats', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        const [totalLogins, dailyLogins, loginsByHour, loginsByDay, webtoolUsage, lastLogin, peakHourData] = await Promise.all([
+            baseQuery.getCount(),
+            this.getDailyLogins(days, webtool, normalizedEmail),
+            this.getLoginsByHour(days, webtool, normalizedEmail),
+            this.getLoginsByDayOfWeek(days, webtool, normalizedEmail),
+            this.loginEventRepository
+                .createQueryBuilder('login')
+                .select('login.webtool', 'webtool')
+                .addSelect('COUNT(*)', 'count')
+                .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
+                .andWhere('login.loginTime >= :startDate', { startDate })
+                .groupBy('login.webtool')
+                .orderBy('count', 'DESC')
+                .getRawMany(),
+            baseQuery
+                .orderBy('login.loginTime', 'DESC')
+                .getOne(),
+            baseQuery
+                .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
+                .addSelect('COUNT(*)', 'count')
+                .groupBy('EXTRACT(HOUR FROM login.loginTime)')
+                .orderBy('count', 'DESC')
+                .limit(1)
+                .getRawOne()
+        ]);
+        return {
+            username: normalizedEmail.split('@')[0],
+            email: normalizedEmail,
+            department: lastLogin?.department || 'Unknown',
+            totalLogins,
+            mostUsedWebtool: webtoolUsage[0]?.webtool || 'N/A',
+            lastLogin: lastLogin?.loginTime || null,
+            peakHour: peakHourData ? `${peakHourData.hour}:00` : 'N/A',
+            dailyLogins,
+            loginsByHour,
+            loginsByDay,
+            webtoolUsage
+        };
     }
     async getSummary(days = 30, webtool, email) {
         const startDate = (0, date_fns_1.subDays)(new Date(), days);
@@ -212,6 +202,26 @@ let AnalyticsService = class AnalyticsService {
             .groupBy('login.department, DATE(login.loginTime)')
             .orderBy('department, date')
             .getRawMany();
+    }
+    async getUserWebtoolStats(email, days = 30) {
+        const normalizedEmail = email.toLowerCase().trim();
+        const results = await this.loginEventRepository
+            .createQueryBuilder('login')
+            .select('login.webtool', 'webtool')
+            .addSelect('COUNT(*)', 'count')
+            .addSelect('MAX(login.loginTime)', 'lastLogin')
+            .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
+            .andWhere('login.loginTime >= :startDate', {
+            startDate: (0, date_fns_1.subDays)(new Date(), days)
+        })
+            .groupBy('login.webtool')
+            .orderBy('count', 'DESC')
+            .getRawMany();
+        return results.map(r => ({
+            webtool: r.webtool,
+            count: parseInt(r.count),
+            lastLogin: r.lastLogin ? new Date(r.lastLogin) : null
+        }));
     }
 };
 exports.AnalyticsService = AnalyticsService;

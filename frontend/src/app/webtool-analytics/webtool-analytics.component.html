@@ -185,6 +185,7 @@
 
     <!-- User Profile Section -->
  <!-- Replace your current user profile section with this code -->
+<!-- User Profile Section -->
 <div *ngIf="isSpecificUserSelected" class="container px-4 py-4 mx-auto">
   <!-- User Profile Card -->
   <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-xl overflow-hidden border border-gray-200">
@@ -210,33 +211,37 @@
             {{ userKPIs?.department }}
           </span>
           <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium text-white">
-            {{ userKPIs?.totalLogins }} {{ userKPIs?.totalLogins === 1 ? 'Login' : 'Logins' }}
+            {{ filteredTotalLogins | number }} {{ filteredTotalLogins === 1 ? 'Login' : 'Logins' }} (Last {{selectedTimeRange}} days)
+          </span>
+          <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium text-white">
+            Peak: {{ userKPIs?.peakHour }}
           </span>
         </div>
       </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200/50">
-      <!-- Last Login -->
-      <div class="p-6">
+    <!-- Summary Cards - Moved ABOVE the table -->
+    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200/50 bg-gray-50">
+      <!-- Total Logins -->
+      <div class="p-4">
         <div class="flex items-center gap-3">
           <div class="p-3 bg-blue-100 rounded-lg text-blue-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
           </div>
           <div>
-            <p class="text-sm text-gray-500">Last Login</p>
+            <p class="text-sm text-gray-500">Total Logins</p>
             <p class="text-lg font-semibold text-gray-800">
-              {{ userKPIs?.lastLogin ? (userKPIs?.lastLogin | date:'medium') : 'Never' }}
+              {{ filteredTotalLogins | number }}
             </p>
           </div>
         </div>
       </div>
 
       <!-- Most Used Webtool -->
-      <div class="p-6">
+      <div class="p-4">
         <div class="flex items-center gap-3">
           <div class="p-3 bg-indigo-100 rounded-lg text-indigo-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -251,7 +256,7 @@
       </div>
 
       <!-- Peak Hour -->
-      <div class="p-6">
+      <div class="p-4">
         <div class="flex items-center gap-3">
           <div class="p-3 bg-purple-100 rounded-lg text-purple-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -266,79 +271,62 @@
       </div>
     </div>
 
-    <!-- Webtool Usage Breakdown -->
-    <div class="border-t border-gray-200/50 p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Webtool Usage Breakdown</h3>
-      <div class="space-y-4">
-        <div *ngFor="let webtool of userKPIs?.webtoolUsage" class="flex items-center">
-          <div class="w-2/12">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              {{ webtool.webtool }}
-            </span>
-          </div>
-          <div class="w-8/12 px-4">
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-              <div class="bg-blue-600 h-2.5 rounded-full" 
-                   [style.width.%]="(webtool.count / userKPIs?.totalLogins) * 100">
-              </div>
-            </div>
-          </div>
-          <div class="w-2/12 text-right">
-            <span class="text-sm font-medium text-gray-700">
-              {{ webtool.count }} ({{ (webtool.count / userKPIs.totalLogins * 100).toFixed(0) }}%)
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- User Specific Charts -->
-  <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Daily Logins Chart -->
-    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Daily Login Activity</h3>
-        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
-          Last {{selectedTimeRange}} Days
-        </span>
-      </div>
-      <div class="h-64"  style="touch-action: none;"  *ngIf= "chartOptions"> 
-        <apx-chart
-          *ngIf="chartOptions?.dailyLoginsChart.series[0].data.length > 0"
-          [series]="chartOptions?.dailyLoginsChart.series"
-          [chart]="chartOptions?.dailyLoginsChart.chart"
-          [xaxis]="chartOptions?.dailyLoginsChart.xaxis"
-          [colors]="chartOptions?.dailyLoginsChart.colors"
-              [stroke]="chartOptions?.dailyLoginsChart.stroke || { width: 1, curve: 'smooth' }">
-        </apx-chart>
-        <div *ngIf="chartOptions?.dailyLoginsChart.series[0].data.length === 0" 
-             class="h-full flex items-center justify-center text-gray-500">
-          No daily login data available
-        </div>
-      </div>
-    </div>
-
-    <!-- Hourly Activity Chart -->
-    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Hourly Activity Pattern</h3>
-        <span class="text-xs px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full">
-          Peak: {{ userKPIs?.peakHour }}
-        </span>
-      </div>
-      <div class="h-64"  style="touch-action: none;" *ngIf= "chartOptions">
-        <apx-chart
-          *ngIf="chartOptions?.hourlyLoginsChart.series[0].data.length > 0"
-          [series]="chartOptions?.hourlyLoginsChart.series"
-          [chart]="chartOptions?.hourlyLoginsChart.chart"
-          [xaxis]="chartOptions?.hourlyLoginsChart.xaxis"
-          [colors]="chartOptions?.hourlyLoginsChart.colors">
-        </apx-chart>
-        <div *ngIf="chartOptions?.hourlyLoginsChart.series[0].data.length === 0" 
-             class="h-full flex items-center justify-center text-gray-500">
-          No hourly login data available
-        </div>
+    <!-- Webtool Usage Table -->
+    <div class="p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Webtool Usage (Last {{selectedTimeRange}} Days)</h3>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Webtool</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Login Count</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Used</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage %</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let item of userWebtoolStats" class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ item.webtool }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ item.count }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">
+                  {{ item.lastLogin ? (item.lastLogin | date:'medium') : 'Never' }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-blue-600 h-2.5 rounded-full" 
+                         [style.width.%]="filteredTotalLogins > 0 ? (item.count / filteredTotalLogins * 100) : 0">
+                    </div>
+                  </div>
+                  <span class="ml-2 text-sm font-medium text-gray-700">
+                    {{ filteredTotalLogins > 0 ? (item.count / filteredTotalLogins * 100).toFixed(1) : 0 }}%
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="userWebtoolStats.length === 0">
+              <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                No webtool usage data available for the selected time range
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

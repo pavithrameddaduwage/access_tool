@@ -103,31 +103,6 @@ async getSummary(
   return this.analyticsService.getSummary(days, webtool, email);
 }
 
-// @Get('department-logins')
-// async getDepartmentLoginStats(
-//   @Query('days') days: number = 30,
-//   @Query('webtool') webtool?: string
-// ) {
-//   return this.analyticsService.getDepartmentLoginStats(days, webtool);
-// }
-
-// @Get('department-hourly-logins')
-// async getDepartmentHourlyLogins(
-//   @Query('days') days: number = 30,
-//   @Query('webtool') webtool?: string
-// ) {
-//   return this.analyticsService.getDepartmentHourlyLogins(days, webtool);
-// }
-
-// @Get('department-daily-logins')
-// async getDepartmentDailyLogins(
-//   @Query('days') days: number = 30,
-//   @Query('webtool') webtool?: string
-// ) {
-//   return this.analyticsService.getDepartmentDailyLogins(days, webtool);
-// }
-
-
 @Get('department-logins')
 async getDepartmentLoginStats(
   @Query('days') days: number = 30,
@@ -185,4 +160,11 @@ async getUserStats(
   return this.analyticsService.getUserStats(email, webtool, days);
 }
 
+@Get('user-webtool-stats/:email')
+async getUserWebtoolStats(
+  @Param('email') email: string,
+  @Query('days') days: number = 30
+) {
+  return this.analyticsService.getUserWebtoolStats(email, days);
+}
 }

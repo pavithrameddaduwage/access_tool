@@ -53,6 +53,9 @@ let AnalyticsController = class AnalyticsController {
     async getUserStats(email, webtool, days = 30) {
         return this.analyticsService.getUserStats(email, webtool, days);
     }
+    async getUserWebtoolStats(email, days = 30) {
+        return this.analyticsService.getUserWebtoolStats(email, days);
+    }
 };
 exports.AnalyticsController = AnalyticsController;
 __decorate([
@@ -142,6 +145,14 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Number]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getUserStats", null);
+__decorate([
+    (0, common_1.Get)('user-webtool-stats/:email'),
+    __param(0, (0, common_1.Param)('email')),
+    __param(1, (0, common_1.Query)('days')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getUserWebtoolStats", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

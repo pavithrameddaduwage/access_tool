@@ -23,6 +23,7 @@
     "apexcharts": "^4.3.0",
     "chart.js": "^4.4.7",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "date-fns": "^4.1.0",
     "jwt-decode": "^4.0.0",
     "ng-apexcharts": "^1.15.0",
     "ng2-charts": "^8.0.0",

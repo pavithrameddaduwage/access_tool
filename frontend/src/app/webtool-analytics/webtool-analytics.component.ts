@@ -101,7 +101,9 @@ export class WebtoolAnalyticsComponent implements OnInit {
      users: ProcessedUser[] = [];
      roles: Role[] = [];
      rawData: UserWebtool[] = [];
- 
+ public userWebtoolStats: any[] = [];
+
+
      metrics: DashboardMetrics = {                       // For User Webtool Metrics
        totalUsers: 0,
        totalWebtools: 0,
@@ -125,7 +127,8 @@ export class WebtoolAnalyticsComponent implements OnInit {
        { label: '30 Days', value: 30 },
        { label: '90 Days', value: 90 }
      ];
-     
+     public filteredTotalLogins: number = 0;
+
      selectedTimeRange = 30; 
 public selectedUser: string = 'All';  
     public selectedUserData: User | null = null;
@@ -1054,11 +1057,42 @@ private async resetToDefaultView(webtoolFilter?: string): Promise<void> {
   this.loadUserLoginData();
 }
 
+// private async loadUserData(email: string, webtoolFilter?: string): Promise<void> {
+//   try {
+//     const userStats = await firstValueFrom(
+//       this.loginAnalyticsService.getUserStats(email, webtoolFilter, this.selectedTimeRange)
+//     );
+    
+//     this.userKPIs = {
+//       name: userStats.username,
+//       email: email,
+//       department: userStats.department,
+//       lastLogin: userStats.lastLogin,
+//       mostUsedWebtool: userStats.mostUsedWebtool,
+//       totalLogins: userStats.totalLogins,
+//       webtoolUsage: userStats.webtoolUsage,
+//       peakHour: userStats.peakHour,
+//       dailyLogins: userStats.dailyLogins,
+//       loginsByHour: userStats.loginsByHour,
+//       loginsByDay: userStats.loginsByDay
+//     };
+//   } catch (error) {
+//     console.error('Error loading user data:', error);
+//     this.userKPIs = null;
+//   }
+// }
 private async loadUserData(email: string, webtoolFilter?: string): Promise<void> {
   try {
-    const userStats = await firstValueFrom(
-      this.loginAnalyticsService.getUserStats(email, webtoolFilter, this.selectedTimeRange)
-    );
+    const [userStats, webtoolStats] = await Promise.all([
+      firstValueFrom(
+        this.loginAnalyticsService.getUserStats(email, webtoolFilter, this.selectedTimeRange)
+      ),
+      firstValueFrom(
+        this.loginAnalyticsService.getUserWebtoolStats(email, this.selectedTimeRange)
+      )
+    ]);
+    
+    this.filteredTotalLogins = userStats.totalLogins;
     
     this.userKPIs = {
       name: userStats.username,
@@ -1073,9 +1107,13 @@ private async loadUserData(email: string, webtoolFilter?: string): Promise<void>
       loginsByHour: userStats.loginsByHour,
       loginsByDay: userStats.loginsByDay
     };
+    
+    this.userWebtoolStats = webtoolStats;
   } catch (error) {
     console.error('Error loading user data:', error);
     this.userKPIs = null;
+    this.userWebtoolStats = [];
+    this.filteredTotalLogins = 0;
   }
 }
     async onSelectUser(user: User) {
@@ -1089,6 +1127,41 @@ private async loadUserData(email: string, webtoolFilter?: string): Promise<void>
     }
   }
 
+// async onTimeRangeChange() {
+//   console.log('Time range changed to:', this.selectedTimeRange);
+  
+//   const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
+//     this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+  
+//   console.log('Reloading all data with time range:', this.selectedTimeRange);
+  
+//   // Show loading states
+//   this.loadingLoginMetrics = true;
+//   this.loadingDepartmentStats = true;
+  
+//   try {
+//     // Reload ALL time-dependent data
+//     await Promise.all([
+//       this.loadLoginMetrics(webtoolFilter, this.selectedUser || undefined),
+//       this.loadDepartmentStats(),
+//       this.loadUserLoginData(), // This was missing!
+//       this.selectedUser ? this.loadUserDetails() : Promise.resolve() // Reload user details if selected
+//     ]);
+    
+//     // Regenerate charts after data is loaded
+//     this.chartOptions = this.initLoginCharts();
+//     this.departmentChartOptions = this.getDepartmentCharts();
+    
+//     // Trigger change detection
+//     this.cdr.detectChanges();
+    
+//   } catch (error) {
+//     console.error('Error reloading data for time range change:', error);
+//   } finally {
+//     this.loadingLoginMetrics = false;
+//     this.loadingDepartmentStats = false;
+//   }
+// }
 async onTimeRangeChange() {
   console.log('Time range changed to:', this.selectedTimeRange);
   
@@ -1102,13 +1175,17 @@ async onTimeRangeChange() {
   this.loadingDepartmentStats = true;
   
   try {
-    // Reload ALL time-dependent data
-    await Promise.all([
+    const promises = [
       this.loadLoginMetrics(webtoolFilter, this.selectedUser || undefined),
       this.loadDepartmentStats(),
-      this.loadUserLoginData(), // This was missing!
-      this.selectedUser ? this.loadUserDetails() : Promise.resolve() // Reload user details if selected
-    ]);
+      this.loadUserLoginData()
+    ];
+    
+    if (this.selectedUser && this.selectedUser !== 'All') {
+      promises.push(this.loadUserData(this.selectedUser, webtoolFilter));
+    }
+    
+    await Promise.all(promises);
     
     // Regenerate charts after data is loaded
     this.chartOptions = this.initLoginCharts();
@@ -1124,7 +1201,6 @@ async onTimeRangeChange() {
     this.loadingDepartmentStats = false;
   }
 }
-
 private filterEventsByTimeRange(events: any[]): any[] {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - this.selectedTimeRange);
