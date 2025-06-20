@@ -6,6 +6,7 @@ import { ExternalWebtoolGuard } from 'src/auth/guards/external-webtool.guard';
 import { ExternalDeleteAssignmentDto } from './dto/external-delete-assignment.dto';
 import {  ExternalWebtoolUpdateDto } from './dto/external-update-assignment.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('user-webtools')
 export class UserWebtoolController {
@@ -65,7 +66,7 @@ export class UserWebtoolController {
 
 @Public()
   @Delete('external-assignment')
-// @UseGuards(ExternalWebtoolGuard)
+@UseGuards(ExternalWebtoolGuard)
 async deleteExternalAssignment(
   @Body() dto: ExternalDeleteAssignmentDto
 ) {

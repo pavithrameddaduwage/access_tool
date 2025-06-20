@@ -18,12 +18,14 @@ export declare class UserWebtoolService {
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<UserWebtool>;
     remove(email: string, webtoolId: number): Promise<void>;
+    private findExistingEmail;
     createExternalAssignment(dto: ExternalWebtoolAssignmentDto): Promise<{
         success: boolean;
         message: string;
         data: {
             email: string;
             userName: string;
+            department: string;
             webtool: string;
             roles: {
                 id: number;

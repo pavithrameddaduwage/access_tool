@@ -23,6 +23,7 @@ import { PowerBIUsageDashboardComponent } from '../powerbi-usage-dashboard/power
 import { WebtoolAnalyticsComponent } from '../webtool-analytics/webtool-analytics.component';
 import { PowerBIDashboardComponent } from '../powerbi-dashboard/powerbi-dashboard.component';
 import { AnalyticsComponent } from '../analytics/analytics.component';
+import { WAnalyticsComponent } from '../w-analytics/w-analytics.component';
 
 const routeConfig: Routes = [
   {

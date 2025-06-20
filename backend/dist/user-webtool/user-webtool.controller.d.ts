@@ -18,6 +18,7 @@ export declare class UserWebtoolController {
         data: {
             email: string;
             userName: string;
+            department: string;
             webtool: string;
             roles: {
                 id: number;

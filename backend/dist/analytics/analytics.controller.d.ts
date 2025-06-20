@@ -6,15 +6,6 @@ export declare class AnalyticsController {
     private loginTrackingService;
     constructor(analyticsService: AnalyticsService, loginTrackingService: LoginTrackingService);
     getLoginEvents(): Promise<import("./entities/login-event.entity").LoginEvent[]>;
-    getUserStats(email: string): Promise<{
-        totalLogins: number;
-        mostUsedWebtool: any;
-        lastLogin: Date;
-        peakHour: string;
-        dailyLogins: any[];
-        loginsByHour: any[];
-        loginsByDay: any[];
-    }>;
     getDailyLoginStats(days?: number, webtool?: string, email?: string): Promise<any[]>;
     getLoginsByHour(days?: number, webtool?: string, email?: string): Promise<any[]>;
     getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<any[]>;
@@ -22,16 +13,13 @@ export declare class AnalyticsController {
         totalLogins: number;
         activeUsers: number;
     }>;
-    getDepartmentLoginStats(days?: number, webtool?: string): Promise<{
-        department: string;
-        logins: number;
-    }[]>;
-    getDepartmentHourlyLogins(days?: number, webtool?: string): Promise<{
+    getDepartmentLoginStats(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getDepartmentHourlyLogins(days?: number, webtool?: string, email?: string): Promise<{
         department: string;
         hour: number;
         count: number;
     }[]>;
-    getDepartmentDailyLogins(days?: number, webtool?: string): Promise<{
+    getDepartmentDailyLogins(days?: number, webtool?: string, email?: string): Promise<{
         department: string;
         date: string;
         count: number;
@@ -42,4 +30,10 @@ export declare class AnalyticsController {
         department?: string;
         location?: string;
     }, req: Request): Promise<import("./entities/login-event.entity").LoginEvent>;
+    getUserStats(email: string, webtool?: string, days?: number): Promise<any>;
+    getUserWebtoolStats(email: string, days?: number): Promise<{
+        webtool: string;
+        count: number;
+        lastLogin: Date | null;
+    }[]>;
 }

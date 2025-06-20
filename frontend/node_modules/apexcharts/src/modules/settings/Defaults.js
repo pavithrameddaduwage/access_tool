@@ -307,7 +307,7 @@ export default class Defaults {
       },
       stroke: {
         width: 0,
-        lineCap: 'round',
+        lineCap: 'square',
       },
       fill: {
         opacity: 0.85,
@@ -394,7 +394,6 @@ export default class Defaults {
     return {
       stroke: {
         width: 1,
-        colors: ['#333'],
       },
       fill: {
         opacity: 1,
