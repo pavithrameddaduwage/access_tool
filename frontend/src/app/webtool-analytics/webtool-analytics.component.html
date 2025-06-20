@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-50 analytics-container">
   <!-- Header Section with Filter Controls -->
   <div class="bg-gradient-to-r from-[#003a8b] to-[#0077B6] shadow-lg header-section">
-    <div class="container px-4 py-4 mx-auto">
+    <div class="max-w-7xl px-6 py-4 mx-auto">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
           <div>
@@ -22,7 +22,7 @@
                   {{ webtool.webtool }}
                 </option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-700">
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-blue-700">
                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
               </div>
             </div>
@@ -50,7 +50,7 @@
         <!-- Combined Controls: View Toggle and Time Range -->
         <div class="flex items-center gap-3">
           <!-- Time Range Selector -->
-          <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+          <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-1 py-2 rounded-xl border border-white/20">
             <span class="text-xs font-medium text-white/90">Time Range:</span>
             <div class="flex space-x-1 bg-white/15 rounded-lg p-1">
               <button 
@@ -82,7 +82,7 @@
   <!-- Dashboard Content -->
   <ng-container *ngIf="chartsInitialized">
     <!-- Combined Summary Cards -->
-    <div class="container px-4 py-4 mx-auto">
+    <div class="max-w-7xl px-6 px-1 py-4 mx-auto">
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 metrics-cards">
         <!-- Webtools Card (always shows total) -->
         <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-blue-500 metric-card transition-shadow duration-200">
@@ -184,133 +184,133 @@
     </div>
 
     <!-- User Profile Section -->
- <!-- Replace your current user profile section with this code -->
-<!-- User Profile Section -->
-<div *ngIf="isSpecificUserSelected" class="container px-4 py-4 mx-auto">
+<!-- User Profile Header - Sleek Pastel Design -->
+<!-- User Profile Header - Darker Blue Version -->
+<div *ngIf="isSpecificUserSelected" class="px-4 py-6 w-full max-w-[99%] mx-auto">
   <!-- User Profile Card -->
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-    <!-- Card Header with User Avatar -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 flex items-center gap-6">
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+    <!-- Card Header -->
+    <div class="bg-blue-100 p-6 flex flex-col md:flex-row items-start md:items-center gap-6">
+      <!-- Avatar with Initial -->
       <div class="relative">
-        <div class="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-lg">
-          <span class="text-3xl font-bold text-blue-600">
+        <div class="w-20 h-20 rounded-full bg-blue-200 flex items-center justify-center border-2 border-white shadow">
+          <span class="text-3xl font-medium text-blue-800">
             {{ userKPIs?.name?.charAt(0) || 'U' }}
           </span>
         </div>
-        <div class="absolute -bottom-2 -right-2 bg-green-400 rounded-full p-1 border-2 border-white">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+        <!-- Active Status Badge -->
+        <div class="absolute -bottom-1 -right-1 bg-green-400 rounded-full p-1 border-2 border-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
           </svg>
         </div>
       </div>
-      <div>
-        <h2 class="text-2xl font-bold text-white">{{ userKPIs?.name }}</h2>
-        <p class="text-blue-100">{{ userKPIs?.email }}</p>
-        <div class="mt-2 flex items-center gap-2">
-          <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium text-white">
-            {{ userKPIs?.department }}
-          </span>
-          <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium text-white">
-            {{ filteredTotalLogins | number }} {{ filteredTotalLogins === 1 ? 'Login' : 'Logins' }} (Last {{selectedTimeRange}} days)
-          </span>
-          <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-medium text-white">
-            Peak: {{ userKPIs?.peakHour }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Summary Cards - Moved ABOVE the table -->
-    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200/50 bg-gray-50">
-      <!-- Total Logins -->
-      <div class="p-4">
-        <div class="flex items-center gap-3">
-          <div class="p-3 bg-blue-100 rounded-lg text-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </div>
+      
+      <!-- User Details -->
+      <div class="flex-1">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <p class="text-sm text-gray-500">Total Logins</p>
+            <h2 class="text-xl font-semibold text-gray-800">{{ userKPIs?.name }}</h2>
+            <p class="text-blue-700 text-sm">{{ userKPIs?.email }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 bg-blue-200 rounded-full text-xs font-medium text-blue-900 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              {{ userKPIs?.department }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Stats Row -->
+        <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <!-- Total Logins -->
+          <div class="bg-white p-2 rounded-lg border border-blue-200">
+            <p class="text-xs font-medium text-gray-500">Total Logins</p>
             <p class="text-lg font-semibold text-gray-800">
               {{ filteredTotalLogins | number }}
+              <span class="text-xs font-normal text-gray-500 ml-1">({{selectedTimeRange}}d)</span>
+            </p>
+          </div>
+          
+          <!-- Most Used Webtool -->
+          <div class="bg-white p-2 rounded-lg border border-blue-200">
+            <p class="text-xs font-medium text-gray-500">Most Used</p>
+            <p class="text-lg font-semibold text-gray-800 truncate">{{ userKPIs?.mostUsedWebtool || 'N/A' }}</p>
+          </div>
+          
+          <!-- Peak Hour -->
+          <div class="bg-white p-2 rounded-lg border border-blue-200">
+            <p class="text-xs font-medium text-gray-500">Peak Hour</p>
+            <p class="text-lg font-semibold text-gray-800">{{ userKPIs?.peakHour || 'N/A' }}</p>
+          </div>
+          
+          <!-- Last Login -->
+          <div class="bg-white p-2 rounded-lg border border-blue-200">
+            <p class="text-xs font-medium text-gray-500">Last Login</p>
+            <p class="text-lg font-semibold text-gray-800">
+              {{ userKPIs?.lastLogin ? (userKPIs.lastLogin | date:'short') : 'Never' }}
             </p>
           </div>
         </div>
       </div>
-
-      <!-- Most Used Webtool -->
-      <div class="p-4">
-        <div class="flex items-center gap-3">
-          <div class="p-3 bg-indigo-100 rounded-lg text-indigo-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div>
-            <p class="text-sm text-gray-500">Most Used Webtool</p>
-            <p class="text-lg font-semibold text-gray-800">{{ userKPIs?.mostUsedWebtool }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Peak Hour -->
-      <div class="p-4">
-        <div class="flex items-center gap-3">
-          <div class="p-3 bg-purple-100 rounded-lg text-purple-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          </div>
-          <div>
-            <p class="text-sm text-gray-500">Peak Activity Hour</p>
-            <p class="text-lg font-semibold text-gray-800">{{ userKPIs?.peakHour }}</p>
-          </div>
-        </div>
-      </div>
     </div>
-
     <!-- Webtool Usage Table -->
     <div class="p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Webtool Usage (Last {{selectedTimeRange}} Days)</h3>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-800">
+          <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            Webtool Usage Breakdown
+          </span>
+          <span class="block text-sm font-normal text-gray-500 mt-1">Last {{selectedTimeRange}} days activity</span>
+        </h3>
+        <div class="flex items-center gap-2">
+          <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+            {{ userWebtoolStats.length }} Webtools
+          </span>
+        </div>
+      </div>
       
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Webtool</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Login Count</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Used</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage %</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trend</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let item of userWebtoolStats" class="hover:bg-gray-50">
+            <tr *ngFor="let item of userWebtoolStats" class="hover:bg-gray-50 transition-colors duration-150">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center shadow-inner">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">{{ item.webtool }}</div>
+                    <div class="text-xs text-gray-500">{{ item.lastLogin ? 'Last used ' + (item.lastLogin | date:'short') : 'Never used' }}</div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ item.count }}</div>
+                <div class="text-base font-medium text-gray-900">{{ item.count }}</div>
+                <div class="text-xs text-gray-500">{{ (item.count / filteredTotalLogins * 100).toFixed(1) }}% of total</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">
-                  {{ item.lastLogin ? (item.lastLogin | date:'medium') : 'Never' }}
+                  {{ item.lastLogin ? (item.lastLogin | date:'mediumDate') : 'Never' }}
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div class="bg-blue-600 h-2.5 rounded-full" 
+                  <div class="w-32 bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full" 
                          [style.width.%]="filteredTotalLogins > 0 ? (item.count / filteredTotalLogins * 100) : 0">
                     </div>
                   </div>
@@ -319,10 +319,23 @@
                   </span>
                 </div>
               </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </td>
             </tr>
             <tr *ngIf="userWebtoolStats.length === 0">
-              <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-                No webtool usage data available for the selected time range
+              <td colspan="5" class="px-6 py-8 text-center">
+                <div class="flex flex-col items-center justify-center text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="mt-2 text-sm font-medium">No webtool usage data available</p>
+                  <p class="text-xs">Try adjusting your time range or filters</p>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -333,7 +346,7 @@
 </div>
 
     <!-- Existing Webtool View Content -->
-<div class="container px-4 pb-4 mx-auto space-y-4">
+<div class="max-w-7xl px-6 px-1 pb-4 mx-auto space-y-4">
       <!-- Top Row - Webtool Usage + Department Distribution -->
       <div *ngIf="!isUserSelected" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <!-- Webtool Usage Chart -->
