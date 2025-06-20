@@ -144,28 +144,46 @@ let UserWebtoolService = class UserWebtoolService {
         if (roles.length !== dto.roleIds.length) {
             throw new common_1.NotFoundException('Some roles were not found or do not belong to this webtool');
         }
-        const existingEmail = await this.findExistingEmail(dto.email, dto.webtoolId);
+        const existingEmail = await this.findExistingEmail(dto.email);
         const emailToUse = existingEmail || dto.email;
-        const existingAssignments = await this.userWebtoolRepository.find({
-            where: { email: emailToUse, webtoolId: dto.webtoolId },
-            relations: ['role']
-        });
-        const existingRoleIds = existingAssignments.map(assignment => assignment.roleId);
-        const newRoleIds = dto.roleIds.filter(roleId => !existingRoleIds.includes(roleId));
+        await this.userWebtoolRepository
+            .createQueryBuilder()
+            .delete()
+            .where('LOWER(email) = LOWER(:email)', { email: dto.email })
+            .andWhere('webtoolId = :webtoolId', { webtoolId: dto.webtoolId })
+            .execute();
         const isActive = dto.isActive !== undefined ? dto.isActive : true;
         const lastActiveAt = isActive ? null : new Date();
-        if (newRoleIds.length > 0) {
-            const userWebtools = newRoleIds.map(roleId => this.userWebtoolRepository.create({
+        const userWebtools = dto.roleIds.map(roleId => this.userWebtoolRepository.create({
+            email: emailToUse,
+            userName: dto.userName,
+            department: dto.department,
+            webtoolId: dto.webtoolId,
+            roleId: roleId,
+            isActive: isActive,
+            lastActiveAt: lastActiveAt
+        }));
+        const saved = await this.userWebtoolRepository.save(userWebtools);
+        const updatedAssignments = await this.userWebtoolRepository.find({
+            where: { email: emailToUse, webtoolId: dto.webtoolId },
+            relations: ['webtool', 'role']
+        });
+        return {
+            success: true,
+            message: 'User assignments created successfully',
+            data: {
                 email: emailToUse,
                 userName: dto.userName,
                 department: dto.department,
-                webtoolId: dto.webtoolId,
-                roleId: roleId,
+                webtool: webtool.webtool,
+                roles: updatedAssignments.map(uw => ({
+                    id: uw.role.id,
+                    name: uw.role.roles
+                })),
                 isActive: isActive,
                 lastActiveAt: lastActiveAt
-            }));
-            await this.userWebtoolRepository.save(userWebtools);
-        }
+            }
+        };
     }
     async deleteExternalAssignment(dto) {
         await this.userWebtoolRepository.delete({

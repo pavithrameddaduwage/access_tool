@@ -12,7 +12,22 @@ export declare class UserWebtoolController {
     remove(email: string, webtoolId: string): Promise<void>;
     getUserWebtoolsByUser(email: string): Promise<import("./entities/user-webtool.entity").UserWebtool[]>;
     removeRole(email: string, webtoolId: string, roleId: string): Promise<void>;
-    createExternalAssignment(dto: ExternalWebtoolAssignmentDto, req: Request): Promise<void>;
+    createExternalAssignment(dto: ExternalWebtoolAssignmentDto, req: Request): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            userName: string;
+            department: string;
+            webtool: string;
+            roles: {
+                id: number;
+                name: string;
+            }[];
+            isActive: boolean;
+            lastActiveAt: Date;
+        };
+    }>;
     deleteExternalAssignment(dto: ExternalDeleteAssignmentDto): Promise<{
         success: boolean;
         message: string;

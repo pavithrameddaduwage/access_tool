@@ -19,7 +19,22 @@ export declare class UserWebtoolService {
     findOne(id: number): Promise<UserWebtool>;
     remove(email: string, webtoolId: number): Promise<void>;
     private findExistingEmail;
-    createExternalAssignment(dto: ExternalWebtoolAssignmentDto): Promise<void>;
+    createExternalAssignment(dto: ExternalWebtoolAssignmentDto): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            userName: string;
+            department: string;
+            webtool: string;
+            roles: {
+                id: number;
+                name: string;
+            }[];
+            isActive: boolean;
+            lastActiveAt: Date;
+        };
+    }>;
     deleteExternalAssignment(dto: ExternalDeleteAssignmentDto): Promise<{
         success: boolean;
         message: string;
