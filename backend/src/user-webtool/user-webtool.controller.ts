@@ -7,6 +7,7 @@ import { ExternalDeleteAssignmentDto } from './dto/external-delete-assignment.dt
 import {  ExternalWebtoolUpdateDto } from './dto/external-update-assignment.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 
+
 @Controller('user-webtools')
 export class UserWebtoolController {
   constructor(private readonly userWebtoolService: UserWebtoolService) {}
@@ -53,8 +54,9 @@ export class UserWebtoolController {
 
 
   // This is just for external use by other webtools I guess @Post('external-assignment')...
-  @Post('external-assignment')
   @Public()
+  @Post('external-assignment')
+  // @UseGuards(ExternalWebtoolGuard)
   async createExternalAssignment(
     @Body() dto: ExternalWebtoolAssignmentDto,
     @Req() req: Request  
@@ -62,9 +64,9 @@ export class UserWebtoolController {
     return this.userWebtoolService.createExternalAssignment(dto);
   }
 
-
-  @Delete('external-assignment')
 @Public()
+  @Delete('external-assignment')
+// @UseGuards(ExternalWebtoolGuard)
 async deleteExternalAssignment(
   @Body() dto: ExternalDeleteAssignmentDto
 ) {
@@ -85,8 +87,10 @@ async getAllRawUserWebtools() {
 }
 
 
-@Patch('external-assignment')
 @Public()
+@Patch('external-assignment')
+// @UseGuards(ExternalWebtoolGuard)
+// @UseGuards(ExternalWebtoolGuard)
 async updateExternalAssignment(
   @Body() dto: ExternalWebtoolUpdateDto
 ) {
