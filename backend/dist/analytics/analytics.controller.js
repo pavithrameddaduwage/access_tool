@@ -56,6 +56,12 @@ let AnalyticsController = class AnalyticsController {
     async getUserWebtoolStats(email, days = 30) {
         return this.analyticsService.getUserWebtoolStats(email, days);
     }
+    async getTopActiveUsers(days = 30, webtool) {
+        return this.analyticsService.getTopActiveUsers(days, webtool);
+    }
+    async getTopUsedWebtools(days = 30, email) {
+        return this.analyticsService.getTopUsedWebtools(days, email);
+    }
 };
 exports.AnalyticsController = AnalyticsController;
 __decorate([
@@ -153,6 +159,22 @@ __decorate([
     __metadata("design:paramtypes", [String, Number]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getUserWebtoolStats", null);
+__decorate([
+    (0, common_1.Get)('top-active-users'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('webtool')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getTopActiveUsers", null);
+__decorate([
+    (0, common_1.Get)('top-used-webtools'),
+    __param(0, (0, common_1.Query)('days')),
+    __param(1, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getTopUsedWebtools", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

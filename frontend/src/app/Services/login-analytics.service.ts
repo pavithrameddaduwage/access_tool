@@ -102,4 +102,18 @@ getUserWebtoolStats(email: string, days: number = 30): Observable<any> {
     params: { days } 
   });
 }
+
+getTopActiveUsers(days: number = 30, webtool?: string): Observable<any> {
+  let params: any = { days };
+  if (webtool) params.webtool = webtool;
+  
+  return this.http.get(`${this.apiUrl}top-active-users`, { params });
+}
+
+getTopUsedWebtools(days: number = 30, email?: string): Observable<any> {
+  let params: any = { days };
+  if (email) params.email = email;
+  
+  return this.http.get(`${this.apiUrl}top-used-webtools`, { params });
+}
 }

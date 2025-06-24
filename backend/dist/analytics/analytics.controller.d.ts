@@ -36,4 +36,12 @@ export declare class AnalyticsController {
         count: number;
         lastLogin: Date | null;
     }[]>;
+    getTopActiveUsers(days?: number, webtool?: string): Promise<{
+        email: string;
+        count: number;
+    }[]>;
+    getTopUsedWebtools(days?: number, email?: string): Promise<{
+        webtool: string;
+        count: number;
+    }[]>;
 }

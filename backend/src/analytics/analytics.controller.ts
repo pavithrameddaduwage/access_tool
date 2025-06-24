@@ -167,4 +167,20 @@ async getUserWebtoolStats(
 ) {
   return this.analyticsService.getUserWebtoolStats(email, days);
 }
+
+@Get('top-active-users')
+async getTopActiveUsers(
+  @Query('days') days: number = 30,
+  @Query('webtool') webtool?: string
+) {
+  return this.analyticsService.getTopActiveUsers(days, webtool);
+}
+
+@Get('top-used-webtools')
+async getTopUsedWebtools(
+  @Query('days') days: number = 30,
+  @Query('email') email?: string
+) {
+  return this.analyticsService.getTopUsedWebtools(days, email);
+}
 }
