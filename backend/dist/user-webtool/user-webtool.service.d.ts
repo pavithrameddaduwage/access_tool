@@ -7,11 +7,13 @@ import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.
 import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 import { UpdateUserWebtoolDto } from "./dto/update-user-webtool.dto";
 import { ExternalWebtoolUpdateDto } from "./dto/external-update-assignment.dto";
+import { AuthService } from "src/auth/auth.service";
 export declare class UserWebtoolService {
     private userWebtoolRepository;
     private webtoolRepository;
     private roleRepository;
-    constructor(userWebtoolRepository: Repository<UserWebtool>, webtoolRepository: Repository<Webtool>, roleRepository: Repository<Role>);
+    private authService;
+    constructor(userWebtoolRepository: Repository<UserWebtool>, webtoolRepository: Repository<Webtool>, roleRepository: Repository<Role>, authService: AuthService);
     create(createUserWebtoolDto: CreateUserWebtoolDto): Promise<UserWebtool>;
     removeRole(email: string, webtoolId: number, roleId: number): Promise<void>;
     getUserWebtoolsByUser(email: string): Promise<UserWebtool[]>;
