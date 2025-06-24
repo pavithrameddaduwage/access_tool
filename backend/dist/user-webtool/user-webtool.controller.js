@@ -105,8 +105,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "removeRole", null);
 __decorate([
-    (0, common_1.Post)('external-assignment'),
     (0, public_decorator_1.Public)(),
+    (0, common_1.Post)('external-assignment'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -115,8 +115,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "createExternalAssignment", null);
 __decorate([
-    (0, common_1.Delete)('external-assignment'),
     (0, public_decorator_1.Public)(),
+    (0, common_1.Delete)('external-assignment'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [external_delete_assignment_dto_1.ExternalDeleteAssignmentDto]),
@@ -138,8 +138,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserWebtoolController.prototype, "getAllRawUserWebtools", null);
 __decorate([
-    (0, common_1.Patch)('external-assignment'),
     (0, public_decorator_1.Public)(),
+    (0, common_1.Patch)('external-assignment'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [external_update_assignment_dto_1.ExternalWebtoolUpdateDto]),

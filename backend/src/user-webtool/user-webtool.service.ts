@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { UserWebtool } from "./entities/user-webtool.entity";
@@ -9,6 +9,7 @@ import { ExternalWebtoolAssignmentDto } from "./dto/external-webtool-assignment.
 import { ExternalDeleteAssignmentDto } from "./dto/external-delete-assignment.dto";
 import { UpdateUserWebtoolDto } from "./dto/update-user-webtool.dto";
 import {  ExternalWebtoolUpdateDto } from "./dto/external-update-assignment.dto";
+import { AuthService } from "src/auth/auth.service";
 
 
 @Injectable()
@@ -19,8 +20,9 @@ export class UserWebtoolService {
     @InjectRepository(Webtool)
     private webtoolRepository: Repository<Webtool>,
     @InjectRepository(Role)
-    private roleRepository: Repository<Role>
-  ) {}
+    private roleRepository: Repository<Role>,
+ @Inject(forwardRef(() => AuthService)) // Proper injection with forwardRef
+    private authService: AuthService  ) {}
 
   // async create(createUserWebtoolDto: CreateUserWebtoolDto) {
   //   console.log('Creating user webtool with data:', createUserWebtoolDto);
@@ -183,131 +185,7 @@ export class UserWebtoolService {
 
 
 
-  // Only for external webtool use
-  // async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
-  //   // Validate webtool exists
-  //   const webtool = await this.webtoolRepository.findOne({
-  //     where: { id: dto.webtoolId }
-  //   });
 
-  //   if (!webtool) {
-  //     throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
-  //   }
-
-  //   // Validate roles exist and belong to the webtool
-  //   const roles = await this.roleRepository.find({
-  //     where: { 
-  //       id: In(dto.roleIds),
-  //       webtool: { id: dto.webtoolId } // Changed this line to use the relation
-  //     },
-  //     relations: ['webtool'] // Add this to load the webtool relation
-  //   });
-
-  //   if (roles.length !== dto.roleIds.length) {
-  //     throw new NotFoundException('Some roles were not found or do not belong to this webtool');
-  //   }
-
-  //   // Delete existing assignments for this user-webtool combination
-  //   await this.userWebtoolRepository.delete({
-  //     email: dto.email,
-  //     webtoolId: dto.webtoolId
-  //   });
-
-  //   // Create new assignments
-  //   const userWebtools = dto.roleIds.map(roleId => 
-  //     this.userWebtoolRepository.create({
-  //       email: dto.email,
-  //       userName: dto.userName,
-  //       department: dto.department,
-  //       webtoolId: dto.webtoolId,
-  //       roleId: roleId
-  //     })
-  //   );
-
-  //   const saved = await this.userWebtoolRepository.save(userWebtools);
-
-  //   return {
-  //     success: true,
-  //     message: 'User assignments created successfully',
-  //     data: {
-  //       email: dto.email,
-  //       userName: dto.userName,
-  //       webtool: webtool.webtool,
-  //       roles: roles.map(role => ({
-  //         id: role.id,
-  //         name: role.roles
-  //       }))
-  //     }
-  //   };
-  // }
-
-
-  // new recent one
-
-  // async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
-  //   // Validate webtool exists
-  //   const webtool = await this.webtoolRepository.findOne({
-  //     where: { id: dto.webtoolId }
-  //   });
-  
-  //   if (!webtool) {
-  //     throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
-  //   }
-  
-  //   // Validate roles exist and belong to the webtool
-  //   const roles = await this.roleRepository.find({
-  //     where: { 
-  //       id: In(dto.roleIds),
-  //       webtool: { id: dto.webtoolId }
-  //     },
-  //     relations: ['webtool']
-  //   });
-  
-  //   if (roles.length !== dto.roleIds.length) {
-  //     throw new NotFoundException('Some roles were not found or do not belong to this webtool');
-  //   }
-  
-  //   // Delete existing assignments for this user-webtool combination
-  //   await this.userWebtoolRepository.delete({
-  //     email: dto.email,
-  //     webtoolId: dto.webtoolId
-  //   });
-  
-  //   // Determine the active status (default to true if not provided)
-  //   const isActive = dto.isActive !== undefined ? dto.isActive : true;
-  //   const lastActiveAt = isActive ? null : new Date();
-  
-  //   // Create new assignments with proper active status
-  //   const userWebtools = dto.roleIds.map(roleId => 
-  //     this.userWebtoolRepository.create({
-  //       email: dto.email,
-  //       userName: dto.userName,
-  //       department: dto.department,
-  //       webtoolId: dto.webtoolId,
-  //       roleId: roleId,
-  //       isActive: isActive,
-  //       lastActiveAt: lastActiveAt
-  //     })
-  //   );
-  
-  //   const saved = await this.userWebtoolRepository.save(userWebtools);
-  
-  //   return {
-  //     success: true,
-  //     message: 'User assignments created successfully',
-  //     data: {
-  //       email: dto.email,
-  //       userName: dto.userName,
-  //       webtool: webtool.webtool,
-  //       roles: roles.map(role => ({
-  //         id: role.id,
-  //         name: role.roles
-  //       })),
-  //       isActive: isActive,
-  //       lastActiveAt: lastActiveAt
-  //     }
-  //   };
-  // }
  private async findExistingEmail(email: string, webtoolId?: number): Promise<string | null> {
     const queryBuilder = this.userWebtoolRepository.createQueryBuilder('uw')
       .select('uw.email')
@@ -320,6 +198,83 @@ export class UserWebtoolService {
     const result = await queryBuilder.getOne();
     return result?.email || null;
   }
+// async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
+//     // Validate webtool exists
+//     const webtool = await this.webtoolRepository.findOne({
+//       where: { id: dto.webtoolId }
+//     });
+
+//     if (!webtool) {
+//       throw new NotFoundException(`Webtool with ID ${dto.webtoolId} not found`);
+//     }
+
+//     // Validate roles exist and belong to the webtool
+//     const roles = await this.roleRepository.find({
+//       where: { 
+//         id: In(dto.roleIds),
+//         webtool: { id: dto.webtoolId }
+//       },
+//       relations: ['webtool']
+//     });
+
+//     if (roles.length !== dto.roleIds.length) {
+//       throw new NotFoundException('Some roles were not found or do not belong to this webtool');
+//     }
+
+//     // Find existing email (case-insensitive) to preserve original case
+//     const existingEmail = await this.findExistingEmail(dto.email);
+//     const emailToUse = existingEmail || dto.email;
+
+//     // Delete existing assignments for this user-webtool combination (case-insensitive)
+//     await this.userWebtoolRepository
+//       .createQueryBuilder()
+//       .delete()
+//       .where('LOWER(email) = LOWER(:email)', { email: dto.email })
+//       .andWhere('webtoolId = :webtoolId', { webtoolId: dto.webtoolId })
+//       .execute();
+
+//     // Determine the active status (default to true if not provided)
+//     const isActive = dto.isActive !== undefined ? dto.isActive : true;
+//     const lastActiveAt = isActive ? null : new Date();
+
+//     // Create new assignments with proper active status and preserved email case
+//     const userWebtools = dto.roleIds.map(roleId => 
+//       this.userWebtoolRepository.create({
+//         email: emailToUse,
+//         userName: dto.userName,
+//         department: dto.department,
+//         webtoolId: dto.webtoolId,
+//         roleId: roleId,
+//         isActive: isActive,
+//         lastActiveAt: lastActiveAt
+//       })
+//     );
+
+//     const saved = await this.userWebtoolRepository.save(userWebtools);
+
+//     // Get the updated assignments with relations for response
+//     const updatedAssignments = await this.userWebtoolRepository.find({
+//       where: { email: emailToUse, webtoolId: dto.webtoolId },
+//       relations: ['webtool', 'role']
+//     });
+
+//     return {
+//       success: true,
+//       message: 'User assignments created successfully',
+//       data: {
+//         email: emailToUse,
+//         userName: dto.userName,
+//         department: dto.department,
+//         webtool: webtool.webtool,
+//         roles: updatedAssignments.map(uw => ({
+//           id: uw.role.id,
+//           name: uw.role.roles
+//         })),
+//         isActive: isActive,
+//         lastActiveAt: lastActiveAt
+//       }
+//     };
+// }
 async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
     // Validate webtool exists
     const webtool = await this.webtoolRepository.findOne({
@@ -347,6 +302,35 @@ async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
     const existingEmail = await this.findExistingEmail(dto.email);
     const emailToUse = existingEmail || dto.email;
 
+    // Check if user has existing records to determine department
+    let departmentToUse = dto.department;
+    if (!departmentToUse || departmentToUse.trim() === '') {
+      const existingAssignment = await this.userWebtoolRepository.findOne({
+        where: { email: dto.email },
+        select: ['department']
+      });
+      
+      if (existingAssignment?.department) {
+        // Use existing department from database
+        departmentToUse = existingAssignment.department;
+      } else {
+        // Fetch department from AD
+        try {
+          const users = await this.authService.searchUsers(dto.email);
+          const userFromAD = users.find(u => u.email.toLowerCase() === dto.email.toLowerCase());
+          
+          if (userFromAD?.department) {
+            departmentToUse = userFromAD.department;
+          } else {
+            departmentToUse = 'Unknown'; // Default value if not found in AD
+          }
+        } catch (error) {
+          console.error('Failed to fetch department from AD:', error);
+          departmentToUse = 'Unknown';
+        }
+      }
+    }
+
     // Delete existing assignments for this user-webtool combination (case-insensitive)
     await this.userWebtoolRepository
       .createQueryBuilder()
@@ -364,7 +348,7 @@ async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
       this.userWebtoolRepository.create({
         email: emailToUse,
         userName: dto.userName,
-        department: dto.department,
+        department: departmentToUse,
         webtoolId: dto.webtoolId,
         roleId: roleId,
         isActive: isActive,
@@ -386,7 +370,7 @@ async createExternalAssignment(dto: ExternalWebtoolAssignmentDto) {
       data: {
         email: emailToUse,
         userName: dto.userName,
-        department: dto.department,
+        department: departmentToUse,
         webtool: webtool.webtool,
         roles: updatedAssignments.map(uw => ({
           id: uw.role.id,

@@ -223,6 +223,36 @@ let AnalyticsService = class AnalyticsService {
             lastLogin: r.lastLogin ? new Date(r.lastLogin) : null
         }));
     }
+    async getTopActiveUsers(days = 30, webtool) {
+        const startDate = (0, date_fns_1.subDays)(new Date(), days);
+        const query = this.loginEventRepository.createQueryBuilder('login')
+            .select('login.email', 'email')
+            .addSelect('COUNT(*)', 'count')
+            .where('login.loginTime >= :startDate', { startDate });
+        if (webtool && webtool !== 'all') {
+            query.andWhere('login.webtool = :webtool', { webtool });
+        }
+        return query
+            .groupBy('login.email')
+            .orderBy('count', 'DESC')
+            .limit(5)
+            .getRawMany();
+    }
+    async getTopUsedWebtools(days = 30, email) {
+        const startDate = (0, date_fns_1.subDays)(new Date(), days);
+        const query = this.loginEventRepository.createQueryBuilder('login')
+            .select('login.webtool', 'webtool')
+            .addSelect('COUNT(*)', 'count')
+            .where('login.loginTime >= :startDate', { startDate });
+        if (email && email !== 'All') {
+            query.andWhere('LOWER(login.email) = LOWER(:email)', { email });
+        }
+        return query
+            .groupBy('login.webtool')
+            .orderBy('count', 'DESC')
+            .limit(5)
+            .getRawMany();
+    }
 };
 exports.AnalyticsService = AnalyticsService;
 exports.AnalyticsService = AnalyticsService = __decorate([

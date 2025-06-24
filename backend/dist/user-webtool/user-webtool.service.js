@@ -19,11 +19,13 @@ const typeorm_2 = require("typeorm");
 const user_webtool_entity_1 = require("./entities/user-webtool.entity");
 const webtool_entity_1 = require("../webtool/entities/webtool.entity");
 const role_entity_1 = require("../roles/entities/role.entity");
+const auth_service_1 = require("../auth/auth.service");
 let UserWebtoolService = class UserWebtoolService {
-    constructor(userWebtoolRepository, webtoolRepository, roleRepository) {
+    constructor(userWebtoolRepository, webtoolRepository, roleRepository, authService) {
         this.userWebtoolRepository = userWebtoolRepository;
         this.webtoolRepository = webtoolRepository;
         this.roleRepository = roleRepository;
+        this.authService = authService;
     }
     async create(createUserWebtoolDto) {
         const webtool = await this.webtoolRepository.findOne({
@@ -146,6 +148,32 @@ let UserWebtoolService = class UserWebtoolService {
         }
         const existingEmail = await this.findExistingEmail(dto.email);
         const emailToUse = existingEmail || dto.email;
+        let departmentToUse = dto.department;
+        if (!departmentToUse || departmentToUse.trim() === '') {
+            const existingAssignment = await this.userWebtoolRepository.findOne({
+                where: { email: dto.email },
+                select: ['department']
+            });
+            if (existingAssignment?.department) {
+                departmentToUse = existingAssignment.department;
+            }
+            else {
+                try {
+                    const users = await this.authService.searchUsers(dto.email);
+                    const userFromAD = users.find(u => u.email.toLowerCase() === dto.email.toLowerCase());
+                    if (userFromAD?.department) {
+                        departmentToUse = userFromAD.department;
+                    }
+                    else {
+                        departmentToUse = 'Unknown';
+                    }
+                }
+                catch (error) {
+                    console.error('Failed to fetch department from AD:', error);
+                    departmentToUse = 'Unknown';
+                }
+            }
+        }
         await this.userWebtoolRepository
             .createQueryBuilder()
             .delete()
@@ -157,7 +185,7 @@ let UserWebtoolService = class UserWebtoolService {
         const userWebtools = dto.roleIds.map(roleId => this.userWebtoolRepository.create({
             email: emailToUse,
             userName: dto.userName,
-            department: dto.department,
+            department: departmentToUse,
             webtoolId: dto.webtoolId,
             roleId: roleId,
             isActive: isActive,
@@ -174,7 +202,7 @@ let UserWebtoolService = class UserWebtoolService {
             data: {
                 email: emailToUse,
                 userName: dto.userName,
-                department: dto.department,
+                department: departmentToUse,
                 webtool: webtool.webtool,
                 roles: updatedAssignments.map(uw => ({
                     id: uw.role.id,
@@ -308,8 +336,10 @@ exports.UserWebtoolService = UserWebtoolService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(user_webtool_entity_1.UserWebtool)),
     __param(1, (0, typeorm_1.InjectRepository)(webtool_entity_1.Webtool)),
     __param(2, (0, typeorm_1.InjectRepository)(role_entity_1.Role)),
+    __param(3, (0, common_1.Inject)((0, common_1.forwardRef)(() => auth_service_1.AuthService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        auth_service_1.AuthService])
 ], UserWebtoolService);
 //# sourceMappingURL=user-webtool.service.js.map
