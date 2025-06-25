@@ -879,6 +879,109 @@ async loadTopCharts(): Promise<void> {
 //     }
 //   };
 // }
+
+//new
+
+
+// new
+// private initTopActiveUsersChart(data: any[]): void {
+//   // When a specific user is selected, show only that user's data
+//   if (this.isUserSelected) {
+//     data = [{
+//       email: this.userKPIs?.email,
+//       name: this.userKPIs?.name || this.userKPIs?.email.split('@')[0],
+//       count: this.userKPIs?.totalLogins || 0
+//     }];
+//   }
+
+//   // Create a map to normalize email casing and track the most recent name
+//   const emailMap = new Map<string, {name: string, count: number}>();
+  
+//   // Process the raw data to consolidate case variations
+//   data.forEach(user => {
+//     const normalizedEmail = user.email.toLowerCase();
+//     const existing = emailMap.get(normalizedEmail);
+    
+//     if (existing) {
+//       // If we already have this email (case-insensitive), sum the counts
+//       emailMap.set(normalizedEmail, {
+//         name: existing.name, // Keep the first name we encountered
+//         count: existing.count + user.count
+//       });
+//     } else {
+//       // New email (case-insensitive)
+//       emailMap.set(normalizedEmail, {
+//         name: user.name || user.email.split('@')[0],
+//         count: user.count
+//       });
+//     }
+//   });
+
+//   // Convert the map back to an array
+//   const consolidatedData = Array.from(emailMap.entries()).map(([email, {name, count}]) => ({
+//     email,
+//     name,
+//     count
+//   }));
+
+//   // Sort by count descending
+//   consolidatedData.sort((a, b) => b.count - a.count);
+
+//   // Take top 5 (unless we have a specific user selected)
+//   const chartData = this.isUserSelected ? consolidatedData : consolidatedData.slice(0, 5);
+
+//   this.topActiveUsersChart = {
+//     series: [{
+//       name: 'Logins',
+//       data: chartData.map(user => user.count)
+//     }],
+//     chart: {
+//       type: 'bar',
+//       height: 300,
+//       toolbar: { show: false }
+//     },
+//     plotOptions: {
+//       bar: {
+//         borderRadius: 4,
+//         horizontal: false,
+//       }
+//     },
+//     xaxis: {
+//       categories: chartData.map(user => user.name),
+//       labels: { 
+//         style: { fontSize: '10px' },
+//         rotate: -45 
+//       }
+//     },
+//     yaxis: {
+//       title: { text: 'Login Count' },
+//       min: 0,
+//       forceNiceScale: true
+//     },
+//     colors: ['#0077B6'],
+//     tooltip: {
+//       custom: ({ dataPointIndex }: any) => {
+//         const user = chartData[dataPointIndex];
+//         return `
+//           <div class="p-1 text-xs">
+//             <div><strong>User:</strong> ${user.name}</div>
+//             <div><strong>Email:</strong> ${user.email}</div>
+//             <div><strong>Logins:</strong> ${user.count}</div>
+//           </div>
+//         `;
+//       }
+//     },
+//     noData: {
+//       text: 'No data available',
+//       align: 'center',
+//       verticalAlign: 'middle',
+//       style: {
+//         color: '#64748b',
+//         fontSize: '14px'
+//       }
+//     }
+//   };
+// }
 private initTopActiveUsersChart(data: any[]): void {
   // When a specific user is selected, show only that user's data
   if (this.isUserSelected) {
@@ -890,30 +993,39 @@ private initTopActiveUsersChart(data: any[]): void {
   }
 
   // Create a map to normalize email casing and track the most recent name
-  const emailMap = new Map<string, {name: string, count: number}>();
+  const userMap = new Map<string, {name: string, count: number}>();
   
-  // Process the raw data to consolidate case variations
+  // Process the raw data to consolidate case variations and get names
   data.forEach(user => {
     const normalizedEmail = user.email.toLowerCase();
-    const existing = emailMap.get(normalizedEmail);
     
-    if (existing) {
+    // Find the user in our filteredUserLoginData to get their name
+    const userInfo = this.filteredUserLoginData.find(u => 
+      u.email.toLowerCase() === normalizedEmail
+    );
+    
+    const userName = userInfo?.username || 
+                    user.name || 
+                    user.email.split('@')[0];
+    
+    if (userMap.has(normalizedEmail)) {
       // If we already have this email (case-insensitive), sum the counts
-      emailMap.set(normalizedEmail, {
+      const existing = userMap.get(normalizedEmail)!;
+      userMap.set(normalizedEmail, {
         name: existing.name, // Keep the first name we encountered
         count: existing.count + user.count
       });
     } else {
       // New email (case-insensitive)
-      emailMap.set(normalizedEmail, {
-        name: user.name || user.email.split('@')[0],
+      userMap.set(normalizedEmail, {
+        name: userName,
         count: user.count
       });
     }
   });
 
   // Convert the map back to an array
-  const consolidatedData = Array.from(emailMap.entries()).map(([email, {name, count}]) => ({
+  const consolidatedData = Array.from(userMap.entries()).map(([email, {name, count}]) => ({
     email,
     name,
     count
