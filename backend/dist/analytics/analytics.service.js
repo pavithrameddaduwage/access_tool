@@ -226,14 +226,14 @@ let AnalyticsService = class AnalyticsService {
     async getTopActiveUsers(days = 30, webtool) {
         const startDate = (0, date_fns_1.subDays)(new Date(), days);
         const query = this.loginEventRepository.createQueryBuilder('login')
-            .select('login.email', 'email')
+            .select('LOWER(login.email)', 'email')
             .addSelect('COUNT(*)', 'count')
             .where('login.loginTime >= :startDate', { startDate });
         if (webtool && webtool !== 'all') {
             query.andWhere('login.webtool = :webtool', { webtool });
         }
         return query
-            .groupBy('login.email')
+            .groupBy('LOWER(login.email)')
             .orderBy('count', 'DESC')
             .limit(5)
             .getRawMany();

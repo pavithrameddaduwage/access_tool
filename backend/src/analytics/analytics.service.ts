@@ -328,11 +328,29 @@ async getUserWebtoolStats(email: string, days: number = 30): Promise<{webtool: s
   }));
 }
 
+// async getTopActiveUsers(days: number = 30, webtool?: string): Promise<{email: string; count: number}[]> {
+//   const startDate = subDays(new Date(), days);
+  
+//   const query = this.loginEventRepository.createQueryBuilder('login')
+//     .select('login.email', 'email')
+//     .addSelect('COUNT(*)', 'count')
+//     .where('login.loginTime >= :startDate', { startDate });
+
+//   if (webtool && webtool !== 'all') {
+//     query.andWhere('login.webtool = :webtool', { webtool });
+//   }
+
+//   return query
+//     .groupBy('login.email')
+//     .orderBy('count', 'DESC')
+//     .limit(5)
+//     .getRawMany();
+// }
 async getTopActiveUsers(days: number = 30, webtool?: string): Promise<{email: string; count: number}[]> {
   const startDate = subDays(new Date(), days);
   
   const query = this.loginEventRepository.createQueryBuilder('login')
-    .select('login.email', 'email')
+    .select('LOWER(login.email)', 'email') // Convert to lowercase for grouping
     .addSelect('COUNT(*)', 'count')
     .where('login.loginTime >= :startDate', { startDate });
 
@@ -341,12 +359,11 @@ async getTopActiveUsers(days: number = 30, webtool?: string): Promise<{email: st
   }
 
   return query
-    .groupBy('login.email')
+    .groupBy('LOWER(login.email)') // Group by lowercase email
     .orderBy('count', 'DESC')
     .limit(5)
     .getRawMany();
 }
-
 async getTopUsedWebtools(days: number = 30, email?: string): Promise<{webtool: string; count: number}[]> {
   const startDate = subDays(new Date(), days);
   
