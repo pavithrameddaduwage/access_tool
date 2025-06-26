@@ -214,27 +214,6 @@ async getLoginsByHour(days: number = 30, webtool?: string, email?: string) {
     .getRawMany();
 }
 
-// async getLoginsByDayOfWeek(days: number = 30, webtool?: string, email?: string) {
-//   const startDate = subDays(new Date(), days);
-  
-//   const query = this.loginEventRepository.createQueryBuilder('login')
-//     .select('EXTRACT(DOW FROM login.loginTime)', 'day')
-//     .addSelect('COUNT(*)', 'count')
-//     .where('login.loginTime >= :startDate', { startDate });
-
-//   if (webtool) {
-//     query.andWhere('login.webtool = :webtool', { webtool });
-//   }
-
-//   if (email) {
-//     query.andWhere('LOWER(login.email) = LOWER(:email)', { email }); // Case-insensitive comparison
-//   }
-
-//   return query
-//     .groupBy('EXTRACT(DOW FROM login.loginTime)')
-//     .orderBy('EXTRACT(DOW FROM login.loginTime)', 'ASC')
-//     .getRawMany();
-// }
 async getLoginsByDayOfWeek(days: number = 30, webtool?: string, email?: string) {
   const startDate = subDays(new Date(), days);
   
@@ -248,27 +227,15 @@ async getLoginsByDayOfWeek(days: number = 30, webtool?: string, email?: string) 
   }
 
   if (email) {
-    query.andWhere('LOWER(login.email) = LOWER(:email)', { email });
+    query.andWhere('LOWER(login.email) = LOWER(:email)', { email }); // Case-insensitive comparison
   }
 
-  const rawResults = await query
+  return query
     .groupBy('EXTRACT(DOW FROM login.loginTime)')
     .orderBy('EXTRACT(DOW FROM login.loginTime)', 'ASC')
     .getRawMany();
-
-  // Create a complete week array with all days initialized to 0
-  const daysOfWeek = Array(7).fill(0).map((_, index) => ({
-    day: index,
-    count: 0
-  }));
-
-  // Update with actual data
-  rawResults.forEach(result => {
-    daysOfWeek[result.day].count = parseInt(result.count, 10);
-  });
-
-  return daysOfWeek;
 }
+
 
 async getDepartmentLoginStats(days: number = 30, webtool?: string, email?: string) {
   const startDate = subDays(new Date(), days);
