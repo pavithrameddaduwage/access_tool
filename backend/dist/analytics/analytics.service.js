@@ -145,10 +145,18 @@ let AnalyticsService = class AnalyticsService {
         if (email) {
             query.andWhere('LOWER(login.email) = LOWER(:email)', { email });
         }
-        return query
+        const rawResults = await query
             .groupBy('EXTRACT(DOW FROM login.loginTime)')
             .orderBy('EXTRACT(DOW FROM login.loginTime)', 'ASC')
             .getRawMany();
+        const daysOfWeek = Array(7).fill(0).map((_, index) => ({
+            day: index,
+            count: 0
+        }));
+        rawResults.forEach(result => {
+            daysOfWeek[result.day].count = parseInt(result.count, 10);
+        });
+        return daysOfWeek;
     }
     async getDepartmentLoginStats(days = 30, webtool, email) {
         const startDate = (0, date_fns_1.subDays)(new Date(), days);

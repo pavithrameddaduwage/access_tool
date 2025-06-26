@@ -202,6 +202,9 @@ public topUsedWebtoolsChart: any;
      screenWidth: number;
  public loadingTopCharts = false;
 
+ public showModal = false;
+public modalTitle = '';
+public activeModal: 'webtools' | 'users' | 'logins' | 'activeUsers' = 'webtools';
    
      // Utility
  
@@ -623,7 +626,9 @@ private initEmptyCharts(): void {
  
 
 public initLoginCharts(): LoginCharts {
+  console.log('=== DEBUGGING LOGIN CHARTS INITIALIZATION ===');
   console.log('Initializing login charts with time range:', this.selectedTimeRange);
+  console.log('isUserSelected:', this.isUserSelected);
   
   // Use user-specific data if available, otherwise use global data
   const dailyData = this.isUserSelected && this.userKPIs?.dailyLogins 
@@ -638,16 +643,89 @@ public initLoginCharts(): LoginCharts {
     ? this.userKPIs.loginsByDay 
     : this.loginMetrics.loginsByDay || [];
 
+  console.log('Raw dayOfWeekData from backend:', dayOfWeekData);
+  console.log('dayOfWeekData type:', typeof dayOfWeekData);
+  console.log('dayOfWeekData is array:', Array.isArray(dayOfWeekData));
+
   // Ensure we have at least empty arrays for each chart type
   const safeDailyData = Array.isArray(dailyData) ? dailyData : [];
   const safeHourlyData = Array.isArray(hourlyData) ? hourlyData : [];
   const safeDayOfWeekData = Array.isArray(dayOfWeekData) ? dayOfWeekData : [];
 
-  console.log('Processed chart data:', {
-    dailyData: safeDailyData,
-    hourlyData: safeHourlyData,
-    dayOfWeekData: safeDayOfWeekData
+  console.log('Safe dayOfWeekData:', safeDayOfWeekData);
+  console.log('Safe dayOfWeekData length:', safeDayOfWeekData.length);
+
+  // Log each item in the array to see the structure
+  safeDayOfWeekData.forEach((item, index) => {
+    console.log(`dayOfWeekData[${index}]:`, {
+      item: item,
+      day: item.day,
+      dayType: typeof item.day,
+      dayValue: item.day,
+      count: item.count,
+      countType: typeof item.count
+    });
   });
+
+  // For day of week chart - ensure data is in correct order
+  const dayOrder = [0, 1, 2, 3, 4, 5, 6]; // Sunday to Saturday
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  console.log('Expected dayOrder:', dayOrder);
+  console.log('Expected dayNames:', dayNames);
+  
+  // Create an array with counts in correct order
+  const dayCounts = dayOrder.map(dayNum => {
+    console.log(`\n--- Processing day ${dayNum} (${dayNames[dayNum]}) ---`);
+    
+    // Try multiple comparison methods to see which one works
+    const dayDataByString = safeDayOfWeekData.find(d => d.day == dayNum); // Loose equality
+    const dayDataByNumber = safeDayOfWeekData.find(d => parseInt(d.day) === dayNum); // Parse to int
+    const dayDataByExact = safeDayOfWeekData.find(d => d.day === dayNum); // Exact match
+    const dayDataByStringExact = safeDayOfWeekData.find(d => d.day === dayNum.toString()); // String exact
+    
+    console.log(`Looking for day ${dayNum}:`);
+    console.log(`  - Loose equality (==): `, dayDataByString);
+    console.log(`  - parseInt comparison: `, dayDataByNumber);
+    console.log(`  - Exact match (===): `, dayDataByExact);
+    console.log(`  - String exact match: `, dayDataByStringExact);
+    
+    // Use the most reliable method - parseInt
+    const dayData = dayDataByNumber || dayDataByString || dayDataByExact || dayDataByStringExact;
+    const count = dayData ? (dayData.count || 0) : 0;
+    
+    console.log(`  - Final selected dayData:`, dayData);
+    console.log(`  - Final count for ${dayNames[dayNum]}:`, count);
+    
+    return count;
+  });
+
+  console.log('\n=== FINAL RESULTS ===');
+  console.log('Final dayCounts array:', dayCounts);
+  console.log('Day mapping:');
+  dayCounts.forEach((count, index) => {
+    console.log(`  ${dayNames[index]} (${index}): ${count} logins`);
+  });
+
+  // Additional debugging - check if all counts are going to one day
+  const totalExpectedCount = safeDayOfWeekData.reduce((sum, item) => sum + (item.count || 0), 0);
+  const totalMappedCount = dayCounts.reduce((sum, count) => sum + count, 0);
+  console.log('Total expected count from backend:', totalExpectedCount);
+  console.log('Total mapped count in frontend:', totalMappedCount);
+  
+  if (totalExpectedCount !== totalMappedCount) {
+    console.error('ERROR: Count mismatch! Some data is being lost in mapping.');
+  }
+
+  // Check for data clustering in one day
+  const nonZeroDays = dayCounts.filter(count => count > 0).length;
+  console.log('Number of days with data:', nonZeroDays);
+  
+  if (nonZeroDays === 1) {
+    console.warn('WARNING: All data is clustered in one day - this suggests a mapping issue!');
+    const dayWithData = dayCounts.findIndex(count => count > 0);
+    console.warn(`All data is in: ${dayNames[dayWithData]} (index ${dayWithData})`);
+  }
 
   return {
     dailyLoginsChart: {
@@ -686,19 +764,18 @@ public initLoginCharts(): LoginCharts {
       },
       colors: ['#00B4D8']
     },
-dayOfWeekChart: {
-  series: [{
-    name: 'Logins',
-    data: safeDayOfWeekData.map((day: any) => day.count)
-  }],
-  chart: { type: 'bar', height: 220, toolbar: { show: false } },
-  xaxis: {
-    // Shift labels by one position
-    categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    labels: { style: { fontSize: '10px' } }
-  },
-  colors: ['#90E0EF']
-}
+    dayOfWeekChart: {
+      series: [{
+        name: 'Logins',
+        data: dayCounts
+      }],
+      chart: { type: 'bar', height: 220, toolbar: { show: false } },
+      xaxis: {
+        categories: dayNames,
+        labels: { style: { fontSize: '10px' } }
+      },
+      colors: ['#90E0EF']
+    }
   };
 }
       private adjustChartDimensions() {
@@ -2250,6 +2327,30 @@ getLastItemIndex(): number {
   return Math.min(this.currentPage * this.itemsPerPage, this.filteredUserLoginData.length);
 }
 
+openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
+  this.activeModal = type;
+  
+  switch(type) {
+    case 'webtools':
+      this.modalTitle = 'All Webtools';
+      break;
+    case 'users':
+      this.modalTitle = 'All Users';
+      break;
+    case 'logins':
+      this.modalTitle = 'Login Statistics';
+      break;
+    case 'activeUsers':
+      this.modalTitle = 'Active Users';
+      break;
+  }
+  
+  this.showModal = true;
+}
+
+closeModal() {
+  this.showModal = false;
+}
 // Event Handlers
 
     onPageChange(page: number) {

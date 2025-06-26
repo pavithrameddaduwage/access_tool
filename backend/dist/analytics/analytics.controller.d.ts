@@ -8,7 +8,10 @@ export declare class AnalyticsController {
     getLoginEvents(): Promise<import("./entities/login-event.entity").LoginEvent[]>;
     getDailyLoginStats(days?: number, webtool?: string, email?: string): Promise<any[]>;
     getLoginsByHour(days?: number, webtool?: string, email?: string): Promise<any[]>;
-    getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<{
+        day: number;
+        count: number;
+    }[]>;
     getSummary(days?: number, webtool?: string, email?: string): Promise<{
         totalLogins: number;
         activeUsers: number;

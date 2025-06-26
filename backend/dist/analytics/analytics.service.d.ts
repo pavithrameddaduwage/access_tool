@@ -11,7 +11,10 @@ export declare class AnalyticsService {
     }>;
     getDailyLogins(days?: number, webtool?: string, email?: string): Promise<any[]>;
     getLoginsByHour(days?: number, webtool?: string, email?: string): Promise<any[]>;
-    getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<any[]>;
+    getLoginsByDayOfWeek(days?: number, webtool?: string, email?: string): Promise<{
+        day: number;
+        count: number;
+    }[]>;
     getDepartmentLoginStats(days?: number, webtool?: string, email?: string): Promise<any[]>;
     getDepartmentHourlyLogins(days?: number, webtool?: string, email?: string): Promise<{
         department: string;
