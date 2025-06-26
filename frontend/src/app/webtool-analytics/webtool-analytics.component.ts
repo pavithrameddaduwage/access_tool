@@ -202,6 +202,9 @@ public topUsedWebtoolsChart: any;
      screenWidth: number;
  public loadingTopCharts = false;
 
+ public showModal = false;
+public modalTitle = '';
+public activeModal: 'webtools' | 'users' | 'logins' | 'activeUsers' = 'webtools';
    
      // Utility
  
@@ -623,7 +626,9 @@ private initEmptyCharts(): void {
  
 
 public initLoginCharts(): LoginCharts {
+  console.log('=== DEBUGGING LOGIN CHARTS INITIALIZATION ===');
   console.log('Initializing login charts with time range:', this.selectedTimeRange);
+  console.log('isUserSelected:', this.isUserSelected);
   
   // Use user-specific data if available, otherwise use global data
   const dailyData = this.isUserSelected && this.userKPIs?.dailyLogins 
@@ -638,16 +643,89 @@ public initLoginCharts(): LoginCharts {
     ? this.userKPIs.loginsByDay 
     : this.loginMetrics.loginsByDay || [];
 
+  console.log('Raw dayOfWeekData from backend:', dayOfWeekData);
+  console.log('dayOfWeekData type:', typeof dayOfWeekData);
+  console.log('dayOfWeekData is array:', Array.isArray(dayOfWeekData));
+
   // Ensure we have at least empty arrays for each chart type
   const safeDailyData = Array.isArray(dailyData) ? dailyData : [];
   const safeHourlyData = Array.isArray(hourlyData) ? hourlyData : [];
   const safeDayOfWeekData = Array.isArray(dayOfWeekData) ? dayOfWeekData : [];
 
-  console.log('Processed chart data:', {
-    dailyData: safeDailyData,
-    hourlyData: safeHourlyData,
-    dayOfWeekData: safeDayOfWeekData
+  console.log('Safe dayOfWeekData:', safeDayOfWeekData);
+  console.log('Safe dayOfWeekData length:', safeDayOfWeekData.length);
+
+  // Log each item in the array to see the structure
+  safeDayOfWeekData.forEach((item, index) => {
+    console.log(`dayOfWeekData[${index}]:`, {
+      item: item,
+      day: item.day,
+      dayType: typeof item.day,
+      dayValue: item.day,
+      count: item.count,
+      countType: typeof item.count
+    });
   });
+
+  // For day of week chart - ensure data is in correct order
+  const dayOrder = [0, 1, 2, 3, 4, 5, 6]; // Sunday to Saturday
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  console.log('Expected dayOrder:', dayOrder);
+  console.log('Expected dayNames:', dayNames);
+  
+  // Create an array with counts in correct order
+  const dayCounts = dayOrder.map(dayNum => {
+    console.log(`\n--- Processing day ${dayNum} (${dayNames[dayNum]}) ---`);
+    
+    // Try multiple comparison methods to see which one works
+    const dayDataByString = safeDayOfWeekData.find(d => d.day == dayNum); // Loose equality
+    const dayDataByNumber = safeDayOfWeekData.find(d => parseInt(d.day) === dayNum); // Parse to int
+    const dayDataByExact = safeDayOfWeekData.find(d => d.day === dayNum); // Exact match
+    const dayDataByStringExact = safeDayOfWeekData.find(d => d.day === dayNum.toString()); // String exact
+    
+    console.log(`Looking for day ${dayNum}:`);
+    console.log(`  - Loose equality (==): `, dayDataByString);
+    console.log(`  - parseInt comparison: `, dayDataByNumber);
+    console.log(`  - Exact match (===): `, dayDataByExact);
+    console.log(`  - String exact match: `, dayDataByStringExact);
+    
+    // Use the most reliable method - parseInt
+    const dayData = dayDataByNumber || dayDataByString || dayDataByExact || dayDataByStringExact;
+    const count = dayData ? (dayData.count || 0) : 0;
+    
+    console.log(`  - Final selected dayData:`, dayData);
+    console.log(`  - Final count for ${dayNames[dayNum]}:`, count);
+    
+    return count;
+  });
+
+  console.log('\n=== FINAL RESULTS ===');
+  console.log('Final dayCounts array:', dayCounts);
+  console.log('Day mapping:');
+  dayCounts.forEach((count, index) => {
+    console.log(`  ${dayNames[index]} (${index}): ${count} logins`);
+  });
+
+  // Additional debugging - check if all counts are going to one day
+  const totalExpectedCount = safeDayOfWeekData.reduce((sum, item) => sum + (item.count || 0), 0);
+  const totalMappedCount = dayCounts.reduce((sum, count) => sum + count, 0);
+  console.log('Total expected count from backend:', totalExpectedCount);
+  console.log('Total mapped count in frontend:', totalMappedCount);
+  
+  if (totalExpectedCount !== totalMappedCount) {
+    console.error('ERROR: Count mismatch! Some data is being lost in mapping.');
+  }
+
+  // Check for data clustering in one day
+  const nonZeroDays = dayCounts.filter(count => count > 0).length;
+  console.log('Number of days with data:', nonZeroDays);
+  
+  if (nonZeroDays === 1) {
+    console.warn('WARNING: All data is clustered in one day - this suggests a mapping issue!');
+    const dayWithData = dayCounts.findIndex(count => count > 0);
+    console.warn(`All data is in: ${dayNames[dayWithData]} (index ${dayWithData})`);
+  }
 
   return {
     dailyLoginsChart: {
@@ -689,15 +767,11 @@ public initLoginCharts(): LoginCharts {
     dayOfWeekChart: {
       series: [{
         name: 'Logins',
-        data: safeDayOfWeekData.map((day: any) => day.count || 0)
+        data: dayCounts
       }],
-      chart: { 
-        type: 'bar', 
-        height: 220, 
-        toolbar: { show: false } 
-      },
+      chart: { type: 'bar', height: 220, toolbar: { show: false } },
       xaxis: {
-        categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        categories: dayNames,
         labels: { style: { fontSize: '10px' } }
       },
       colors: ['#90E0EF']
@@ -730,38 +804,7 @@ public initLoginCharts(): LoginCharts {
           }
         }
 
-// async loadTopCharts(): Promise<void> {
-//   this.loadingTopCharts = true;
-//   try {
-//     const webtoolFilter = this.selectedWebtool === 'all' 
-//       ? undefined 
-//       : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
-    
-//     const emailFilter = this.selectedUser === 'All' ? undefined : this.selectedUser;
 
-//     const [activeUsers, usedWebtools] = await Promise.all([
-//       firstValueFrom(
-//         this.loginAnalyticsService.getTopActiveUsers(this.selectedTimeRange, webtoolFilter)
-//           .pipe(catchError(() => of([])))
-//       ),
-//       firstValueFrom(
-//         this.loginAnalyticsService.getTopUsedWebtools(this.selectedTimeRange, emailFilter)
-//           .pipe(catchError(() => of([])))
-//       )
-//     ]);
-
-//     // Ensure we have data even when filtered
-//     this.initTopActiveUsersChart(activeUsers || []);
-//     this.initTopUsedWebtoolsChart(usedWebtools || []);
-//   } catch (error) {
-//     console.error('Error loading top charts:', error);
-//     // Initialize empty charts if there's an error
-//     this.initTopActiveUsersChart([]);
-//     this.initTopUsedWebtoolsChart([]);
-//   } finally {
-//     this.loadingTopCharts = false;
-//   }
-// }
 async loadTopCharts(): Promise<void> {
   this.loadingTopCharts = true;
   try {
@@ -802,186 +845,7 @@ async loadTopCharts(): Promise<void> {
     this.loadingTopCharts = false;
   }
 }
-// private initTopActiveUsersChart(data: any[]): void {
-//   // When a specific user is selected, show only that user's data
-//   if (this.isUserSelected) {
-//     data = [{
-//       email: this.userKPIs?.email,
-//       name: this.userKPIs?.name || this.userKPIs?.email.split('@')[0],
-//       count: this.userKPIs?.totalLogins || 0
-//     }];
-//   }
 
-//   // Map emails to names from filteredUserLoginData
-//   const emailToNameMap = new Map<string, string>();
-//   this.filteredUserLoginData.forEach(user => {
-//     emailToNameMap.set(user.email.toLowerCase(), user.username);
-//   });
-
-//   // Ensure we always have items for consistent chart display
-//   const chartData = data.length > 0 ? data : 
-//     Array(5).fill({ email: 'No data', name: 'No data', count: 0 });
-
-//   this.topActiveUsersChart = {
-//     series: [{
-//       name: 'Logins',
-//       data: chartData.map(user => user.count)
-//     }],
-//     chart: {
-//       type: 'bar',
-//       height: 300,
-//       toolbar: { show: false }
-//     },
-//     plotOptions: {
-//       bar: {
-//         borderRadius: 4,
-//         horizontal: false,
-//       }
-//     },
-//     xaxis: {
-//       categories: chartData.map(user => {
-//         // Use the name if available, otherwise fall back to email
-//         return emailToNameMap.get(user.email.toLowerCase()) || 
-//                user.name || 
-//                (user.email.includes('@') ? user.email.split('@')[0] : user.email);
-//       }),
-//       labels: { 
-//         style: { fontSize: '10px' },
-//         rotate: -45 
-//       }
-//     },
-//     yaxis: {
-//       title: { text: 'Login Count' },
-//       min: 0,
-//       forceNiceScale: true
-//     },
-//     colors: ['#0077B6'],
-//     tooltip: {
-//       custom: ({ dataPointIndex }: any) => {
-//         const user = chartData[dataPointIndex];
-//         return `
-//           <div class="p-1 text-xs">
-//             <div><strong>User:</strong> ${emailToNameMap.get(user.email.toLowerCase()) || user.name || user.email}</div>
-//             <div><strong>Email:</strong> ${user.email || 'No data'}</div>
-//             <div><strong>Logins:</strong> ${user.count}</div>
-//           </div>
-//         `;
-//       }
-//     },
-//     noData: {
-//       text: 'No data available',
-//       align: 'center',
-//       verticalAlign: 'middle',
-//       style: {
-//         color: '#64748b',
-//         fontSize: '14px'
-//       }
-//     }
-//   };
-// }
-
-//new
-
-
-// new
-// private initTopActiveUsersChart(data: any[]): void {
-//   // When a specific user is selected, show only that user's data
-//   if (this.isUserSelected) {
-//     data = [{
-//       email: this.userKPIs?.email,
-//       name: this.userKPIs?.name || this.userKPIs?.email.split('@')[0],
-//       count: this.userKPIs?.totalLogins || 0
-//     }];
-//   }
-
-//   // Create a map to normalize email casing and track the most recent name
-//   const emailMap = new Map<string, {name: string, count: number}>();
-  
-//   // Process the raw data to consolidate case variations
-//   data.forEach(user => {
-//     const normalizedEmail = user.email.toLowerCase();
-//     const existing = emailMap.get(normalizedEmail);
-    
-//     if (existing) {
-//       // If we already have this email (case-insensitive), sum the counts
-//       emailMap.set(normalizedEmail, {
-//         name: existing.name, // Keep the first name we encountered
-//         count: existing.count + user.count
-//       });
-//     } else {
-//       // New email (case-insensitive)
-//       emailMap.set(normalizedEmail, {
-//         name: user.name || user.email.split('@')[0],
-//         count: user.count
-//       });
-//     }
-//   });
-
-//   // Convert the map back to an array
-//   const consolidatedData = Array.from(emailMap.entries()).map(([email, {name, count}]) => ({
-//     email,
-//     name,
-//     count
-//   }));
-
-//   // Sort by count descending
-//   consolidatedData.sort((a, b) => b.count - a.count);
-
-//   // Take top 5 (unless we have a specific user selected)
-//   const chartData = this.isUserSelected ? consolidatedData : consolidatedData.slice(0, 5);
-
-//   this.topActiveUsersChart = {
-//     series: [{
-//       name: 'Logins',
-//       data: chartData.map(user => user.count)
-//     }],
-//     chart: {
-//       type: 'bar',
-//       height: 300,
-//       toolbar: { show: false }
-//     },
-//     plotOptions: {
-//       bar: {
-//         borderRadius: 4,
-//         horizontal: false,
-//       }
-//     },
-//     xaxis: {
-//       categories: chartData.map(user => user.name),
-//       labels: { 
-//         style: { fontSize: '10px' },
-//         rotate: -45 
-//       }
-//     },
-//     yaxis: {
-//       title: { text: 'Login Count' },
-//       min: 0,
-//       forceNiceScale: true
-//     },
-//     colors: ['#0077B6'],
-//     tooltip: {
-//       custom: ({ dataPointIndex }: any) => {
-//         const user = chartData[dataPointIndex];
-//         return `
-//           <div class="p-1 text-xs">
-//             <div><strong>User:</strong> ${user.name}</div>
-//             <div><strong>Email:</strong> ${user.email}</div>
-//             <div><strong>Logins:</strong> ${user.count}</div>
-//           </div>
-//         `;
-//       }
-//     },
-//     noData: {
-//       text: 'No data available',
-//       align: 'center',
-//       verticalAlign: 'middle',
-//       style: {
-//         color: '#64748b',
-//         fontSize: '14px'
-//       }
-//     }
-//   };
-// }
 private initTopActiveUsersChart(data: any[]): void {
   // When a specific user is selected, show only that user's data
   if (this.isUserSelected) {
@@ -1490,7 +1354,7 @@ private updateFilteredCharts(): void {
 //   }
 // }
 
-// new one
+// new
 // async filterByWebtool(): Promise<void> {
 //   try {
 //     const webtoolFilter = this.selectedWebtool === 'all' 
@@ -1498,22 +1362,17 @@ private updateFilteredCharts(): void {
 //       : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
     
 //     if (this.activeView === 'webtool') {
-//       if (this.selectedUser === 'All') {
-//         await this.loadLoginMetrics(webtoolFilter);
-//         await this.loadDepartmentStats();
-//         await this.loadTopCharts();
-//         this.updateFilteredCharts();
-//       } else if (this.selectedUser) {
-//         await this.loadUserData(this.selectedUser, webtoolFilter);
-//         await this.loadDepartmentStats();
-//         this.departmentChartOptions = this.getDepartmentCharts();
-//       }
+//       // Existing webtool view logic...
 //     } else if (this.activeView === 'user') {
-//       // For user view, reload the user login data with webtool filter
+//       // Reload all relevant data
+//       await this.loadLoginMetrics(webtoolFilter);
 //       await this.loadUserLoginData();
 //       await this.loadTopCharts();
       
-//       // If a user is selected, reload their data with the webtool filter
+//       // Force UI updates
+//       this.cdr.detectChanges();
+      
+//       // If a user is selected, reload their data
 //       if (this.isUserSelected) {
 //         await this.loadUserData(this.selectedUser, webtoolFilter);
 //       }
@@ -1528,22 +1387,39 @@ async filterByWebtool(): Promise<void> {
       ? undefined 
       : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
     
-    if (this.activeView === 'webtool') {
-      // Existing webtool view logic...
-    } else if (this.activeView === 'user') {
+    if (this.activeView === 'user') {
       // Reload all relevant data
-      await this.loadLoginMetrics(webtoolFilter);
+      await this.loadLoginMetrics(webtoolFilter, this.selectedUser !== 'All' ? this.selectedUser : undefined);
       await this.loadUserLoginData();
-      await this.loadTopCharts();
-      
-      // Force UI updates
-      this.cdr.detectChanges();
       
       // If a user is selected, reload their data
       if (this.isUserSelected) {
         await this.loadUserData(this.selectedUser, webtoolFilter);
       }
+      
+      // Always reload department stats and top charts
+      await this.loadDepartmentStats();
+      await this.loadTopCharts();
+      
+      // Update charts
+      this.chartOptions = this.initLoginCharts();
+      this.departmentChartOptions = this.getDepartmentCharts();
+    } else if (this.activeView === 'webtool') {
+      // Existing webtool view logic...
+      if (this.selectedUser === 'All') {
+        await this.loadLoginMetrics(webtoolFilter);
+        await this.loadDepartmentStats();
+        await this.loadTopCharts();
+        this.updateFilteredCharts();
+      } else if (this.selectedUser) {
+        await this.loadUserData(this.selectedUser, webtoolFilter);
+        await this.loadDepartmentStats();
+        this.departmentChartOptions = this.getDepartmentCharts();
+      }
     }
+    
+    // Force UI updates
+    this.cdr.detectChanges();
   } catch (error) {
     console.error('Error in filterByWebtool:', error);
   }
@@ -2451,6 +2327,30 @@ getLastItemIndex(): number {
   return Math.min(this.currentPage * this.itemsPerPage, this.filteredUserLoginData.length);
 }
 
+openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
+  this.activeModal = type;
+  
+  switch(type) {
+    case 'webtools':
+      this.modalTitle = 'All Webtools';
+      break;
+    case 'users':
+      this.modalTitle = 'All Users';
+      break;
+    case 'logins':
+      this.modalTitle = 'Login Statistics';
+      break;
+    case 'activeUsers':
+      this.modalTitle = 'Active Users';
+      break;
+  }
+  
+  this.showModal = true;
+}
+
+closeModal() {
+  this.showModal = false;
+}
 // Event Handlers
 
     onPageChange(page: number) {
