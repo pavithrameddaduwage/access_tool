@@ -24,66 +24,6 @@ export class AnalyticsService {
 
 
 
-  // async getUserStats(email: string, webtool?: string, days: number = 30) {
-  //   const normalizedEmail = email.toLowerCase().trim();
-    
-  //   try {
-  //     const [totalLogins, dailyLogins, loginsByHour, loginsByDay, webtoolUsage, lastLogin, peakHourData] = await Promise.all([
-  //       this.loginEventRepository.count({ 
-  //         where: { 
-  //           email: ILike(normalizedEmail),
-  //           ...(webtool && { webtool })
-  //         } 
-  //       }),
-  //       this.getDailyLogins(days, webtool, normalizedEmail),
-  //       this.getLoginsByHour(days, webtool, normalizedEmail),
-  //       this.getLoginsByDayOfWeek(days, webtool, normalizedEmail),
-  //       this.loginEventRepository
-  //         .createQueryBuilder('login')
-  //         .select('login.webtool', 'webtool')
-  //         .addSelect('COUNT(*)', 'count')
-  //         .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
-  //         .andWhere(webtool ? 'login.webtool = :webtool' : '1=1', { webtool })
-  //         .groupBy('login.webtool')
-  //         .orderBy('count', 'DESC')
-  //         .getRawMany(),
-  //       this.loginEventRepository.findOne({
-  //         where: { 
-  //           email: ILike(normalizedEmail),
-  //           ...(webtool && { webtool })
-  //         },
-  //         order: { loginTime: 'DESC' }
-  //       }),
-  //       this.loginEventRepository
-  //         .createQueryBuilder('login')
-  //         .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
-  //         .addSelect('COUNT(*)', 'count')
-  //         .where('LOWER(login.email) = LOWER(:email)', { email: normalizedEmail })
-  //         .andWhere(webtool ? 'login.webtool = :webtool' : '1=1', { webtool })
-  //         .groupBy('EXTRACT(HOUR FROM login.loginTime)')
-  //         .orderBy('count', 'DESC')
-  //         .limit(1)
-  //         .getRawOne()
-  //     ]);
-
-  //     return {
-  //       username: normalizedEmail.split('@')[0],
-  //       email: normalizedEmail,
-  //       department: lastLogin?.department || 'Unknown',
-  //       totalLogins,
-  //       mostUsedWebtool: webtoolUsage[0]?.webtool || 'N/A',
-  //       lastLogin: lastLogin?.loginTime || null,
-  //       peakHour: peakHourData ? `${peakHourData.hour}:00` : 'N/A',
-  //       dailyLogins,
-  //       loginsByHour,
-  //       loginsByDay,
-  //       webtoolUsage
-  //     };
-  //   } catch (error) {
-  //     console.error('Error in getUserStats:', error);
-  //     throw new HttpException('Failed to get user stats', HttpStatus.INTERNAL_SERVER_ERROR);
-  //   }
-  // }
 async getUserStats(
   email: string, 
   webtool?: string, 
@@ -328,24 +268,6 @@ async getUserWebtoolStats(email: string, days: number = 30): Promise<{webtool: s
   }));
 }
 
-// async getTopActiveUsers(days: number = 30, webtool?: string): Promise<{email: string; count: number}[]> {
-//   const startDate = subDays(new Date(), days);
-  
-//   const query = this.loginEventRepository.createQueryBuilder('login')
-//     .select('login.email', 'email')
-//     .addSelect('COUNT(*)', 'count')
-//     .where('login.loginTime >= :startDate', { startDate });
-
-//   if (webtool && webtool !== 'all') {
-//     query.andWhere('login.webtool = :webtool', { webtool });
-//   }
-
-//   return query
-//     .groupBy('login.email')
-//     .orderBy('count', 'DESC')
-//     .limit(5)
-//     .getRawMany();
-// }
 async getTopActiveUsers(days: number = 30, webtool?: string): Promise<{email: string; count: number}[]> {
   const startDate = subDays(new Date(), days);
   

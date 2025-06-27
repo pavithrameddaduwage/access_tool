@@ -21,52 +21,6 @@ async getLoginEvents() {
 }
 
 
-// @Get('user-stats/:email')
-// async getUserStats(@Param('email') email: string) {
-//   const [totalLogins, dailyLogins, loginsByHour, loginsByDay] = await Promise.all([
-//     this.analyticsService.loginEventRepository.count({ where: { email } }),
-//     this.analyticsService.getDailyLogins(30, undefined, email),
-//     this.analyticsService.getLoginsByHour(undefined, email),
-//     this.analyticsService.getLoginsByDayOfWeek(undefined, email)
-//   ]);
-
-//   const webtoolUsage = await this.analyticsService.loginEventRepository
-//     .createQueryBuilder('login')
-//     .select('login.webtool', 'webtool')
-//     .addSelect('COUNT(*)', 'count')
-//     .where('login.email = :email', { email })
-//     .groupBy('login.webtool')
-//     .orderBy('count', 'DESC')
-//     .getRawOne();
-
-//   // Find last login
-//   const lastLogin = await this.analyticsService.loginEventRepository.findOne({
-//     where: { email },
-//     order: { loginTime: 'DESC' }
-//   });
-
-//   // Find peak hour
-//   const peakHourData = await this.analyticsService.loginEventRepository
-//     .createQueryBuilder('login')
-//     .select('EXTRACT(HOUR FROM login.loginTime)', 'hour')
-//     .addSelect('COUNT(*)', 'count')
-//     .where('login.email = :email', { email })
-//     .groupBy('EXTRACT(HOUR FROM login.loginTime)')
-//     .orderBy('count', 'DESC')
-//     .getRawOne();
-
-//   return {
-//     totalLogins,
-//     mostUsedWebtool: webtoolUsage?.webtool || 'N/A',
-//     lastLogin: lastLogin?.loginTime || null,
-//     peakHour: peakHourData ? `${peakHourData.hour}:00` : 'N/A',
-//     dailyLogins,
-//     loginsByHour,
-//     loginsByDay
-//   };
-// }
-
-
 
 @Get('daily-logins')
 async getDailyLoginStats(
