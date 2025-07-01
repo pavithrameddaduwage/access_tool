@@ -191,22 +191,26 @@
           </div>
         </div>
         
-        <!-- Peak Hour Card -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-amber-500 metric-card transition-shadow duration-200">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-amber-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Peak Hour</h3>
-              <p class="text-2xl font-bold text-gray-800">
-                {{ peakHour }}
-              </p>
-            </div>
-          </div>
-        </div>
+   <!-- Peak Hour Card - Make it clickable -->
+<div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-amber-500 metric-card transition-shadow duration-200 cursor-pointer"
+     (click)="openPeakHourModal()">
+  <div class="flex items-center gap-3">
+    <div class="p-2 bg-amber-100 rounded-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    </div>
+    <div>
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Peak Hour</h3>
+      <p class="text-2xl font-bold text-gray-800">
+        {{ peakHour }}
+      </p>
+      <p *ngIf="selectedWebtool !== 'all'" class="text-xs text-gray-500 mt-1">
+        (for selected webtool)
+      </p>
+    </div>
+  </div>
+</div>
       </div>
     </div>
 
@@ -816,8 +820,9 @@
   <!-- Summary Tiles (when no user selected) -->
   <div *ngIf="!isSpecificUserSelected" class="grid grid-cols-2 gap-4 h-full">
   <!-- Most Active User Tile -->
-<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center">
-  <div class="p-3 bg-blue-100 rounded-full mb-3">
+<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-blue-50 transition-colors"
+     (click)="openMostActiveUserModal(getMostActiveUser())">
+       <div class="p-3 bg-blue-100 rounded-full mb-3">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
     </svg>
@@ -831,8 +836,9 @@
 </div>
 
 <!-- Top Department Tile -->
-<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center">
-  <div class="p-3 bg-indigo-100 rounded-full mb-3">
+<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-blue-50 transition-colors"
+     (click)="openTopDepartmentModal(getTopDepartment())">
+       <div class="p-3 bg-indigo-100 rounded-full mb-3">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
     </svg>
@@ -847,8 +853,8 @@
 
 <!-- Recent Activity Tile -->
 <!-- Recent Activity Tile -->
-<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center">
-  <div class="p-3 bg-green-100 rounded-full mb-3">
+<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-blue-50 transition-colors"
+     (click)="openRecentActivityModal()">  <div class="p-3 bg-green-100 rounded-full mb-3">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
@@ -863,7 +869,9 @@
 </div>
 
 <!-- Peak Hour Tile -->
-<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center">
+<!-- Peak Hour Tile -->
+<div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-blue-50 transition-colors"
+     (click)="openPeakHourModal()">  <!-- Add this click handler -->
   <div class="p-3 bg-amber-100 rounded-full mb-3">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -1018,130 +1026,105 @@
       </button>
     </div>
     
-    <!-- Modal Body -->
-    <div class="p-6">
-      <ng-container [ngSwitch]="activeModal">
-        <!-- Webtools Modal Content -->
-        <div *ngSwitchCase="'webtools'" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div *ngFor="let webtool of webtools" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <div class="flex items-center gap-3">
-                <div class="p-2 bg-blue-100 rounded-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="font-medium text-gray-800">{{ webtool.webtool }}</h4>
-                  <p class="text-sm text-gray-500">ID: {{ webtool.id }}</p>
-                </div>
-              </div>
+<!-- Modal Body -->
+<div class="p-6">
+  <ng-container [ngSwitch]="activeModal">
+    <!-- Webtools Modal Content - Simplified -->
+    <div *ngSwitchCase="'webtools'" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div *ngFor="let webtool of webtools" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-blue-100 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-medium text-gray-800">{{ webtool.webtool }}</h4>
             </div>
           </div>
         </div>
-        
-        <!-- Users Modal Content -->
-        <div *ngSwitchCase="'users'" class="space-y-4">
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Webtools</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let user of users">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span class="text-blue-800">{{ user.name?.charAt(0) || 'U' }}</span>
-                      </div>
-                      <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
-                        <div class="text-sm text-gray-500">{{ user.email }}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ user.department || 'Unknown' }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ user.webtools?.size || 0 }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        
-        <!-- Logins Modal Content -->
-        <div *ngSwitchCase="'logins'" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h4 class="font-medium text-gray-800 mb-2">Total Logins</h4>
-              <p class="text-3xl font-bold text-blue-600">{{ loginMetrics.totalLogins | number }}</p>
-              <p class="text-sm text-gray-500 mt-1">Last {{ selectedTimeRange }} days</p>
-            </div>
-            
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h4 class="font-medium text-gray-800 mb-2">Daily Average</h4>
-              <p class="text-3xl font-bold text-blue-600">{{ (loginMetrics.totalLogins / selectedTimeRange) | number:'1.1-1' }}</p>
-              <p class="text-sm text-gray-500 mt-1">Logins per day</p>
-            </div>
-            
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h4 class="font-medium text-gray-800 mb-2">Peak Hour</h4>
-              <p class="text-3xl font-bold text-blue-600">{{ peakHour }}</p>
-              <p class="text-sm text-gray-500 mt-1">Most active time</p>
-            </div>
-            
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h4 class="font-medium text-gray-800 mb-2">Active Users</h4>
-              <p class="text-3xl font-bold text-blue-600">{{ loginMetrics.activeUsers | number }}</p>
-              <p class="text-sm text-gray-500 mt-1">Unique users</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Active Users Modal Content -->
-        <div *ngSwitchCase="'activeUsers'" class="space-y-4">
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let user of filteredUserLoginData.slice(0, 10)">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span class="text-blue-800">{{ user.username?.charAt(0) || 'U' }}</span>
-                      </div>
-                      <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
-                        <div class="text-sm text-gray-500">{{ user.email }}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ user.loginCount || 0 }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ user.lastLogin ? (user.lastLogin | date:'short') : 'Never' }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </ng-container>
+      </div>
     </div>
+    
+    <!-- Users Modal Content - Simplified -->
+    <div *ngSwitchCase="'users'" class="space-y-4">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let user of users">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span class="text-blue-800">{{ user.name?.charAt(0) || 'U' }}</span>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.department || 'Unknown' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Logins Modal Content - Simplified -->
+    <div *ngSwitchCase="'logins'" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h4 class="font-medium text-gray-800 mb-2">Total Logins</h4>
+          <p class="text-3xl font-bold text-blue-600">{{ loginMetrics.totalLogins | number }}</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h4 class="font-medium text-gray-800 mb-2">Daily Average</h4>
+          <p class="text-3xl font-bold text-blue-600">{{ (loginMetrics.totalLogins / selectedTimeRange) | number:'1.1-1' }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Active Users Modal Content - Simplified -->
+    <div *ngSwitchCase="'activeUsers'" class="space-y-4">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let user of filteredUserLoginData.slice(0, 10)">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span class="text-blue-800">{{ user.username?.charAt(0) || 'U' }}</span>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.lastLogin ? (user.lastLogin | date:'short') : 'Never' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>
   </div>
 </div>
 
@@ -1199,3 +1182,228 @@
     </div>
   </div>
 </div>
+
+<!-- Most Active User Details Modal -->
+<div *ngIf="showMostActiveUserDetails" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+  <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+      <h3 class="text-lg font-semibold text-gray-800">Most Active User Details</h3>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <div *ngIf="selectedMostActiveUser" class="space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center">
+            <span class="text-blue-800 text-xl font-medium">{{ selectedMostActiveUser.username?.charAt(0) || 'U' }}</span>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-800">{{ selectedMostActiveUser.username }}</h4>
+            <p class="text-sm text-gray-500">{{ selectedMostActiveUser.email }}</p>
+            <p class="text-sm text-gray-500">{{ selectedMostActiveUser.department || 'Unknown' }}</p>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-medium text-gray-800 mb-3">Webtool Usage</h4>
+          <div class="space-y-3">
+            <div *ngFor="let item of selectedMostActiveUser.webtoolUsage" class="text-sm">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-medium text-gray-700">{{ item.webtool }}</span>
+                <span class="font-medium">{{ item.count }}</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-2">
+                <div class="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full" 
+                     [style.width.%]="(item.count / selectedMostActiveUser.loginCount * 100) || 0">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Top Department Details Modal -->
+<div *ngIf="showTopDepartmentDetails" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+  <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+      <h3 class="text-lg font-semibold text-gray-800">Department Users</h3>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let user of selectedDepartmentUsers">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span class="text-blue-800">{{ user.username?.charAt(0) || 'U' }}</span>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                    <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.loginCount || 0 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.lastLogin ? (user.lastLogin | date:'short') : 'Never' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activity Details Modal -->
+<div *ngIf="showRecentActivityDetails" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+  <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+      <h3 class="text-lg font-semibold text-gray-800">Today's Activity</h3>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let user of selectedRecentActivityDetails">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span class="text-blue-800">{{ user.username?.charAt(0) || 'U' }}</span>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                    <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.loginCount || 0 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.lastLogin ? (user.lastLogin | date:'short') : 'Never' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Peak Hour Users Modal -->
+<!-- Peak Hour Users Modal -->
+<div *ngIf="showPeakHourModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+  <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+      <h3 class="text-lg font-semibold text-gray-800">
+        Users Active During Peak Hour ({{selectedPeakHour}})
+        <span *ngIf="activeView === 'webtool' && selectedWebtool !== 'all'" class="text-sm font-normal text-gray-500">
+          (for selected webtool)
+        </span>
+      </h3>
+      <button (click)="showPeakHourModal = false" class="text-gray-400 hover:text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <div class="mb-4 bg-blue-50 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-medium text-gray-800">Total Logins During This Hour</h4>
+            <p class="text-2xl font-bold text-blue-600">{{ getTotalPeakHourLogins() }}</p>
+          </div>
+          <div class="text-sm text-gray-600">
+            {{ peakHourUsers.length }} active users
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="peakHourUsers.length > 0; else noUsers">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let user of peakHourUsers" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span class="text-blue-800">{{ user.username?.charAt(0) || 'U' }}</span>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                      <div class="text-sm text-gray-500">{{ user.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ user.department || 'Unknown' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ user.loginCount }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ user.lastLogin | date:'short' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <ng-template #noUsers>
+        <div class="text-center py-8">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h4 class="mt-4 font-medium text-gray-900">No users found</h4>
+          <p class="mt-1 text-gray-500">No users logged in during this peak hour</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+

@@ -44,4 +44,5 @@ export declare class AnalyticsController {
         webtool: string;
         count: number;
     }[]>;
+    getPeakHourUsers(hour: number, days?: number, webtool?: string): Promise<any[]>;
 }

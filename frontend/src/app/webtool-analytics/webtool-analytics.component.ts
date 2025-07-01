@@ -91,6 +91,19 @@ interface DashboardMetrics {
     peakHour: number;
   };
 }
+interface UserLoginData {
+  count: number;
+  lastLogin: Date;
+}
+
+interface PeakHourUser {
+  email: string;
+  username: string;
+  department: string;
+  loginCount: number;
+  lastLogin: Date;
+}
+
 @Component({
   selector: 'app-webtool-analytics',
   templateUrl: './webtool-analytics.component.html',
@@ -128,6 +141,14 @@ export class WebtoolAnalyticsComponent implements OnInit {
  
      // Filter/Selection State
  
+     showMostActiveUserDetails = false;
+showTopDepartmentDetails = false;
+showRecentActivityDetails = false;
+public peakHourDetails: {hour: string, logins: any[]} = {hour: '', logins: []};
+selectedMostActiveUser: any = null;
+selectedDepartmentUsers: any[] = [];
+selectedRecentActivityDetails: any[] = [];
+
      timeRangeOptions = [
        { label: '7 Days', value: 7 },
        { label: '30 Days', value: 30 },
@@ -183,6 +204,11 @@ public topUsedWebtoolsChart: any;
        loginsByDay: []
      };
      
+     public showPeakHourModal = false;
+public peakHourUsers: any[] = [];
+public selectedPeakHour: string = '';
+
+
      public filteredUserLoginData: any[] = [];
      userKPIs: any;
      public peakHour: string = 'N/A';
@@ -746,7 +772,8 @@ async onActivityTimelineClick(date: string) {
     this.selectedDateWebtools = Object.entries(webtoolCounts)
       .map(([webtool, count]) => ({ webtool, count }))
       .sort((a, b) => b.count - a.count);
-    
+      this.cdr.detectChanges();
+
     console.log('Webtools for date:', this.selectedDateWebtools);
   } catch (error) {
     console.error('Error loading date details:', error);
@@ -758,6 +785,7 @@ closeDatePopup() {
   this.showDatePopup = false;
   this.selectedDateForPopup = null;
   this.selectedDateWebtools = [];
+   this.cdr.detectChanges()
 }
 
 
@@ -1488,7 +1516,52 @@ private initTopUsedWebtoolsChart(data: any[]): void {
 
 //   this.cdr.detectChanges();
 // }
-
+getPeakHour(): string {
+  if (!this.loginMetrics.loginsByHour?.length) return 'N/A';
+  
+  const peak = this.loginMetrics.loginsByHour.reduce(
+    (prev: {hour: number, count: number}, current: {hour: number, count: number}) => 
+      (prev.count > current.count) ? prev : current, 
+    { hour: 0, count: 0 }
+  );
+  
+  // Return "N/A" if there are actually no logins
+  return peak.count > 0 ? `${peak.hour}:00` : 'N/A';
+}
+async openPeakHourModal() {
+  if (!this.peakHour || this.peakHour === 'N/A') return;
+  
+  // Get the hour number from the peak hour string (e.g., "14:00" -> 14)
+  const hourNumber = parseInt(this.peakHour.split(':')[0]);
+  
+  this.selectedPeakHour = this.peakHour;
+  this.showPeakHourModal = true;
+  
+  try {
+    // Determine if we need to filter by webtool
+    const webtoolFilter = this.selectedWebtool === 'all' 
+      ? undefined 
+      : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+    
+    // Get users for this peak hour
+    this.peakHourUsers = await this.getUsersByHour(hourNumber);
+    
+    // If in user view and a specific user is selected, filter to just that user
+    if (this.activeView === 'user' && this.isUserSelected) {
+      const normalizedEmail = this.selectedUser.toLowerCase().trim();
+      this.peakHourUsers = this.peakHourUsers.filter(user => 
+        user.email.toLowerCase().trim() === normalizedEmail
+      );
+    }
+  } catch (error) {
+    console.error('Error loading peak hour users:', error);
+    this.peakHourUsers = [];
+  }
+}
+closePeakHourModal() {
+  this.showPeakHourModal = false;
+  this.peakHourDetails = {hour: '', logins: []};
+}
 private updateFilteredCharts(): void {
   // When a specific webtool is selected
   if (this.selectedWebtool !== 'all') {
@@ -1818,45 +1891,6 @@ private async loadUserData(email: string, webtoolFilter?: string): Promise<void>
   }
 
 
-// async onTimeRangeChange() {
-//   console.log('Time range changed to:', this.selectedTimeRange);
-  
-//   const webtoolFilter = this.selectedWebtool === 'all' ? undefined : 
-//     this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
-  
-//   console.log('Reloading all data with time range:', this.selectedTimeRange);
-  
-//   // Show loading states
-//   this.loadingLoginMetrics = true;
-//   this.loadingDepartmentStats = true;
-  
-//   try {
-//     const promises = [
-//       this.loadLoginMetrics(webtoolFilter, this.selectedUser || undefined),
-//       this.loadDepartmentStats(),
-//       this.loadUserLoginData()
-//     ];
-    
-//     if (this.selectedUser) {
-//       promises.push(this.loadUserData(this.selectedUser, webtoolFilter));
-//     }
-    
-//     await Promise.all(promises);
-    
-//     // Regenerate charts after data is loaded
-//     this.chartOptions = this.initLoginCharts();
-//     this.departmentChartOptions = this.getDepartmentCharts();
-    
-//     // Trigger change detection
-//     this.cdr.detectChanges();
-    
-//   } catch (error) {
-//     console.error('Error reloading data for time range change:', error);
-//   } finally {
-//     this.loadingLoginMetrics = false;
-//     this.loadingDepartmentStats = false;
-//   }
-// }
 async onTimeRangeChange() {
   console.log('Time range changed to:', this.selectedTimeRange);
   
@@ -1950,17 +1984,7 @@ get isSpecificUserSelected(): boolean {
   this.currentPage = 1;
 }
 
-// selectUser(user: any): void {
-//   if (this.selectedUser === user.email) {
-//     this.selectedUser = '';
-//     this.selectedUserData = null;
-//     this.userKPIs = null;
-//   } else {
-//     this.selectedUser = user.email;
-//     this.selectedUserData = user;
-//     this.loadUserData(user.email);
-//   }
-// }
+
 async selectUser(user: any): Promise<void> {
   if (this.selectedUser === user.email) {
     // Deselect if same user is clicked
@@ -2273,6 +2297,54 @@ async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: n
 }
   // Utility Calculations
 
+//   async openPeakHourModal() {
+//   if (!this.peakHour || this.peakHour === 'N/A') return;
+  
+//   this.selectedPeakHour = this.peakHour;
+//   const hourNumber = Number(this.peakHour.split(':')[0]);
+//   this.peakHourUsers = await this.getUsersByHour(hourNumber);
+//   this.showPeakHourModal = true;
+// }
+getTotalPeakHourLogins(): number {
+  return this.peakHourUsers.reduce((total, user) => total + user.loginCount, 0);
+}
+
+async getUsersByHour(hour: number): Promise<PeakHourUser[]> {
+  try {
+    const webtoolFilter = this.selectedWebtool === 'all' 
+      ? undefined 
+      : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+
+    const rawUsers = await firstValueFrom(
+      this.loginAnalyticsService.getPeakHourUsers(
+        hour,
+        this.selectedTimeRange,
+        webtoolFilter
+      )
+    );
+
+    // Map to our frontend format
+    return rawUsers.map(rawUser => {
+      const userFromList = this.filteredUserLoginData.find(u => 
+        u.email?.toLowerCase() === rawUser.email.toLowerCase()
+      );
+
+      return {
+        email: rawUser.email,
+        username: userFromList?.username || rawUser.email.split('@')[0],
+        department: userFromList?.department || 'Unknown',
+        loginCount: rawUser.count,
+        lastLogin: rawUser.lastLogin
+      };
+    });
+
+  } catch (error) {
+    console.error('Error getting peak hour users:', error);
+    return [];
+  }
+}
+
+
     private calculatePeakHour(): void {
     if (!this.loginMetrics.loginsByHour?.length) {
       this.peakHour = 'N/A';
@@ -2301,6 +2373,36 @@ async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: n
         {hour: 0, count: 0}
       ).hour;
   }
+
+  openMostActiveUserModal(user: any) {
+  this.selectedMostActiveUser = user;
+  this.showMostActiveUserDetails = true;
+  // Load webtool usage for this user
+  this.getWebtoolUsageForUser(user.email).then(usage => {
+    this.selectedMostActiveUser.webtoolUsage = usage;
+  });
+}
+
+openTopDepartmentModal(department: any) {
+  this.selectedDepartmentUsers = this.filteredUserLoginData
+    .filter(u => u.department === department.department)
+    .sort((a, b) => (b.loginCount || 0) - (a.loginCount || 0));
+  this.showTopDepartmentDetails = true;
+}
+
+openRecentActivityModal() {
+  // Get today's logins
+  const today = new Date().toISOString().split('T')[0];
+  this.selectedRecentActivityDetails = this.filteredUserLoginData
+    .filter(user => {
+      if (!user.lastLogin) return false;
+      const loginDate = new Date(user.lastLogin).toISOString().split('T')[0];
+      return loginDate === today;
+    })
+    .sort((a, b) => (b.loginCount || 0) - (a.loginCount || 0));
+  this.showRecentActivityDetails = true;
+}
+
     // getPeakHour(): string {
     //   if (!this.loginMetrics.loginsByHour?.length) return 'N/A';
       
@@ -2317,18 +2419,7 @@ async getWebtoolUsageForUser(email: string): Promise<{ webtool: string; count: n
     return this.filteredUserLoginData.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
-    // getUserListForFilter(): User[] {
-    //   return this.userLoginData
-    //     .filter(user => user.loginCount > 0)
-    //     .map(user => ({
-    //       email: user.email.toLowerCase(),
-    //       username: user.username,  
-    //       department: user.department,
-    //       lastLogin: user.lastLogin,
-    //       mostUsedWebtool: user.mostUsedWebtool,
-    //       loginCount: user.loginCount
-    //     }));
-    // }
+
 
 getUserListForFilter(): User[] {
   // Create a map to handle case-insensitive emails
@@ -2506,18 +2597,22 @@ getRecentActivityCount(): number {
   
   return 0;
 }
-getPeakHour(): string {
-  if (!this.loginMetrics.loginsByHour?.length) return 'N/A';
-  
-  const peak = this.loginMetrics.loginsByHour.reduce(
-    (prev: {hour: number, count: number}, current: {hour: number, count: number}) => 
-      (prev.count > current.count) ? prev : current, 
-    { hour: 0, count: 0 }
-  );
-  
-  // Return "N/A" if there are actually no logins
-  return peak.count > 0 ? `${peak.hour}:00` : 'N/A';
+testClick() {
+  console.log('Tile clicked!'); // Check if this appears in console
+  this.openPeakHourModal();
 }
+// getPeakHour(): string {
+//   if (!this.loginMetrics.loginsByHour?.length) return 'N/A';
+  
+//   const peak = this.loginMetrics.loginsByHour.reduce(
+//     (prev: {hour: number, count: number}, current: {hour: number, count: number}) => 
+//       (prev.count > current.count) ? prev : current, 
+//     { hour: 0, count: 0 }
+//   );
+  
+//   // Return "N/A" if there are actually no logins
+//   return peak.count > 0 ? `${peak.hour}:00` : 'N/A';
+// }
 previousPage(): void {
   if (this.currentPage > 1) {
     this.currentPage--;
@@ -2555,6 +2650,9 @@ openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
 
 closeModal() {
   this.showModal = false;
+  this.showMostActiveUserDetails = false;
+  this.showTopDepartmentDetails = false;
+  this.showRecentActivityDetails = false;
 }
 // Event Handlers
 

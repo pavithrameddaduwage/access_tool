@@ -304,4 +304,32 @@ async getTopUsedWebtools(days: number = 30, email?: string): Promise<{webtool: s
     .limit(5)
     .getRawMany();
 }
+
+async getPeakHourUsers(hour: number, days: number = 30, webtool?: string): Promise<any[]> {
+  const startDate = subDays(new Date(), days);
+  
+  const query = this.loginEventRepository
+    .createQueryBuilder('login')
+    .select('login.email', 'email')
+    .addSelect('COUNT(*)', 'count')
+    .addSelect('MAX(login.loginTime)', 'lastLogin')
+    .where('EXTRACT(HOUR FROM login.loginTime) = :hour', { hour })
+    .andWhere('login.loginTime >= :startDate', { startDate });
+
+  if (webtool) {
+    query.andWhere('login.webtool = :webtool', { webtool });
+  }
+
+  const results = await query
+    .groupBy('login.email')
+    .orderBy('count', 'DESC')
+    .getRawMany();
+
+  // Join with user data if needed
+  return results.map(r => ({
+    email: r.email,
+    count: parseInt(r.count),
+    lastLogin: r.lastLogin ? new Date(r.lastLogin) : null
+  }));
+}
 }

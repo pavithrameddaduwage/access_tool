@@ -137,4 +137,14 @@ async getTopUsedWebtools(
 ) {
   return this.analyticsService.getTopUsedWebtools(days, email);
 }
+
+@Get('peak-hour-users/:hour')
+async getPeakHourUsers(
+  @Param('hour') hour: number,
+  @Query('days') days: number = 30,
+  @Query('webtool') webtool?: string
+) {
+  return this.analyticsService.getPeakHourUsers(hour, days, webtool);
+}
+
 }

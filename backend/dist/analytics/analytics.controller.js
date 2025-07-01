@@ -62,6 +62,9 @@ let AnalyticsController = class AnalyticsController {
     async getTopUsedWebtools(days = 30, email) {
         return this.analyticsService.getTopUsedWebtools(days, email);
     }
+    async getPeakHourUsers(hour, days = 30, webtool) {
+        return this.analyticsService.getPeakHourUsers(hour, days, webtool);
+    }
 };
 exports.AnalyticsController = AnalyticsController;
 __decorate([
@@ -175,6 +178,15 @@ __decorate([
     __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", Promise)
 ], AnalyticsController.prototype, "getTopUsedWebtools", null);
+__decorate([
+    (0, common_1.Get)('peak-hour-users/:hour'),
+    __param(0, (0, common_1.Param)('hour')),
+    __param(1, (0, common_1.Query)('days')),
+    __param(2, (0, common_1.Query)('webtool')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getPeakHourUsers", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.Controller)('analytics'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
