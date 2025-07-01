@@ -1277,6 +1277,7 @@
 </div>
 
 <!-- Recent Activity Details Modal -->
+<!-- Recent Activity Details Modal - Simplified Version -->
 <div *ngIf="showRecentActivityDetails" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
   <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
     <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
@@ -1293,8 +1294,7 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+              <!-- Removed the other column headers -->
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -1310,12 +1310,7 @@
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ user.loginCount || 0 }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ user.lastLogin ? (user.lastLogin | date:'short') : 'Never' }}
-              </td>
+              <!-- Removed the other columns -->
             </tr>
           </tbody>
         </table>
@@ -1323,7 +1318,6 @@
     </div>
   </div>
 </div>
-
 <!-- Peak Hour Users Modal -->
 <!-- Peak Hour Users Modal -->
 <div *ngIf="showPeakHourModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
