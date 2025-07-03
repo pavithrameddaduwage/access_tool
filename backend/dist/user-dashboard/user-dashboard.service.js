@@ -155,10 +155,18 @@ let UserDashboardService = class UserDashboardService {
     }
     async getLastDeactivatedUsers(limit = 5) {
         return this.userDashboardRepository.query(`
-    SELECT DISTINCT ON (email) email, "userName", department, "lastActiveAt"
-    FROM user_dashboard 
-    WHERE "isActive" = false 
-    ORDER BY email, "lastActiveAt" DESC 
+    WITH latest_user_records AS (
+      SELECT DISTINCT ON (email) 
+        email, 
+        "userName", 
+        department, 
+        "lastActiveAt"
+      FROM user_dashboard 
+      WHERE "isActive" = false 
+      ORDER BY email, "lastActiveAt" DESC NULLS LAST
+    )
+    SELECT * FROM latest_user_records
+    ORDER BY "lastActiveAt" DESC NULLS LAST
     LIMIT $1
   `, [limit]);
     }

@@ -2626,7 +2626,39 @@ getFirstItemIndex(): number {
 getLastItemIndex(): number {
   return Math.min(this.currentPage * this.itemsPerPage, this.filteredUserLoginData.length);
 }
+getFilteredActiveUsers(): any[] {
+  // Start with users who have at least one login
+  let users = this.filteredUserLoginData.filter(user => 
+    (user.loginCount || 0) > 0
+  );
 
+  // Apply webtool filter if selected
+  if (this.selectedWebtool !== 'all') {
+    const webtoolName = this.getWebtoolName(this.selectedWebtool);
+    users = users.filter(user => 
+      user.webtools?.some((wt: any) => wt.webtool === webtoolName)
+    );
+  }
+
+  // Apply time range filter
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - this.selectedTimeRange);
+  
+  return users.filter(user => 
+    user.lastLogin && new Date(user.lastLogin) >= cutoffDate
+  );
+}
+get activeUsersCount(): number {
+  // For default view (no filters), only count users with logins
+  if (this.selectedWebtool === 'all' && this.selectedUser === 'All') {
+    return this.filteredUserLoginData.filter(user => 
+      (user.loginCount || 0) > 0
+    ).length;
+  }
+  
+  // For filtered views, use the full filtered logic
+  return this.getFilteredActiveUsers().length;
+}
 openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
   this.activeModal = type;
   
@@ -2635,19 +2667,47 @@ openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
       this.modalTitle = 'All Webtools';
       break;
     case 'users':
-      this.modalTitle = 'All Users';
+      this.modalTitle = this.selectedWebtool === 'all' 
+        ? 'All Users' 
+        : `Users with access to ${this.getWebtoolName(this.selectedWebtool)}`;
       break;
     case 'logins':
       this.modalTitle = 'Login Statistics';
       break;
-    case 'activeUsers':
-      this.modalTitle = 'Active Users';
-      break;
+case 'activeUsers':
+  const timeText = this.selectedTimeRange === 7 ? 'week' : 
+                 this.selectedTimeRange === 30 ? 'month' : 
+                 `${this.selectedTimeRange} days`;
+  const webtoolText = this.selectedWebtool === 'all' ? '' : 
+                     ` for ${this.getWebtoolName(this.selectedWebtool)}`;
+  
+  if (this.selectedWebtool === 'all' && this.selectedUser === 'All') {
+    this.modalTitle = `Users With Logins (last ${timeText})`;
+  } else {
+    this.modalTitle = `Active Users (last ${timeText}${webtoolText})`;
+  }
+  break;
   }
   
   this.showModal = true;
 }
+getFilteredUsers(): ProcessedUser[] {
+  if (this.selectedWebtool === 'all') {
+    return this.users;
+  }
+  
+  const selectedWebtoolId = Number(this.selectedWebtool);
+  return this.users.filter(user => 
+    user.webtools.has(selectedWebtoolId)
+  );
+}
 
+getWebtoolName(id: number | string): string {
+  if (id === 'all') return 'All Webtools';
+  const numId = Number(id);
+  const webtool = this.webtools.find(w => w.id === numId);
+  return webtool?.webtool || 'Unknown Webtool';
+}
 closeModal() {
   this.showModal = false;
   this.showMostActiveUserDetails = false;

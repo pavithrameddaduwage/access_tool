@@ -614,72 +614,6 @@ userCounts = {
     return methodExplanations[method] || method;
   }
 
-  // async selectUser(userId: string) {
-  //   this.selectedUserId = userId;
-  //   const endDate = new Date();
-  //   const startDate = new Date();
-  //   startDate.setDate(endDate.getDate() - this.selectedPeriod);
-  
-  //   const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
-  //   const reportId = this.selectedReport === null ? undefined : this.selectedReport;
-  
-  //   try {
-  //     const [userMetrics, workspaceDistribution, consumptionMethods, reportViews] = await Promise.all([
-  //       this.powerBIMetricsService.getUserMetrics(
-  //         userId, 
-  //         startDate, 
-  //         endDate,
-  //         workspaceId,
-  //         reportId
-  //       ).toPromise(),
-  //       this.powerBIMetricsService.getWorkspaceViewsDistribution(
-  //         userId, 
-  //         startDate, 
-  //         endDate,
-  //         reportId
-  //       ).toPromise(),
-  //       this.powerBIMetricsService.getUserConsumptionMethods(
-  //         userId, 
-  //         startDate, 
-  //         endDate
-  //       ).toPromise(),
-  //       this.powerBIMetricsService.getUserReportViewsDistribution(
-  //         userId,
-  //         startDate,
-  //         endDate,
-  //         workspaceId
-  //       ).toPromise()
-  //     ]);
-  
-  //     if (!userMetrics || !workspaceDistribution || !consumptionMethods || !reportViews) {
-  //       throw new Error('Failed to load user metrics');
-  //     }
-  
-  //     this.userConsumptionMethods = consumptionMethods.map(m => ({
-  //       method: m.method === null ? 'Microsoft Teams' : m.method,
-  //       count: m.count
-  //     }));
-  
-  //     this.userMetrics = {
-  //       ...userMetrics,
-  //       activityChartData: userMetrics.activityByDate.map(a => ({
-  //         x: a.date,
-  //         y: a.count
-  //       })),
-  //       workspaceDistribution,
-  //       consumptionMethods: this.userConsumptionMethods
-  //     };
-  
-  //     this.userReportViews = reportViews;
-      
-  //     this.prepareUserWorkspacePieChart();
-  //     this.prepareUserConsumptionChart();
-  //     this.prepareUserReportViewsChart();
-  //     this.cdr.detectChanges();
-  //   } catch (error) {
-  //     console.error('Error loading user metrics:', error);
-  //   }
-  // }
   async selectUser(userId: string) {
     this.selectedUserId = userId;
     this.selectedDate = null; 
@@ -907,100 +841,7 @@ userCounts = {
     return this.filteredUsers.slice(startIndex, startIndex + this.usersPerPage);
   }
 
-  // async loadData(days: number): Promise<void> {
-  //   this.loading = true;
-  //   this.error = '';
-  //   this.selectedPeriod = days;
-  
-  //   try {
-  //     const endDate = new Date();
-  //     const startDate = new Date();
-  //     startDate.setDate(endDate.getDate() - days);
-  //     this.loadingUnusedReports = true;
 
-  
-  //     // Handle workspace and report filters
-  //     const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
-  //       ? undefined 
-  //       : this.selectedWorkspace as string;
-      
-  //     const reportId = this.selectedReport === null 
-  //       ? undefined 
-  //       : this.selectedReport as string;
-  
-  //       this.unusedReports = await this.powerBIMetricsService.getUnusedReports(
-  //         startDate, 
-  //         endDate,
-  //         workspaceId
-  //       ).toPromise() || [];
-
-  //     // Get all metrics in parallel with filters applied
-  //     const [
-  //       viewsByDate, 
-  //       topReports, 
-  //       topUsers, 
-  //       activityTrend,
-  //       uniqueUserCount,
-  //       uniqueReportCount
-  //     ] = await Promise.all([
-  //       this.powerBIMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getTopReports(startDate, endDate, 10, workspaceId).toPromise(),
-  //       this.powerBIMetricsService.getTopUsers(startDate, endDate, 10, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUniqueReportCount(startDate, endDate, workspaceId).toPromise()
-  //     ]);
-
-  //     console.log("vies check", viewsByDate)
-  
-  //     // Calculate total views
-  //     const totalViews = (viewsByDate || []).reduce((sum, day) => sum + (day?.count || 0), 0);
-  
-  //     // Update metrics
-  //     this.metrics = {
-  //       totalViews,
-  //       uniqueUsers: uniqueUserCount || 0,
-  //       uniqueReports: uniqueReportCount || 0,
-  //       topReports: topReports || [],
-  //       topUsers: topUsers || [],
-  //       activityTrend: activityTrend || [],
-  //       viewsByDate: (viewsByDate || []).reduce((acc, day) => {
-  //         if (day?.date) {
-  //           acc[day.date] = day.count || 0;
-  //         }
-  //         return acc;
-  //       }, {} as Record<string, number>)
-  //     };
-  
-  //     // Process users and workspaces
-  //     await this.processUsers(startDate, endDate, workspaceId, reportId);
-  //     this.prepareCharts();
-      
-  //     // If a user is selected, refresh their data with the new filters
-  //     if (this.selectedUserId) {
-  //       await this.selectUser(this.selectedUserId);
-  //     }
-      
-  //     this.dataLoaded = true;
-  //   } catch (error) {
-  //     console.error('Error loading data:', error);
-  //     this.unusedReports = [];
-  //     this.error = 'Failed to load data';
-  //     this.metrics = {
-  //       totalViews: 0,
-  //       uniqueUsers: 0,
-  //       uniqueReports: 0,
-  //       topReports: [],
-  //       topUsers: [],
-  //       activityTrend: [],
-  //       viewsByDate: {}
-  //     };
-  //   } finally {
-  //     this.loading = false;
-  //     this.loadingUnusedReports = false;
-
-  //   }
-  // }
 
 getUserDisplayName(userId: string): string {
   if (!userId) return '';
@@ -1014,253 +855,6 @@ getUserDisplayName(userId: string): string {
   return userId;
 }
 
-  // async loadData(days: number): Promise<void> {
-  //   this.loading = true;
-  //   this.error = '';
-  //   this.selectedPeriod = days;
-  
-  //   try {
-  //     const endDate = new Date();
-  //     const startDate = new Date();
-  //     startDate.setDate(endDate.getDate() - days);
-  //     this.loadingUnusedReports = true;
-
-  //     // Handle workspace and report filters
-  //     const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
-  //       ? undefined 
-  //       : this.selectedWorkspace as string;
-      
-  //     const reportId = this.selectedReport === null 
-  //       ? undefined 
-  //       : this.selectedReport as string;
-  
-  //     this.unusedReports = await this.powerBIMetricsService.getUnusedReports(
-  //       startDate, 
-  //       endDate,
-  //       workspaceId
-  //     ).toPromise() || [];
-
-  //     // Get all metrics in parallel with filters applied
-  //     const [
-  //       viewsByDate, 
-  //       topReports, 
-  //       topUsers, 
-  //       activityTrend,
-  //       uniqueUserCount
-  //     ] = await Promise.all([
-  //       this.powerBIMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       reportId 
-  //         ? this.powerBIMetricsService.getDistinctReports(startDate, endDate, workspaceId)
-  //             .toPromise()
-  //             .then(reports => {
-  //               if (!reports) return [];
-  //               return reports.filter(r => r.id === reportId)
-  //                 .map(r => ({
-  //                   reportId: r.id,
-  //                   reportName: r.name,
-  //                   count: 0 // Will be updated from viewsByDate
-  //                 }));
-  //             })
-  //         : this.powerBIMetricsService.getTopReports(startDate, endDate, 10, workspaceId).toPromise(),
-  //       this.powerBIMetricsService.getTopUsers(startDate, endDate, 10, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId).toPromise()
-        
-  //     ]);
-
-  //     // Handle unique report count separately
-  //     const uniqueReportCount = reportId 
-  //       ? 1 
-  //       : await this.powerBIMetricsService.getUniqueReportCount(startDate, endDate, workspaceId).toPromise();
-
-  //     // If a report is selected, update its count from viewsByDate
-  //     if (reportId && topReports && topReports.length > 0 && viewsByDate) {
-  //       const totalViews = viewsByDate.reduce((sum, day) => sum + (day?.count || 0), 0);
-  //       topReports[0].count = totalViews;
-  //     }
-
-  //     // Calculate total views
-  //     const totalViews = (viewsByDate || []).reduce((sum, day) => sum + (day?.count || 0), 0);
-
-  //     // Update metrics
-  //     this.metrics = {
-  //       totalViews,
-  //       uniqueUsers: uniqueUserCount || 0,
-  //       uniqueReports: uniqueReportCount || 0,
-  //       topReports: topReports || [],
-  //       topUsers: topUsers || [],
-  //       activityTrend: activityTrend || [],
-  //       viewsByDate: (viewsByDate || []).reduce((acc, day) => {
-  //         if (day?.date) {
-  //           acc[day.date] = day.count || 0;
-  //         }
-  //         return acc;
-  //       }, {} as Record<string, number>)
-  //     };
-
-  //     // Process users and workspaces
-  //     await this.processUsers(startDate, endDate, workspaceId, reportId);
-  //     this.prepareCharts();
-      
-  //     // If a user is selected, refresh their data with the new filters
-  //     if (this.selectedUserId) {
-  //       await this.selectUser(this.selectedUserId);
-  //     }
-      
-  //     this.dataLoaded = true;
-  //   } catch (error) {
-  //     console.error('Error loading data:', error);
-  //     this.unusedReports = [];
-  //     this.error = 'Failed to load data';
-  //     this.metrics = {
-  //       totalViews: 0,
-  //       uniqueUsers: 0,
-  //       uniqueReports: 0,
-  //       topReports: [],
-  //       topUsers: [],
-  //       activityTrend: [],
-  //       viewsByDate: {}
-  //     };
-  //   } finally {
-  //     this.loading = false;
-  //     this.loadingUnusedReports = false;
-  //   }
-  // }
-
-
-
-
-
-
-  // new one
-  // async loadData(days: number): Promise<void> {
-  //   this.loading = true;
-  //   this.error = '';
-  //   this.selectedPeriod = days;
-  
-  //   try {
-  //     const endDate = new Date();
-  //     const startDate = new Date();
-  //     startDate.setDate(endDate.getDate() - days);
-  //     this.loadingUnusedReports = true;
-  
-  //     // Handle workspace and report filters
-  //     const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
-  //       ? undefined 
-  //       : this.selectedWorkspace as string;
-      
-  //     const reportId = this.selectedReport === null 
-  //       ? undefined 
-  //       : this.selectedReport as string;
-  
-  //     this.unusedReports = await this.powerBIMetricsService.getUnusedReports(
-  //       startDate, 
-  //       endDate,
-  //       workspaceId
-  //     ).toPromise() || [];
-  
-  //     // Get all metrics in parallel with filters applied
-  //     const [
-  //       viewsByDate, 
-  //       topReports, 
-  //       topUsers, 
-  //       activityTrend,
-  //       uniqueUserCount,
-  //       counts
-  //     ] = await Promise.all([
-  //       this.powerBIMetricsService.getViewCountsByDate(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       reportId 
-  //         ? this.powerBIMetricsService.getDistinctReports(startDate, endDate, workspaceId)
-  //             .toPromise()
-  //             .then(reports => {
-  //               if (!reports) return [];
-  //               return reports.filter(r => r.id === reportId)
-  //                 .map(r => ({
-  //                   reportId: r.id,
-  //                   reportName: r.name,
-  //                   count: 0 // Will be updated from viewsByDate
-  //                 }));
-  //             })
-  //         : this.powerBIMetricsService.getTopReports(startDate, endDate, 10, workspaceId).toPromise(),
-  //       this.powerBIMetricsService.getTopUsers(startDate, endDate, 10, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUserActivityTrend(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUniqueUserCount(startDate, endDate, workspaceId, reportId).toPromise(),
-  //       this.powerBIMetricsService.getUserCounts(startDate, endDate, workspaceId, reportId).toPromise()
-  //     ]);
-  
-  //     // Store user counts data
-  //     this.userCounts = counts || {
-  //       totalUsers: 0,
-  //       totalViews: 0,
-  //       zeroViewUsers: 0,
-  //       lowActivityUsers: 0
-  //     };
-  
-  //     // Handle unique report count separately
-  //     const uniqueReportCount = reportId 
-  //       ? 1 
-  //       : await this.powerBIMetricsService.getUniqueReportCount(startDate, endDate, workspaceId).toPromise();
-  
-  //     // If a report is selected, update its count from viewsByDate
-  //     if (reportId && topReports && topReports.length > 0 && viewsByDate) {
-  //       const totalViews = viewsByDate.reduce((sum, day) => sum + (day?.count || 0), 0);
-  //       topReports[0].count = totalViews;
-  //     }
-  
-  //     // Calculate total views
-  //     const totalViews = (viewsByDate || []).reduce((sum, day) => sum + (day?.count || 0), 0);
-  
-  //     // Update metrics
-  //     this.metrics = {
-  //       totalViews,
-  //       uniqueUsers: uniqueUserCount || 0,
-  //       uniqueReports: uniqueReportCount || 0,
-  //       topReports: topReports || [],
-  //       topUsers: topUsers || [],
-  //       activityTrend: activityTrend || [],
-  //       viewsByDate: (viewsByDate || []).reduce((acc, day) => {
-  //         if (day?.date) {
-  //           acc[day.date] = day.count || 0;
-  //         }
-  //         return acc;
-  //       }, {} as Record<string, number>)
-  //     };
-  
-  //     // Process users and workspaces
-  //     await this.processUsers(startDate, endDate, workspaceId, reportId);
-  //     this.prepareCharts();
-      
-  //     // If a user is selected, refresh their data with the new filters
-  //     if (this.selectedUserId) {
-  //       await this.selectUser(this.selectedUserId);
-  //     }
-      
-  //     this.dataLoaded = true;
-  //   } catch (error) {
-  //     console.error('Error loading data:', error);
-  //     this.unusedReports = [];
-  //     this.error = 'Failed to load data';
-  //     this.metrics = {
-  //       totalViews: 0,
-  //       uniqueUsers: 0,
-  //       uniqueReports: 0,
-  //       topReports: [],
-  //       topUsers: [],
-  //       activityTrend: [],
-  //       viewsByDate: {}
-  //     };
-  //     // Reset user counts data on error
-  //     this.userCounts = {
-  //       totalUsers: 0,
-  //       totalViews: 0,
-  //       zeroViewUsers: 0,
-  //       lowActivityUsers: 0
-  //     };
-  //   } finally {
-  //     this.loading = false;
-  //     this.loadingUnusedReports = false;
-  //   }
-  // }
 
 async loadData(days: number): Promise<void> {
     this.loading = true;
@@ -1443,100 +1037,7 @@ async loadData(days: number): Promise<void> {
     // console.log('Chart labels:', this.userConsumptionChartOptions.labels);
   }
 
-// private async processUsers(
-//   startDate: Date, 
-//   endDate: Date,
-//   workspaceId?: string,
-//   reportId?: string
-// ): Promise<void> {
-//   try {
-//     const topUsers = await this.powerBIMetricsService.getTopUsers(
-//       startDate, 
-//       endDate, 
-//       1000,
-//       workspaceId || undefined,
-//       reportId || undefined
-//     ).toPromise().catch(() => [] as UserMetric[]);
 
-//     if (!topUsers || topUsers.length === 0) {
-//       this.allRegularUsers = [];
-//       this.allZeroViewUsers = [];
-//       this.filteredUsers = [];
-//       return;
-//     }
-
-//     // Get name mappings for all users
-//     const nameMappings = await this.powerBIMetricsService.getUserNameMappings(
-//       topUsers.map(u => u.userId)
-//     ).toPromise() || {};
-
-//     const userPromises = topUsers.map(async user => {
-//       try {
-//         const metrics = await this.powerBIMetricsService.getUserMetrics(
-//           user.userId, 
-//           startDate, 
-//           endDate,
-//           workspaceId || undefined,
-//           reportId || undefined
-//         ).toPromise();
-
-//         return {
-//           id: user.userId,
-//           name: nameMappings[user.userId] || user.userId.split('@')[0], // Fallback to email prefix if no name
-//           totalViews: metrics?.totalViews || 0,
-//           reports: metrics?.reports?.length || 0,
-//           workspaces: metrics?.workspaces?.length || 0,
-//           lastActivity: metrics?.activityByDate && metrics.activityByDate.length > 0 
-//             ? metrics.activityByDate[metrics.activityByDate.length - 1].date 
-//             : 'Never',
-//           activityByDate: metrics?.activityByDate || []
-//         } as UserDetail;
-//       } catch (error) {
-//         console.error(`Error processing user ${user.userId}:`, error);
-//         return {
-//           id: user.userId,
-//           name: nameMappings[user.userId] || user.userId.split('@')[0],
-//           totalViews: 0,
-//           reports: 0,
-//           workspaces: 0,
-//           lastActivity: 'Never',
-//           activityByDate: []
-//         } as UserDetail;
-//       }
-//     });
-
-//     let databaseUsers: any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(
-//       this.workspaceOptions.find((w) => w.id === workspaceId)?.name ?? '',
-//       this.reportOptions.find((r) => r.id === reportId)?.name ?? ''
-//     ).toPromise().catch(() => [] as any[]);
-    
-//     databaseUsers = databaseUsers.map((user: any) => user.user_email);
-    
-//     const users = await Promise.all(userPromises);
-//     const userEmails = users.map((user: any) => user.id);
-//     const difference = databaseUsers.filter((item: any) => !userEmails.includes(item));
-    
-//     this.allRegularUsers = users;
-//     this.allZeroViewUsers = difference.map((user: any) => {
-//       return {
-//         id: user,
-//         name: nameMappings[user] || user.split('@')[0],
-//         totalViews: 0,
-//         reports: 0,
-//         workspaces: 0,
-//         lastActivity: 'Never',
-//         activityByDate: []
-//       }
-//     });
-    
-//     this.filteredUsers = [...this.allRegularUsers, ...this.allZeroViewUsers];
-//   } catch (error) {
-//     console.error('Error processing users:', error);
-//     this.allRegularUsers = [];
-//     this.allZeroViewUsers = [];
-//     this.filteredUsers = [];
-//   }
-// }
 private async processUsers(
   startDate: Date, 
   endDate: Date,
@@ -1690,28 +1191,55 @@ private async processUsers(
     this.isUserListExpanded = !this.isUserListExpanded;
   }
 
-  exportUserListToCSV() {
-    const usersToExport = this.filteredUsers;
+  // exportUserListToCSV() {
+  //   const usersToExport = this.filteredUsers;
     
-    const headers = ['Email', 'Total Views', 'Last Activity'];
-    const rows = usersToExport.map(user => [
-      user.id, 
-      user.totalViews, 
-      user.lastActivity === 'Never' ? 'Never' : new Date(user.lastActivity).toLocaleDateString()
-    ]);
+  //   const headers = ['Email', 'Total Views', 'Last Activity'];
+  //   const rows = usersToExport.map(user => [
+  //     user.id, 
+  //     user.totalViews, 
+  //     user.lastActivity === 'Never' ? 'Never' : new Date(user.lastActivity).toLocaleDateString()
+  //   ]);
   
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(',')) 
-    ].join('\n');
+  //   const csvContent = [
+  //     headers.join(','),
+  //     ...rows.map(row => row.join(',')) 
+  //   ].join('\n');
   
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'powerbi-users.csv';
-    link.click();
-  }
+  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  //   const link = document.createElement('a');
+  //   link.href = URL.createObjectURL(blob);
+  //   link.download = 'powerbi-users.csv';
+  //   link.click();
+  // }
+exportUserListToCSV() {
+  const usersToExport = this.filteredUsers;
+  
+  // Updated headers with additional columns
+  const headers = ['Name', 'Email', 'Department', 'Total Views', 'Last Activity'];
+  
+  // Updated rows with additional data
+  const rows = usersToExport.map(user => [
+    user.name || '', 
+    user.id, 
+    user.department || 'Unknown',
+    user.totalViews, 
+    user.lastActivity === 'Never' ? 'Never' : new Date(user.lastActivity).toLocaleDateString()
+  ]);
 
+  // Create CSV content
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(',')) 
+  ].join('\n');
+
+  // Create and trigger download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'powerbi-users.csv';
+  link.click();
+}
 
 
 workspaces: PowerBIWorkspace[] = [];
@@ -1799,67 +1327,6 @@ async onActivityTimelineClick(clickedDate: string) {
     this.selectedDateReports = [];
   }
 }
-// async loadReportViewsForDate(date: string) {
-//   if (!this.selectedUserId) return;
-
-//   try {
-//     // Create date in EDT timezone
-//     const edtDate = new Date(date + 'T00:00:00-04:00'); // EDT is UTC-4
-    
-//     // Set start/end to beginning and end of day in EDT
-//     const startDate = new Date(edtDate);
-//     startDate.setHours(0, 0, 0, 0);
-    
-//     const endDate = new Date(edtDate);
-//     endDate.setHours(23, 59, 59, 999);
-    
-//     // Convert to UTC for the API call
-//     const utcStart = new Date(startDate.toISOString());
-//     const utcEnd = new Date(endDate.toISOString());
-
-//     this.dateReportViews = await this.powerBIMetricsService.getUserReportViewsDistribution(
-//       this.selectedUserId,
-//       utcStart,
-//       utcEnd,
-//       this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace
-//     ).toPromise() || [];
-    
-//     this.cdr.detectChanges();
-//   } catch (error) {
-//     console.error('Error loading report views:', error);
-//     this.dateReportViews = [];
-//     this.cdr.detectChanges();
-//   }
-// }
-
-//latest
-// async loadReportViewsForDate(date: string) {
-//   if (!this.selectedUserId) return;
-
-//   try {
-    
-//     const [year, month, day] = date.split('-').map(num => parseInt(num, 10));
-    
-//     const startDate = new Date(Date.UTC(year, month - 1, day, 4, 0, 0)); 
-//     const endDate = new Date(Date.UTC(year, month - 1, day, 28, 0, 0));  // 24:00 EDT = 04:00 UTC (next day)
-    
-//     // Adjust end time to 23:59:59.999
-//     endDate.setTime(endDate.getTime() - 1);
-    
-//     this.dateReportViews = await this.powerBIMetricsService.getUserReportViewsDistribution(
-//       this.selectedUserId,
-//       startDate,
-//       endDate,
-//       this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace
-//     ).toPromise() || [];
-    
-//     this.cdr.detectChanges();
-//   } catch (error) {
-//     console.error('Error loading report views:', error);
-//     this.dateReportViews = [];
-//     this.cdr.detectChanges();
-//   }
-// }
 
 async loadReportViewsForDate(date: string) {
   if (!this.selectedUserId) return;

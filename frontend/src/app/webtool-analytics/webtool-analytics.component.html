@@ -159,21 +159,21 @@
         </div>
         
         <!-- Active Users Card -->
+<!-- Active Users Card -->
 <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-green-500 metric-card transition-shadow duration-200 cursor-pointer"
      (click)="openModal('activeUsers')">
-               <div class="flex items-center gap-3">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Users</h3>
-              <p class="text-2xl font-bold text-gray-800">{{ loginMetrics.activeUsers | number }}</p>
-            </div>
-          </div>
-        </div>
-        
+  <div class="flex items-center gap-3">
+    <div class="p-2 bg-green-100 rounded-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    </div>
+    <div>
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Users</h3>
+      <p class="text-2xl font-bold text-gray-800">{{ activeUsersCount | number }}</p>
+    </div>
+  </div>
+</div>
         <!-- Avg Logins Card -->
      <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-4 border-l-4 border-purple-500 metric-card transition-shadow duration-200">
   <div class="flex items-center gap-3">
@@ -204,9 +204,6 @@
       <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Peak Hour</h3>
       <p class="text-2xl font-bold text-gray-800">
         {{ peakHour }}
-      </p>
-      <p *ngIf="selectedWebtool !== 'all'" class="text-xs text-gray-500 mt-1">
-        (for selected webtool)
       </p>
     </div>
   </div>
@@ -1048,35 +1045,50 @@
     </div>
     
     <!-- Users Modal Content - Simplified -->
-    <div *ngSwitchCase="'users'" class="space-y-4">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let user of users">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                    <span class="text-blue-800">{{ user.name?.charAt(0) || 'U' }}</span>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ user.department || 'Unknown' }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<!-- Users Modal Content -->
+<!-- Users Modal Content -->
+<div *ngSwitchCase="'users'" class="space-y-4">
+  <div *ngIf="selectedWebtool !== 'all'" class="bg-blue-50 p-3 rounded-lg mb-4">
+    <p class="text-sm text-blue-800">
+      Showing users with access to: <strong>{{ getWebtoolName(selectedWebtool) }}</strong>
+    </p>
+  </div>
+  
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+          <th *ngIf="selectedWebtool !== 'all'" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Access</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let user of getFilteredUsers()">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <span class="text-blue-800">{{ user.name?.charAt(0) || 'U' }}</span>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
+                <div class="text-sm text-gray-500">{{ user.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ user.department || 'Unknown' }}
+          </td>
+          <td *ngIf="selectedWebtool !== 'all'" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+              Has access
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
     
     <!-- Logins Modal Content - Simplified -->
     <div *ngSwitchCase="'logins'" class="space-y-4">
@@ -1094,35 +1106,56 @@
     </div>
     
     <!-- Active Users Modal Content - Simplified -->
-    <div *ngSwitchCase="'activeUsers'" class="space-y-4">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let user of filteredUserLoginData.slice(0, 10)">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                    <span class="text-blue-800">{{ user.username?.charAt(0) || 'U' }}</span>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ user.lastLogin ? (user.lastLogin | date:'short') : 'Never' }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <!-- Active Users Modal Content -->
+<div *ngSwitchCase="'activeUsers'" class="space-y-4">
+  <div class="bg-blue-50 p-3 rounded-lg mb-4">
+    <p class="text-sm text-blue-800">
+      Showing users active in last {{selectedTimeRange}} days
+      <span *ngIf="selectedWebtool !== 'all'"> 
+        with access to <strong>{{getWebtoolName(selectedWebtool)}}</strong>
+      </span>
+    </p>
+  </div>
+  
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logins</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+          <th *ngIf="selectedWebtool !== 'all'" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Access</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let user of getFilteredActiveUsers()">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <span class="text-blue-800">{{user.username?.charAt(0) || 'U'}}</span>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">{{user.username}}</div>
+                <div class="text-sm text-gray-500">{{user.email}}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{user.loginCount || 0}}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{user.lastLogin ? (user.lastLogin | date:'short') : 'Never'}}
+          </td>
+          <td *ngIf="selectedWebtool !== 'all'" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+              Has access
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
   </ng-container>
 </div>
   </div>
