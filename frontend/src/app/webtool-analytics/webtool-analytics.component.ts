@@ -2471,8 +2471,10 @@ getTotalPages(): number {
 }
 
 get filteredTotalWebtools(): number {
+  if (this.selectedWebtool !== 'all') {
+    return 1; // Since only one webtool is selected
+  }
   if (this.isUserSelected) {
-    // Return count of webtools assigned to the selected user
     const user = this.users.find(u => u.email.toLowerCase() === this.selectedUser.toLowerCase());
     return user ? user.webtools.size : 0;
   }
@@ -2652,7 +2654,14 @@ previousPage(): void {
     this.currentPage--;
   }
 }
-
+get filteredTotalUsers(): number {
+  if (this.selectedWebtool !== 'all') {
+    // Count users who have access to the selected webtool
+    const selectedId = Number(this.selectedWebtool);
+    return this.users.filter(user => user.webtools.has(selectedId)).length;
+  }
+  return this.users.length; // Total users from user_webtool table
+}
 getFirstItemIndex(): number {
   return (this.currentPage - 1) * this.itemsPerPage + 1;
 }
@@ -2813,15 +2822,16 @@ getFilteredWebtoolsForModal(): any[] {
 }
 
 getFilteredUsersForModal(): any[] {
-  if (this.isUserSelected) {
-    // Return just the selected user
-    const user = this.users.find(u => u.email.toLowerCase() === this.selectedUser.toLowerCase());
-    return user ? [{
-      email: user.email,
-      username: user.name,
-      department: user.department,
-      // Add any other relevant user data
-    }] : [];
+if (this.isUserSelected) {
+    // Return just the selected user with complete data
+    return [{
+      email: this.userKPIs?.email,
+      username: this.userKPIs?.name,
+      department: this.userKPIs?.department,
+      loginCount: this.filteredTotalLogins,
+      lastLogin: this.userKPIs?.lastLogin,
+      webtools: this.userWebtoolStats.length
+    }];
   }
   
   // If a webtool is selected, filter users who have access to that webtool
