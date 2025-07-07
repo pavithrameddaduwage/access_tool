@@ -473,7 +473,7 @@ private calculateMetrics() {
       
 
 
-  // Chart Management
+  // Chart Management and other stuff
 
    private initCharts(): void {
   if (!this.webtools?.length || !this.users?.length) {
@@ -732,6 +732,54 @@ private prepareActivityTimelineChart() {
     }
   };
 }
+// async onActivityTimelineClick(date: string) {
+//   console.log('Opening modal for date:', date);
+//   this.selectedDateForPopup = date;
+//   this.selectedDateWebtools = [];
+//   this.showDatePopup = true;
+
+//   try {
+//     // Get login events for the selected user and date
+//     const loginEvents = await firstValueFrom(
+//       this.loginAnalyticsService.getLoginEvents().pipe(
+//         catchError(error => {
+//           console.error('Error fetching login events:', error);
+//           return of([]);
+//         })
+//       )
+//     );
+    
+//     // Filter events for the selected user and date
+//     const normalizedEmail = this.selectedUser.toLowerCase().trim();
+//     const selectedDate = new Date(date).toISOString().split('T')[0];
+    
+//     const dateEvents = loginEvents.filter((event: any) => {
+//       const eventDate = new Date(event.loginTime).toISOString().split('T')[0];
+//       return event.email.toLowerCase().trim() === normalizedEmail && 
+//              eventDate === selectedDate;
+//     });
+    
+//     console.log(`Found ${dateEvents.length} events for ${selectedDate}`);
+
+//     // Group by webtool
+//     const webtoolCounts = dateEvents.reduce((acc: Record<string, number>, event: any) => {
+//       const webtool = event.webtool || 'Unknown';
+//       acc[webtool] = (acc[webtool] || 0) + 1;
+//       return acc;
+//     }, {} as Record<string, number>);
+    
+//     // Convert to array and sort
+//     this.selectedDateWebtools = Object.entries(webtoolCounts)
+//       .map(([webtool, count]) => ({ webtool, count }))
+//       .sort((a, b) => b.count - a.count);
+//       this.cdr.detectChanges();
+
+//     console.log('Webtools for date:', this.selectedDateWebtools);
+//   } catch (error) {
+//     console.error('Error loading date details:', error);
+//     this.selectedDateWebtools = [];
+//   }
+// }
 async onActivityTimelineClick(date: string) {
   console.log('Opening modal for date:', date);
   this.selectedDateForPopup = date;
@@ -753,13 +801,23 @@ async onActivityTimelineClick(date: string) {
     const normalizedEmail = this.selectedUser.toLowerCase().trim();
     const selectedDate = new Date(date).toISOString().split('T')[0];
     
+    // Get the selected webtool name for filtering
+    const selectedWebtoolName = this.selectedWebtool === 'all' 
+      ? null 
+      : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+    
     const dateEvents = loginEvents.filter((event: any) => {
       const eventDate = new Date(event.loginTime).toISOString().split('T')[0];
-      return event.email.toLowerCase().trim() === normalizedEmail && 
-             eventDate === selectedDate;
+      const matchesUser = event.email.toLowerCase().trim() === normalizedEmail;
+      const matchesDate = eventDate === selectedDate;
+      
+      // Apply webtool filter if a specific webtool is selected
+      const matchesWebtool = !selectedWebtoolName || event.webtool === selectedWebtoolName;
+      
+      return matchesUser && matchesDate && matchesWebtool;
     });
     
-    console.log(`Found ${dateEvents.length} events for ${selectedDate}`);
+    console.log(`Found ${dateEvents.length} events for ${selectedDate}${selectedWebtoolName ? ` (filtered by ${selectedWebtoolName})` : ''}`);
 
     // Group by webtool
     const webtoolCounts = dateEvents.reduce((acc: Record<string, number>, event: any) => {
@@ -772,7 +830,8 @@ async onActivityTimelineClick(date: string) {
     this.selectedDateWebtools = Object.entries(webtoolCounts)
       .map(([webtool, count]) => ({ webtool, count }))
       .sort((a, b) => b.count - a.count);
-      this.cdr.detectChanges();
+      
+    this.cdr.detectChanges();
 
     console.log('Webtools for date:', this.selectedDateWebtools);
   } catch (error) {
@@ -2470,6 +2529,42 @@ getTotalPages(): number {
   return Math.ceil(this.filteredUserLoginData.length / this.itemsPerPage);
 }
 
+get filteredTotalWebtools(): number {
+  if (this.selectedWebtool !== 'all') {
+    return 1; // Since only one webtool is selected
+  }
+  if (this.isUserSelected) {
+    const user = this.users.find(u => u.email.toLowerCase() === this.selectedUser.toLowerCase());
+    return user ? user.webtools.size : 0;
+  }
+  return this.metrics.totalWebtools;
+}
+
+get filteredTotalLoginsCard(): number {
+  if (this.isUserSelected) {
+    return this.filteredTotalLogins;
+  }
+  return this.loginMetrics.totalLogins;
+}
+
+get filteredActiveUsers(): number {
+  return this.isUserSelected ? 1 : this.activeUsersCount;
+}
+
+get filteredAvgLogins(): number {
+  if (this.isUserSelected) {
+    return this.filteredTotalLogins / this.selectedTimeRange;
+  }
+  return this.loginMetrics.totalLogins / this.selectedTimeRange;
+}
+
+get filteredPeakHour(): string {
+  if (this.isUserSelected && this.userKPIs) {
+    return this.userKPIs.peakHour || 'N/A';
+  }
+  return this.getPeakHour();
+}
+
 getPageNumbers(): number[] {
   const totalPages = this.getTotalPages();
   const maxVisiblePages = 5; // Show up to 5 page numbers
@@ -2618,7 +2713,14 @@ previousPage(): void {
     this.currentPage--;
   }
 }
-
+get filteredTotalUsers(): number {
+  if (this.selectedWebtool !== 'all') {
+    // Count users who have access to the selected webtool
+    const selectedId = Number(this.selectedWebtool);
+    return this.users.filter(user => user.webtools.has(selectedId)).length;
+  }
+  return this.users.length; // Total users from user_webtool table
+}
 getFirstItemIndex(): number {
   return (this.currentPage - 1) * this.itemsPerPage + 1;
 }
@@ -2659,34 +2761,75 @@ get activeUsersCount(): number {
   // For filtered views, use the full filtered logic
   return this.getFilteredActiveUsers().length;
 }
+// openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
+//   this.activeModal = type;
+  
+//   switch(type) {
+//     case 'webtools':
+//       this.modalTitle = 'All Webtools';
+//       break;
+//     case 'users':
+//       this.modalTitle = this.selectedWebtool === 'all' 
+//         ? 'All Users' 
+//         : `Users with access to ${this.getWebtoolName(this.selectedWebtool)}`;
+//       break;
+//     case 'logins':
+//       this.modalTitle = 'Login Statistics';
+//       break;
+// case 'activeUsers':
+//   const timeText = this.selectedTimeRange === 7 ? 'week' : 
+//                  this.selectedTimeRange === 30 ? 'month' : 
+//                  `${this.selectedTimeRange} days`;
+//   const webtoolText = this.selectedWebtool === 'all' ? '' : 
+//                      ` for ${this.getWebtoolName(this.selectedWebtool)}`;
+  
+//   if (this.selectedWebtool === 'all' && this.selectedUser === 'All') {
+//     this.modalTitle = `Users With Logins (last ${timeText})`;
+//   } else {
+//     this.modalTitle = `Active Users (last ${timeText}${webtoolText})`;
+//   }
+//   break;
+//   }
+  
+//   this.showModal = true;
+// }
+
 openModal(type: 'webtools' | 'users' | 'logins' | 'activeUsers') {
   this.activeModal = type;
   
   switch(type) {
     case 'webtools':
-      this.modalTitle = 'All Webtools';
+      this.modalTitle = this.isUserSelected 
+        ? `${this.userKPIs?.name}'s Webtools` 
+        : this.selectedWebtool !== 'all'
+          ? this.getWebtoolName(this.selectedWebtool)
+          : 'All Webtools';
       break;
     case 'users':
-      this.modalTitle = this.selectedWebtool === 'all' 
-        ? 'All Users' 
-        : `Users with access to ${this.getWebtoolName(this.selectedWebtool)}`;
+      this.modalTitle = this.isUserSelected 
+        ? `${this.userKPIs?.name}'s Profile`
+        : this.selectedWebtool !== 'all'
+          ? `Users with access to ${this.getWebtoolName(this.selectedWebtool)}`
+          : 'All Users';
       break;
     case 'logins':
-      this.modalTitle = 'Login Statistics';
+      this.modalTitle = this.isUserSelected
+        ? `${this.userKPIs?.name}'s Login Statistics`
+        : this.selectedWebtool !== 'all'
+          ? `Login Statistics for ${this.getWebtoolName(this.selectedWebtool)}`
+          : 'Login Statistics';
       break;
-case 'activeUsers':
-  const timeText = this.selectedTimeRange === 7 ? 'week' : 
-                 this.selectedTimeRange === 30 ? 'month' : 
-                 `${this.selectedTimeRange} days`;
-  const webtoolText = this.selectedWebtool === 'all' ? '' : 
-                     ` for ${this.getWebtoolName(this.selectedWebtool)}`;
-  
-  if (this.selectedWebtool === 'all' && this.selectedUser === 'All') {
-    this.modalTitle = `Users With Logins (last ${timeText})`;
-  } else {
-    this.modalTitle = `Active Users (last ${timeText}${webtoolText})`;
-  }
-  break;
+    case 'activeUsers':
+      const timeText = this.selectedTimeRange === 7 ? 'week' : 
+                     this.selectedTimeRange === 30 ? 'month' : 
+                     `${this.selectedTimeRange} days`;
+      const webtoolText = this.selectedWebtool === 'all' ? '' : 
+                         ` using ${this.getWebtoolName(this.selectedWebtool)}`;
+      
+      this.modalTitle = this.isUserSelected
+        ? `${this.userKPIs?.name}'s Activity (last ${timeText}${webtoolText})`
+        : `Active Users (last ${timeText}${webtoolText})`;
+      break;
   }
   
   this.showModal = true;
@@ -2708,6 +2851,111 @@ getWebtoolName(id: number | string): string {
   const webtool = this.webtools.find(w => w.id === numId);
   return webtool?.webtool || 'Unknown Webtool';
 }
+
+getUserWebtoolCount(email: string): number {
+  const user = this.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  return user ? user.webtools.size : 0;
+}
+getFilteredWebtoolsForModal(): any[] {
+  if (this.isUserSelected) {
+    // Return webtools assigned to the selected user
+    const user = this.users.find(u => u.email.toLowerCase() === this.selectedUser.toLowerCase());
+    if (!user) return [];
+    
+    return this.webtools
+      .filter(webtool => user.webtools.has(webtool.id))
+      .map(webtool => ({
+        ...webtool,
+        // Add any additional user-specific webtool data here
+      }));
+  }
+  
+  // If a webtool is selected, return just that webtool
+  if (this.selectedWebtool !== 'all') {
+    const selected = this.webtools.find(w => w.id === Number(this.selectedWebtool));
+    return selected ? [selected] : [];
+  }
+  
+  // Otherwise return all webtools
+  return this.webtools;
+}
+
+getFilteredUsersForModal(): any[] {
+if (this.isUserSelected) {
+    // Return just the selected user with complete data
+    return [{
+      email: this.userKPIs?.email,
+      username: this.userKPIs?.name,
+      department: this.userKPIs?.department,
+      loginCount: this.filteredTotalLogins,
+      lastLogin: this.userKPIs?.lastLogin,
+      webtools: this.userWebtoolStats.length
+    }];
+  }
+  
+  // If a webtool is selected, filter users who have access to that webtool
+  if (this.selectedWebtool !== 'all') {
+    return this.users
+      .filter(user => user.webtools.has(Number(this.selectedWebtool)))
+      .map(user => ({
+        email: user.email,
+        username: user.name,
+        department: user.department,
+        // Add any other relevant user data
+      }));
+  }
+  
+  // Otherwise return all users from userWebtool table
+  return this.users.map(user => ({
+    email: user.email,
+    username: user.name,
+    department: user.department,
+    // Add any other relevant user data
+  }));
+}
+
+getFilteredLoginsForModal(): any {
+  if (this.isUserSelected) {
+    return {
+      totalLogins: this.filteredTotalLogins,
+      avgDailyLogins: this.filteredTotalLogins / this.selectedTimeRange,
+      // Add any other user-specific login stats
+    };
+  }
+  
+  // Return aggregated login stats based on current filters
+  return {
+    totalLogins: this.loginMetrics.totalLogins,
+    avgDailyLogins: this.loginMetrics.totalLogins / this.selectedTimeRange,
+    // Add any other aggregated stats
+  };
+}
+
+getFilteredActiveUsersForModal(): any[] {
+  if (this.isUserSelected) {
+    // Return just the selected user if they have logins
+    const hasLogins = this.filteredTotalLogins > 0;
+    if (!hasLogins) return [];
+    
+    const user = this.users.find(u => u.email.toLowerCase() === this.selectedUser.toLowerCase());
+    return user ? [{
+      email: user.email,
+      username: user.name,
+      department: user.department,
+      loginCount: this.filteredTotalLogins,
+      lastLogin: this.userKPIs?.lastLogin || null
+    }] : [];
+  }
+  
+  // Return active users based on current filters
+  return this.getFilteredActiveUsers().map(user => ({
+    ...user,
+    // Ensure we're using data from userWebtool table
+    username: user.username || user.email.split('@')[0],
+    department: user.department || 'Unknown'
+  }));
+}
+
 closeModal() {
   this.showModal = false;
   this.showMostActiveUserDetails = false;
