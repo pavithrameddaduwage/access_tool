@@ -732,6 +732,54 @@ private prepareActivityTimelineChart() {
     }
   };
 }
+// async onActivityTimelineClick(date: string) {
+//   console.log('Opening modal for date:', date);
+//   this.selectedDateForPopup = date;
+//   this.selectedDateWebtools = [];
+//   this.showDatePopup = true;
+
+//   try {
+//     // Get login events for the selected user and date
+//     const loginEvents = await firstValueFrom(
+//       this.loginAnalyticsService.getLoginEvents().pipe(
+//         catchError(error => {
+//           console.error('Error fetching login events:', error);
+//           return of([]);
+//         })
+//       )
+//     );
+    
+//     // Filter events for the selected user and date
+//     const normalizedEmail = this.selectedUser.toLowerCase().trim();
+//     const selectedDate = new Date(date).toISOString().split('T')[0];
+    
+//     const dateEvents = loginEvents.filter((event: any) => {
+//       const eventDate = new Date(event.loginTime).toISOString().split('T')[0];
+//       return event.email.toLowerCase().trim() === normalizedEmail && 
+//              eventDate === selectedDate;
+//     });
+    
+//     console.log(`Found ${dateEvents.length} events for ${selectedDate}`);
+
+//     // Group by webtool
+//     const webtoolCounts = dateEvents.reduce((acc: Record<string, number>, event: any) => {
+//       const webtool = event.webtool || 'Unknown';
+//       acc[webtool] = (acc[webtool] || 0) + 1;
+//       return acc;
+//     }, {} as Record<string, number>);
+    
+//     // Convert to array and sort
+//     this.selectedDateWebtools = Object.entries(webtoolCounts)
+//       .map(([webtool, count]) => ({ webtool, count }))
+//       .sort((a, b) => b.count - a.count);
+//       this.cdr.detectChanges();
+
+//     console.log('Webtools for date:', this.selectedDateWebtools);
+//   } catch (error) {
+//     console.error('Error loading date details:', error);
+//     this.selectedDateWebtools = [];
+//   }
+// }
 async onActivityTimelineClick(date: string) {
   console.log('Opening modal for date:', date);
   this.selectedDateForPopup = date;
@@ -753,13 +801,23 @@ async onActivityTimelineClick(date: string) {
     const normalizedEmail = this.selectedUser.toLowerCase().trim();
     const selectedDate = new Date(date).toISOString().split('T')[0];
     
+    // Get the selected webtool name for filtering
+    const selectedWebtoolName = this.selectedWebtool === 'all' 
+      ? null 
+      : this.webtools.find(w => w.id === Number(this.selectedWebtool))?.webtool;
+    
     const dateEvents = loginEvents.filter((event: any) => {
       const eventDate = new Date(event.loginTime).toISOString().split('T')[0];
-      return event.email.toLowerCase().trim() === normalizedEmail && 
-             eventDate === selectedDate;
+      const matchesUser = event.email.toLowerCase().trim() === normalizedEmail;
+      const matchesDate = eventDate === selectedDate;
+      
+      // Apply webtool filter if a specific webtool is selected
+      const matchesWebtool = !selectedWebtoolName || event.webtool === selectedWebtoolName;
+      
+      return matchesUser && matchesDate && matchesWebtool;
     });
     
-    console.log(`Found ${dateEvents.length} events for ${selectedDate}`);
+    console.log(`Found ${dateEvents.length} events for ${selectedDate}${selectedWebtoolName ? ` (filtered by ${selectedWebtoolName})` : ''}`);
 
     // Group by webtool
     const webtoolCounts = dateEvents.reduce((acc: Record<string, number>, event: any) => {
@@ -772,7 +830,8 @@ async onActivityTimelineClick(date: string) {
     this.selectedDateWebtools = Object.entries(webtoolCounts)
       .map(([webtool, count]) => ({ webtool, count }))
       .sort((a, b) => b.count - a.count);
-      this.cdr.detectChanges();
+      
+    this.cdr.detectChanges();
 
     console.log('Webtools for date:', this.selectedDateWebtools);
   } catch (error) {
