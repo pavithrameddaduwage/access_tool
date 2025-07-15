@@ -172,7 +172,8 @@ export class DashboardDetailComponent implements OnInit {
     this.homeService.getRecords().subscribe({
       next: (records) => {
         this.users = records
-          .filter(record => record.dashboards.includes(this.dashboardName))
+          .filter(record => record.dashboards.includes(this.dashboardName) && 
+          record.isActive)    //change here
           .map(record => ({
             userId: record.userId,
             userName: record.userName,

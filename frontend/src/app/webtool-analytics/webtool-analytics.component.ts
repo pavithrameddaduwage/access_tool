@@ -112,7 +112,7 @@ interface PeakHourUser {
 })
 export class WebtoolAnalyticsComponent implements OnInit {
 
-   // DATA Variables
+   // DATA Variabless
  
      webtools: Webtool[] = [];
      users: ProcessedUser[] = [];

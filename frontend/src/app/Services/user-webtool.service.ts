@@ -12,6 +12,8 @@ interface LocalWebtoolUser {
   department: string;
   roles: [{ id: number; name: string; privileges: string; }] | { [key: string]: Array<{ id: number; name: string; privileges: string }> };
   webtools: string[];
+  isActive: boolean;
+  lastActiveAt?: Date;
 }
 
 @Injectable({
@@ -81,39 +83,73 @@ export class UserWebtoolService {
   }
 
 
-  getConsolidatedUserData(): Observable<WebtoolUser[]> {
-    return this.getAllUserWebtools().pipe(
-      map((userWebtools: UserWebtool[]) => {
-        const processedUsers = userWebtools.map(uw => ({
-          userId: uw.userId || 0,
-          userName: uw.userName,
-          email: uw.email,
-          department: uw.department,
-          roles: uw.roles || {},  
-          webtools: uw.webtools || [],
+  // getConsolidatedUserData(): Observable<WebtoolUser[]> {
+  //   return this.getAllUserWebtools().pipe(
+  //     map((userWebtools: UserWebtool[]) => {
+  //       const processedUsers = userWebtools.map(uw => ({
+  //         userId: uw.userId || 0,
+  //         userName: uw.userName,
+  //         email: uw.email,
+  //         department: uw.department,
+  //         roles: uw.roles || {},  
+  //         webtools: uw.webtools || [],
           
-        }));
+  //       }));
   
-        const userMap = new Map<string, LocalWebtoolUser>();
+  //       const userMap = new Map<string, LocalWebtoolUser>();
         
-        processedUsers.forEach(uw => {
-          if (!userMap.has(uw.email)) {
-            userMap.set(uw.email, {
-              userId: uw.userId,
-              userName: uw.userName,
-              email: uw.email,
-              department: uw.department,
-              roles: uw.roles,
-              webtools: uw.webtools
-            });
-          }
-        });
+  //       processedUsers.forEach(uw => {
+  //         if (!userMap.has(uw.email)) {
+  //           userMap.set(uw.email, {
+  //             userId: uw.userId,
+  //             userName: uw.userName,
+  //             email: uw.email,
+  //             department: uw.department,
+  //             roles: uw.roles,
+  //             webtools: uw.webtools
+  //           });
+  //         }
+  //       });
   
-        return Array.from(userMap.values()) as WebtoolUser[];
-      })
-    );
-  }
-  
+  //       return Array.from(userMap.values()) as WebtoolUser[];
+  //     })
+  //   );
+  // }
+  getConsolidatedUserData(): Observable<WebtoolUser[]> {
+  return this.getAllUserWebtools().pipe(
+    map((userWebtools: UserWebtool[]) => {
+      const processedUsers = userWebtools.map(uw => ({
+        userId: uw.userId || 0,
+        userName: uw.userName,
+        email: uw.email,
+        department: uw.department,
+        roles: uw.roles || {},  
+        webtools: uw.webtools || [],
+        isActive: uw.isActive !== undefined ? uw.isActive : true,
+        lastActiveAt: uw.lastActiveAt
+      }));
+
+      const userMap = new Map<string, LocalWebtoolUser>();
+      
+      processedUsers.forEach(uw => {
+        if (!userMap.has(uw.email)) {
+          userMap.set(uw.email, {
+            userId: uw.userId,
+            userName: uw.userName,
+            email: uw.email,
+            department: uw.department,
+            roles: uw.roles,
+            webtools: uw.webtools,
+            isActive: uw.isActive,
+            lastActiveAt: uw.lastActiveAt
+          });
+        }
+      });
+
+      return Array.from(userMap.values()) as WebtoolUser[];
+    })
+  );
+}
   deleteUserWebtoolRole(email: string, webtoolId: number, roleId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${email}/${webtoolId}/role/${roleId}`);
   }

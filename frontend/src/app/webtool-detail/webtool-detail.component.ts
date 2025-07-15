@@ -325,34 +325,39 @@ export class WebtoolDetailComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-  loadUsersForWebtool() {
-    if (!this.webtoolId) return Promise.resolve();
+loadUsersForWebtool() {
+  if (!this.webtoolId) return Promise.resolve();
 
-    return new Promise((resolve, reject) => {
-      this.userWebtoolService.getConsolidatedUserData().pipe(
-        takeUntil(this.destroy$)
-      ).subscribe({
-        next: (allUsers) => {
-          this.users = allUsers
-            .filter(user => user.webtools?.includes(this.selectedWebtool?.webtool || ''))
-            .map(user => ({
-              userId: user.userId,
-              userName: user.userName,
-              email: user.email,
-              department: user.department,
-              roles: user.roles[this.webtoolId] || [],
-              webtools: user.webtools,
-              isActive: user.isActive !== undefined ? user.isActive : true
-            }));
-          resolve(true);
-        },
-        error: (error) => {
-          console.error('Error loading users:', error);
-          reject(error);
-        }
-      });
+  return new Promise((resolve, reject) => {
+    this.userWebtoolService.getConsolidatedUserData().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (allUsers) => {
+        this.users = allUsers
+          .filter(user => {
+            // Filter out inactive users
+            if (user.isActive === false) return false;
+            
+            return user.webtools?.includes(this.selectedWebtool?.webtool || '');
+          })
+          .map(user => ({
+            userId: user.userId,
+            userName: user.userName,
+            email: user.email,
+            department: user.department,
+            roles: user.roles[this.webtoolId] || [],
+            webtools: user.webtools,
+            isActive: user.isActive !== undefined ? user.isActive : true
+          }));
+        resolve(true);
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+        reject(error);
+      }
     });
-  }
+  });
+}
 
   onUserChange(selectedUserName: string) {
     const selectedUser = this.userOptions.find(user => user.value === selectedUserName);

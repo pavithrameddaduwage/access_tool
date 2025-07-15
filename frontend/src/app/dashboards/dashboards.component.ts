@@ -620,7 +620,7 @@ loadRecords() {
       next: (records) => {
         this.dashboards = this.dashboards.map(dashboard => {
           const users = records.filter(record => 
-            record.dashboards.includes(dashboard.dashboard)
+            record.dashboards.includes(dashboard.dashboard)  && record.isActive //change here
           );
           return {
             ...dashboard,

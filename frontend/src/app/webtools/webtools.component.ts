@@ -472,62 +472,119 @@ export class WebtoolsComponent implements OnInit {
       error: (error) => console.error('Error loading webtool options:', error)
     });
   }
-  loadUserWebtoolData() {
-    // console.log('Loading user webtool data...');
-    this.userWebtoolService.getConsolidatedUserData().pipe(
-      tap(users => console.log())
-    ).subscribe({
-      next: (users) => {
-        // console.log('Processing consolidated user data:', users);
+  // loadUserWebtoolData() {
+  //   // console.log('Loading user webtool data...');
+  //   this.userWebtoolService.getConsolidatedUserData().pipe(
+  //     tap(users => console.log())
+  //   ).subscribe({
+  //     next: (users) => {
+  //       // console.log('Processing consolidated user data:', users);
         
-        this.webtools = this.webtools.map(tool => {
-          // console.log(`Processing webtool ${tool.webtool}`);
+  //       this.webtools = this.webtools.map(tool => {
+  //         // console.log(`Processing webtool ${tool.webtool}`);
           
-          const toolUsers = users.filter(user => {
-            if (!user.webtools || !Array.isArray(user.webtools)) {
-              // console.log(`No webtools array for user ${user.userName}`);
-              return false;
-            }
+  //         const toolUsers = users.filter(user => {
+  //            // Add active status check here
+  //         if (user.isActive === false) return false;
+  //           if (!user.webtools || !Array.isArray(user.webtools)) {
+              
+  //             // console.log(`No webtools array for user ${user.userName}`);
+  //             return false;
+  //           }
   
-            const hasWebtool = user.webtools.some(wt => 
-              wt.toLowerCase().trim() === tool.webtool.toLowerCase().trim()
-            );
+  //           const hasWebtool = user.webtools.some(wt => 
+  //             wt.toLowerCase().trim() === tool.webtool.toLowerCase().trim()
+  //           );
             
-            // console.log(`User ${user.userName} has webtool ${tool.webtool}:`, hasWebtool);
-            return hasWebtool;
-          }).map(user => {
-            const userRoles = user.roles[tool.id] || [];
-            // console.log(`Roles for user ${user.userName}:`, userRoles);
+  //           // console.log(`User ${user.userName} has webtool ${tool.webtool}:`, hasWebtool);
+  //           return hasWebtool;
+  //         }).map(user => {
+  //           const userRoles = user.roles[tool.id] || [];
+  //           // console.log(`Roles for user ${user.userName}:`, userRoles);
             
-            return {
-              userId: user.userId,
-              userName: user.userName,
-              email: user.email,
-              department: user.department,
-              roles: userRoles,
-              webtools: user.webtools,
-              isActive: user.isActive !== undefined ? user.isActive : true,
-              lastActiveAt: user.lastActiveAt
-            };
-          });
+  //           return {
+  //             userId: user.userId,
+  //             userName: user.userName,
+  //             email: user.email,
+  //             department: user.department,
+  //             roles: userRoles,
+  //             webtools: user.webtools,
+  //             isActive: user.isActive !== undefined ? user.isActive : true,
+  //             lastActiveAt: user.lastActiveAt
+  //           };
+  //         });
   
-          // console.log(`Found ${toolUsers.length} users for ${tool.webtool}:`, toolUsers);
+  //         // console.log(`Found ${toolUsers.length} users for ${tool.webtool}:`, toolUsers);
   
+  //         return {
+  //           ...tool,
+  //           users: toolUsers,
+  //           totalUsers: toolUsers.length
+  //         };
+  //       });
+  
+  //       this.webtools = [...this.webtools];
+  //       this.filteredWebtools = [...this.webtools];
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading user webtool data:', error);
+  //     }
+  //   });
+  // }
+loadUserWebtoolData() {
+  this.userWebtoolService.getConsolidatedUserData().pipe(
+    tap(users => console.log())
+  ).subscribe({
+    next: (users) => {
+      this.webtools = this.webtools.map(tool => {
+        const toolUsers = users.filter(user => {
+          // First check if user is active
+          if (user.isActive === false) return false;
+          
+          if (!user.webtools || !Array.isArray(user.webtools)) {
+            return false;
+          }
+
+          const hasWebtool = user.webtools.some(wt => 
+            wt.toLowerCase().trim() === tool.webtool.toLowerCase().trim()
+          );
+          
+          return hasWebtool;
+        }).map(user => {
+          const userRoles = user.roles[tool.id] || [];
+          
           return {
-            ...tool,
-            users: toolUsers,
-            totalUsers: toolUsers.length
+            userId: user.userId,
+            userName: user.userName,
+            email: user.email,
+            department: user.department,
+            roles: userRoles,
+            webtools: user.webtools,
+            isActive: user.isActive !== undefined ? user.isActive : true,
+            lastActiveAt: user.lastActiveAt
           };
         });
-  
-        this.webtools = [...this.webtools];
-        this.filteredWebtools = [...this.webtools];
-      },
-      error: (error) => {
-        console.error('Error loading user webtool data:', error);
-      }
-    });
-  }
+
+        return {
+          ...tool,
+          users: toolUsers,
+          totalUsers: toolUsers.length
+        };
+      });
+
+      this.webtools = [...this.webtools];
+      this.filteredWebtools = [...this.webtools];
+    },
+    error: (error) => {
+      console.error('Error loading user webtool data:', error);
+    }
+  });
+}
+
+
+
+
+
   // onSave() {
   //   if (!this.editForm.email) {
   //     alert('Please select a user');
