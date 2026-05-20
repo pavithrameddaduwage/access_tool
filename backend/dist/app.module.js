@@ -29,7 +29,6 @@ const group_module_1 = require("./group/group.module");
 const webtool_user_module_1 = require("./webtool-user/webtool-user.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
-const auth_guard_1 = require("./auth/guards/auth.guard");
 const core_1 = require("@nestjs/core");
 const http_exception_filter_1 = require("./http-exception.filter");
 const config_1 = require("@nestjs/config");
@@ -46,23 +45,27 @@ exports.AppModule = AppModule = __decorate([
         imports: [config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: 'localhost',
-                port: 5432,
-                username: 'postgres',
-                password: '12345',
-                database: 'user-access',
-                entities: [type_entity_1.Type, dashboard_entity_1.Dashboard,
-                    dashboard_type_entity_1.DashboardType,
-                    dashboard_valuetype_entity_1.DashboardValuetype,
-                    valuetype_entity_1.Valuetype],
-                autoLoadEntities: true,
-                synchronize: true,
-                logging: false,
-                extra: {
-                    timezone: 'America/New_York'
-                }
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    type: 'postgres',
+                    host: configService.get('PG_DB_HOST', 'localhost'),
+                    port: parseInt(configService.get('PG_DB_PORT', '5432'), 10),
+                    username: configService.get('PG_DB_USER', 'postgres'),
+                    password: configService.get('PG_DB_PASSWORD', 'M!SAppsTest'),
+                    database: configService.get('PG_DB_NAME', 'user-access'),
+                    entities: [type_entity_1.Type, dashboard_entity_1.Dashboard,
+                        dashboard_type_entity_1.DashboardType,
+                        dashboard_valuetype_entity_1.DashboardValuetype,
+                        valuetype_entity_1.Valuetype],
+                    autoLoadEntities: true,
+                    synchronize: true,
+                    logging: false,
+                    extra: {
+                        timezone: 'America/New_York'
+                    }
+                }),
             }),
             department_module_1.DepartmentModule,
             roles_module_1.RolesModule,
@@ -81,18 +84,13 @@ exports.AppModule = AppModule = __decorate([
             powerbi_metrics_module_1.PowerBIMetricsModule,
             workspace_mapping_module_1.WorkspaceMappingModule,
             report_mapping_module_1.ReportMappingModule,
-            analytics_module_1.AnalyticsModule,
-        ],
+            analytics_module_1.AnalyticsModule,],
         controllers: [app_controller_1.AppController],
         providers: [
             app_service_1.AppService,
             {
                 provide: core_1.APP_FILTER,
                 useClass: http_exception_filter_1.HttpExceptionFilter,
-            },
-            {
-                provide: core_1.APP_GUARD,
-                useClass: auth_guard_1.AuthGuard,
             },
         ],
     })

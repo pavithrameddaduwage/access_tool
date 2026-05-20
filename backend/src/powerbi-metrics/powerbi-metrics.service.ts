@@ -1520,13 +1520,20 @@ async getUserMetrics(
   reports: {reportId: string, reportName: string}[];
   workspaces: {workspaceId: string, workspaceName: string}[];
   activityByDate: {date: string, count: number}[];
+  assignedDashboards: string[];
+  estimatedTimeSpent: number;
 }> {
   try {
-    const [totalViews, rawReports, rawWorkspaces, activityByDate] = await Promise.all([
+    const [totalViews, rawReports, rawWorkspaces, activityByDate, estimatedTimeSpent, userAssignments] = await Promise.all([
       this.getUserTotalViews(userId, startDate, endDate, workspaceId, reportId),
       this.getUserReports(userId, startDate, endDate, workspaceId, reportId),
       this.getUserWorkspaces(userId, startDate, endDate, reportId),
-      this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId)
+      this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId),
+      this.getUserEstimatedTimeSpent(userId, startDate, endDate, workspaceId, reportId),
+      this.userDashboardRepository.find({
+        where: { email: userId, isActive: true },
+        relations: ['dashboard']
+      })
     ]);
 
     // Map names for reports and workspaces
@@ -1545,15 +1552,77 @@ async getUserMetrics(
       totalViews: totalViews || 0,
       reports: reports || [],
       workspaces: workspaces || [],
-      activityByDate: activityByDate || []
+      activityByDate: activityByDate || [],
+      assignedDashboards: userAssignments.map(ua => ua.dashboard?.dashboard).filter(Boolean) || [],
+      estimatedTimeSpent: estimatedTimeSpent || 0
     };
   } catch (error) {
     return {
       totalViews: 0,
       reports: [],
       workspaces: [],
-      activityByDate: []
+      activityByDate: [],
+      assignedDashboards: [],
+      estimatedTimeSpent: 0
     };
+  }
+}
+
+private async getUserEstimatedTimeSpent(
+  userId: string,
+  startDate: Date,
+  endDate: Date,
+  workspaceId?: string,
+  reportId?: string
+): Promise<number> {
+  try {
+    const query = this.powerbiLogRepository
+      .createQueryBuilder('log')
+      .where('log.userId = :userId', { userId })
+      .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere("log.operation = 'ViewReport'")
+      .orderBy('log.creationTime', 'ASC');
+
+    if (workspaceId) {
+      if (workspaceId === '000000') {
+        query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+      } else {
+        query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+      }
+    }
+
+    if (reportId) {
+      query.andWhere('log.reportId = :reportId', { reportId });
+    }
+
+    const logs = await query.getMany();
+    if (logs.length === 0) {
+      return 0;
+    }
+    if (logs.length === 1) {
+      return 120; // 2 minutes default for 1 page view
+    }
+
+    let totalDurationSeconds = 0;
+    const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+    const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
+
+    for (let i = 0; i < logs.length - 1; i++) {
+      const currentLogTime = new Date(logs[i].creationTime).getTime();
+      const nextLogTime = new Date(logs[i + 1].creationTime).getTime();
+      const diff = nextLogTime - currentLogTime;
+
+      if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
+        totalDurationSeconds += diff / 1000;
+      } else {
+        totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
+      }
+    }
+    totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
+
+    return Math.round(totalDurationSeconds);
+  } catch (error) {
+    return 0;
   }
 }
 private async getUserTotalViews(
@@ -2241,6 +2310,13 @@ async getUserNameMappings(emails: string[]): Promise<{
   names: { [email: string]: string };
   departments: { [email: string]: string };
 }> {
+  if (!emails || emails.length === 0) {
+    return {
+      names: {},
+      departments: {}
+    };
+  }
+
   const users = await this.userDashboardRepository
     .createQueryBuilder('user')
     .where('user.email IN (:...emails)', { emails })
@@ -2261,5 +2337,119 @@ async getUserNameMappings(emails: string[]): Promise<{
     names: nameMap,
     departments: departmentMap,
   };
+}
+
+public async syncMappingsToMasterData(): Promise<void> {
+  try {
+    this.logger.log('Starting Workspace/Dashboard mappings to Master Data sync...');
+    const manager = this.dashboardRepository.manager;
+
+    // 1. Fetch workspace mappings and report mappings
+    const workspaceMappings = await manager.query('SELECT * FROM workspace_mapping');
+    const reportMappings = await manager.query('SELECT * FROM report_mapping');
+
+    // 2. Sync workspaces
+    const workspaceNameToId: { [name: string]: number } = {};
+    for (const wm of workspaceMappings) {
+      const name = wm.displayName || wm.originalName;
+      // Check if exists
+      const existing = await manager.query('SELECT id FROM workspace WHERE workspace = $1', [name]);
+      let workspaceId: number;
+      if (existing && existing.length > 0) {
+        workspaceId = existing[0].id;
+      } else {
+        const insertRes = await manager.query(
+          'INSERT INTO workspace (workspace) VALUES ($1) RETURNING id',
+          [name]
+        );
+        workspaceId = insertRes[0].id;
+      }
+      workspaceNameToId[wm.workspaceId] = workspaceId;
+    }
+
+    // 3. Sync dashboards & workspace links
+    for (const rm of reportMappings) {
+      const name = rm.displayName || rm.originalName;
+      // Check if exists
+      const existingDashboard = await manager.query('SELECT id FROM dashboard WHERE dashboard = $1', [name]);
+      let dashboardId: number;
+      if (existingDashboard && existingDashboard.length > 0) {
+        dashboardId = existingDashboard[0].id;
+      } else {
+        const insertRes = await manager.query(
+          'INSERT INTO dashboard (dashboard, "groupId") VALUES ($1, NULL) RETURNING id',
+          [name]
+        );
+        dashboardId = insertRes[0].id;
+      }
+
+      // Link in dashboard_workspace
+      const dbWorkspaceId = workspaceNameToId[rm.workspaceId];
+      if (dbWorkspaceId) {
+        const existingLink = await manager.query(
+          'SELECT id FROM dashboard_workspace WHERE "workspaceId" = $1 AND "dashboardId" = $2',
+          [dbWorkspaceId, dashboardId]
+        );
+        if (!existingLink || existingLink.length === 0) {
+          await manager.query(
+            'INSERT INTO dashboard_workspace ("workspaceId", "dashboardId") VALUES ($1, $2)',
+            [dbWorkspaceId, dashboardId]
+          );
+        }
+      }
+    }
+
+    this.logger.log('Workspace/Dashboard mappings successfully synced to Master Data.');
+  } catch (err) {
+    this.logger.error('Failed to sync mappings to Master Data', err.stack);
+  }
+}
+
+public async syncUsersFromLogs(): Promise<void> {
+  try {
+    this.logger.log('Starting User roster sync from Power BI logs...');
+    const manager = this.dashboardRepository.manager;
+
+    // 1. Get distinct UserIds (emails) from power_bi_log
+    const res = await manager.query('SELECT DISTINCT "userId" FROM power_bi_log WHERE "userId" IS NOT NULL');
+    const emails = res.map(r => r.userId.toLowerCase());
+
+    if (emails.length === 0) return;
+
+    // 2. Get the 'Viewer' role (or create it)
+    let roleRes = await manager.query("SELECT id FROM role_master WHERE role = 'Viewer'");
+    let viewerRoleId;
+    if (roleRes.length > 0) {
+      viewerRoleId = roleRes[0].id;
+    } else {
+      const insertRole = await manager.query("INSERT INTO role_master (role) VALUES ('Viewer') RETURNING id");
+      viewerRoleId = insertRole[0].id;
+    }
+
+    // 3. Insert users that don't exist
+    let newUsersCount = 0;
+    for (const email of emails) {
+      const userRes = await manager.query('SELECT id FROM "user" WHERE email = $1', [email]);
+      if (userRes.length === 0) {
+        const name = email.split('@')[0];
+        const insertUser = await manager.query(
+          'INSERT INTO "user" (email, name, is_active) VALUES ($1, $2, true) RETURNING id',
+          [email, name]
+        );
+        const userId = insertUser[0].id;
+
+        // Assign 'Viewer' role
+        await manager.query(
+          'INSERT INTO user_roles ("userId", "roleId") VALUES ($1, $2)',
+          [userId, viewerRoleId]
+        );
+        newUsersCount++;
+      }
+    }
+    
+    this.logger.log(`User roster sync complete. Added ${newUsersCount} new users from logs.`);
+  } catch (err) {
+    this.logger.error('Failed to sync users from logs', err.stack);
+  }
 }
 }

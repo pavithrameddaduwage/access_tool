@@ -1,24 +1,67 @@
-<div class="flex-col h-screen bg-gradient-to-t from-cyan-900 to-light-blue-600 -mt-16">
-    <div class="flex-col h-full mx-auto py-48">
-        <div class="my-auto">
-            <h3 class="text-blue-50 text-center font-medium text-2xl mt-5 mx-auto mb-5">User Access Tool</h3>
-            <div class="max-w-xs mx-auto my-auto border border-gray-400 rounded-lg p-5 pb-16 w-96 bg-white shadow-xl">
-                <h1 class="text-primary text-center font-light text-2xl mt-5">
-                    Login
-                </h1>
-                <form [formGroup]="formGroup" class="block max-w-xs mx-auto" (ngSubmit)="handleSubmit()">
-                    <input type="email" placeholder="Email" formControlName="email" required class="text-sm"/>
-                    <input type="password" placeholder="Password" formControlName="password" class="text-sm"/>
-                    <button type="submit" name="login" 
-                        class="btn w-full text-center justify-center my-auto py-auto font-light text-sm">
-                        Login
-                    </button>
-                </form>
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0a1e36] via-[#0d3159] to-[#1c4b7c] -mt-16 relative overflow-hidden">
+  <!-- Glowing background elements for premium feel -->
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+
+  <div class="relative w-full max-w-md px-6 py-12">
+    <!-- Main Card -->
+    <div class="bg-white/80 backdrop-blur-md border border-white/20 rounded-3xl p-8 shadow-2xl">
+      <!-- Title -->
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-black text-gray-800 tracking-tight">User Access Panel</h1>
+        <p class="text-xs text-gray-500 font-medium mt-1.5">Authorized Administrator Portal</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="formGroup" (ngSubmit)="handleSubmit()" class="space-y-5">
+        <!-- Email Input -->
+        <div class="space-y-1.5">
+          <label class="block text-gray-500 text-[10px] font-bold uppercase tracking-wider">Email Address</label>
+          <div class="relative">
+            <input 
+              type="email" 
+              placeholder="name@company.com" 
+              formControlName="email" 
+              required 
+              class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            />
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <i class="pi pi-envelope text-xs"></i>
             </div>
-            <!-- Powered by text below form -->
-            <div class="text-center text-blue-100 text-sm mt-4">
-                Powered by MIS Team
-            </div>
+          </div>
         </div>
+
+        <!-- Password Input -->
+        <div class="space-y-1.5">
+          <label class="block text-gray-500 text-[10px] font-bold uppercase tracking-wider">Password</label>
+          <div class="relative">
+            <input 
+              type="password" 
+              placeholder="••••••••" 
+              formControlName="password" 
+              required 
+              class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            />
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <i class="pi pi-lock text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          [disabled]="formGroup.invalid"
+          class="w-full py-3 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+        >
+          Confirm Authentication
+        </button>
+      </form>
+
+      <!-- Powered By -->
+      <div class="text-center text-[10px] text-gray-400 font-semibold uppercase tracking-wider mt-8">
+        Powered by MIS Team
+      </div>
     </div>
+  </div>
 </div>

@@ -31,10 +31,12 @@ interface ChartDataPoint {
   x: number; // Timestamp
   y: number; // View count
 }
+import { DropdownModule } from 'primeng/dropdown';
+
 @Component({
   selector: 'app-powerbi-usage-dashboard',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule, FormsModule],
+  imports: [CommonModule, NgApexchartsModule, FormsModule, DropdownModule],
   templateUrl: './powerbi-usage-dashboard.component.html',
 })
 export class PowerBIUsageDashboardComponent implements OnInit {

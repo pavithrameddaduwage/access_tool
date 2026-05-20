@@ -293,6 +293,33 @@ findUserByEmail(email: string) {
   });
 }
  
+  async seedDummyAdmin(): Promise<User> {
+    let adminRole = await this.roleRepository.findOne({ where: { role: 'Admin' } });
+    if (!adminRole) {
+      adminRole = new RoleMaster();
+      adminRole.role = 'Admin';
+      adminRole = await this.roleRepository.save(adminRole);
+    }
+
+    let adminUser = await this.userRepository.findOne({ 
+      where: { email: 'admin@hgusa.com' },
+      relations: ['user_roles', 'user_roles.role']
+    });
+    if (!adminUser) {
+      adminUser = new User();
+      adminUser.email = 'admin@hgusa.com';
+      adminUser.name = 'Admin User';
+      adminUser.is_active = true;
+      adminUser = await this.userRepository.save(adminUser);
+
+      const userRole = new UserRoles();
+      userRole.user = adminUser;
+      userRole.role = adminRole;
+      await this.userrolesRepository.save(userRole);
+    }
+    
+    return this.findUserByEmail('admin@hgusa.com');
+  }
 
   async remove(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });

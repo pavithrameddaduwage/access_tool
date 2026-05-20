@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HomeService } from '../Services/home.service';
 import { UserService } from '../Services/user.service';
 import { DashboardService } from '../Services/dashboard.service';
-import { SelectWithSearchComponent } from '../components/select_with_search/select_with_search.component';
 import { FormsModule } from '@angular/forms';
 import { catchError, debounceTime, distinctUntilChanged, finalize, of, Subject, switchMap, tap, timeout } from 'rxjs';
 import { ToastService } from '../Services/toast.service';
@@ -26,7 +25,7 @@ interface UserOption {
 @Component({
   selector: 'app-dashboard-detail',
   standalone: true,
-  imports: [CommonModule, SelectWithSearchComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard-detail.component.html'
 })
 export class DashboardDetailComponent implements OnInit {

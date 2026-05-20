@@ -3,7 +3,6 @@ import { UserService } from '../../Services/user.service';
 import { DepartmentService } from '../../Services/department.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SelectWithSearchComponent } from '../../components/select_with_search/select_with_search.component';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -34,10 +33,14 @@ interface User {
   department?: { id: number; department: string };
 }
 
+import { DropdownModule } from 'primeng/dropdown';
+
+import { AvatarComponent } from '../../components/avatar/avatar.component';
+
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [FormsModule, CommonModule, SelectWithSearchComponent],
+  imports: [FormsModule, CommonModule, DropdownModule, AvatarComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })

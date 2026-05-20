@@ -29,6 +29,8 @@ export declare class PowerBIMetricsController {
             date: string;
             count: number;
         }[];
+        assignedDashboards: string[];
+        estimatedTimeSpent: number;
     }>;
     getLog(): Promise<import("./entities/powerbi-log.entity").PowerBILog[]>;
     getUserConsumptionMethods(userId: string, startDate: Date, endDate: Date): Promise<{

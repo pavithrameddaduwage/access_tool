@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { CustomTableComponent } from '../custom-table/custom-table.component';
 import { FormsModule } from '@angular/forms';
 import { SelectComponent } from '../select/select/select.component';
-import { SelectWithSearchComponent } from '../select_with_search/select_with_search.component';
 
 @Component({
   selector: 'app-role-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectComponent, SelectWithSearchComponent],
+  imports: [CommonModule, FormsModule, SelectComponent],
   styleUrls: ['./app-role-table.component.css'],
   templateUrl: './app-role-table.component.html'
 })

@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { PowerBIMetricsService, PowerBIReport, PowerBIWorkspace } from '../Services/powerbi-metrics.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -6,8 +7,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HomeService } from '../Services/home.service';
 import { ToastService } from '../Services/toast.service';
+import { DropdownModule } from 'primeng/dropdown';
 import { NameMapperService } from '../Services/name-mapper.service';
-
+import { AvatarComponent } from '../components/avatar/avatar.component';
 
 interface ViewCount {
   date: string;
@@ -50,6 +52,8 @@ interface UserDetail {
   workspaces: number;
   lastActivity: string;
   activityByDate: {date: string, count: number}[];
+  assignedDashboards?: string[];
+  estimatedTimeSpent?: number;
 }
 
 interface UserMetric {
@@ -100,14 +104,16 @@ interface User {
   selector: 'app-powerbi-dashboard',
   templateUrl: './powerbi-dashboard.component.html',
   styleUrls: ['./powerbi-dashboard.component.css'],
-  imports: [CommonModule, NgApexchartsModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, NgApexchartsModule, ReactiveFormsModule, FormsModule, DropdownModule, AvatarComponent],
 
   standalone: true
 })
 export class PowerBIDashboardComponent implements OnInit {
   // View state
-  activeView: 'workspace' | 'user' = 'workspace';
+  activeView: 'workspace' | 'user' | 'access' = 'workspace';
   selectedUserId: string | null = null;
+  dashboardAccessData: any[] = [];
+  loadingAccessMatrix = false;
 
   selectedPeriod = 30;
   isUserListExpanded = false;
@@ -153,7 +159,7 @@ export class PowerBIDashboardComponent implements OnInit {
   userConsumptionMethods: ConsumptionMethod[] = []; 
   // Colors
   private blueGradientColors = [
-    '#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'
+    '#1e3a8a', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'
   ];
 
 userReportViews: {reportId: string, reportName: string, count: number}[] = [];
@@ -189,10 +195,17 @@ userCounts = {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private toastService: ToastService,
-    private nameMapper: NameMapperService
+    private nameMapper: NameMapperService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['view'] && ['workspace', 'user', 'access'].includes(params['view'])) {
+        this.activeView = params['view'];
+      }
+    });
+
     this.loadFilters().then(() => {
       this.loadData(this.selectedPeriod);
     });  }
@@ -256,7 +269,7 @@ userCounts = {
         dataLabels: {
           enabled: false
         },
-        colors: ['#0077B6'],
+        colors: ['#2563eb'],
         tooltip: {
           y: {
             formatter: (val: number) => `${val} views`
@@ -331,13 +344,13 @@ userCounts = {
           format: 'dd MMM yyyy'
         }
       },
-      colors: ['#ffb703'],
+      colors: ['#2563eb'],
       fill: {
         type: 'gradient',
         gradient: {
           shadeIntensity: 1,
-          opacityFrom: 0.7,
-          opacityTo: 0.3,
+          opacityFrom: 0.25,
+          opacityTo: 0.05,
         }
       },
       // Add padding to the chart to ensure labels fit
@@ -387,7 +400,7 @@ userCounts = {
           rotate: -45,
           style: {
             fontSize: '11px',
-            colors: '#333'
+            colors: '#93c5fd'
           }
         }
       },
@@ -400,7 +413,7 @@ userCounts = {
       dataLabels: {
         enabled: false
       },
-      colors: ["#0077B6"]
+      colors: ["#2563eb"]
     };
   }
 
@@ -477,7 +490,7 @@ userCounts = {
           offsetY: 5
         }
       },
-      colors: ['#0077B6'],
+      colors: ['#2563eb'],
       plotOptions: {
         bar: {
           columnWidth: '60%'
@@ -535,7 +548,7 @@ userCounts = {
             return this.formatDisplayDate(dataPoint?.originalDate || ''); 
           },
           style: { 
-            colors: '#6B7280', 
+            colors: '#93c5fd', 
             fontSize: '12px', 
             cssClass: 'apexcharts-xaxis-label' 
           },
@@ -558,7 +571,7 @@ userCounts = {
         }, 
         labels: { 
           style: { 
-            colors: '#6B7280', 
+            colors: '#93c5fd', 
             fontSize: '12px' 
           } 
         } 
@@ -567,9 +580,10 @@ userCounts = {
         width: 2, 
         curve: 'smooth' 
       }, 
-      colors: ['#ffb703'], 
+      colors: ['#2563eb'], 
       grid: { 
-        borderColor: '#E5E7EB' 
+        borderColor: '#dbeafe',
+        strokeDashArray: 4,
       },
       tooltip: { 
         x: { 
@@ -685,7 +699,7 @@ userCounts = {
       console.error('Error loading user metrics:', error);
     }
   }
-  private transformDisplayName(name: string | undefined): string {
+  transformDisplayName(name: string | undefined): string {
     if (!name) return 'Unknown';
     
     // Remove "HGU" prefix (case insensitive)
@@ -698,6 +712,15 @@ userCounts = {
     
     // Trim any remaining whitespace
     return transformed.trim() || 'Unknown';
+  }
+  
+  formatTimeSpent(seconds: number | undefined): string {
+    if (!seconds || seconds <= 0) return '0m';
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return `${minutes}m`;
+    const hours = (seconds / 3600).toFixed(1);
+    return `${hours}h`;
   }
   
   private extractWorkspaceName(reportName: string | undefined): string | undefined {
@@ -747,7 +770,7 @@ userCounts = {
         },
        
       },
-      colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7', '#5E8CBE', '#4A7FB7', '#3672B0', '#2365A9'],
+      colors: ['#1e3a8a', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#1d4ed8', '#1e3a8a', '#2563eb'],
     };
   }
   private generateDailyActivityData(startDate: Date, endDate: Date, activityData: {date: string, count: number}[]): any[] {
@@ -953,6 +976,11 @@ async loadData(days: number): Promise<void> {
   
       // Process users and workspaces
       await this.processUsers(startDate, endDate, workspaceId, reportId);
+      
+      if (this.activeView === 'access') {
+        await this.loadAccessMatrix();
+      }
+      
       this.prepareCharts();
       
       // If a user is selected, refresh their data with the new filters
@@ -1030,7 +1058,7 @@ async loadData(days: number): Promise<void> {
           formatter: (value: number) => `${value} views`,
         },
       },
-      colors: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#789DBC', '#8ACDD7'],
+      colors: ['#1e3a8a', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'],
     };
     
     // console.log('Chart series values:', this.userConsumptionChartOptions.series);
@@ -1421,6 +1449,191 @@ closeUserListModal() {
   this.showUserListModal = false;
   this.modalTitle = '';
   this.modalUsers = [];
+}
+
+async loadAccessMatrix(): Promise<void> {
+  this.loadingAccessMatrix = true;
+  this.dashboardAccessData = [];
+  try {
+    const workspaceId = this.selectedWorkspace === 'all' || this.selectedWorkspace === null 
+      ? undefined 
+      : this.selectedWorkspace as string;
+    
+    const workspaceName = this.workspaceOptions.find(w => w.id === workspaceId)?.name || '';
+    
+    const reports = this.reportOptions;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - this.selectedPeriod);
+    const endDate = new Date();
+
+    const accessPromises = reports.map(async (report) => {
+      try {
+        let databaseUsersRaw: any = await this.homeService.getDatabaseUsersByWorkspaceAndReportID(
+          workspaceName,
+          report.name
+        ).toPromise().catch(() => []);
+        
+        const databaseUsers: any[] = databaseUsersRaw || [];
+        const dbEmails = databaseUsers.map(u => u.user_email.toLowerCase());
+        
+        const activeUsersRaw: any = await this.powerBIMetricsService.getTopUsers(
+          startDate,
+          endDate,
+          1000,
+          workspaceId,
+          report.id
+        ).toPromise().catch(() => []);
+        
+        const activeUsers: any[] = activeUsersRaw || [];
+
+        const activeUserIds = activeUsers.map(u => u.userId);
+        const allUserIds = Array.from(new Set([...dbEmails, ...activeUserIds]));
+        
+        const mappings: any = await this.powerBIMetricsService.getUserNameMappings(allUserIds)
+          .toPromise()
+          .catch(() => ({ names: {}, departments: {} }));
+
+        const nameMappings = mappings?.names || {};
+        const departmentMappings = mappings?.departments || {};
+
+        const usersList = await Promise.all(allUserIds.map(async (userId) => {
+          const hasAccess = dbEmails.includes(userId.toLowerCase());
+          
+          const activeUser = activeUsers.find(u => u.userId.toLowerCase() === userId.toLowerCase());
+          const totalViews = activeUser ? activeUser.count : 0;
+          
+          let lastViewed = 'Never';
+          let timeSpent = 0;
+          
+          if (totalViews > 0) {
+            const userMetrics: any = await this.powerBIMetricsService.getUserMetrics(
+              userId,
+              startDate,
+              endDate,
+              workspaceId,
+              report.id
+            ).toPromise().catch(() => null);
+            
+            if (userMetrics) {
+              lastViewed = userMetrics.activityByDate && userMetrics.activityByDate.length > 0 
+                ? userMetrics.activityByDate[userMetrics.activityByDate.length - 1].date 
+                : 'Never';
+              timeSpent = userMetrics.estimatedTimeSpent || 0;
+            }
+          }
+
+          return {
+            email: userId,
+            name: nameMappings[userId] || userId.split('@')[0],
+            department: departmentMappings[userId] || 'Unknown',
+            hasAccess,
+            totalViews,
+            lastViewed,
+            estimatedTimeSpent: timeSpent
+          };
+        }));
+
+        usersList.sort((a, b) => {
+          if (a.hasAccess !== b.hasAccess) return a.hasAccess ? -1 : 1;
+          return b.totalViews - a.totalViews;
+        });
+
+        const activeUsersCount = usersList.filter(u => u.totalViews > 0).length;
+
+        return {
+          reportId: report.id,
+          reportName: report.name,
+          assignedUsersCount: dbEmails.length,
+          activeUsersCount,
+          users: usersList,
+          searchQuery: '',
+          accessFilter: 'all',
+          currentPage: 1,
+          pageSize: 5
+        };
+      } catch (err) {
+        console.error(`Error loading access details for report ${report.name}:`, err);
+        return {
+          reportId: report.id,
+          reportName: report.name,
+          assignedUsersCount: 0,
+          activeUsersCount: 0,
+          users: [],
+          searchQuery: '',
+          accessFilter: 'all',
+          currentPage: 1,
+          pageSize: 5
+        };
+      }
+    });
+
+    this.dashboardAccessData = await Promise.all(accessPromises);
+  } catch (error) {
+    console.error('Error loading Access Control Matrix:', error);
+  } finally {
+    this.loadingAccessMatrix = false;
+  }
+}
+
+getPaginatedReportUsers(report: any): any[] {
+  let list = report.users || [];
+  
+  if (report.searchQuery) {
+    const q = report.searchQuery.toLowerCase();
+    list = list.filter((u: any) => 
+      u.name.toLowerCase().includes(q) || 
+      u.email.toLowerCase().includes(q) ||
+      u.department.toLowerCase().includes(q)
+    );
+  }
+  
+  if (report.accessFilter && report.accessFilter !== 'all') {
+    if (report.accessFilter === 'assigned') {
+      list = list.filter((u: any) => u.hasAccess);
+    } else if (report.accessFilter === 'external') {
+      list = list.filter((u: any) => !u.hasAccess);
+    }
+  }
+  
+  const startIndex = (report.currentPage - 1) * report.pageSize;
+  return list.slice(startIndex, startIndex + report.pageSize);
+}
+
+getReportUsersTotalCount(report: any): number {
+  let list = report.users || [];
+  
+  if (report.searchQuery) {
+    const q = report.searchQuery.toLowerCase();
+    list = list.filter((u: any) => 
+      u.name.toLowerCase().includes(q) || 
+      u.email.toLowerCase().includes(q) ||
+      u.department.toLowerCase().includes(q)
+    );
+  }
+  
+  if (report.accessFilter && report.accessFilter !== 'all') {
+    if (report.accessFilter === 'assigned') {
+      list = list.filter((u: any) => u.hasAccess);
+    } else if (report.accessFilter === 'external') {
+      list = list.filter((u: any) => !u.hasAccess);
+    }
+  }
+  
+  return list.length;
+}
+
+getReportPageNumbers(report: any): number[] {
+  const total = this.getReportUsersTotalCount(report);
+  const pages = Math.ceil(total / report.pageSize);
+  return Array.from({ length: pages }, (_, i) => i + 1);
+}
+
+changeReportPage(report: any, page: number): void {
+  report.currentPage = page;
+}
+
+MathMin(a: number, b: number): number {
+  return Math.min(a, b);
 }
 
 }

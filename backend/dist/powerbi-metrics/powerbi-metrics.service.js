@@ -717,11 +717,16 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
     }
     async getUserMetrics(userId, startDate, endDate, workspaceId, reportId) {
         try {
-            const [totalViews, rawReports, rawWorkspaces, activityByDate] = await Promise.all([
+            const [totalViews, rawReports, rawWorkspaces, activityByDate, estimatedTimeSpent, userAssignments] = await Promise.all([
                 this.getUserTotalViews(userId, startDate, endDate, workspaceId, reportId),
                 this.getUserReports(userId, startDate, endDate, workspaceId, reportId),
                 this.getUserWorkspaces(userId, startDate, endDate, reportId),
-                this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId)
+                this.getUserActivityByDate(userId, startDate, endDate, workspaceId, reportId),
+                this.getUserEstimatedTimeSpent(userId, startDate, endDate, workspaceId, reportId),
+                this.userDashboardRepository.find({
+                    where: { email: userId, isActive: true },
+                    relations: ['dashboard']
+                })
             ]);
             const [reports, workspaces] = await Promise.all([
                 Promise.all(rawReports.map(async (r) => ({
@@ -737,7 +742,9 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 totalViews: totalViews || 0,
                 reports: reports || [],
                 workspaces: workspaces || [],
-                activityByDate: activityByDate || []
+                activityByDate: activityByDate || [],
+                assignedDashboards: userAssignments.map(ua => ua.dashboard?.dashboard).filter(Boolean) || [],
+                estimatedTimeSpent: estimatedTimeSpent || 0
             };
         }
         catch (error) {
@@ -745,8 +752,57 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 totalViews: 0,
                 reports: [],
                 workspaces: [],
-                activityByDate: []
+                activityByDate: [],
+                assignedDashboards: [],
+                estimatedTimeSpent: 0
             };
+        }
+    }
+    async getUserEstimatedTimeSpent(userId, startDate, endDate, workspaceId, reportId) {
+        try {
+            const query = this.powerbiLogRepository
+                .createQueryBuilder('log')
+                .where('log.userId = :userId', { userId })
+                .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+                .andWhere("log.operation = 'ViewReport'")
+                .orderBy('log.creationTime', 'ASC');
+            if (workspaceId) {
+                if (workspaceId === '000000') {
+                    query.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+                }
+                else {
+                    query.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+                }
+            }
+            if (reportId) {
+                query.andWhere('log.reportId = :reportId', { reportId });
+            }
+            const logs = await query.getMany();
+            if (logs.length === 0) {
+                return 0;
+            }
+            if (logs.length === 1) {
+                return 120;
+            }
+            let totalDurationSeconds = 0;
+            const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+            const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
+            for (let i = 0; i < logs.length - 1; i++) {
+                const currentLogTime = new Date(logs[i].creationTime).getTime();
+                const nextLogTime = new Date(logs[i + 1].creationTime).getTime();
+                const diff = nextLogTime - currentLogTime;
+                if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
+                    totalDurationSeconds += diff / 1000;
+                }
+                else {
+                    totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
+                }
+            }
+            totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
+            return Math.round(totalDurationSeconds);
+        }
+        catch (error) {
+            return 0;
         }
     }
     async getUserTotalViews(userId, startDate, endDate, workspaceId, reportId) {
@@ -1070,6 +1126,12 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         };
     }
     async getUserNameMappings(emails) {
+        if (!emails || emails.length === 0) {
+            return {
+                names: {},
+                departments: {}
+            };
+        }
         const users = await this.userDashboardRepository
             .createQueryBuilder('user')
             .where('user.email IN (:...emails)', { emails })
@@ -1087,6 +1149,85 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             names: nameMap,
             departments: departmentMap,
         };
+    }
+    async syncMappingsToMasterData() {
+        try {
+            this.logger.log('Starting Workspace/Dashboard mappings to Master Data sync...');
+            const manager = this.dashboardRepository.manager;
+            const workspaceMappings = await manager.query('SELECT * FROM workspace_mapping');
+            const reportMappings = await manager.query('SELECT * FROM report_mapping');
+            const workspaceNameToId = {};
+            for (const wm of workspaceMappings) {
+                const name = wm.displayName || wm.originalName;
+                const existing = await manager.query('SELECT id FROM workspace WHERE workspace = $1', [name]);
+                let workspaceId;
+                if (existing && existing.length > 0) {
+                    workspaceId = existing[0].id;
+                }
+                else {
+                    const insertRes = await manager.query('INSERT INTO workspace (workspace) VALUES ($1) RETURNING id', [name]);
+                    workspaceId = insertRes[0].id;
+                }
+                workspaceNameToId[wm.workspaceId] = workspaceId;
+            }
+            for (const rm of reportMappings) {
+                const name = rm.displayName || rm.originalName;
+                const existingDashboard = await manager.query('SELECT id FROM dashboard WHERE dashboard = $1', [name]);
+                let dashboardId;
+                if (existingDashboard && existingDashboard.length > 0) {
+                    dashboardId = existingDashboard[0].id;
+                }
+                else {
+                    const insertRes = await manager.query('INSERT INTO dashboard (dashboard, "groupId") VALUES ($1, NULL) RETURNING id', [name]);
+                    dashboardId = insertRes[0].id;
+                }
+                const dbWorkspaceId = workspaceNameToId[rm.workspaceId];
+                if (dbWorkspaceId) {
+                    const existingLink = await manager.query('SELECT id FROM dashboard_workspace WHERE "workspaceId" = $1 AND "dashboardId" = $2', [dbWorkspaceId, dashboardId]);
+                    if (!existingLink || existingLink.length === 0) {
+                        await manager.query('INSERT INTO dashboard_workspace ("workspaceId", "dashboardId") VALUES ($1, $2)', [dbWorkspaceId, dashboardId]);
+                    }
+                }
+            }
+            this.logger.log('Workspace/Dashboard mappings successfully synced to Master Data.');
+        }
+        catch (err) {
+            this.logger.error('Failed to sync mappings to Master Data', err.stack);
+        }
+    }
+    async syncUsersFromLogs() {
+        try {
+            this.logger.log('Starting User roster sync from Power BI logs...');
+            const manager = this.dashboardRepository.manager;
+            const res = await manager.query('SELECT DISTINCT "userId" FROM power_bi_log WHERE "userId" IS NOT NULL');
+            const emails = res.map(r => r.userId.toLowerCase());
+            if (emails.length === 0)
+                return;
+            let roleRes = await manager.query("SELECT id FROM role_master WHERE role = 'Viewer'");
+            let viewerRoleId;
+            if (roleRes.length > 0) {
+                viewerRoleId = roleRes[0].id;
+            }
+            else {
+                const insertRole = await manager.query("INSERT INTO role_master (role) VALUES ('Viewer') RETURNING id");
+                viewerRoleId = insertRole[0].id;
+            }
+            let newUsersCount = 0;
+            for (const email of emails) {
+                const userRes = await manager.query('SELECT id FROM "user" WHERE email = $1', [email]);
+                if (userRes.length === 0) {
+                    const name = email.split('@')[0];
+                    const insertUser = await manager.query('INSERT INTO "user" (email, name, is_active) VALUES ($1, $2, true) RETURNING id', [email, name]);
+                    const userId = insertUser[0].id;
+                    await manager.query('INSERT INTO user_roles ("userId", "roleId") VALUES ($1, $2)', [userId, viewerRoleId]);
+                    newUsersCount++;
+                }
+            }
+            this.logger.log(`User roster sync complete. Added ${newUsersCount} new users from logs.`);
+        }
+        catch (err) {
+            this.logger.error('Failed to sync users from logs', err.stack);
+        }
     }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;

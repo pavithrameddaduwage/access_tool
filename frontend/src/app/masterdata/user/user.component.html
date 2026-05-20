@@ -80,17 +80,18 @@
   <!-- Department Dropdown -->
   <div>
     <label class="block text-gray-700 text-sm font-bold mb-2" for="department">Department</label>
-    <select
-      class="block w-full bg-white text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
-      [(ngModel)]="editForm.departmentId"
+    <p-dropdown 
+      [options]="departments" 
+      optionLabel="department" 
+      optionValue="id" 
+      [(ngModel)]="editForm.departmentId" 
       name="department"
-      [class.bg-gray-100]="editForm.departmentId"
-    >
-      <option [ngValue]="null"></option>
-      <option *ngFor="let dept of departments" [ngValue]="dept.id">
-        {{ dept.department }}
-      </option>
-    </select>
+      [filter]="true" 
+      filterBy="department" 
+      [showClear]="true" 
+      placeholder="Select Department"
+      styleClass="w-full text-sm border-gray-300 rounded-lg shadow-sm">
+    </p-dropdown>
   </div>
 
   <!-- Action Buttons -->
@@ -148,7 +149,12 @@
         
         <tbody class="bg-white divide-y divide-gray-200">
           <tr *ngFor="let user of users; let i = index" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300">{{ user.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300">
+              <div class="flex items-center">
+                <app-avatar [name]="user.name"></app-avatar>
+                <span>{{ user.name }}</span>
+              </div>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300">{{ user.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-300">
               <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">

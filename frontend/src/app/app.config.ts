@@ -38,6 +38,8 @@ Chart.register(
   Legend
 );
 
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
@@ -45,6 +47,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([customAuthInterceptor]),
       withFetch()
-    )
+    ),
+    provideAnimationsAsync()
   ]
 };

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { CustomTableComponent } from '../../components/custom-table/custom-table.component';
 import { RolesService } from '../../Services/roles.service';
 import { WebtoolService } from '../../Services/webtool.service';
 import { ToastService } from '../../Services/toast.service';
@@ -30,7 +29,7 @@ interface RoleData {
 
 @Component({
   selector: 'app-roles',
-  imports: [CommonModule, CustomTableComponent, RoleTableComponent],
+  imports: [CommonModule, RoleTableComponent],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.css'
 })

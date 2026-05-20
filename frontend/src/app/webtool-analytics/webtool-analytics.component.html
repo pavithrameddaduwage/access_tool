@@ -12,16 +12,18 @@
           <!-- Webtool Dropdown -->
           <div class="w-48">
             <div class="relative ml-9">
-              <select
-                [(ngModel)]="selectedWebtool"
-                (change)="filterByWebtool()"
-                class="w-full p-2 pl-3 text-sm border border-blue-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white appearance-none bg-blue-50 text-blue-900"
-              >
-                <option value="all">All Webtools</option>
-                <option *ngFor="let webtool of webtools" [value]="webtool.id">
-                  {{ webtool.webtool }}
-                </option>
-              </select>
+              <p-dropdown 
+                [options]="webtools" 
+                optionLabel="webtool" 
+                optionValue="id" 
+                [(ngModel)]="selectedWebtool" 
+                (onChange)="filterByWebtool()" 
+                [filter]="true" 
+                filterBy="webtool" 
+                [showClear]="true" 
+                placeholder="All Webtools"
+                styleClass="w-full text-sm border-blue-300 rounded-lg bg-blue-50 text-blue-900">
+              </p-dropdown>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-blue-700">
                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
               </div>
@@ -32,15 +34,18 @@
         <!-- User Dropdown -->
         <div class="w-48">
           <div class="relative">
-          <select
-  [(ngModel)]="selectedUser"
-  (change)="onUserFilterChange($event)"
-  class="user-select w-full p-2 pl-3 text-sm border border-blue-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white appearance-none bg-blue-50 text-blue-900">
-  <option value="All">All Users</option>
-  <option *ngFor="let user of getUserListForFilter()" [value]="user.email">
-    {{ user.username }}
-  </option>
-</select>
+          <p-dropdown 
+            [options]="getUserListForFilter()" 
+            optionLabel="username" 
+            optionValue="email" 
+            [(ngModel)]="selectedUser" 
+            (onChange)="onUserFilterChange($event)" 
+            [filter]="true" 
+            filterBy="username" 
+            [showClear]="true" 
+            placeholder="All Users"
+            styleClass="user-select w-full text-sm border-blue-300 rounded-lg bg-blue-50 text-blue-900">
+          </p-dropdown>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-700">
               <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
             </div>

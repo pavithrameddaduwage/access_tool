@@ -16,5 +16,6 @@ export declare class UsersService {
     findAllRoles(): Promise<RoleMaster[]>;
     findUserById(id: number): Promise<User>;
     findUserByEmail(email: string): Promise<User>;
+    seedDummyAdmin(): Promise<User>;
     remove(id: number): Promise<void>;
 }

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { CustomTableComponent } from '../../components/custom-table/custom-table.component';
 import { SelectWithSearchComponent } from '../../components/select_with_search/select_with_search.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DashboardService } from '../../Services/dashboard.service';
@@ -132,7 +131,7 @@ interface WorkspaceOption {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CustomTableComponent, SelectWithSearchComponent, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, SelectWithSearchComponent, FormsModule, ReactiveFormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

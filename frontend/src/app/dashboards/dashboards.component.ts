@@ -104,10 +104,14 @@ export class FilterUsersPipe implements PipeTransform {
     return filtered;
   }
 }
+import { DropdownModule } from 'primeng/dropdown';
+
+import { AvatarComponent } from '../components/avatar/avatar.component';
+
 @Component({
   selector: 'app-dashboards',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectWithSearchComponent, FilterUsersPipe],
+  imports: [CommonModule, FormsModule, SelectWithSearchComponent, FilterUsersPipe, DropdownModule, AvatarComponent],
   templateUrl: './dashboards.component.html',
   styleUrls: ['./dashboards.component.css']
 })

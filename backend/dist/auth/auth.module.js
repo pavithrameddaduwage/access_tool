@@ -12,29 +12,42 @@ const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const jwt_1 = require("@nestjs/jwt");
-const constants_1 = require("./constants");
+const config_1 = require("@nestjs/config");
 const users_module_1 = require("../users/users.module");
 const role_master_entity_1 = require("../users/entities/role_master.entity");
 const user_roles_entity_1 = require("../users/entities/user_roles.entity");
 const user_entity_1 = require("../users/entities/user.entity");
 const analytics_module_1 = require("../analytics/analytics.module");
+const core_1 = require("@nestjs/core");
+const auth_guard_1 = require("./guards/auth.guard");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
+    (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [
-            users_module_1.UsersModule, analytics_module_1.AnalyticsModule,
+            users_module_1.UsersModule, analytics_module_1.AnalyticsModule, config_1.ConfigModule,
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, role_master_entity_1.RoleMaster, user_roles_entity_1.UserRoles]),
-            jwt_1.JwtModule.register({
-                global: true,
-                secret: constants_1.jwtConstants.secret,
-                signOptions: { expiresIn: '24h' },
+            jwt_1.JwtModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    global: true,
+                    secret: configService.get('JWT_SECRET') || 'your-strong-secret-key-here-min-32-chars',
+                    signOptions: { expiresIn: '24h' },
+                }),
             }),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService],
-        exports: [auth_service_1.AuthService]
+        providers: [
+            auth_service_1.AuthService,
+            {
+                provide: core_1.APP_GUARD,
+                useClass: auth_guard_1.AuthGuard,
+            },
+        ],
+        exports: [auth_service_1.AuthService, jwt_1.JwtModule]
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

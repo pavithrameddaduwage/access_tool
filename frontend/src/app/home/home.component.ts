@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectWithSearchComponent } from '../components/select_with_search/select_with_search.component';
+import { AvatarComponent } from '../components/avatar/avatar.component';
 import { UserService } from '../Services/user.service';
 import { DashboardService } from '../Services/dashboard.service';
 import { HomeService } from '../Services/home.service';
@@ -58,7 +59,7 @@ interface DashboardWithWorkspace extends Dashboard {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectWithSearchComponent],
+  imports: [CommonModule, FormsModule, SelectWithSearchComponent, AvatarComponent],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {

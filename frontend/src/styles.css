@@ -1,65 +1,207 @@
+@import 'ngx-toastr/toastr';
+@import "primeicons/primeicons.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import 'ngx-toastr/toastr.css';
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Horizon Group USA Custom Global Colors & Theme Overrides */
+:root {
+  --page-bg: #f0f5ff;
+  --card-bg: #ffffff;
+  --card-border: #dbeafe;
+  --card-shadow: 0 1px 8px rgba(29, 78, 216, 0.07);
+  
+  --text-heading: #1e3a8a;
+  --text-body: #1e3a5f;
+  --text-muted: #93c5fd;
+  
+  --btn-active-grad: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+  --metric-grad: linear-gradient(135deg, #2563eb, #3b82f6);
+  
+  --table-border: #f0f9ff;
+  --table-hover: #eff6ff;
+}
 
-html {
-    font-size: 14px;
+body {
+  background-color: var(--page-bg);
+  color: var(--text-body);
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  margin: 0;
+  height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-heading);
+}
+
+h1.page-title {
+  font-weight: 700;
+}
+
+h2.card-title, h3.card-title {
+  font-weight: 600;
+}
+
+/* Global Tables styling */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  background-color: var(--card-bg) !important;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  border-bottom: 2px solid var(--table-border) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+td {
+  border-bottom: 1px solid var(--table-border) !important;
+  color: var(--text-heading) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+tr:hover td {
+  background-color: var(--table-hover) !important;
+}
+
+/* Buttons elevation */
+button.btn-active, .btn-primary {
+  background: var(--btn-active-grad) !important;
+  border: none !important;
+  color: #ffffff !important;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+button.btn-inactive, .btn-secondary {
+  background: var(--card-bg) !important;
+  border: 1px solid #bfdbfe !important;
+  color: #3b82f6 !important;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+/* Generic Modals glassmorphism */
+.fixed.inset-0:not(.pointer-events-none) {
+  backdrop-filter: blur(8px) !important;
+  background-color: rgba(30, 58, 138, 0.4) !important;
+}
+
+.bg-white.rounded-lg, .content-card {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+.metric-card {
+  background: var(--metric-grad) !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+}
+.metric-card h3, .metric-card p, .metric-card span {
+  color: #ffffff !important;
+}
+
+/* Form labels */
+label {
+  color: var(--text-muted) !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+}
+
+/* Inputs beauty */
+input[type="text"], input[type="email"], input[type="password"], select {
+  border-radius: 0.5rem !important;
+  border: 1px solid #bfdbfe !important;
+  padding: 0.625rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  background-color: #ffffff !important;
+  color: var(--text-body) !important;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+  outline: none !important;
+}
+
+/* Responsive table behavior */
+@media (max-width: 768px) {
+  table.responsive-table {
+    display: block;
+    width: 100%;
   }
   
-  @media (min-width: 640px) {
-    html {
-      font-size: 15px;
-    }
+  table.responsive-table thead {
+    display: none;
   }
   
-  @media (min-width: 1024px) {
-    html {
-      font-size: 16px;
-    }
+  table.responsive-table tbody, 
+  table.responsive-table tr, 
+  table.responsive-table td {
+    display: block;
+    width: 100%;
   }
   
-  /* Responsive table behavior */
-  @media (max-width: 768px) {
-    /* Stack table headers on small screens */
-    table.responsive-table {
-      display: block;
-      width: 100%;
-    }
-    
-    table.responsive-table thead {
-      display: none;
-    }
-    
-    table.responsive-table tbody, 
-    table.responsive-table tr, 
-    table.responsive-table td {
-      display: block;
-      width: 100%;
-    }
-    
-    table.responsive-table tr {
-      margin-bottom: 1rem;
-      border: 1px solid #ddd;
-    }
-    
-    table.responsive-table td {
-      text-align: right;
-      padding-left: 50%;
-      position: relative;
-      border-bottom: 1px solid #eee;
-    }
-    
-    table.responsive-table td::before {
-      content: attr(data-label);
-      position: absolute;
-      left: 0;
-      width: 50%;
-      padding-left: 1rem;
-      text-align: left;
-      font-weight: bold;
-    }
+  table.responsive-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
   }
+  
+  table.responsive-table td {
+    text-align: right;
+    padding-left: 50% !important;
+    position: relative;
+    border-bottom: 1px solid #eee;
+  }
+  
+  table.responsive-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 1rem;
+    text-align: left;
+    font-weight: 700;
+  }
+}
+
+/* User Avatar Styles */
+.user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Access Matrix Styles */
+.matrix-header {
+  transform: rotate(-45deg);
+  transform-origin: bottom left;
+  white-space: nowrap;
+  color: var(--text-heading) !important;
+  font-size: 11px !important;
+  padding-bottom: 10px !important;
+}
+
+.matrix-cell {
+  text-align: center;
+  font-weight: 600;
+  font-size: 12px;
+}
+.matrix-cell.high-activity { background-color: #1e3a8a !important; color: #ffffff !important; }
+.matrix-cell.med-activity { background-color: #3b82f6 !important; color: #ffffff !important; }
+.matrix-cell.low-activity { background-color: #bfdbfe !important; color: #1e3a8a !important; }
+.matrix-cell.no-activity { background-color: #f0f5ff !important; color: #1e3a8a !important; }

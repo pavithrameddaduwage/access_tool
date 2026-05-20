@@ -56,6 +56,10 @@ export class NavbarComponent implements OnInit {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
+  get isAdmin(): boolean {
+    return this.user && this.user.roles && (this.user.roles.includes('Admin') || this.user.roles.includes('admin'));
+  }
+
   logout(): void {
     this.authService.logout();
     this.isloggedIn = false;

@@ -1,163 +1,233 @@
-<div class="container mx-auto px-4 py-8 max-w-7xl">
-  <!-- Add Button -->
-  <div class="mb-4 flex justify-end">
-    <button
-      (click)="openForm('add')"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Add New Record
-    </button>
+<div class="max-w-7xl mx-auto px-6 py-8">
+  
+  <!-- Premium Header & Stats Section -->
+  <div style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8); border-radius: 16px;" class="p-6 text-white shadow-xl mb-8 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(96,165,250,0.15),transparent_50%)]"></div>
+    <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight" style="color:#fff;">Active User Dashboard Permissions</h1>
+        <p class="text-xs mt-1 font-medium max-w-xl" style="color:#93c5fd;">
+          Authorized workspace credentials registry. Configure database access mappings, assign dashboard roles, and audit security tokens.
+        </p>
+      </div>
+      
+      <!-- Premium Action Button -->
+      <button
+        (click)="openForm('add')"
+        style="background: linear-gradient(135deg, #2563eb, #3b82f6); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;"
+        class="flex items-center gap-2 text-white font-semibold text-xs px-5 py-3 shadow-lg active:scale-95 transition-all duration-150"
+      >
+        <i class="pi pi-plus"></i>
+        <span>Add Access Record</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Records Table -->
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white text-gray-900">
-    <table class="w-full text-sm text-left text-gray-700">
-      <thead class="text-xs uppercase">
-        <tr>
-          <th 
-            *ngFor="let header of tableHeaders" 
-            [style.width]="header.width" 
-            [style.backgroundColor]="'#e5e7eb'"
-            class="px-6 py-3 border-r border-gray-300 text-gray-700"
-          >
-            {{ header.display_name }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let record of records; let i = index">
-          <!-- Main Row -->
-          <tr class="bg-white border-b hover:bg-gray-50">
-            <td class="px-6 py-4 border-r border-gray-300">
-              <div class="flex items-center space-x-3">
-                <button 
-                  (click)="openForm('edit', record, i)"
-                  class="text-blue-600 hover:text-blue-800"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <button 
-                  (click)="toggleRowExpansion(i)"
-                  class="text-gray-600 hover:text-gray-800 transform transition-transform duration-200"
-                  [class.rotate-180]="record.isExpanded"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-            <td class="px-6 py-4 border-r border-gray-300">{{ record.userName }}</td>
-            <td class="px-6 py-4 border-r border-gray-300">{{ record.department }}</td>
-            <td class="px-6 py-4 border-r border-gray-300">{{ record.email }}</td>
-            <td class="px-6 py-4 border-r border-gray-300">
-              <div class="flex flex-wrap gap-1">
-                <ng-container *ngIf="!record.isExpanded">
-                  <span 
-                    *ngFor="let dashboard of record.dashboards.slice(0, 3)"
-                    class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+  <!-- Main Content Card -->
+  <div style="background: #fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" class="overflow-hidden">
+    
+    <!-- Table Header Toolbar -->
+    <div style="background: #f0f5ff; border-bottom: 1px solid #dbeafe;" class="px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center space-x-2">
+        <span style="color: #93c5fd;" class="text-xs font-semibold uppercase tracking-wider">Access Roster</span>
+        <span style="background: #eff6ff; color: #1d4ed8; border-radius: 12px;" class="font-semibold text-xs px-2.5 py-0.5">
+          {{ records.length }} Active Mappings
+        </span>
+      </div>
+      
+      <!-- Quick Search Indicator -->
+      <div style="color: #93c5fd;" class="text-xs font-medium">
+        <i class="pi pi-info-circle mr-1"></i> Expand any row to audit complete workspace assets.
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="records.length === 0" class="p-16 text-center">
+      <i class="pi pi-inbox text-4xl mb-3" style="color:#bfdbfe;"></i>
+      <h3 class="text-base font-semibold" style="color:#1e3a8a;">No Access Records Configured</h3>
+      <p class="text-xs mt-1" style="color:#93c5fd;">Click the "Add Access Record" button to configure your first database permission mapping.</p>
+    </div>
+
+    <!-- Table Container -->
+    <div *ngIf="records.length > 0" class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr style="background:#f0f5ff; border-bottom: 1px solid #dbeafe;">
+            <th style="color:#93c5fd;" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider w-24">Actions</th>
+            <th style="color:#93c5fd;" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider">User Profile</th>
+            <th style="color:#93c5fd;" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider">Department</th>
+            <th style="color:#93c5fd;" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider">Email Address</th>
+            <th style="color:#93c5fd;" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider">Authorized Dashboards</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y" style="border-color: #f0f9ff;">
+          <ng-container *ngFor="let record of records; let i = index">
+            <!-- Main Row -->
+            <tr #rowEl class="transition-colors duration-150" style="border-bottom: 1px solid #f0f9ff;"
+                [style.background]="record.isExpanded ? '#eff6ff' : '#fff'"
+                (mouseenter)="rowEl.style.backgroundColor = '#eff6ff'"
+                (mouseleave)="rowEl.style.backgroundColor = record.isExpanded ? '#eff6ff' : '#fff'">
+              
+              <!-- Actions -->
+              <td class="px-6 py-4 whitespace-nowrap" style="border-bottom: 1px solid #f0f9ff;">
+                <div class="flex items-center space-x-2">
+                  <button 
+                    (click)="openForm('edit', record, i)"
+                    style="color:#3b82f6;"
+                    class="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="Edit permissions"
                   >
-                    {{ dashboard }}
-                  </span>
-                  <span 
-                    *ngIf="record.dashboards.length > 3"
-                    class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full cursor-pointer"
+                    <i class="pi pi-pencil text-sm"></i>
+                  </button>
+                  <button 
                     (click)="toggleRowExpansion(i)"
+                    style="color:#93c5fd;"
+                    class="p-2 hover:bg-blue-50 rounded-lg transition-all duration-150"
+                    [class.rotate-180]="record.isExpanded"
+                    title="Toggle details"
                   >
-                    +{{ record.dashboards.length - 3 }} more
-                  </span>
-                </ng-container>
-              </div>
-            </td>
-          </tr>
-          
-          <!-- Expanded Row -->
-          <tr *ngIf="record.isExpanded" class="bg-gray-50">
-            <td class="px-6 py-4 border-r border-gray-300">
-              <!-- Empty Actions column -->
-            </td>
-            <td colspan="4" class="px-6 py-4">
-              <div class="flex flex-wrap gap-2">
-                <span 
-                  *ngFor="let dashboard of record.dashboards"
-                  class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                >
-                  {{ dashboard }}
+                    <i class="pi pi-chevron-down text-sm"></i>
+                  </button>
+                </div>
+              </td>
+
+              <!-- User Profile with Avatar -->
+              <td class="px-6 py-4 whitespace-nowrap" style="border-bottom: 1px solid #f0f9ff;">
+                <div class="flex items-center space-x-3">
+                  <app-avatar [name]="record.userName"></app-avatar>
+                  <div style="color:#1e3a8a;" class="font-semibold text-sm">{{ record.userName }}</div>
+                </div>
+              </td>
+
+              <!-- Department -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm" style="border-bottom: 1px solid #f0f9ff;">
+                <span style="background: #dbeafe; color: #1e3a8a; border-radius: 12px;" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold">
+                  {{ record.department }}
                 </span>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+              </td>
+
+              <!-- Email -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm" style="color:#1e3a5f; border-bottom: 1px solid #f0f9ff;">
+                {{ record.email }}
+              </td>
+
+              <!-- Authorized Dashboards (Pills) -->
+              <td class="px-6 py-4" style="border-bottom: 1px solid #f0f9ff;">
+                <div class="flex flex-wrap gap-1.5">
+                  <ng-container *ngIf="!record.isExpanded">
+                    <span 
+                      *ngFor="let dashboard of record.dashboards.slice(0, 3)"
+                      style="background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; border-radius: 8px;"
+                      class="text-[10px] font-semibold px-2.5 py-1"
+                    >
+                      {{ dashboard }}
+                    </span>
+                    <span 
+                      *ngIf="record.dashboards.length > 3"
+                      style="background: #f0f5ff; color: #3b82f6; border: 1px solid #dbeafe; border-radius: 8px;"
+                      class="text-[10px] font-semibold px-2.5 py-1 cursor-pointer hover:bg-blue-50"
+                      (click)="toggleRowExpansion(i)"
+                    >
+                      +{{ record.dashboards.length - 3 }} more
+                    </span>
+                  </ng-container>
+                  <span *ngIf="record.isExpanded" class="text-xs font-semibold" style="color:#1d4ed8;">
+                    Showing full workspace listing below
+                  </span>
+                </div>
+              </td>
+            </tr>
+            
+            <!-- Expanded Details Row -->
+            <tr *ngIf="record.isExpanded" style="background:#f0f5ff;">
+              <td class="px-6 py-4" style="border-bottom: 1px solid #dbeafe;"></td>
+              <td colspan="4" class="px-6 py-5" style="border-bottom: 1px solid #dbeafe;">
+                <div style="background:#fff; border: 1px solid #dbeafe; border-radius: 12px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" class="p-5">
+                  <h4 style="color:#93c5fd;" class="text-xs font-semibold uppercase tracking-wider mb-3">All Assigned Workspaces & Dashboards</h4>
+                  <div class="flex flex-wrap gap-2">
+                    <span 
+                      *ngFor="let dashboard of record.dashboards"
+                      style="background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; border-radius: 8px;"
+                      class="inline-flex items-center text-xs font-semibold px-3 py-1.5"
+                    >
+                      <i class="pi pi-check-circle mr-1.5" style="color:#3b82f6;"></i>
+                      {{ dashboard }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Modal/Popup Form -->
-  <div *ngIf="showForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-8 w-full max-w-md">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold">{{ isEditMode ? 'Edit Record' : 'Add New Record' }}</h2>
+  <!-- Premium Modal Form Overlay -->
+  <div *ngIf="showForm" class="fixed inset-0 flex items-center justify-center z-50 p-4 transition-all duration-300" style="background: rgba(30,58,138,0.4); backdrop-filter: blur(8px);">
+    <div style="background:#fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 25px 50px rgba(29,78,216,0.15);" class="w-full max-w-lg overflow-hidden transform scale-100 transition-all duration-300">
+      
+      <!-- Modal Header -->
+      <div style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8);" class="text-white px-6 py-4 flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-bold tracking-tight" style="color:#fff;">{{ isEditMode ? 'Modify Access Credentials' : 'Create Access Mapping' }}</h2>
+          <p class="text-[10px] mt-0.5 font-medium" style="color:#93c5fd;">Configure authorized database user accounts.</p>
+        </div>
         <button 
           (click)="closeForm()"
-          class="text-gray-500 hover:text-gray-700"
+          class="h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors focus:outline-none"
         >
-          ×
+          <i class="pi pi-times"></i>
         </button>
       </div>
 
-      <form class="space-y-4">
+      <!-- Modal Form Body -->
+      <form class="p-6 space-y-5">
         <!-- User Selection -->
         <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="user">
-            User
-          </label>
+          <label style="color:#93c5fd;" class="block text-xs font-semibold uppercase tracking-wider mb-2">User Profile</label>
           <app-search-select
-  [data]="userOptions"
-  [label]="'User'"
-  [textsize]="'text-xs'"
-  (setSelectValue)="onUserChange($event)"
-></app-search-select>
+            [data]="userOptions"
+            [label]="'Select user profile'"
+            [textsize]="'text-xs'"
+            (setSelectValue)="onUserChange($event)"
+          ></app-search-select>
         </div>
 
-        <!-- Email Display -->
-        <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-          <div class="w-full py-2 px-3 text-gray-700 bg-gray-100 rounded">
-            {{ editForm.email }}
+        <!-- Read-only Details Group -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label style="color:#93c5fd;" class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5">Registered Email</label>
+            <div style="background: #f0f5ff; border: 1px solid #dbeafe; border-radius: 8px; color: #1e3a5f;" class="w-full py-2 px-3 text-xs font-semibold">
+              {{ editForm.email || 'Select a user profile first' }}
+            </div>
+          </div>
+          <div>
+            <label style="color:#93c5fd;" class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5">Assigned Department</label>
+            <div style="background: #f0f5ff; border: 1px solid #dbeafe; border-radius: 8px; color: #1e3a5f;" class="w-full py-2 px-3 text-xs font-semibold">
+              {{ editForm.department || 'Select a user profile first' }}
+            </div>
           </div>
         </div>
 
-        <!-- Department Display -->
+        <!-- Workspace Selection -->
         <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>
-          <div class="w-full py-2 px-3 text-gray-700 bg-gray-100 rounded">
-            {{ editForm.department }}
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="workspace">
-            Workspace
-          </label>
+          <label style="color:#93c5fd;" class="block text-xs font-semibold uppercase tracking-wider mb-2">Workspace</label>
           <app-search-select
             [data]="workspaceOptions"
-            [label]="'Workspace'"
+            [label]="'Select Power BI Workspace'"
             [textsize]="'text-xs'"
             (setSelectValue)="onWorkspaceChange($event)"
             class="w-full"
           ></app-search-select>
         </div>
       
-        <!-- Dashboard Selection - Updated -->
+        <!-- Dashboard Selection -->
         <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="dashboard">
-            Dashboards
-          </label>
+          <label style="color:#93c5fd;" class="block text-xs font-semibold uppercase tracking-wider mb-2">Dashboards</label>
           <app-search-select
             [data]="dashboardOptions"
-            [label]="'Dashboard'"
+            [label]="'Select Dashboard to add'"
             [textsize]="'text-xs'"
             (setSelectValue)="onDashboardChange($event)"
             [disabled]="!selectedWorkspace"
@@ -165,15 +235,18 @@
           ></app-search-select>
 
           <!-- Selected Dashboards Pills -->
-          <div class="flex flex-wrap gap-2 mt-2">
+          <div style="background:#f0f5ff; border: 1px solid #dbeafe; border-radius: 8px;" class="flex flex-wrap gap-1.5 mt-3 max-h-32 overflow-y-auto p-2">
+            <span *ngIf="selectedDashboards.length === 0" style="color:#93c5fd;" class="text-[10px] font-medium p-1">No dashboards added for this record yet.</span>
             <div 
               *ngFor="let dashboard of selectedDashboards; let i = index"
-              class="flex items-center bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+              style="background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; border-radius: 8px;"
+              class="flex items-center text-[10px] font-semibold px-2.5 py-1"
             >
-              {{ dashboard }}
+              <span>{{ dashboard }}</span>
               <button
                 type="button"
-                class="ml-1 text-blue-600 hover:text-blue-800 focus:outline-none"
+                style="color:#3b82f6;"
+                class="ml-1.5 hover:text-blue-800 focus:outline-none font-bold"
                 (click)="removeDashboard(i)"
               >
                 ×
@@ -183,23 +256,26 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex justify-end space-x-3 mt-6">
+        <div style="border-top: 1px solid #dbeafe;" class="flex justify-end space-x-3 pt-4">
           <button
             type="button"
             (click)="closeForm()"
-            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+            style="background: #fff; border: 1px solid #bfdbfe; color: #3b82f6; border-radius: 8px;"
+            class="font-semibold text-xs px-4 py-2.5 transition-colors active:scale-95"
           >
             Cancel
           </button>
           <button
             type="button"
             (click)="onSave()"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8); border-radius: 8px;"
+            class="text-white font-semibold text-xs px-5 py-2.5 transition-all shadow-md active:scale-95"
           >
-            {{ isEditMode ? 'Save Changes' : 'Add Record' }}
+            {{ isEditMode ? 'Save Changes' : 'Confirm Access' }}
           </button>
         </div>
       </form>
     </div>
   </div>
+
 </div>

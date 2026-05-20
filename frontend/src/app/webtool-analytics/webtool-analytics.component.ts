@@ -104,10 +104,12 @@ interface PeakHourUser {
   lastLogin: Date;
 }
 
+import { DropdownModule } from 'primeng/dropdown';
+
 @Component({
   selector: 'app-webtool-analytics',
   templateUrl: './webtool-analytics.component.html',
-  imports: [CommonModule, NgApexchartsModule, FormsModule],
+  imports: [CommonModule, NgApexchartsModule, FormsModule, DropdownModule],
   styleUrls: ['./webtool-analytics.component.css']
 })
 export class WebtoolAnalyticsComponent implements OnInit {
@@ -1774,10 +1776,10 @@ async filterByWebtool(): Promise<void> {
     console.error('Error in filterByWebtool:', error);
   }
 }
-async onUserFilterChange(event: Event): Promise<void> {
+async onUserFilterChange(event: any): Promise<void> {
   try {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedValue = selectElement?.value || 'All';
+    const target = event.target || event;
+    const selectedValue = target?.value || 'All';
     this.selectedUser = selectedValue;
     console.log('User filter changed to:', this.selectedUser);
 

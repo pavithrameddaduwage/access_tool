@@ -155,7 +155,10 @@ export declare class PowerBIMetricsService {
             date: string;
             count: number;
         }[];
+        assignedDashboards: string[];
+        estimatedTimeSpent: number;
     }>;
+    private getUserEstimatedTimeSpent;
     private getUserTotalViews;
     private getUserReports;
     private getUserWorkspaces;
@@ -209,4 +212,6 @@ export declare class PowerBIMetricsService {
             [email: string]: string;
         };
     }>;
+    syncMappingsToMasterData(): Promise<void>;
+    syncUsersFromLogs(): Promise<void>;
 }

@@ -20,12 +20,10 @@ import { GroupsModule } from './group/group.module';
 import { WebtoolUserModule } from './webtool-user/webtool-user.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { AuthGuard } from './auth/guards/auth.guard';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
+import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './http-exception.filter';
 // import { PowerBIAnalyticsModule } from './powerbi-analytics/powerbi-analytics.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserMappingsModule } from './user-mappings/user-mappings.module';
 import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
 import { WorkspaceMappingModule } from './workspace-mapping/workspace-mapping.module';
@@ -36,28 +34,29 @@ import { AnalyticsModule } from './analytics/analytics.module';
   imports: [ ConfigModule.forRoot({
     isGlobal: true,
   }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost', 
-      port: 5432,
-      username: 'postgres', 
-      // password: '12345', 
-      password:"M!SAppsTest",
- 
-      database: 'user-access',
-      entities: [Type,  Dashboard,
-        DashboardType,
-        DashboardValuetype,
-       
-        Valuetype], 
-      autoLoadEntities: true, 
-      synchronize: true, 
-      logging: false, 
-      extra: {
-        // Set timezone for all database connections
-        timezone: 'America/New_York'
-      }
-    }, ),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('PG_DB_HOST', 'localhost'),
+        port: parseInt(configService.get<string>('PG_DB_PORT', '5432'), 10),
+        username: configService.get<string>('PG_DB_USER', 'postgres'),
+        password: configService.get<string>('PG_DB_PASSWORD', 'M!SAppsTest'),
+        database: configService.get<string>('PG_DB_NAME', 'user-access'),
+        entities: [Type,  Dashboard,
+          DashboardType,
+          DashboardValuetype,
+          Valuetype],
+        autoLoadEntities: true,
+        synchronize: true,
+        logging: false,
+        extra: {
+          // Set timezone for all database connections
+          timezone: 'America/New_York'
+        }
+      }),
+    }),
     DepartmentModule,
     RolesModule,
     TypeModule,
@@ -84,11 +83,6 @@ import { AnalyticsModule } from './analytics/analytics.module';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    
   ],
 })
 export class AppModule {}

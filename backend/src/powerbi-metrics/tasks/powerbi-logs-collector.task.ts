@@ -1,5 +1,5 @@
 // src/powerbi-metrics/tasks/powerbi-logs-collector.task.ts
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PowerBILogEntry, PowerBIMetricsService } from '../powerbi-metrics.service';
 import { Between, In, Repository } from 'typeorm';
@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as moment from 'moment-timezone';
 
 @Injectable()
-export class PowerBILogsCollectorTask {
+export class PowerBILogsCollectorTask implements OnApplicationBootstrap {
   private readonly logger = new Logger(PowerBILogsCollectorTask.name);
 
   constructor(
@@ -17,35 +17,42 @@ export class PowerBILogsCollectorTask {
     private readonly powerbiLogRepository: Repository<PowerBILog>,
   ) {}
 
-  @Cron('0 58 0 * * *')  
-  async collectPreviousDayLogs() {
+  async onApplicationBootstrap() {
+    this.logger.log('Application bootstrap: triggering Workspace/Dashboard mappings sync to Master Data');
+    await this.powerbiMetricsService.syncMappingsToMasterData();
+
+    this.logger.log('Application bootstrap: triggering User roster sync from Power BI logs');
+    await this.powerbiMetricsService.syncUsersFromLogs();
+
+    this.logger.log('Application bootstrap: triggering initial Power BI log collection');
+    this.collectRealTimeLogs().catch(err => {
+      this.logger.error('Initial bootstrap log collection failed', err.stack);
+    });
+  }
+
+  @Cron('0 */10 * * * *')  
+  async collectRealTimeLogs() {
     try {
-      this.logger.log('Starting Power BI logs collection for previous day');
+      this.logger.log('Starting real-time Power BI logs collection (last 24 hours)');
       const now = new Date();
+      // Start from 24 hours ago to make sure no logs are missed due to delays
+      const startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const endDate = now;
 
-      const endDate = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() - 1, 
-        23, 59, 59, 999
-      );
-
-      const startDate = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() - 1, 
-        0, 0, 0, 0
-      );
-
-      console.log("date formt", startDate, endDate)
+      this.logger.debug(`Time window: ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
       const accessToken = await this.powerbiMetricsService.getAccessToken();
-      console.log("access token retrieved: ", accessToken);
+      this.logger.debug('Access token retrieved successfully');
       await this.powerbiMetricsService.ensureSubscription(accessToken);
-      console.log("Subscription successful")
-      const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
+      this.logger.debug('Subscription checked/ensured');
       
+      const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
       this.logger.debug(`Found ${contentUris.length} content URIs`);
+
+      if (contentUris.length === 0) {
+        this.logger.log('No content URIs found for this period');
+        return;
+      }
 
       const allLogs = await Promise.all(
         contentUris.map(uri => 
@@ -63,35 +70,47 @@ export class PowerBILogsCollectorTask {
 
       this.logger.debug(`Fetched ${powerBILogs.length} raw Power BI logs`);
 
+      if (powerBILogs.length === 0) {
+        this.logger.log('No Power BI ViewReport logs found');
+        return;
+      }
+
       const newLogs = await this.filterExistingLogs(powerBILogs);
       this.logger.debug(`Found ${newLogs.length} new logs to save`);
 
       if (newLogs.length > 0) {
         await this.powerbiMetricsService.saveRawLogs(newLogs);
-        this.logger.log(`Successfully saved ${newLogs.length} new logs for date ${this.formatDate(startDate)}`);
+        this.logger.log(`Successfully saved ${newLogs.length} new real-time logs`);
       } else {
         this.logger.log('No new logs to save');
       }
     } catch (error) {
-      this.logger.error('Failed to collect Power BI logs', error.stack);
-      throw error; 
+      this.logger.error('Failed to collect real-time Power BI logs', error.stack);
     }
   }
 
   private async filterExistingLogs(logs: PowerBILogEntry[]): Promise<PowerBILogEntry[]> {
-    const existingIds = await this.powerbiLogRepository.find({
-      where: {
-        id: In(logs.map(l => l.Id)),
-      },
-      select: ['id'],
-    });
+    if (logs.length === 0) return [];
+    
+    // Chunk logs queries to avoid SQL IN clause limits if logs array is extremely large
+    const chunkSize = 500;
+    const allExistingIds = new Set<string>();
 
-    const existingIdSet = new Set(existingIds.map(l => l.id));
-    return logs.filter(log => !existingIdSet.has(log.Id));
+    for (let i = 0; i < logs.length; i += chunkSize) {
+      const chunk = logs.slice(i, i + chunkSize);
+      const existingIds = await this.powerbiLogRepository.find({
+        where: {
+          id: In(chunk.map(l => l.Id)),
+        },
+        select: ['id'],
+      });
+      existingIds.forEach(l => allExistingIds.add(l.id));
+    }
+
+    return logs.filter(log => !allExistingIds.has(log.Id));
   }
 
   private formatDate(date: Date): string {
     return date.toISOString().replace('T', ' ').substring(0, 19) + ' EDT';
   }
-
 }
