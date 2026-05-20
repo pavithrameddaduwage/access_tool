@@ -121,6 +121,16 @@ async getLog(){
   return this.powerbiMetricsService.getAllLogs();
 }
 
+@Get('logs')
+async getLogs(
+  @Query('startDate', new DefaultValuePipe(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', new DefaultValuePipe(new Date()), ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string,
+  @Query('reportId') reportId?: string
+) {
+  return this.powerbiMetricsService.getDatabaseLogEntries(startDate, endDate, workspaceId, reportId);
+}
+
 @Get('user-consumption-methods')
 async getUserConsumptionMethods(
   @Query('userId') userId: string,

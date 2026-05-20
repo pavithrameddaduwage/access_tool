@@ -187,7 +187,7 @@ export class PowerBIMetricsService {
 
   async getWorkspaceMetrics(workspaceId: string, startDate: Date, endDate: Date): Promise<any> {
     const metrics = await this.getPowerBIMetrics(startDate, endDate);
-    const allLogEntries = await this.getAllLogEntries(startDate, endDate);
+    const allLogEntries = await this.getLogsFromDatabase(startDate, endDate);
     
     const workspace = metrics.workspaces.workspaces.find(w => w.id === workspaceId);
     const workspaceReports = metrics.reports.reports.filter(r => r.workspaceId === workspaceId);
@@ -207,7 +207,7 @@ export class PowerBIMetricsService {
 
   async getReportMetrics(reportId: string, startDate: Date, endDate: Date): Promise<any> {
     const metrics = await this.getPowerBIMetrics(startDate, endDate);
-    const allLogEntries = await this.getAllLogEntries(startDate, endDate); // Get the log entries
+    const allLogEntries = await this.getLogsFromDatabase(startDate, endDate); // Get the log entries from the saved DB
     
     const report = metrics.reports.reports.find(r => r.id === reportId);
     
@@ -802,17 +802,22 @@ export class PowerBIMetricsService {
   getAllLogs() {
     return this.powerbiLogRepository.find();
   }
-  private async getLogsFromDatabase(startDate: Date, endDate: Date): Promise<PowerBILogEntry[]> {
-    const logs = await this.powerbiLogRepository.find({
-      where: {
-        creationTime: Between(startDate, endDate),
-        workload: 'PowerBI',
-        operation: 'ViewReport',
-      },
-      order: {
-        creationTime: 'ASC',
-      },
-    });
+  private async getLogsFromDatabase(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<PowerBILogEntry[]> {
+    const query = this.powerbiLogRepository.createQueryBuilder('log')
+      .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('log.workload = :workload', { workload: 'PowerBI' })
+      .andWhere('log.operation = :operation', { operation: 'ViewReport' })
+      .orderBy('log.creationTime', 'ASC');
+
+    if (workspaceId) {
+      query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+    }
+
+    if (reportId) {
+      query.andWhere('log.reportId = :reportId', { reportId });
+    }
+
+    const logs = await query.getMany();
   
     return logs.map(log => ({
       Id: log.id,
@@ -849,6 +854,10 @@ export class PowerBIMetricsService {
       RefreshEnforcementPolicy: log.refreshEnforcementPolicy,
       BillingType: log.billingType,
     }));
+  }
+
+  public async getDatabaseLogEntries(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<PowerBILogEntry[]> {
+    return this.getLogsFromDatabase(startDate, endDate, workspaceId, reportId);
   }
 
   private async fetchAndProcessLogs(contentUri: string, accessToken: string): Promise<PowerBILogEntry[]> {

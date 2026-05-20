@@ -117,6 +117,7 @@ export declare class PowerBIMetricsService {
     private convertToEdtEndOfDay;
     getAllLogs(): Promise<PowerBILog[]>;
     private getLogsFromDatabase;
+    getDatabaseLogEntries(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<PowerBILogEntry[]>;
     private fetchAndProcessLogs;
     private emptyMetricsResponse;
     getAllLogEntries(startDate: Date, endDate: Date): Promise<PowerBILogEntry[]>;

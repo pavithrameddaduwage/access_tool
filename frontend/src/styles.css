@@ -4,22 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Horizon Group USA Custom Global Colors & Theme Overrides */
+/* Global Colors & Theme Overrides (reduced-blue, amber accents) */
 :root {
-  --page-bg: #f0f5ff;
+  --page-bg: #f7fafc; /* neutral background */
   --card-bg: #ffffff;
-  --card-border: #dbeafe;
-  --card-shadow: 0 1px 8px rgba(29, 78, 216, 0.07);
-  
-  --text-heading: #1e3a8a;
-  --text-body: #1e3a5f;
-  --text-muted: #93c5fd;
-  
-  --btn-active-grad: linear-gradient(135deg, #1e3a8a, #1d4ed8);
-  --metric-grad: linear-gradient(135deg, #2563eb, #3b82f6);
-  
-  --table-border: #f0f9ff;
-  --table-hover: #eff6ff;
+  --card-border: #e6e7ea; /* subtle border */
+  --card-shadow: 0 1px 8px rgba(15, 23, 42, 0.06);
+
+  /* Darker text for headings/body for better contrast */
+  --text-heading: #0f172a; /* slate-900 */
+  --text-body: #0f172a;
+  --text-muted: #6b7280; /* neutral gray */
+
+  /* Amber/golden accents */
+  --accent-amber-600: #b45309;
+  --accent-amber-500: #d97706;
+  --accent-amber-400: #f59e0b;
+
+  --btn-active-grad: linear-gradient(135deg, #92400e, #f59e0b); /* amber gradient */
+  --metric-grad: linear-gradient(135deg, #334155, #f59e0b); /* slate -> amber */
+
+  --table-border: #e6e7ea;
+  --table-hover: #f3f4f6;
 }
 
 body {
@@ -33,6 +39,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-heading);
+  font-weight: 700;
 }
 
 h1.page-title {
@@ -40,7 +47,8 @@ h1.page-title {
 }
 
 h2.card-title, h3.card-title {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--text-heading);
 }
 
 /* Global Tables styling */
@@ -70,20 +78,93 @@ tr:hover td {
 }
 
 /* Buttons elevation */
-button.btn-active, .btn-primary {
-  background: var(--btn-active-grad) !important;
-  border: none !important;
-  color: #ffffff !important;
-  border-radius: 0.5rem;
-  font-weight: 600;
+button, .p-button, .btn-primary, .btn-secondary, button.btn-active, button.btn-inactive {
+  background: transparent !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  color: var(--text-heading) !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  padding: 0.75rem 1rem !important;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
-button.btn-inactive, .btn-secondary {
-  background: var(--card-bg) !important;
-  border: 1px solid #bfdbfe !important;
-  color: #3b82f6 !important;
-  border-radius: 0.5rem;
-  font-weight: 600;
+button:hover, .p-button:hover, .btn-primary:hover, .btn-secondary:hover, button.btn-active:hover, button.btn-inactive:hover {
+  background: rgba(245, 158, 11, 0.14) !important;
+  border-color: rgba(212, 119, 6, 0.3) !important;
+  color: #0f172a !important;
+  transform: translateY(-1px);
+}
+
+button:focus-visible, .p-button:focus-visible {
+  outline: 2px solid rgba(245, 158, 11, 0.35) !important;
+  outline-offset: 2px !important;
+}
+
+/* Amber accent element inside buttons (optional small dot/icon) */
+.btn-primary .btn-accent, button.btn-active .btn-accent {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-amber-400);
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* PrimeNG dropdown and overlay improvements */
+.p-dropdown,
+.p-dropdown .p-dropdown-label,
+.p-dropdown .p-dropdown-clear,
+.p-dropdown .p-dropdown-trigger {
+  background-color: #ffffff !important;
+}
+
+.p-dropdown {
+  margin-bottom: 0.75rem !important;
+  min-width: 220px !important;
+}
+
+.p-dropdown .p-dropdown-label {
+  color: var(--text-heading) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08) !important;
+}
+
+.p-dropdown .p-dropdown-trigger {
+  color: var(--text-heading) !important;
+}
+
+.p-dropdown-panel {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16) !important;
+  z-index: 1100 !important;
+  border-radius: 0.75rem !important;
+}
+
+.p-dropdown-item {
+  color: var(--text-heading) !important;
+}
+
+.p-dropdown-item.p-highlight,
+.p-dropdown-item:hover {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: var(--text-heading) !important;
+}
+
+.p-dropdown-filter-container input {
+  background: #ffffff !important;
+}
+
+.p-button {
+  min-width: 120px;
+}
+
+/* Give dashboards and workspace selection space below the main header */
+.container {
+  padding-top: 0.5rem;
 }
 
 /* Generic Modals glassmorphism */
@@ -127,8 +208,8 @@ input[type="text"], input[type="email"], input[type="password"], select {
 }
 
 input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+  border-color: var(--accent-amber-500) !important;
+  box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.08) !important;
   outline: none !important;
 }
 
@@ -201,7 +282,7 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
   font-weight: 600;
   font-size: 12px;
 }
-.matrix-cell.high-activity { background-color: #1e3a8a !important; color: #ffffff !important; }
-.matrix-cell.med-activity { background-color: #3b82f6 !important; color: #ffffff !important; }
-.matrix-cell.low-activity { background-color: #bfdbfe !important; color: #1e3a8a !important; }
-.matrix-cell.no-activity { background-color: #f0f5ff !important; color: #1e3a8a !important; }
+.matrix-cell.high-activity { background-color: var(--accent-amber-600) !important; color: #ffffff !important; }
+.matrix-cell.med-activity { background-color: var(--accent-amber-500) !important; color: #ffffff !important; }
+.matrix-cell.low-activity { background-color: var(--accent-amber-400) !important; color: var(--text-heading) !important; }
+.matrix-cell.no-activity { background-color: var(--page-bg) !important; color: var(--text-heading) !important; }

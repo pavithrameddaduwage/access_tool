@@ -7,29 +7,6 @@
         <!-- Heading -->
         <h1 class="text-xl font-bold text-gray-800 mb-4 mr-10 md:mb-0">Power BI Usage Analytics</h1>
 
-        <!-- Toggle Buttons -->
-        <div class="view-toggle-container flex gap-4">
-          <button
-            class="px-4 py-1.5 rounded-lg transition-colors font-medium text-sm"
-            [class.bg-[#0077B6]]="activeView === 'workspace'"
-            [class.text-white]="activeView === 'workspace'"
-            [class.bg-gray-200]="activeView !== 'workspace'"
-            [class.text-gray-700]="activeView !== 'workspace'"
-            (click)="activeView = 'workspace'"
-          >
-            Workspace View
-          </button>
-          <button
-            class="px-4 py-1.5 rounded-lg transition-colors font-medium text-sm"
-            [class.bg-[#0077B6]]="activeView === 'user'"
-            [class.text-white]="activeView === 'user'"
-            [class.bg-gray-200]="activeView !== 'user'"
-            [class.text-gray-700]="activeView !== 'user'"
-            (click)="activeView = 'user'; loadData(selectedPeriod)"
-          >
-            User Analytics
-          </button>
-        </div>
       </div>
 
       <!-- Filters Section -->

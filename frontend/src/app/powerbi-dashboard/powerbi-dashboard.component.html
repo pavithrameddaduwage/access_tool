@@ -58,35 +58,7 @@
 </div>
   </div>
   
-  <!-- View Toggles -->
-  <div class="w-full md:w-auto flex justify-end">
-    <div class="flex p-1 rounded-xl" style="background: #f0f5ff; border: 1px solid #dbeafe;">
-      <button
-        class="px-3 py-1.5 rounded-lg transition-all duration-200 font-semibold text-xs"
-        [style.background]="activeView === 'workspace' ? 'linear-gradient(135deg, #1e3a8a, #1d4ed8)' : 'transparent'"
-        [style.color]="activeView === 'workspace' ? '#fff' : '#3b82f6'"
-        (click)="activeView = 'workspace'; loadData(selectedPeriod)"
-      >
-        Workspace Analytics
-      </button>
-      <button
-        class="px-3 py-1.5 rounded-lg transition-all duration-200 font-semibold text-xs ml-1"
-        [style.background]="activeView === 'user' ? 'linear-gradient(135deg, #1e3a8a, #1d4ed8)' : 'transparent'"
-        [style.color]="activeView === 'user' ? '#fff' : '#3b82f6'"
-        (click)="activeView = 'user'; loadData(selectedPeriod)"
-      >
-        User Engagement
-      </button>
-      <button
-        class="px-3 py-1.5 rounded-lg transition-all duration-200 font-semibold text-xs ml-1"
-        [style.background]="activeView === 'access' ? 'linear-gradient(135deg, #1e3a8a, #1d4ed8)' : 'transparent'"
-        [style.color]="activeView === 'access' ? '#fff' : '#3b82f6'"
-        (click)="activeView = 'access'; loadData(selectedPeriod)"
-      >
-        Access &amp; Activity Matrix
-      </button>
-    </div>
-  </div>
+
 </div>
     <!-- Loading State -->
     <div *ngIf="loading" class="flex justify-center items-center h-64">

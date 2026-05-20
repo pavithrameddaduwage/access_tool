@@ -67,6 +67,9 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getLog() {
         return this.powerbiMetricsService.getAllLogs();
     }
+    async getLogs(startDate, endDate, workspaceId, reportId) {
+        return this.powerbiMetricsService.getDatabaseLogEntries(startDate, endDate, workspaceId, reportId);
+    }
     async getUserConsumptionMethods(userId, startDate, endDate) {
         return this.powerbiMetricsService.getUserConsumptionMethods(userId, startDate, endDate);
     }
@@ -197,6 +200,17 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getLog", null);
+__decorate([
+    (0, common_1.Get)('logs'),
+    __param(0, (0, common_1.Query)('startDate', new common_1.DefaultValuePipe(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', new common_1.DefaultValuePipe(new Date()), parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __param(3, (0, common_1.Query)('reportId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getLogs", null);
 __decorate([
     (0, common_1.Get)('user-consumption-methods'),
     __param(0, (0, common_1.Query)('userId')),

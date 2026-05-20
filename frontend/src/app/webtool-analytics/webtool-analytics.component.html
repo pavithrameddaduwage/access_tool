@@ -67,25 +67,6 @@
             </div>
           </div>
 
-          <!-- In your header section, add this right after the time range controls -->
-<div class="flex items-center gap-3">
-  <!-- View Toggle -->
-  <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-1 py-2 rounded-xl border border-white/20">
-    <span class="text-xs font-medium text-white/90">View:</span>
-    <div class="flex space-x-1 bg-white/15 rounded-lg p-1">
-      <button 
-        [class]="activeView === 'webtool' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-white text-blue-800 shadow-lg transition-all duration-300 transform hover:scale-105' : 'px-3 py-1.5 text-xs font-medium rounded-md bg-transparent text-white/90 hover:bg-white/20 hover:text-white transition-all duration-300'"
-        (click)="activeView = 'webtool'">
-        Webtool
-      </button>
-      <button 
-        [class]="activeView === 'user' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-white text-blue-800 shadow-lg transition-all duration-300 transform hover:scale-105' : 'px-3 py-1.5 text-xs font-medium rounded-md bg-transparent text-white/90 hover:bg-white/20 hover:text-white transition-all duration-300'"
-        (click)="activeView = 'user'">
-        User
-      </button>
-    </div>
-  </div>
-</div>
         </div>
       </div>
     </div>

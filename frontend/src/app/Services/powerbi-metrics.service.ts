@@ -91,7 +91,7 @@ export class PowerBIMetricsService {
     if (workspaceId) params.workspaceId = workspaceId;
     if (reportId) params.reportId = reportId;
     
-    return this.http.get<PowerBILog[]>(this.apiUrl, { params });
+    return this.http.get<PowerBILog[]>(`${this.apiUrl}/logs`, { params });
   }
 
   getWorkspaceLogs(workspaceId: string, startDate: Date, endDate: Date): Observable<PowerBILog[]> {

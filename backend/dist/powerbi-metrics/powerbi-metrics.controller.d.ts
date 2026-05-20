@@ -33,6 +33,7 @@ export declare class PowerBIMetricsController {
         estimatedTimeSpent: number;
     }>;
     getLog(): Promise<import("./entities/powerbi-log.entity").PowerBILog[]>;
+    getLogs(startDate: Date, endDate: Date, workspaceId?: string, reportId?: string): Promise<import("./powerbi-metrics.service").PowerBILogEntry[]>;
     getUserConsumptionMethods(userId: string, startDate: Date, endDate: Date): Promise<{
         method: string;
         count: number;
