@@ -41,14 +41,37 @@ let PowerBIMetricsController = class PowerBIMetricsController {
         return this.powerbiMetricsService.getReportMetrics(reportId, startDate, endDate);
     }
     async collectRawData(startDate, endDate) {
+        const limitTime = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        const limitDate = new Date(limitTime);
+        let adjustedStart = new Date(startDate);
+        const adjustedEnd = new Date(endDate);
+        if (adjustedEnd.getTime() < limitTime) {
+            return {
+                message: `Skipped sync: Requested end date (${endDate.toISOString()}) is older than the 7-day Office 365 API boundary (${limitDate.toISOString()}). No data could be fetched.`,
+                logs: []
+            };
+        }
+        let wasClamped = false;
+        if (adjustedStart.getTime() < limitTime) {
+            adjustedStart = limitDate;
+            wasClamped = true;
+        }
         const accessToken = await this.powerbiMetricsService.getAccessToken();
         await this.powerbiMetricsService.ensureSubscription(accessToken);
-        const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
-        const allLogs = await Promise.all(contentUris.map(uri => this.powerbiMetricsService.getLogEntries(uri, accessToken)));
-        const powerBILogs = allLogs.flat().filter(entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport');
+        const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, adjustedStart, adjustedEnd);
+        const allLogs = await Promise.all(contentUris.map(async (uri) => {
+            try {
+                return await this.powerbiMetricsService.getLogEntries(uri, accessToken);
+            }
+            catch (err) {
+                console.error(`Failed to fetch logs for content URI: ${uri}`, err);
+                return [];
+            }
+        }));
+        const powerBILogs = allLogs.flat().filter(entry => entry && entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport');
         await this.powerbiMetricsService.saveRawLogs(powerBILogs);
         return {
-            message: `Saved ${powerBILogs.length} raw logs`,
+            message: `Saved ${powerBILogs.length} raw logs${wasClamped ? ' (Start date clamped to 7-day limit: ' + adjustedStart.toISOString() + ')' : ''}`,
             logs: powerBILogs.slice(0, 5)
         };
     }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { PowerBIMetricsService, PowerBIReport, PowerBIWorkspace } from '../Services/powerbi-metrics.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -104,7 +104,7 @@ interface User {
   selector: 'app-powerbi-dashboard',
   templateUrl: './powerbi-dashboard.component.html',
   styleUrls: ['./powerbi-dashboard.component.css'],
-  imports: [CommonModule, NgApexchartsModule, ReactiveFormsModule, FormsModule, DropdownModule, AvatarComponent],
+  imports: [CommonModule, NgApexchartsModule, ReactiveFormsModule, FormsModule, DropdownModule, AvatarComponent, RouterModule],
 
   standalone: true
 })

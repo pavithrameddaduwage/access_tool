@@ -30,7 +30,7 @@ export class PowerBILogsCollectorTask implements OnApplicationBootstrap {
     });
   }
 
-  @Cron('0 */10 * * * *')  
+  @Cron('0 0 * * * *')  // Run once every hour (at top of hour)
   async collectRealTimeLogs() {
     try {
       this.logger.log('Starting real-time Power BI logs collection (last 24 hours)');

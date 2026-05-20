@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/navbar/navbar.component.css"],
-  "sourcesContent": [".active-link {\r\n  @apply text-sky-300 bg-[#133561];\r\n}\r\n\r\n:host {\r\n  display: block;\r\n}\r\n\r\n.sticky {\r\n  position: sticky;\r\n  top: 0;\r\n  z-index: 50;\r\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);\r\n}"],
-  "mappings": ";AACE,CAAA;AAAA,mBAAA;AAAA,oBAAA,IAAA,GAAA,GAAA,GAAA,EAAA,IAAA,eAAA,EAAA;AAAA,qBAAA;AAAA,SAAA,IAAA,IAAA,IAAA,IAAA,EAAA,IAAA,iBAAA,EAAA;AAAgC;AAGlC;AACE,WAAA;AACF;AAEA,CAAA;AACE,YAAA;AACA,OAAA;AACA,WAAA;AACA,cAAA,EAAA,IAAA,IAAA,KAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA,IAAA,EAAA,EAAA,IAAA,IAAA,KAAA,KAAA,CAAA,EAAA,CAAA,EAAA,CAAA,EAAA;AACF;",
-  "names": []
-}

@@ -1,65 +1,71 @@
-<div class="min-h-screen" style="background: #f0f5ff;">
-  <!-- Main Container -->
-  <div style="background: #fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" class="mx-9 mt-5 p-6">
-   <!-- Header Section -->
-<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-  <div class="w-full md:w-auto">
-    <h1 class="text-xl font-bold mt-8 whitespace-nowrap" style="color: #1e3a8a;">Power BI Usage Analytics</h1>
-  </div>
-  
-  <!-- Filters -->
-  <div class="flex flex-col md:flex-row gap-4 w-full md:flex-1 md:max-w-2xl">
-    <div class="w-full md:w-64">
-      <label style="color:#93c5fd;" class="block text-sm font-semibold mb-1.5">Workspace</label>
-      <p-dropdown 
-        [options]="workspaceOptions" 
-        optionLabel="name" 
-        optionValue="id" 
-        [(ngModel)]="selectedWorkspace" 
-        (onChange)="onWorkspaceChange()" 
-        [filter]="true" 
-        filterBy="name" 
-        styleClass="w-full text-sm border-gray-300 rounded-md shadow-sm">
-      </p-dropdown>
+<div class="min-h-screen bg-slate-50/50 py-6 px-4 md:px-8">
+  <!-- Main Glassmorphic Container -->
+  <div class="card-glass max-w-7xl mx-auto p-6 md:p-8 mb-8">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-slate-100 pb-6">
+      <div class="w-full md:w-auto">
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 flex items-center gap-3">
+          <i class="pi pi-chart-bar text-amber-500 text-2xl"></i>
+          Power BI Usage Analytics
+        </h1>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Real-time governance & engagement monitoring</p>
+      </div>
+      
+      <!-- Filters and Duration Controls -->
+      <div class="flex flex-col md:flex-row items-stretch md:items-end gap-4 w-full md:w-auto md:max-w-4xl">
+        <div class="w-full md:w-60">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
+            <i class="pi pi-folder-open text-slate-400"></i> Workspace
+          </label>
+          <p-dropdown 
+            [options]="workspaceOptions" 
+            optionLabel="name" 
+            optionValue="id" 
+            [(ngModel)]="selectedWorkspace" 
+            (onChange)="onWorkspaceChange()" 
+            [filter]="true" 
+            filterBy="name" 
+            styleClass="w-full text-sm border-gray-200 rounded-lg shadow-sm">
+          </p-dropdown>
+        </div>
+
+        <div class="w-full md:w-60">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
+            <i class="pi pi-file text-slate-400"></i> Report
+          </label>
+          <p-dropdown 
+            [options]="reportOptions" 
+            optionLabel="name" 
+            optionValue="id" 
+            [(ngModel)]="selectedReport" 
+            (onChange)="onReportChange()" 
+            [filter]="true" 
+            filterBy="name" 
+            [showClear]="true" 
+            placeholder="All Reports"
+            [disabled]="!reportOptions.length"
+            styleClass="w-full text-sm border-gray-200 rounded-lg shadow-sm">
+          </p-dropdown>
+        </div>
+
+        <!-- Time Duration Buttons -->
+        <div class="w-full md:w-auto">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
+            <i class="pi pi-calendar text-slate-400"></i> Duration
+          </label>
+          <div class="flex gap-2">
+            <button
+              *ngFor="let period of timePeriods"
+              (click)="loadData(period.days)"
+              class="btn-premium text-xs px-4 py-2.5 rounded-lg whitespace-nowrap"
+              [ngClass]="selectedPeriod === period.days ? 'btn-premium-primary' : 'btn-premium-secondary'"
+            >
+              {{ period.label }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="w-full md:w-64">
-      <label style="color:#93c5fd;" class="block text-sm font-semibold mb-1.5">Report</label>
-      <p-dropdown 
-        [options]="reportOptions" 
-        optionLabel="name" 
-        optionValue="id" 
-        [(ngModel)]="selectedReport" 
-        (onChange)="onReportChange()" 
-        [filter]="true" 
-        filterBy="name" 
-        [showClear]="true" 
-        placeholder="All Reports"
-        [disabled]="!reportOptions.length"
-        styleClass="w-full text-sm border-gray-300 rounded-md shadow-sm">
-      </p-dropdown>
-    </div>
-
-<!-- Time Duration Buttons -->
-<div class="w-40 pl-6">
-  <label style="color:#93c5fd;" class="block text-sm font-semibold mb-1.5">Time Duration</label>
-  <div class="flex gap-1">
-    <button
-      *ngFor="let period of timePeriods"
-      (click)="loadData(period.days)"
-      class="w-full px-2 py-1.5 text-sm font-semibold rounded transition-all duration-200 whitespace-nowrap"
-      [style.background]="selectedPeriod === period.days ? 'linear-gradient(135deg, #1e3a8a, #1d4ed8)' : '#fff'"
-      [style.color]="selectedPeriod === period.days ? '#fff' : '#3b82f6'"
-      [style.border]="selectedPeriod === period.days ? 'none' : '1px solid #bfdbfe'"
-    >
-      {{ period.label }}
-    </button>
-  </div>
-</div>
-  </div>
-  
-
-</div>
     <!-- Loading State -->
     <div *ngIf="loading" class="flex justify-center items-center h-64">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -74,32 +80,40 @@
     <!-- Workspace View -->
     <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
       <!-- Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 mb-2">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <!-- Total Views -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-left:4px solid #1d4ed8; border-radius:12px; box-shadow:0 1px 6px rgba(29,78,216,0.06);" class="p-5">
-          <h3 class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:#93c5fd;">Total Views</h3>
-          <p class="text-3xl font-bold" style="color:#1e3a8a;">{{ metrics.totalViews || 0 }}</p>
+        <div class="card-glass border-l-4 border-l-blue-600 p-6 flex flex-col justify-center">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
+            <i class="pi pi-eye text-blue-500"></i> Total Views
+          </h3>
+          <p class="text-3xl font-extrabold text-slate-800">{{ metrics.totalViews || 0 }}</p>
         </div>
 
         <!-- Unique Users -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-left:4px solid #2563eb; border-radius:12px; box-shadow:0 1px 6px rgba(29,78,216,0.06);" class="p-5">
-          <h3 class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:#93c5fd;">Unique Users</h3>
-          <p class="text-3xl font-bold" style="color:#1e3a8a;">{{ metrics.uniqueUsers + userCounts.zeroViewUsers }}</p>
+        <div class="card-glass border-l-4 border-l-indigo-600 p-6 flex flex-col justify-center">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
+            <i class="pi pi-users text-indigo-500"></i> Unique Users
+          </h3>
+          <p class="text-3xl font-extrabold text-slate-800">{{ metrics.uniqueUsers + userCounts.zeroViewUsers }}</p>
         </div>
 
         <!-- Unique Reports -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-left:4px solid #3b82f6; border-radius:12px; box-shadow:0 1px 6px rgba(29,78,216,0.06);" class="p-5">
-          <h3 class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:#93c5fd;">Unique Reports</h3>
-          <p class="text-3xl font-bold" style="color:#1e3a8a;">{{ metrics.uniqueReports || 0 }}</p>
+        <div class="card-glass border-l-4 border-l-amber-500 p-6 flex flex-col justify-center">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
+            <i class="pi pi-file text-amber-500"></i> Unique Reports
+          </h3>
+          <p class="text-3xl font-extrabold text-slate-800">{{ metrics.uniqueReports || 0 }}</p>
         </div>
       </div>
 
       <!-- Main Charts -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Views Over Time -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 h-[350px]">
-          <h3 class="text-lg font-semibold ml-3 mb-2" style="color:#1e3a8a;">Views Over Time</h3>
-          <div class="h-[calc(100%-40px)]">
+        <div class="card-glass p-5 h-[360px]">
+          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="pi pi-chart-line text-blue-500"></i> Views Over Time
+          </h3>
+          <div class="h-[calc(100%-48px)]">
             <apx-chart
               *ngIf="viewsChartOptions"
               [series]="viewsChartOptions.series"
@@ -114,9 +128,11 @@
         </div>
 
         <!-- Top Reports -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 h-[350px]">
-          <h3 class="text-lg font-semibold mb-2" style="color:#1e3a8a;">Top Reports</h3>
-          <div class="h-[calc(100%-40px)]">
+        <div class="card-glass p-5 h-[360px]">
+          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="pi pi-file text-amber-500"></i> Top Reports
+          </h3>
+          <div class="h-[calc(100%-48px)]">
             <apx-chart
               *ngIf="topReportsChartOptions"
               [series]="topReportsChartOptions.series"
@@ -130,9 +146,11 @@
         </div>
 
         <!-- Top Users Chart -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 h-[350px]">
-          <h3 class="text-lg font-semibold mb-2" style="color:#1e3a8a;">Top Users</h3>
-          <div class="h-[calc(100%-40px)]">
+        <div class="card-glass p-5 h-[360px]">
+          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="pi pi-users text-indigo-500"></i> Top Users
+          </h3>
+          <div class="h-[calc(100%-48px)]">
             <apx-chart
               *ngIf="topUsersChartOptions"
               [series]="topUsersChartOptions.series"
@@ -147,9 +165,11 @@
         </div>
 
         <!-- Activity Trend -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 h-[350px]">
-          <h3 class="text-lg font-semibold mb-2" style="color:#1e3a8a;">User Activity Trend</h3>
-          <div class="h-[calc(100%-40px)]">
+        <div class="card-glass p-5 h-[360px]">
+          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="pi pi-sliders-h text-emerald-500"></i> User Activity Trend
+          </h3>
+          <div class="h-[calc(100%-48px)]">
             <apx-chart
               *ngIf="activityTrendChartOptions"
               [series]="activityTrendChartOptions.series"
@@ -244,9 +264,9 @@
                 *ngFor="let page of getPageNumbers()"
                 (click)="changePage(page)"
                 class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150"
-                [style.background]="currentPage === page ? 'linear-gradient(135deg, #1e3a8a, #1d4ed8)' : '#fff'"
-                [style.color]="currentPage === page ? '#fff' : '#3b82f6'"
-                [style.border]="currentPage === page ? 'none' : '1px solid #dbeafe'"
+                [style.background]="currentPage === page ? '#f1f5f9' : '#fff'"
+                [style.color]="currentPage === page ? '#0f172a' : '#475569'"
+                [style.border]="currentPage === page ? '1.5px solid #64748b' : '1.5px solid #cbd5e1'"
               >
                 {{ page }}
               </button>
@@ -254,69 +274,34 @@
           </div>
         </div>
 
-        <!-- User Metrics Tiles (right side) -->
+        <!-- Navigate to Users page -->
         <div class="lg:col-span-1 flex flex-col gap-4 h-full">
           <!-- Header placeholder -->
           <div class="h-10 mb-4 hidden lg:block"></div>
-          
-          <div class="grid grid-cols-2 gap-4 flex-1">
-            <!-- Total Users Tile -->
-            <div 
-              style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8); border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" 
-              class="p-5 text-white cursor-pointer transform hover:-translate-y-1 transition-all duration-200 flex flex-col justify-center"
-              (click)="openUserListModal('all')"
-            >
-              <h3 class="text-sm font-medium mb-1" style="color: rgba(255,255,255,0.8);">Total Users</h3>
-              <p class="text-3xl font-bold text-white mb-1">{{ metrics.uniqueUsers + userCounts.zeroViewUsers || 0 }}</p>
-              <p class="text-xs" style="color: rgba(255,255,255,0.7);">All users in the system</p>
+          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%); border-radius: 18px; box-shadow: 0 4px 20px rgba(29,78,216,0.18);" class="p-6 flex flex-col justify-between h-full" style="min-height: 280px;">
+            <div>
+              <p style="color: rgba(255,255,255,0.7); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;" class="mb-2">User Activity</p>
+              <h3 style="color: #fff; font-size: 1.3rem; font-weight: 800; line-height: 1.3;" class="mb-3">
+                Detailed per-user analytics, time spent per dashboard & report access
+              </h3>
+              <p style="color: rgba(255,255,255,0.65); font-size: 0.8rem; line-height: 1.5;">
+                View every user's workspace views, consumption methods, top reports, and full activity timeline — all on one dedicated page.
+              </p>
             </div>
-        
-            <!-- Total Views Tile -->
-            <div 
-              style="background: #fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" 
-              class="p-5 flex flex-col justify-center"
+            <a
+              routerLink="/users"
+              style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); color: #fff; border-radius: 10px; padding: 0.7rem 1.25rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; margin-top: 1.5rem; transition: background 0.18s; backdrop-filter: blur(6px);"
+              onmouseenter="this.style.background='rgba(255,255,255,0.25)'"
+              onmouseleave="this.style.background='rgba(255,255,255,0.15)'"
             >
-              <h3 class="text-sm font-semibold mb-1" style="color: #93c5fd;">Total Views</h3>
-              <p class="text-3xl font-bold mb-1" style="color: #1e3a8a;">{{ userCounts.totalViews }}</p>
-              <p class="text-xs" style="color: #93c5fd;">Across all reports</p>
-            </div>
-
-            <!-- Zero View Users Tile -->
-            <div 
-              style="background: #fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" 
-              class="p-5 cursor-pointer transform hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex flex-col justify-center"
-              (click)="openUserListModal('zero')"
-            >
-              <h3 class="text-sm font-semibold mb-1" style="color: #93c5fd;">Zero View Users</h3>
-              <p class="text-3xl font-bold mb-1" style="color: #3b82f6;">{{ userCounts.zeroViewUsers }}</p>
-              <p class="text-xs" style="color: #93c5fd;">No views in selected period</p>
-            </div>
-        
-            <!-- Low Activity Users Tile -->
-            <div 
-              style="background: #fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" 
-              class="p-5 cursor-pointer transform hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex flex-col justify-center"
-              (click)="openUserListModal('low')"
-            >
-              <h3 class="text-sm font-semibold mb-1" style="color: #93c5fd;">Low Activity Users</h3>
-              <p class="text-3xl font-bold mb-1" style="color: #1d4ed8;">{{ userCounts.lowActivityUsers }}</p>
-              <p class="text-xs" style="color: #93c5fd;">Less than 5 views</p>
-            </div>
-            
-            <!-- Deactivated Users Tile -->
-            <div 
-              style="background: #fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 1px 8px rgba(29,78,216,0.07);" 
-              class="p-5 col-span-2 cursor-pointer transform hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex flex-col justify-center"
-              (click)="openUserListModal('deactivated')"
-            >
-              <h3 class="text-sm font-semibold mb-1" style="color: #93c5fd;">Deactivated Users</h3>
-              <p class="text-3xl font-bold mb-1" style="color: #1e3a5f;">{{ userCounts.deactivatedUsers }}</p>
-              <p class="text-xs" style="color: #93c5fd;">Last 5 Deactivated users</p>
-            </div>
+              <i class="pi pi-arrow-right text-xs"></i>
+              Open Users Overview
+            </a>
           </div>
         </div>
       </div>
     </div>
+
 
 <!-- User Metrics -->
 <div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6">
@@ -721,7 +706,7 @@
                   <!-- Pagination -->
                   <div *ngIf="getReportPageNumbers(report).length > 1" class="flex items-center justify-center gap-1 mt-4 pt-4" style="border-top:1px solid #f0f9ff;">
                     <button [disabled]="report.currentPage === 1" (click)="changeReportPage(report, report.currentPage - 1)" style="border:1px solid #dbeafe; border-radius:8px; background:#fff; color:#3b82f6;" class="p-2 disabled:opacity-40"><i class="pi pi-chevron-left text-xs"></i></button>
-                    <button *ngFor="let page of getReportPageNumbers(report)" (click)="changeReportPage(report, page)" class="px-3 py-1.5 text-xs font-semibold rounded-lg" [style.background]="report.currentPage === page ? 'linear-gradient(135deg, #1e3a8a, #1d4ed8)' : '#fff'" [style.color]="report.currentPage === page ? '#fff' : '#3b82f6'" [style.border]="report.currentPage === page ? 'none' : '1px solid #dbeafe'">{{ page }}</button>
+                    <button *ngFor="let page of getReportPageNumbers(report)" (click)="changeReportPage(report, page)" class="px-3 py-1.5 text-xs font-semibold rounded-lg" [style.background]="report.currentPage === page ? '#f1f5f9' : '#fff'" [style.color]="report.currentPage === page ? '#0f172a' : '#475569'" [style.border]="report.currentPage === page ? '1.5px solid #64748b' : '1.5px solid #cbd5e1'">{{ page }}</button>
                     <button [disabled]="report.currentPage === getReportPageNumbers(report).length" (click)="changeReportPage(report, report.currentPage + 1)" style="border:1px solid #dbeafe; border-radius:8px; background:#fff; color:#3b82f6;" class="p-2 disabled:opacity-40"><i class="pi pi-chevron-right text-xs"></i></button>
                   </div>
                 </div>

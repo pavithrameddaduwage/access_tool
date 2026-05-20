@@ -101,7 +101,7 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
 };
 exports.PowerBILogsCollectorTask = PowerBILogsCollectorTask;
 __decorate([
-    (0, schedule_1.Cron)('0 */10 * * * *'),
+    (0, schedule_1.Cron)('0 0 * * * *'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

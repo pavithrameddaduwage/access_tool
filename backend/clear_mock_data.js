@@ -1,12 +1,13 @@
 const { Client } = require('pg');
+require('dotenv').config({ path: __dirname + '/.env' });
 
 async function main() {
   const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    database: 'walmart_db',
-    user: 'postgres',
-    password: '0006'
+    host: process.env.PG_DB_HOST || 'localhost',
+    port: parseInt(process.env.PG_DB_PORT || '5432', 10),
+    database: process.env.PG_DB_NAME || 'access_tool',
+    user: process.env.PG_DB_USER || 'postgres',
+    password: process.env.PG_DB_PASSWORD || '0006'
   });
 
   try {

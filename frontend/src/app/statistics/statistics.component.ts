@@ -6,6 +6,7 @@ import { WebtoolService } from '../Services/webtool.service';
 import { WebtoolUserService } from '../Services/webtool-user.service';
 import { UserWebtoolService } from '../Services/user-webtool.service';
 import { GroupService } from '../Services/group.service';
+import { LoginAnalyticsService } from '../Services/login-analytics.service';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -99,6 +100,11 @@ export class StatisticsComponent implements OnInit {
 @ViewChild("accessTrendChart") accessTrendChart!: any;
 
   private records: any[] = []; 
+  private webtoolUserData: any[] = [];
+  private loginEvents: any[] = [];
+  private recordsLoaded = false;
+  private webtoolUsersLoaded = false;
+  private loginEventsLoaded = false;
 
 
   statistics = {
@@ -354,28 +360,39 @@ export class StatisticsComponent implements OnInit {
     private groupService: GroupService,
     private webtoolService: WebtoolService,
     private webtoolUserService: WebtoolUserService,
-    private userWebtoolService: UserWebtoolService
+    private userWebtoolService: UserWebtoolService,
+    private loginAnalyticsService: LoginAnalyticsService
   ) {}
 
   ngOnInit() {
     this.loadStatistics();
     this.loadWebtoolStatistics();
-    
-    // Process advanced analytics with dummy data
-    this.processUserAccessPatterns([]);
-    this.processRoleMetrics();
-    this.processAccessTrends();
-    
-    // Add dummy summary metrics
-    this.statistics.summaryMetrics = {
-      mostActiveTime: {
-        start: '10 AM',
-        end: '2 PM',
-        count: 450
+    this.loadLoginEvents();
+  }
+
+  private loadLoginEvents() {
+    this.loginAnalyticsService.getLoginEvents().subscribe({
+      next: (events: any[]) => {
+        this.loginEvents = events || [];
+        this.loginEventsLoaded = true;
+        this.triggerAdvancedAnalyticsProcessing();
       },
-      crossToolUsage: 65,
-      toolUtilization: 78
-    };
+      error: (error) => {
+        console.error('Error loading login events:', error);
+        this.loginEvents = [];
+        this.loginEventsLoaded = true;
+        this.triggerAdvancedAnalyticsProcessing();
+      }
+    });
+  }
+
+  private triggerAdvancedAnalyticsProcessing() {
+    if (this.recordsLoaded && this.webtoolUsersLoaded && this.loginEventsLoaded) {
+      this.processUserAccessPatterns(this.records, this.webtoolUserData);
+      this.processRoleMetrics(this.records, this.webtoolUserData);
+      this.processAccessTrends(this.loginEvents);
+      this.calculateSummaryMetrics(this.records, this.webtoolUserData, this.loginEvents);
+    }
   }
 
   private loadStatistics() {
@@ -402,18 +419,27 @@ export class StatisticsComponent implements OnInit {
 
     this.homeService.getRecords().subscribe({
       next: (records: any[]) => {
-        if (!records?.length) return;
+        this.records = records || [];
+        this.recordsLoaded = true;
         
-        this.statistics.totalUsers = records.length;
-        
-        const departmentData = this.processDepartmentData(records);
-        const deptAccessData = this.processDepartmentAccess(records);
-        
-        this.updateDepartmentChart(departmentData);
-        this.updateDepartmentAccessChart(deptAccessData);
-        this.calculateAggregateMetrics(records);
+        if (records?.length) {
+          this.statistics.totalUsers = records.length;
+          
+          const departmentData = this.processDepartmentData(records);
+          const deptAccessData = this.processDepartmentAccess(records);
+          
+          this.updateDepartmentChart(departmentData);
+          this.updateDepartmentAccessChart(deptAccessData);
+          this.calculateAggregateMetrics(records);
+        }
+        this.triggerAdvancedAnalyticsProcessing();
       },
-      error: (error) => console.error('Error loading records:', error)
+      error: (error) => {
+        console.error('Error loading records:', error);
+        this.records = [];
+        this.recordsLoaded = true;
+        this.triggerAdvancedAnalyticsProcessing();
+      }
     });
 
     this.groupService.getGroups().subscribe({
@@ -894,10 +920,20 @@ private calculateWebtoolMetrics(
         });
       });
 
+      this.webtoolUserData = userData || [];
+      this.webtoolUsersLoaded = true;
+
       this.updateWebtoolCharts(usersByWebtool, roleCount, departmentAccess);
       this.calculateWebtoolMetrics(usersByWebtool, roleCount);
+
+      this.triggerAdvancedAnalyticsProcessing();
     },
-    error: (error) => console.error('Error loading webtool user data:', error)
+    error: (error) => {
+      console.error('Error loading webtool user data:', error);
+      this.webtoolUserData = [];
+      this.webtoolUsersLoaded = true;
+      this.triggerAdvancedAnalyticsProcessing();
+    }
   });
 }
 // Add method to handle records by department
@@ -1105,129 +1141,208 @@ private updateAccessTrendChart(trends: AccessTrend[]) {
 
 
 
-private calculateSummaryMetrics(records: any[]) {
-  // Calculate cross-tool usage percentage
-  const totalUsers = records.length;
-  const usersWithBoth = records.filter(record => 
-    (record.dashboards?.length || 0) > 0 && 
-    (record.webtools?.length || 0) > 0
-  ).length;
+private calculateSummaryMetrics(records: any[], userData: any[], loginEvents: any[]) {
+  const allEmails = new Set<string>();
+  records.forEach(r => { if (r.email) allEmails.add(r.email.toLowerCase().trim()); });
+  userData.forEach(u => { if (u.email) allEmails.add(u.email.toLowerCase().trim()); });
   
-  this.statistics.summaryMetrics.crossToolUsage = 
-    Math.round((usersWithBoth / totalUsers) * 100);
-
-  // Calculate tool utilization
-  const totalTools = this.statistics.totalDashboards + this.statistics.totalWebtools;
-  const usedTools = new Set();
-  records.forEach(record => {
-    record.dashboards?.forEach((d: string) => usedTools.add(`d_${d}`));
-    record.webtools?.forEach((w: string) => usedTools.add(`w_${w}`));
+  const totalUsers = allEmails.size;
+  let usersWithBoth = 0;
+  
+  allEmails.forEach(email => {
+    const record = records.find(r => r.email?.toLowerCase().trim() === email);
+    const user = userData.find(u => u.email?.toLowerCase().trim() === email);
+    
+    const hasDashboard = record ? (record.dashboards?.length > 0) : false;
+    const hasWebtool = user ? (user.webtools?.length > 0) : false;
+    
+    if (hasDashboard && hasWebtool) {
+      usersWithBoth++;
+    }
   });
   
-  this.statistics.summaryMetrics.toolUtilization = 
-    Math.round((usedTools.size / totalTools) * 100);
+  this.statistics.summaryMetrics.crossToolUsage = totalUsers > 0 
+    ? Math.round((usersWithBoth / totalUsers) * 100) 
+    : 0;
 
-  // This would require timestamp data in your records
-  // If you have access timestamps, you can calculate the most active time period
-  // For now, we'll leave it as "Not Available"
-  this.statistics.summaryMetrics.mostActiveTime = {
-    start: 'N/A',
-    end: 'N/A',
-    count: 0
-  };
-}
-
-
-
-
-private processUserAccessPatterns(records: any[]) {
-  // Since we don't have real data, we'll create dummy data
-  const dummyPatterns: UserAccessPattern[] = [
-    {
-      category: 'Engineering',
-      dashboardOnly: 45,
-      webtoolOnly: 30,
-      bothAccess: 25
-    },
-    {
-      category: 'Sales',
-      dashboardOnly: 35,
-      webtoolOnly: 40,
-      bothAccess: 20
-    },
-    {
-      category: 'Marketing',
-      dashboardOnly: 25,
-      webtoolOnly: 35,
-      bothAccess: 30
-    },
-    {
-      category: 'Finance',
-      dashboardOnly: 30,
-      webtoolOnly: 25,
-      bothAccess: 35
-    },
-    {
-      category: 'HR',
-      dashboardOnly: 20,
-      webtoolOnly: 30,
-      bothAccess: 15
-    }
-  ];
-
-  this.updateUserAccessPatternChart(dummyPatterns);
-}
-
-private processRoleMetrics() {
-  // Dummy role metrics data
-  const dummyRoleMetrics: RoleAccessMetrics[] = [
-    {
-      role: 'Admin',
-      averageTools: 8.5,
-      userCount: 25
-    },
-    {
-      role: 'Manager',
-      averageTools: 6.2,
-      userCount: 45
-    },
-    {
-      role: 'Analyst',
-      averageTools: 5.8,
-      userCount: 60
-    },
-    {
-      role: 'Developer',
-      averageTools: 4.9,
-      userCount: 80
-    },
-    {
-      role: 'Viewer',
-      averageTools: 3.2,
-      userCount: 120
-    }
-  ];
-
-  this.updateRoleMetricsChart(dummyRoleMetrics);
-}
-
-private processAccessTrends() {
-  // Dummy access trend data for the last 7 days
-  const today = new Date();
-  const dummyTrends: AccessTrend[] = [];
-  
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    dummyTrends.push({
-      timestamp: date.toISOString(),
-      activeUsers: Math.floor(180 + Math.random() * 100),
-      totalAccesses: Math.floor(450 + Math.random() * 200),
-      uniqueTools: Math.floor(35 + Math.random() * 15)
+  const totalTools = this.statistics.totalDashboards + this.statistics.totalWebtools;
+  if (totalTools > 0) {
+    const assignedDashboards = new Set<string>();
+    records.forEach(r => {
+      r.dashboards?.forEach((d: string) => { if (d) assignedDashboards.add(d); });
     });
+    
+    const assignedWebtools = new Set<string>();
+    userData.forEach(u => {
+      u.webtools?.forEach((w: string) => { if (w) assignedWebtools.add(w); });
+    });
+    
+    const activeTools = assignedDashboards.size + assignedWebtools.size;
+    this.statistics.summaryMetrics.toolUtilization = Math.round((activeTools / totalTools) * 100);
+  } else {
+    this.statistics.summaryMetrics.toolUtilization = 0;
   }
 
-  this.updateAccessTrendChart(dummyTrends);
+  // Calculate Peak Login Hour
+  const hourCounts = new Array(24).fill(0);
+  loginEvents.forEach(event => {
+    if (event.loginTime) {
+      const d = new Date(event.loginTime);
+      const hour = d.getHours();
+      if (hour >= 0 && hour < 24) {
+        hourCounts[hour]++;
+      }
+    }
+  });
+  
+  let peakHour = 0;
+  let maxHourCount = 0;
+  for (let h = 0; h < 24; h++) {
+    if (hourCounts[h] > maxHourCount) {
+      maxHourCount = hourCounts[h];
+      peakHour = h;
+    }
+  }
+  
+  if (maxHourCount > 0) {
+    const startPeriod = peakHour % 12 === 0 ? 12 : peakHour % 12;
+    const startAmPm = peakHour >= 12 ? 'PM' : 'AM';
+    const endHour = (peakHour + 1) % 24;
+    const endPeriod = endHour % 12 === 0 ? 12 : endHour % 12;
+    const endAmPm = endHour >= 12 ? 'PM' : 'AM';
+    
+    this.statistics.summaryMetrics.mostActiveTime = {
+      start: `${startPeriod} ${startAmPm}`,
+      end: `${endPeriod} ${endAmPm}`,
+      count: maxHourCount
+    };
+  } else {
+    this.statistics.summaryMetrics.mostActiveTime = {
+      start: 'N/A',
+      end: 'N/A',
+      count: 0
+    };
+  }
+}
+
+private processUserAccessPatterns(records: any[], userData: any[]) {
+  const departmentsMap = new Map<string, { dashboardOnly: number, webtoolOnly: number, bothAccess: number }>();
+  
+  const allEmails = new Set<string>();
+  records.forEach(r => { if (r.email) allEmails.add(r.email.toLowerCase().trim()); });
+  userData.forEach(u => { if (u.email) allEmails.add(u.email.toLowerCase().trim()); });
+  
+  allEmails.forEach(email => {
+    const record = records.find(r => r.email?.toLowerCase().trim() === email);
+    const user = userData.find(u => u.email?.toLowerCase().trim() === email);
+    
+    const dept = (record?.department || user?.department || 'Unknown').trim();
+    if (!dept) return;
+    
+    const hasDashboard = record ? (record.dashboards?.length > 0) : false;
+    const hasWebtool = user ? (user.webtools?.length > 0) : false;
+    
+    if (!departmentsMap.has(dept)) {
+      departmentsMap.set(dept, { dashboardOnly: 0, webtoolOnly: 0, bothAccess: 0 });
+    }
+    
+    const counts = departmentsMap.get(dept)!;
+    if (hasDashboard && hasWebtool) {
+      counts.bothAccess++;
+    } else if (hasDashboard) {
+      counts.dashboardOnly++;
+    } else if (hasWebtool) {
+      counts.webtoolOnly++;
+    }
+  });
+  
+  const patterns: UserAccessPattern[] = Array.from(departmentsMap.entries()).map(([dept, counts]) => ({
+    category: dept,
+    dashboardOnly: counts.dashboardOnly,
+    webtoolOnly: counts.webtoolOnly,
+    bothAccess: counts.bothAccess
+  })).filter(p => p.dashboardOnly > 0 || p.webtoolOnly > 0 || p.bothAccess > 0);
+  
+  this.updateUserAccessPatternChart(patterns);
+}
+
+private processRoleMetrics(records: any[], userData: any[]) {
+  const roleUsersMap = new Map<string, Set<string>>();
+  
+  userData.forEach(user => {
+    if (!user.email || !user.roles) return;
+    const email = user.email.toLowerCase().trim();
+    
+    const rolesList: any[] = Object.values(user.roles).flat();
+    rolesList.forEach((role: any) => {
+      if (role && role.name) {
+        const roleName = role.name.trim();
+        if (!roleUsersMap.has(roleName)) {
+          roleUsersMap.set(roleName, new Set<string>());
+        }
+        roleUsersMap.get(roleName)!.add(email);
+      }
+    });
+  });
+  
+  const roleMetrics: RoleAccessMetrics[] = [];
+  
+  roleUsersMap.forEach((emails, roleName) => {
+    let totalToolsCount = 0;
+    
+    emails.forEach(email => {
+      const record = records.find(r => r.email?.toLowerCase().trim() === email);
+      const user = userData.find(u => u.email?.toLowerCase().trim() === email);
+      
+      const dashboardsCount = record?.dashboards?.length || 0;
+      const webtoolsCount = user?.webtools?.length || 0;
+      
+      totalToolsCount += (dashboardsCount + webtoolsCount);
+    });
+    
+    const userCount = emails.size;
+    const averageTools = userCount > 0 ? totalToolsCount / userCount : 0;
+    
+    roleMetrics.push({
+      role: roleName,
+      averageTools: parseFloat(averageTools.toFixed(2)),
+      userCount: userCount
+    });
+  });
+  
+  roleMetrics.sort((a, b) => b.userCount - a.userCount);
+  this.updateRoleMetricsChart(roleMetrics);
+}
+
+private processAccessTrends(loginEvents: any[]) {
+  const trends: AccessTrend[] = [];
+  const today = new Date();
+  
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    
+    const dayEvents = loginEvents.filter(event => {
+      if (!event.loginTime) return false;
+      const eventDate = new Date(event.loginTime);
+      return eventDate.getFullYear() === d.getFullYear() &&
+             eventDate.getMonth() === d.getMonth() &&
+             eventDate.getDate() === d.getDate();
+    });
+    
+    const uniqueUsers = new Set(dayEvents.map(e => e.email?.toLowerCase().trim()).filter(Boolean));
+    const uniqueWebtools = new Set(dayEvents.map(e => e.webtool?.trim()).filter(Boolean));
+    
+    trends.push({
+      timestamp: d.toISOString(),
+      activeUsers: uniqueUsers.size,
+      totalAccesses: dayEvents.length,
+      uniqueTools: uniqueWebtools.size
+    });
+  }
+  
+  this.updateAccessTrendChart(trends);
 }
 
 }

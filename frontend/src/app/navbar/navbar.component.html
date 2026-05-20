@@ -17,7 +17,14 @@
           routerLink="/home"
           routerLinkActive="active-link"
         >
-          <i class="pi pi-chart-bar mr-1"></i> POWER BI ANALYTICS
+          POWER BI ANALYTICS
+        </a>
+        <a
+          class="text-xs font-semibold text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
+          routerLink="/users"
+          routerLinkActive="active-link"
+        >
+          USERS
         </a>
         <a
           class="text-xs font-semibold text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
@@ -25,7 +32,7 @@
           [queryParams]="{view: 'access'}"
           routerLinkActive="active-link"
         >
-          <i class="pi pi-key mr-1"></i> POWER BI ACCESS MATRIX
+          POWER BI ACCESS MATRIX
         </a>
         <a
           *ngIf="isAdmin"
@@ -33,7 +40,7 @@
           routerLink="/user-management"
           routerLinkActive="active-link"
         >
-          <i class="pi pi-users mr-1"></i> USER MANAGEMENT
+          USER MANAGEMENT
         </a>
       </ng-container>
     </div>
@@ -66,6 +73,13 @@
       routerLinkActive="active-link"
     >
       PBI ANALYTICS
+    </a>
+    <a
+      class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
+      routerLink="/users"
+      routerLinkActive="active-link"
+    >
+      USERS
     </a>
     <a
       class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"

@@ -372,19 +372,21 @@
   <div class="grid grid-cols-1 md:grid-cols-3  mt-8">
     <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
       <p class="text-sm font-medium text-gray-600">Most Active Time</p>
-      <p class="text-2xl font-bold text-indigo-600 mt-1">10 AM - 2 PM</p>
+      <p class="text-2xl font-bold text-indigo-600 mt-1">
+        {{ statistics.summaryMetrics.mostActiveTime.start === 'N/A' ? 'N/A' : statistics.summaryMetrics.mostActiveTime.start + ' - ' + statistics.summaryMetrics.mostActiveTime.end }}
+      </p>
       <p class="text-sm text-gray-500">Peak usage period</p>
     </div>
     
     <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
       <p class="text-sm font-medium text-gray-600">Cross-Tool Usage</p>
-      <p class="text-2xl font-bold text-emerald-600 mt-1">65%</p>
+      <p class="text-2xl font-bold text-emerald-600 mt-1">{{ statistics.summaryMetrics.crossToolUsage }}%</p>
       <p class="text-sm text-gray-500">Users with both access types</p>
     </div>
     
     <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
       <p class="text-sm font-medium text-gray-600">Tool Utilization</p>
-      <p class="text-2xl font-bold text-blue-600 mt-1">78%</p>
+      <p class="text-2xl font-bold text-blue-600 mt-1">{{ statistics.summaryMetrics.toolUtilization }}%</p>
       <p class="text-sm text-gray-500">Active tools ratio</p>
     </div>
   </div>

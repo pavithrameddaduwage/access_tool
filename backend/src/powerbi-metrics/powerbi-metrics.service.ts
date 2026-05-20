@@ -585,7 +585,25 @@ export class PowerBIMetricsService {
   }
 
   async saveRawLogs(logs: PowerBILogEntry[]): Promise<void> {
-    const entities = logs.map(log => {
+    if (!logs || logs.length === 0) {
+      return;
+    }
+    
+    // De-duplicate in-memory by log.Id within the same batch
+    const uniqueIncomingMap = new Map<string, PowerBILogEntry>();
+    for (const log of logs) {
+      if (log && log.Id) {
+        uniqueIncomingMap.set(log.Id, log);
+      }
+    }
+    const uniqueIncomingLogs = Array.from(uniqueIncomingMap.values());
+
+    const filteredLogs = await this.filterExistingLogs(uniqueIncomingLogs);
+    if (filteredLogs.length === 0) {
+      this.logger.log('All logs are duplicates, skipping database insertion.');
+      return;
+    }
+    const entities = filteredLogs.map(log => {
       const cleanedWorkspaceName = log.WorkSpaceName?.startsWith('PersonalWorkspace')
         ? 'PersonalWorkspace'
         : log.WorkSpaceName;
@@ -2360,48 +2378,60 @@ public async syncMappingsToMasterData(): Promise<void> {
     // 2. Sync workspaces
     const workspaceNameToId: { [name: string]: number } = {};
     for (const wm of workspaceMappings) {
-      const name = wm.displayName || wm.originalName;
-      // Check if exists
-      const existing = await manager.query('SELECT id FROM workspace WHERE workspace = $1', [name]);
+      const name = (wm.displayName || wm.originalName || '').trim();
+      if (!name) continue;
+      // Check if exists case-insensitively
+      const existing = await manager.query('SELECT id FROM workspace WHERE LOWER(workspace) = LOWER($1)', [name]);
       let workspaceId: number;
       if (existing && existing.length > 0) {
         workspaceId = existing[0].id;
       } else {
-        const insertRes = await manager.query(
-          'INSERT INTO workspace (workspace) VALUES ($1) RETURNING id',
-          [name]
-        );
-        workspaceId = insertRes[0].id;
+        try {
+          const insertRes = await manager.query(
+            'INSERT INTO workspace (workspace) VALUES ($1) ON CONFLICT (workspace) DO UPDATE SET workspace = EXCLUDED.workspace RETURNING id',
+            [name]
+          );
+          workspaceId = insertRes[0].id;
+        } catch (insertErr) {
+          const fallback = await manager.query('SELECT id FROM workspace WHERE LOWER(workspace) = LOWER($1)', [name]);
+          workspaceId = fallback[0]?.id;
+        }
       }
       workspaceNameToId[wm.workspaceId] = workspaceId;
     }
 
     // 3. Sync dashboards & workspace links
     for (const rm of reportMappings) {
-      const name = rm.displayName || rm.originalName;
-      // Check if exists
-      const existingDashboard = await manager.query('SELECT id FROM dashboard WHERE dashboard = $1', [name]);
+      const name = (rm.displayName || rm.originalName || '').trim();
+      if (!name) continue;
+      // Check if exists case-insensitively
+      const existingDashboard = await manager.query('SELECT id FROM dashboard WHERE LOWER(dashboard) = LOWER($1)', [name]);
       let dashboardId: number;
       if (existingDashboard && existingDashboard.length > 0) {
         dashboardId = existingDashboard[0].id;
       } else {
-        const insertRes = await manager.query(
-          'INSERT INTO dashboard (dashboard, "groupId") VALUES ($1, NULL) RETURNING id',
-          [name]
-        );
-        dashboardId = insertRes[0].id;
+        try {
+          const insertRes = await manager.query(
+            'INSERT INTO dashboard (dashboard, "groupId") VALUES ($1, NULL) ON CONFLICT (dashboard) DO UPDATE SET dashboard = EXCLUDED.dashboard RETURNING id',
+            [name]
+          );
+          dashboardId = insertRes[0].id;
+        } catch (insertErr) {
+          const fallback = await manager.query('SELECT id FROM dashboard WHERE LOWER(dashboard) = LOWER($1)', [name]);
+          dashboardId = fallback[0]?.id;
+        }
       }
 
       // Link in dashboard_workspace
       const dbWorkspaceId = workspaceNameToId[rm.workspaceId];
-      if (dbWorkspaceId) {
+      if (dbWorkspaceId && dashboardId) {
         const existingLink = await manager.query(
           'SELECT id FROM dashboard_workspace WHERE "workspaceId" = $1 AND "dashboardId" = $2',
           [dbWorkspaceId, dashboardId]
         );
         if (!existingLink || existingLink.length === 0) {
           await manager.query(
-            'INSERT INTO dashboard_workspace ("workspaceId", "dashboardId") VALUES ($1, $2)',
+            'INSERT INTO dashboard_workspace ("workspaceId", "dashboardId") VALUES ($1, $2) ON CONFLICT DO NOTHING',
             [dbWorkspaceId, dashboardId]
           );
         }

@@ -24,6 +24,7 @@ import { WebtoolAnalyticsComponent } from '../webtool-analytics/webtool-analytic
 import { PowerBIDashboardComponent } from '../powerbi-dashboard/powerbi-dashboard.component';
 import { AnalyticsComponent } from '../analytics/analytics.component';
 import { WAnalyticsComponent } from '../w-analytics/w-analytics.component';
+import { UsersOverviewComponent } from '../users-overview/users-overview.component';
 
 const routeConfig: Routes = [
   {
@@ -186,6 +187,13 @@ const routeConfig: Routes = [
   {
     path: 'webtool-dashboard',
     component: WebtoolAnalyticsComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'users',
+    component: UsersOverviewComponent,
+    canActivate: [authGuard],
+    title: 'User Activity Overview',
     pathMatch: 'full'
   }
 ];

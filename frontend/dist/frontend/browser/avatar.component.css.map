@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;d627280b377803763df664501ae9ada4481505aeb3bba7af7d4c6a98798d7503;C:/Users/PMeddaduwage/Desktop/access_tool/frontend/src/app/components/avatar/avatar.component.ts"],
-  "sourcesContent": ["\n    .user-avatar {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      width: 28px;\n      height: 28px;\n      border-radius: 50%;\n      font-size: 11px;\n      font-weight: 600;\n      text-transform: uppercase;\n    }\n  "],
-  "mappings": ";AACI,CAAC;AACC,WAAS;AACT,eAAa;AACb,mBAAiB;AACjB,SAAO;AACP,UAAQ;AACR,iBAAe;AACf,aAAW;AACX,eAAa;AACb,kBAAgB;AAClB;",
-  "names": []
-}

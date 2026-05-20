@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/login/login.component.css"],
-  "sourcesContent": [":host {\r\n    display: block;\r\n    min-height: 100vh;\r\n    margin-top: -64px;\r\n    padding-top: 64px;\r\n    background-image: linear-gradient(to top, rgb(22 78 99), rgb(14 165 233));\r\n}\r\n\r\ninput[type='email'],\r\ninput[type='password'],\r\ninput[type='text'] {\r\n    @apply block w-full my-4 text-center;\r\n    @apply border p-2 border-gray-400 rounded-2xl;\r\n}\r\n\r\nbutton {\r\n    @apply block w-full font-semibold my-2 text-gray-600;\r\n    @apply border p-2 border-gray-300 rounded-2xl;\r\n}\r\n\r\nbutton[type=\"submit\"], .submit {\r\n    @apply border-0 bg-primary text-white;\r\n}\r\n"],
-  "mappings": ";AAAA;AACI,WAAA;AACA,cAAA;AACA,cAAA;AACA,eAAA;AACA;IAAA;MAAA,GAAA,GAAA;MAAA,IAAA,GAAA,GAAA,GAAA;MAAA,IAAA,GAAA,IAAA;AACJ;AAKI,KAAA,CAAA;;;AAAA,cAAA;AAAA,iBAAA;AAAA,WAAA;AAAA,SAAA;AAAA,cAAA;AACA,iBAAA;AAAA,gBAAA;AAAA,uBAAA;AAAA,gBAAA,IAAA,IAAA,IAAA,IAAA,EAAA,IAAA,mBAAA,EAAA;AAAA,WAAA;AADoC;AAKpC;AAAA,cAAA;AAAA,iBAAA;AAAA,WAAA;AAAA,SAAA;AAAA,eAAA;AAAA,qBAAA;AAAA,SAAA,IAAA,GAAA,GAAA,GAAA,EAAA,IAAA,iBAAA,EAAA;AACA,iBAAA;AAAA,gBAAA;AAAA,uBAAA;AAAA,gBAAA,IAAA,IAAA,IAAA,IAAA,EAAA,IAAA,mBAAA,EAAA;AAAA,WAAA;AADoD;AAKpD,MAAA,CAAA;AAAA,CAAA;AAAA,gBAAA;AAAA,mBAAA;AAAA,oBAAA,IAAA,EAAA,GAAA,IAAA,EAAA,IAAA,eAAA,EAAA;AAAA,qBAAA;AAAA,SAAA,IAAA,IAAA,IAAA,IAAA,EAAA,IAAA,iBAAA,EAAA;AAAqC;",
-  "names": []
-}

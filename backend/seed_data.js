@@ -1,13 +1,14 @@
 const { Client } = require('pg');
 const { v4: uuidv4 } = require('uuid');
+require('dotenv').config({ path: __dirname + '/.env' });
 
 async function main() {
   const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    database: 'walmart_db',
-    user: 'postgres',
-    password: '0006'
+    host: process.env.PG_DB_HOST || 'localhost',
+    port: parseInt(process.env.PG_DB_PORT || '5432', 10),
+    database: process.env.PG_DB_NAME || 'access_tool',
+    user: process.env.PG_DB_USER || 'postgres',
+    password: process.env.PG_DB_PASSWORD || '0006'
   });
 
   try {
@@ -44,7 +45,7 @@ async function main() {
     for (const wm of workspaceMappings) {
       const name = wm.displayName || wm.originalName;
       const res = await client.query(
-        'INSERT INTO workspace (workspace) VALUES ($1) RETURNING id',
+        'INSERT INTO workspace (workspace) VALUES ($1) ON CONFLICT (workspace) DO UPDATE SET workspace = EXCLUDED.workspace RETURNING id',
         [name]
       );
       workspaceIdToDbId[wm.workspaceId] = res.rows[0].id;
@@ -56,7 +57,7 @@ async function main() {
     for (const rm of reportMappings) {
       const name = rm.displayName || rm.originalName;
       const res = await client.query(
-        'INSERT INTO dashboard (dashboard, "groupId") VALUES ($1, NULL) RETURNING id',
+        'INSERT INTO dashboard (dashboard, "groupId") VALUES ($1, NULL) ON CONFLICT (dashboard) DO UPDATE SET dashboard = EXCLUDED.dashboard RETURNING id',
         [name]
       );
       reportIdToDbId[rm.reportId] = res.rows[0].id;
