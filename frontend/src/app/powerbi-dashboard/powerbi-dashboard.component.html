@@ -14,9 +14,7 @@
       <!-- Filters and Duration Controls -->
       <div class="flex flex-col md:flex-row items-stretch md:items-end gap-4 w-full md:w-auto md:max-w-4xl">
         <div class="w-full md:w-60">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
-            <i class="pi pi-folder-open text-slate-400"></i> Workspace
-          </label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Workspace</label>
           <p-dropdown 
             [options]="workspaceOptions" 
             optionLabel="name" 
@@ -30,9 +28,7 @@
         </div>
 
         <div class="w-full md:w-60">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
-            <i class="pi pi-file text-slate-400"></i> Report
-          </label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Report</label>
           <p-dropdown 
             [options]="reportOptions" 
             optionLabel="name" 
@@ -50,9 +46,7 @@
 
         <!-- Time Duration Buttons -->
         <div class="w-full md:w-auto">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
-            <i class="pi pi-calendar text-slate-400"></i> Duration
-          </label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Duration</label>
           <div class="flex gap-2">
             <button
               *ngFor="let period of timePeriods"
@@ -210,8 +204,8 @@
               <input
                 type="text"
                 placeholder="Search users..."
-                style="border:1px solid #bfdbfe; border-radius:8px; color:#1e3a5f;"
-                class="w-full pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                style="border:1px solid #bfdbfe; border-radius:8px; color:#1e3a5f; padding-left: 2.25rem !important;"
+                class="w-full pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                 [(ngModel)]="userSearchQuery"
                 (input)="filterUsers()"
               />
@@ -596,46 +590,50 @@
       
       <!-- Loading state -->
       <div *ngIf="loadingAccessMatrix" class="flex flex-col justify-center items-center h-64 mt-6">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 mb-3" style="border-color: #3b82f6;"></div>
-        <p class="text-sm font-semibold" style="color:#93c5fd;">Compiling access control data...</p>
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 mb-3" style="border-color: #64748b;"></div>
+        <p class="text-sm font-semibold" style="color:#64748b;">Compiling access control data...</p>
       </div>
 
       <!-- Access Cards Content -->
       <div *ngIf="!loadingAccessMatrix" class="space-y-6 mt-6">
         
-        <!-- Header Introduction Card -->
-        <div style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8); border-radius: 16px;" class="p-5 text-white">
-          <div class="flex items-start space-x-4">
-            <div class="p-3 rounded-lg flex-shrink-0" style="background: rgba(255,255,255,0.15);">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-lg font-bold" style="color:#fff;">Dashboard Access &amp; Activity</h2>
-              <p class="text-sm mt-1" style="color: rgba(255,255,255,0.75);">
-                Cross-references the active security access lists with real-time Power BI usage logs.
-              </p>
-            </div>
+        <!-- Overall Dashboard Search -->
+        <div class="relative w-full">
+          <input 
+            type="text" 
+            placeholder="Search dashboards..." 
+            style="border: 1px solid #cbd5e1; border-radius: 8px; color: #0f172a; padding-left: 2.25rem !important; height: 42px;" 
+            class="w-full pr-4 py-2.5 text-sm focus:ring-1 focus:ring-slate-400 focus:outline-none bg-white shadow-sm transition-all" 
+            [(ngModel)]="dashboardAccessSearchQuery" 
+          />
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="color: #94a3b8;">
+            <i class="pi pi-search text-sm"></i>
           </div>
         </div>
 
+        <!-- Empty Search State -->
+        <div *ngIf="getFilteredAccessDashboards().length === 0" class="text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-sm">
+          <i class="pi pi-search text-slate-300 text-4xl mb-3"></i>
+          <h3 class="text-base font-bold text-slate-800">No dashboards found</h3>
+          <p class="text-sm text-slate-500 mt-1">We couldn't find any dashboards matching "{{ dashboardAccessSearchQuery }}"</p>
+        </div>
+
         <!-- Dashboard Report Cards -->
-        <div class="grid grid-cols-1 gap-6">
-          <div *ngFor="let report of dashboardAccessData" style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="overflow-hidden">
+        <div class="grid grid-cols-1 gap-6" *ngIf="getFilteredAccessDashboards().length > 0">
+          <div *ngFor="let report of getFilteredAccessDashboards()" style="background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);" class="overflow-hidden">
             
             <!-- Report Card Header -->
-            <div style="background:#f0f5ff; border-bottom:1px solid #dbeafe;" class="px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0;" class="px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <span style="background:#dbeafe; color:#1e3a8a; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold uppercase tracking-wider">Power BI Report</span>
-                <h3 class="text-base font-bold mt-1" style="color:#1e3a8a;">{{ transformDisplayName(report.reportName) }}</h3>
+                <span style="background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold uppercase tracking-wider">Power BI Report</span>
+                <h3 class="text-base font-bold mt-1" style="color:#0f172a;">{{ transformDisplayName(report.reportName) }}</h3>
               </div>
               <div class="flex flex-wrap items-center gap-2">
-                <span style="background:#eff6ff; color:#1d4ed8; border-radius:12px;" class="text-xs font-semibold px-3 py-1.5">
-                  Assigned: <strong>{{ report.assignedUsersCount }}</strong>
+                <span style="border: 1px solid #e2e8f0; color:#334155; background:#fff; border-radius:12px;" class="text-xs font-semibold px-3 py-1.5">
+                  Assigned: <strong style="color:#0f172a;">{{ report.assignedUsersCount }}</strong>
                 </span>
-                <span style="background:#eff6ff; color:#1d4ed8; border-radius:12px;" class="text-xs font-semibold px-3 py-1.5">
-                  Active: <strong>{{ report.activeUsersCount }}</strong>
+                <span style="border: 1px solid #e2e8f0; color:#334155; background:#fff; border-radius:12px;" class="text-xs font-semibold px-3 py-1.5">
+                  Active: <strong style="color:#0f172a;">{{ report.activeUsersCount }}</strong>
                 </span>
               </div>
             </div>
@@ -643,19 +641,19 @@
             <!-- Users List -->
             <div class="p-6">
               <div *ngIf="report.users.length === 0" class="text-center py-8">
-                <p class="text-sm font-medium" style="color:#93c5fd;">No assigned or active users found.</p>
+                <p class="text-sm font-medium" style="color:#64748b;">No assigned or active users found.</p>
               </div>
 
               <div *ngIf="report.users.length > 0">
                 <!-- Search -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4" style="border-bottom:1px solid #f0f9ff;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4" style="border-bottom:1px solid #f1f5f9;">
                   <div class="relative w-full md:max-w-xs">
-                    <input type="text" placeholder="Search users..." style="border:1px solid #bfdbfe; border-radius:8px; color:#1e3a5f;" class="w-full pl-9 pr-4 py-2 text-xs" [(ngModel)]="report.searchQuery" (input)="report.currentPage = 1" />
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="color:#93c5fd;"><i class="pi pi-search text-xs"></i></div>
+                    <input type="text" placeholder="Search users..." style="border:1px solid #cbd5e1; border-radius:8px; color:#0f172a; padding-left: 2.25rem !important;" class="w-full pr-4 py-2 text-xs focus:ring-1 focus:ring-slate-400 focus:outline-none" [(ngModel)]="report.searchQuery" (input)="report.currentPage = 1" />
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="color:#94a3b8;"><i class="pi pi-search text-xs"></i></div>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span style="color:#93c5fd;" class="text-xs font-semibold uppercase">Access:</span>
-                    <select [(ngModel)]="report.accessFilter" (change)="report.currentPage = 1" style="border:1px solid #bfdbfe; border-radius:8px; color:#1e3a8a;" class="p-2 py-1 text-xs font-semibold cursor-pointer">
+                    <span style="color:#64748b;" class="text-xs font-semibold uppercase tracking-wider">Access:</span>
+                    <select [(ngModel)]="report.accessFilter" (change)="report.currentPage = 1" style="border:1px solid #cbd5e1; border-radius:8px; color:#334155; background: #fff;" class="p-2 py-1 text-xs font-semibold cursor-pointer focus:ring-1 focus:ring-slate-400 focus:outline-none">
                       <option value="all">All</option>
                       <option value="assigned">Assigned Only</option>
                       <option value="external">External Only</option>
@@ -664,7 +662,7 @@
                 </div>
 
                 <div *ngIf="getReportUsersTotalCount(report) === 0" class="text-center py-8">
-                  <p class="text-sm" style="color:#93c5fd;">No users match your filters.</p>
+                  <p class="text-sm" style="color:#64748b;">No users match your filters.</p>
                 </div>
 
                 <!-- User Rows -->
@@ -672,42 +670,42 @@
                   <table class="min-w-full">
                     <thead>
                       <tr>
-                        <th style="color:#93c5fd; border-bottom:2px solid #f0f9ff; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">User</th>
-                        <th style="color:#93c5fd; border-bottom:2px solid #f0f9ff; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Department</th>
-                        <th style="color:#93c5fd; border-bottom:2px solid #f0f9ff; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Access</th>
-                        <th style="color:#93c5fd; border-bottom:2px solid #f0f9ff; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Views</th>
-                        <th style="color:#93c5fd; border-bottom:2px solid #f0f9ff; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Last Viewed</th>
-                        <th style="color:#93c5fd; border-bottom:2px solid #f0f9ff; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Time</th>
+                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">User</th>
+                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Department</th>
+                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Access</th>
+                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Views</th>
+                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Last Viewed</th>
+                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Time</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let user of getPaginatedReportUsers(report)" style="border-bottom:1px solid #f0f9ff;">
-                        <td class="px-4 py-3.5 whitespace-nowrap" style="border-bottom:1px solid #f0f9ff;">
+                      <tr *ngFor="let user of getPaginatedReportUsers(report)" style="border-bottom:1px solid #f1f5f9;" class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3.5 whitespace-nowrap" style="border-bottom:1px solid #f1f5f9;">
                           <div class="flex items-center space-x-3">
                             <app-avatar [name]="user.name"></app-avatar>
                             <div>
-                              <div class="text-sm font-semibold" style="color:#1e3a8a;">{{ user.name }}</div>
-                              <div class="text-xs" style="color:#93c5fd;">{{ user.email }}</div>
+                              <div class="text-sm font-semibold" style="color:#0f172a;">{{ user.name }}</div>
+                              <div class="text-xs" style="color:#64748b;">{{ user.email }}</div>
                             </div>
                           </div>
                         </td>
-                        <td class="px-4 py-3.5 text-sm" style="color:#1e3a5f; border-bottom:1px solid #f0f9ff;">{{ user.department }}</td>
-                        <td class="px-4 py-3.5" style="border-bottom:1px solid #f0f9ff;">
-                          <span *ngIf="user.hasAccess" style="background:#dbeafe; color:#1e3a8a; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold">Assigned</span>
-                          <span *ngIf="!user.hasAccess" style="background:#eff6ff; color:#3b82f6; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold">External</span>
+                        <td class="px-4 py-3.5 text-sm" style="color:#475569; border-bottom:1px solid #f1f5f9;">{{ user.department }}</td>
+                        <td class="px-4 py-3.5" style="border-bottom:1px solid #f1f5f9;">
+                          <span *ngIf="user.hasAccess" style="background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold">Assigned</span>
+                          <span *ngIf="!user.hasAccess" style="background:#fff; color:#64748b; border:1px solid #cbd5e1; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold">External</span>
                         </td>
-                        <td class="px-4 py-3.5 text-sm font-semibold" style="color:#1e3a8a; border-bottom:1px solid #f0f9ff;">{{ user.totalViews }} views</td>
-                        <td class="px-4 py-3.5 text-xs" style="color:#1e3a5f; border-bottom:1px solid #f0f9ff;">{{ user.lastActivity === 'Never' ? 'Never' : (user.lastActivity | date:'shortDate') }}</td>
-                        <td class="px-4 py-3.5 text-xs font-semibold" style="color:#1e3a8a; border-bottom:1px solid #f0f9ff;">{{ formatTimeSpent(user.estimatedTimeSpent) }}</td>
+                        <td class="px-4 py-3.5 text-sm font-semibold" style="color:#0f172a; border-bottom:1px solid #f1f5f9;">{{ user.totalViews }} views</td>
+                        <td class="px-4 py-3.5 text-xs" style="color:#475569; border-bottom:1px solid #f1f5f9;">{{ user.lastActivity === 'Never' ? 'Never' : (user.lastActivity | date:'shortDate') }}</td>
+                        <td class="px-4 py-3.5 text-xs font-semibold" style="color:#0f172a; border-bottom:1px solid #f1f5f9;">{{ formatTimeSpent(user.estimatedTimeSpent) }}</td>
                       </tr>
                     </tbody>
                   </table>
 
                   <!-- Pagination -->
-                  <div *ngIf="getReportPageNumbers(report).length > 1" class="flex items-center justify-center gap-1 mt-4 pt-4" style="border-top:1px solid #f0f9ff;">
-                    <button [disabled]="report.currentPage === 1" (click)="changeReportPage(report, report.currentPage - 1)" style="border:1px solid #dbeafe; border-radius:8px; background:#fff; color:#3b82f6;" class="p-2 disabled:opacity-40"><i class="pi pi-chevron-left text-xs"></i></button>
-                    <button *ngFor="let page of getReportPageNumbers(report)" (click)="changeReportPage(report, page)" class="px-3 py-1.5 text-xs font-semibold rounded-lg" [style.background]="report.currentPage === page ? '#f1f5f9' : '#fff'" [style.color]="report.currentPage === page ? '#0f172a' : '#475569'" [style.border]="report.currentPage === page ? '1.5px solid #64748b' : '1.5px solid #cbd5e1'">{{ page }}</button>
-                    <button [disabled]="report.currentPage === getReportPageNumbers(report).length" (click)="changeReportPage(report, report.currentPage + 1)" style="border:1px solid #dbeafe; border-radius:8px; background:#fff; color:#3b82f6;" class="p-2 disabled:opacity-40"><i class="pi pi-chevron-right text-xs"></i></button>
+                  <div *ngIf="getReportPageNumbers(report).length > 1" class="flex items-center justify-center gap-1 mt-4 pt-4" style="border-top:1px solid #f1f5f9;">
+                    <button [disabled]="report.currentPage === 1" (click)="changeReportPage(report, report.currentPage - 1)" style="border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569;" class="p-2 disabled:opacity-40 transition-colors hover:bg-slate-50"><i class="pi pi-chevron-left text-xs"></i></button>
+                    <button *ngFor="let page of getReportPageNumbers(report)" (click)="changeReportPage(report, page)" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors" [style.background]="report.currentPage === page ? '#f1f5f9' : '#fff'" [style.color]="report.currentPage === page ? '#0f172a' : '#475569'" [style.border]="report.currentPage === page ? '1.5px solid #64748b' : '1.5px solid #cbd5e1'">{{ page }}</button>
+                    <button [disabled]="report.currentPage === getReportPageNumbers(report).length" (click)="changeReportPage(report, report.currentPage + 1)" style="border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569;" class="p-2 disabled:opacity-40 transition-colors hover:bg-slate-50"><i class="pi pi-chevron-right text-xs"></i></button>
                   </div>
                 </div>
               </div>
@@ -720,16 +718,16 @@
   </div>
 
 
-  <div *ngIf="showUserListModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300" style="background: rgba(30,58,138,0.4); backdrop-filter: blur(8px);">
-    <div style="background:#fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 25px 50px rgba(29,78,216,0.15);" class="w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden transform scale-100 transition-all duration-300">
+  <div *ngIf="showUserListModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300" style="background: rgba(15,23,42,0.4); backdrop-filter: blur(8px);">
+    <div style="background:#fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);" class="w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden transform scale-100 transition-all duration-300">
       <!-- Header -->
-      <div style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8);" class="text-white px-6 py-4 flex justify-between items-center">
-        <h3 class="text-lg font-bold tracking-tight" style="color:#fff;">
-          {{ modalTitle }} <span *ngIf="modalUsers.length > 0" class="text-[10px] ml-2 font-medium" style="color:#93c5fd;">({{ modalUsers.length }} users)</span>
+      <div style="background: #ffffff; border-bottom: 1px solid #e2e8f0;" class="px-6 py-4 flex justify-between items-center">
+        <h3 class="text-lg font-bold tracking-tight" style="color:#0f172a;">
+          {{ modalTitle }} <span *ngIf="modalUsers.length > 0" class="text-[11px] ml-2 font-semibold px-2 py-0.5 rounded-full" style="color:#475569; background:#f1f5f9; border: 1px solid #e2e8f0;">{{ modalUsers.length }} users</span>
         </h3>
         <button 
           (click)="closeUserListModal()"
-          class="h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors focus:outline-none"
+          class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center transition-colors focus:outline-none"
         >
           <i class="pi pi-times"></i>
         </button>
@@ -737,37 +735,37 @@
 
       <!-- Content -->
       <div class="flex-1 overflow-y-auto bg-white p-2">
-        <div *ngIf="modalUsers.length > 0" class="divide-y" style="border-color: #f0f9ff;">
-          <div *ngFor="let user of modalUsers" class="px-6 py-4 hover:bg-[#eff6ff] transition-colors duration-150">
+        <div *ngIf="modalUsers.length > 0" class="divide-y" style="border-color: #f1f5f9;">
+          <div *ngFor="let user of modalUsers" class="px-6 py-4 hover:bg-slate-50 transition-colors duration-150">
             <div class="flex justify-between items-center">
               <div class="flex items-center space-x-3 min-w-0">
                 <app-avatar [name]="user.name || user.id"></app-avatar>
                 <div class="min-w-0">
-                  <h4 class="text-sm font-semibold truncate" style="color:#1e3a8a;">{{ user.name || user.id }}</h4>
-                  <p *ngIf="user.totalViews !== undefined" class="text-xs mt-0.5" style="color:#1e3a5f;">
-                    <i class="pi pi-eye text-[10px] mr-1 text-[#3b82f6]"></i>{{ user.totalViews }} views
+                  <h4 class="text-sm font-semibold truncate" style="color:#0f172a;">{{ user.name || user.id }}</h4>
+                  <p *ngIf="user.totalViews !== undefined" class="text-xs mt-0.5" style="color:#64748b;">
+                    <i class="pi pi-eye text-[10px] mr-1 text-slate-500"></i>{{ user.totalViews }} views
                   </p>
                 </div>
               </div>
-              <span *ngIf="user.lastActivity" class="text-xs whitespace-nowrap pl-2" style="color:#93c5fd;">
+              <span *ngIf="user.lastActivity" class="text-xs whitespace-nowrap pl-2" style="color:#64748b;">
                 {{ user.lastActivity === 'Never' ? 'Never active' : (user.lastActivity | date:'shortDate') }}
               </span>
             </div>
           </div>
         </div>
         <div *ngIf="modalUsers.length === 0" class="p-12 text-center">
-          <i class="pi pi-users text-4xl mb-3" style="color:#bfdbfe;"></i>
-          <h4 class="text-base font-semibold" style="color:#1e3a8a;">No users found</h4>
-          <p class="mt-1 text-sm max-w-md mx-auto" style="color:#93c5fd;">There are currently no users matching this criteria</p>
+          <i class="pi pi-users text-4xl mb-3 text-slate-300"></i>
+          <h4 class="text-base font-semibold" style="color:#0f172a;">No users found</h4>
+          <p class="mt-1 text-sm max-w-md mx-auto" style="color:#64748b;">There are currently no users matching this criteria</p>
         </div>
       </div>
 
       <!-- Footer -->
-      <div style="border-top: 1px solid #dbeafe; background: #f0f5ff;" class="px-6 py-4 flex justify-end">
+      <div style="border-top: 1px solid #e2e8f0; background: #f8fafc;" class="px-6 py-4 flex justify-end">
         <button
           (click)="closeUserListModal()"
-          style="background: #fff; border: 1px solid #bfdbfe; color: #3b82f6; border-radius: 8px;"
-          class="font-semibold text-xs px-4 py-2.5 transition-colors active:scale-95"
+          style="background: #fff; border: 1px solid #cbd5e1; color: #334155; border-radius: 8px;"
+          class="font-semibold text-xs px-4 py-2.5 hover:bg-slate-50 transition-colors active:scale-95"
         >
           Close
         </button>

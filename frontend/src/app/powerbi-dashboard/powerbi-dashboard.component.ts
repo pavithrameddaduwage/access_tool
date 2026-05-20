@@ -114,6 +114,7 @@ export class PowerBIDashboardComponent implements OnInit {
   selectedUserId: string | null = null;
   dashboardAccessData: any[] = [];
   loadingAccessMatrix = false;
+  dashboardAccessSearchQuery = '';
 
   selectedPeriod = 30;
   isUserListExpanded = false;
@@ -1573,6 +1574,17 @@ async loadAccessMatrix(): Promise<void> {
   } finally {
     this.loadingAccessMatrix = false;
   }
+}
+
+getFilteredAccessDashboards(): any[] {
+  if (!this.dashboardAccessSearchQuery) {
+    return this.dashboardAccessData;
+  }
+  const q = this.dashboardAccessSearchQuery.toLowerCase().trim();
+  return this.dashboardAccessData.filter(report => 
+    (report.reportName || '').toLowerCase().includes(q) || 
+    (this.transformDisplayName(report.reportName) || '').toLowerCase().includes(q)
+  );
 }
 
 getPaginatedReportUsers(report: any): any[] {
