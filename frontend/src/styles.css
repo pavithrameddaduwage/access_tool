@@ -145,49 +145,72 @@ button:not(.btn-premium):not(.p-button):hover {
   border-color: #94a3b8;
 }
 
-/* PrimeNG dropdown and overlay improvements */
+/* PrimeNG dropdown/select and overlay improvements */
 .p-dropdown,
+.p-select,
 .p-dropdown .p-dropdown-label,
+.p-select .p-select-label,
 .p-dropdown .p-dropdown-clear,
-.p-dropdown .p-dropdown-trigger {
+.p-select .p-select-clear-icon,
+.p-dropdown .p-dropdown-trigger,
+.p-select .p-select-dropdown {
   background-color: #ffffff !important;
 }
 
-.p-dropdown {
+.p-dropdown,
+.p-select {
   margin-bottom: 0.75rem !important;
   min-width: 220px !important;
 }
 
-.p-dropdown .p-dropdown-label {
+.p-dropdown .p-dropdown-label,
+.p-select .p-select-label {
   color: var(--text-heading) !important;
   border: 1px solid rgba(15, 23, 42, 0.12) !important;
   border-radius: 0.75rem !important;
   box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08) !important;
 }
 
-.p-dropdown .p-dropdown-trigger {
+.p-dropdown .p-dropdown-trigger,
+.p-select .p-select-dropdown {
   color: var(--text-heading) !important;
 }
 
-.p-dropdown-panel {
+.p-dropdown-panel,
+.p-select-overlay,
+.p-select-panel,
+.p-select-list-container,
+.p-select-list {
   background-color: #ffffff !important;
+  background: #ffffff !important;
   border: 1px solid rgba(15, 23, 42, 0.12) !important;
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16) !important;
-  z-index: 1100 !important;
+  z-index: 99999 !important; /* Ensure it overrides any chart overlays or card container styles */
   border-radius: 0.75rem !important;
 }
 
-.p-dropdown-item {
+.p-dropdown-items-wrapper,
+.p-dropdown-items {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+.p-dropdown-item,
+.p-select-option {
   color: var(--text-heading) !important;
 }
 
 .p-dropdown-item.p-highlight,
-.p-dropdown-item:hover {
+.p-dropdown-item:hover,
+.p-select-option.p-select-option-selected,
+.p-select-option:hover,
+.p-select-option.p-focus {
   background: rgba(245, 158, 11, 0.16) !important;
   color: var(--text-heading) !important;
 }
 
-.p-dropdown-filter-container input {
+.p-dropdown-filter-container input,
+.p-select-filter {
   background: #ffffff !important;
 }
 

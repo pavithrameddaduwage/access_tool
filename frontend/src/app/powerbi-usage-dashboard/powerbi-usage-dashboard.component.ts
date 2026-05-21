@@ -482,35 +482,13 @@ prepareTopReportsChart() {
   if (!this.metrics.topReports || this.metrics.topReports.length === 0) return;
 
   const topReports = this.metrics.topReports.slice(0, 10);
-  const reportNames = topReports.map((report: ReportMetric) => report.name);
-
-  // Function to split report names into arrays for multi-line labels
-  const splitReportName = (name: string): string[] => {
-    const maxLength = 15; // Maximum characters per line
-    const words = name.split(' '); // Split by spaces
-    const lines: string[] = [];
-    let currentLine = '';
-
-    words.forEach(word => {
-      if ((currentLine + word).length <= maxLength) {
-        currentLine += (currentLine ? ' ' : '') + word; // Add word to current line
-      } else {
-        lines.push(currentLine); // Push current line to lines array
-        currentLine = word; // Start a new line
-      }
-    });
-
-    if (currentLine) {
-      lines.push(currentLine); // Push the last line
-    }
-
-    return lines;
-  };
-
-  // Prepare categories with multi-line labels
-  const categories = reportNames.map((name: string) => {
-    const lines = splitReportName(name);
-    return lines.join('\n'); // Join lines with newline character
+  const categories = topReports.map((report: ReportMetric) => {
+    let name = report.name || 'Unknown Report';
+    // Clean up HGU/Dashboard prefixes/suffixes
+    name = name.replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '');
+    name = name.replace(/\s*-\s*Dashboard$/i, '').replace(/Dashboard$/i, '');
+    name = name.trim();
+    return name.length > 25 ? name.substring(0, 25) + '...' : name;
   });
 
   // Prepare chart options
@@ -521,30 +499,50 @@ prepareTopReportsChart() {
     }],
     chart: { 
       type: 'bar', 
-      height: 350 
-    },
-    xaxis: {
-      categories: categories, // Use multi-line categories
-      labels: {
-        style: {
-          fontSize: '11px',
-          colors: '#333'
-        },
-        formatter: (value: string) => {
-          return value; // Directly return the pre-formatted multi-line string
-        }
-      }
+      height: 350,
+      toolbar: { show: false }
     },
     plotOptions: {
       bar: {
-        horizontal: false,
-        columnWidth: '40%'
+        horizontal: true,
+        barHeight: '55%',
+        borderRadius: 4,
+        borderRadiusApplication: 'end'
+      }
+    },
+    xaxis: {
+      categories: categories,
+      labels: {
+        style: {
+          fontSize: '10px',
+          colors: '#64748b' // slate-500
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: '11px',
+          colors: '#334155', // slate-700
+          fontWeight: 500
+        }
       }
     },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      style: {
+        fontSize: '10px',
+        colors: ['#ffffff'],
+        fontWeight: '600'
+      },
+      offsetX: -6
     },
-    colors: ['#0077B6']
+    colors: ['#0077B6'],
+    tooltip: {
+      y: {
+        formatter: (val: number) => `${val} views`
+      }
+    }
   };
 }
 
@@ -958,19 +956,48 @@ prepareActivityTrendChartOptions() {
 
 prepareTopUsersChartOptions() {
   this.topUsersChartOptions = {
-    chart: { type: 'bar', height: 350 },
     series: [{ name: 'Views', data: this.topUsersChartData }],
-    xaxis: {
-      categories: this.topUsersCategories,
-      labels: {
-        rotate: -45 // Rotate labels for better readability
-      }
+    chart: { 
+      type: 'bar', 
+      height: 350,
+      toolbar: { show: false }
     },
     plotOptions: {
       bar: {
-        columnWidth: '10%' // Adjust this value (e.g., '20%' for thinner bars, '50%' for wider bars)
+        horizontal: true,
+        barHeight: '55%',
+        borderRadius: 4,
+        borderRadiusApplication: 'end'
       }
-    }
+    },
+    xaxis: {
+      categories: this.topUsersCategories.map((name: string) => name.length > 20 ? name.substring(0, 20) + '...' : name),
+      labels: {
+        style: {
+          fontSize: '10px',
+          colors: '#64748b' // slate-500
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: '11px',
+          colors: '#334155', // slate-700
+          fontWeight: 500
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: '10px',
+        colors: ['#ffffff'],
+        fontWeight: '600'
+      },
+      offsetX: -6
+    },
+    colors: ["#0077B6"]
   };
 }
 
@@ -1075,8 +1102,6 @@ async prepareTopUsersChart() {
     return;
   }
 
-  // console.log('Top Users Data:', this.metrics.topUsers); // Debugging
-
   // Extract emails from top users
   const emails = this.metrics.topUsers.map((user: UserMetric) => user.id);
 
@@ -1089,7 +1114,10 @@ async prepareTopUsersChart() {
     count: user.count
   }));
 
-  // console.log('Top Users with Names:', topUsersWithNames); // Debugging
+  const categories = topUsersWithNames.map((user: UserMetric) => {
+    const fullName = user.id.split('@')[0]; // Remove email domain
+    return fullName.length > 20 ? fullName.substring(0, 20) + '...' : fullName;
+  });
 
   // Prepare chart options
   this.topUsersChartOptions = {
@@ -1100,36 +1128,54 @@ async prepareTopUsersChart() {
     chart: {
       type: 'bar',
       height: 350,
+      toolbar: { show: false },
       events: {
         dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
           this.onTopUserChartClick(config.dataPointIndex);
         }
       }
     },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        barHeight: '55%',
+        borderRadius: 4,
+        borderRadiusApplication: 'end'
+      }
+    },
     xaxis: {
-      categories: topUsersWithNames.map((user: UserMetric) => {
-        const fullName = user.id.split('@')[0]; // Remove email domain
-        const [firstName, lastName] = fullName.split(/(?<=^\S+)\s/); // Split into first and last name
-        return lastName ? `${firstName}\n${lastName}` : firstName; // Return two-line name
-      }),
+      categories: categories,
       labels: {
-        rotate: -45, // Rotate labels for better readability
         style: {
-          fontSize: '11px',
-          colors: '#333'
+          fontSize: '10px',
+          colors: '#64748b' // slate-500
         }
       }
     },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '40%' 
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: '11px',
+          colors: '#334155', // slate-700
+          fontWeight: 500
+        }
       }
     },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      style: {
+        fontSize: '10px',
+        colors: ['#ffffff'],
+        fontWeight: '600'
+      },
+      offsetX: -6
     },
-    colors: ["#0077B6"]
+    colors: ["#0077B6"],
+    tooltip: {
+      y: {
+        formatter: (val: number) => `${val} views`
+      }
+    }
   };
 }
 onTopUserChartClick(dataPointIndex: number) {

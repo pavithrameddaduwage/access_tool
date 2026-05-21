@@ -215,13 +215,53 @@ export class UsersOverviewComponent implements OnInit {
       return;
     }
     const top = this.userReportViews.slice(0, 10);
+    const categories = top.map(r => {
+      let name = r.reportName || `Report (${r.reportId.slice(0, 6)}…)`;
+      name = name.replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '');
+      name = name.replace(/\s*-\s*Dashboard$/i, '').replace(/Dashboard$/i, '');
+      name = name.trim();
+      return name.length > 25 ? name.substring(0, 25) + '...' : name;
+    });
+
     this.userReportViewsChartOptions = {
       series: [{ name: 'Views', data: top.map(r => r.count) }],
       chart: { type: 'bar', height: 280, toolbar: { show: false } },
-      plotOptions: { bar: { horizontal: true } },
-      xaxis: { categories: top.map(r => r.reportName || `Report (${r.reportId.slice(0, 6)}…)`), labels: { style: { fontSize: '11px' } } },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          barHeight: '55%',
+          borderRadius: 4,
+          borderRadiusApplication: 'end'
+        }
+      },
+      xaxis: {
+        categories: categories,
+        labels: {
+          style: {
+            fontSize: '10px',
+            colors: '#64748b' // slate-500
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '11px',
+            colors: '#334155', // slate-700
+            fontWeight: 500
+          }
+        }
+      },
       colors: ['#2563eb'],
-      dataLabels: { enabled: false },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '10px',
+          colors: ['#ffffff'],
+          fontWeight: '600'
+        },
+        offsetX: -6
+      },
       tooltip: { y: { formatter: (v: number) => `${v} views` } }
     };
   }

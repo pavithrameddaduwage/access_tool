@@ -223,24 +223,12 @@ userCounts = {
     private prepareTopReportsChart() {
       const reports = this.metrics.topReports || [];
       
-      // Function to split long labels into two lines
-      const formatLabel = (label: string): string => {
-        if (!label) return 'Unknown\nReport';
-        
-        // Split the label into words
-        const words = label.split(' ');
-        
-        // If only one word, return as is
-        if (words.length <= 2) return label;
-        
-        // Try to split roughly in the middle
-        const midPoint = Math.ceil(words.length / 2);
-        const firstLine = words.slice(0, midPoint).join(' ');
-        const secondLine = words.slice(midPoint).join(' ');
-        
-        return `${firstLine}\n${secondLine}`;
-      };
-    
+      // Format report names: clean them up and truncate if too long
+      const categories = reports.map(r => {
+        const cleanName = this.transformDisplayName(r?.reportName || 'Unknown Report');
+        return cleanName.length > 25 ? cleanName.substring(0, 25) + '...' : cleanName;
+      });
+
       this.topReportsChartOptions = {
         series: [{ 
           name: 'Views', 
@@ -248,29 +236,45 @@ userCounts = {
         }],
         chart: { 
           type: 'bar', 
-          height: 280, // Increased height to accommodate two-line labels
+          height: 280,
           toolbar: { show: false }
-        },
-        xaxis: {
-          categories: reports.map(r => formatLabel(r?.reportName || 'Unknown Report')),
-          labels: {
-            style: {
-              fontSize: '10px', // Smaller font size
-              cssClass: 'apexcharts-multiline-label'
-            },
-            formatter: undefined // Remove any previous formatter
-          }
         },
         plotOptions: {
           bar: {
-            horizontal: false,
-            columnWidth: '45%' // Slightly wider bars
+            horizontal: true,
+            barHeight: '55%',
+            borderRadius: 4,
+            borderRadiusApplication: 'end'
+          }
+        },
+        xaxis: {
+          categories: categories,
+          labels: {
+            style: {
+              fontSize: '10px',
+              colors: '#64748b' // slate-500
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              fontSize: '11px',
+              colors: '#334155', // slate-700
+              fontWeight: 500
+            }
           }
         },
         dataLabels: {
-          enabled: false
+          enabled: true,
+          style: {
+            fontSize: '10px',
+            colors: ['#ffffff'],
+            fontWeight: '600'
+          },
+          offsetX: -6 // shift slightly inside the bar
         },
-        colors: ['#2563eb'],
+        colors: ['#3b82f6'], // premium blue
         tooltip: {
           y: {
             formatter: (val: number) => `${val} views`
@@ -379,6 +383,11 @@ userCounts = {
       return acc;
     }, {} as {[email: string]: string});
   
+    const categories = this.metrics.topUsers.map(u => {
+      const name = nameMappings[u.userId] || u.userId.split('@')[0];
+      return name.length > 20 ? name.substring(0, 20) + '...' : name;
+    });
+
     this.topUsersChartOptions = {
       series: [{ 
         name: 'Views', 
@@ -387,34 +396,54 @@ userCounts = {
       chart: {
         type: 'bar',
         height: 300,
+        toolbar: { show: false },
         events: {
           dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
             this.onTopUserChartClick(config.dataPointIndex);
           }
         }
       },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          barHeight: '55%',
+          borderRadius: 4,
+          borderRadiusApplication: 'end'
+        }
+      },
       xaxis: {
-        categories: this.metrics.topUsers.map(u => {
-          return nameMappings[u.userId] || u.userId.split('@')[0];
-        }),
+        categories: categories,
         labels: {
-          rotate: -45,
           style: {
-            fontSize: '11px',
-            colors: '#93c5fd'
+            fontSize: '10px',
+            colors: '#64748b' // slate-500
           }
         }
       },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '40%' 
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '11px',
+            colors: '#334155', // slate-700
+            fontWeight: 500
+          }
         }
       },
       dataLabels: {
-        enabled: false
+        enabled: true,
+        style: {
+          fontSize: '10px',
+          colors: ['#ffffff'],
+          fontWeight: '600'
+        },
+        offsetX: -6 // shift slightly inside the bar
       },
-      colors: ["#2563eb"]
+      colors: ["#6366f1"], // beautiful premium indigo
+      tooltip: {
+        y: {
+          formatter: (val: number) => `${val} views`
+        }
+      }
     };
   }
 
