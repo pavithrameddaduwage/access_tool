@@ -25,7 +25,7 @@
   <div class="flex gap-4">
     <!-- Group Dropdown -->
     <div class="w-1/2">
-      <p-dropdown 
+      <p-dropdown appendTo="body"
         [options]="dashboardGroups" 
         optionLabel="name" 
         optionValue="name"
@@ -41,7 +41,7 @@
 
     <!-- Workspace Dropdown -->
     <div class="w-1/2">
-      <p-dropdown 
+      <p-dropdown appendTo="body"
         [options]="uniqueWorkspaces" 
         [(ngModel)]="selectedWorkspace" 
         (onChange)="setSelectedWorkspace($event.value)" 

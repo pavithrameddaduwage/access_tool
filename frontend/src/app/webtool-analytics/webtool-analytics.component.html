@@ -12,7 +12,7 @@
           <!-- Webtool Dropdown -->
           <div class="w-48">
             <div class="relative ml-9">
-              <p-dropdown 
+              <p-dropdown appendTo="body"
                 [options]="webtools" 
                 optionLabel="webtool" 
                 optionValue="id" 
@@ -34,7 +34,7 @@
         <!-- User Dropdown -->
         <div class="w-48">
           <div class="relative">
-          <p-dropdown 
+          <p-dropdown appendTo="body"
             [options]="getUserListForFilter()" 
             optionLabel="username" 
             optionValue="email" 
