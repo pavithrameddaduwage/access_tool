@@ -292,6 +292,26 @@ findUserByEmail(email: string) {
     }
   });
 }
+
+  async searchLocalUsers(query: string): Promise<any[]> {
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.name ILIKE :query OR user.email ILIKE :query', { query: `%${query}%` })
+      .getMany();
+
+    const formatted = [];
+    for (const u of users) {
+      const userDash = await this.userRepository.manager.getRepository('UserDashboard').findOne({
+        where: { email: u.email }
+      }) as any;
+      formatted.push({
+        name: u.name || u.email.split('@')[0],
+        email: u.email,
+        department: userDash?.department || 'Warehouse Operations'
+      });
+    }
+    return formatted;
+  }
  
   async seedDummyAdmin(): Promise<User> {
     let adminRole = await this.roleRepository.findOne({ where: { role: 'Admin' } });

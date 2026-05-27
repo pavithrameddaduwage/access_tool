@@ -20,6 +20,9 @@ async function main() {
     await client.query('DELETE FROM dashboard CASCADE');
     await client.query('DELETE FROM workspace CASCADE');
     await client.query('DELETE FROM power_bi_log CASCADE');
+    await client.query('DELETE FROM "user_roles" WHERE "userId" != 1');
+    await client.query('DELETE FROM "user" WHERE email != \'admin@hgusa.com\'');
+    await client.query('ALTER SEQUENCE IF EXISTS user_id_seq RESTART WITH 2');
 
     console.log('All mock data has been deleted. The database is clean.');
   } catch (err) {

@@ -133,6 +133,21 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getUserCounts(startDate, endDate, workspaceId, reportId) {
         return this.powerbiMetricsService.getUserCounts(startDate, endDate, workspaceId, reportId);
     }
+    async recordTimeSpent(data) {
+        if (!data.userId || !data.reportId || !data.tabName || typeof data.durationSeconds !== 'number') {
+            throw new common_1.BadRequestException('userId, reportId, tabName, and durationSeconds are required.');
+        }
+        return this.powerbiMetricsService.saveTimeSpent(data);
+    }
+    async getUserTimeSpent(userId, startDate, endDate) {
+        if (!userId) {
+            throw new common_1.BadRequestException('userId is required.');
+        }
+        return this.powerbiMetricsService.getUserTimeSpentDistribution(userId, startDate, endDate);
+    }
+    async getLastRefresh() {
+        return this.powerbiMetricsService.getLastRefreshTime();
+    }
 };
 exports.PowerBIMetricsController = PowerBIMetricsController;
 __decorate([
@@ -358,6 +373,29 @@ __decorate([
         Date, String, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUserCounts", null);
+__decorate([
+    (0, common_1.Post)('time-spent'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "recordTimeSpent", null);
+__decorate([
+    (0, common_1.Get)('user-time-spent'),
+    __param(0, (0, common_1.Query)('userId')),
+    __param(1, (0, common_1.Query)('startDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('endDate', parse_date_pipe_1.ParseISO8601DatePipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Date,
+        Date]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getUserTimeSpent", null);
+__decorate([
+    (0, common_1.Get)('last-refresh'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getLastRefresh", null);
 exports.PowerBIMetricsController = PowerBIMetricsController = __decorate([
     (0, common_1.Controller)('powerbi-metrics'),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService])

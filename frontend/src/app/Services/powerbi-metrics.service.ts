@@ -473,4 +473,42 @@ export class PowerBIMetricsService {
   
   return this.http.get<any>(`${this.apiUrl}/user-counts`, { params });
 }
+
+  recordTimeSpent(
+    userId: string,
+    reportId: string,
+    reportName: string,
+    tabName: string,
+    durationSeconds: number,
+    workspaceId?: string,
+    workspaceName?: string
+  ): Observable<any> {
+    const payload = {
+      userId,
+      reportId,
+      reportName,
+      tabName,
+      durationSeconds,
+      workspaceId,
+      workspaceName
+    };
+    return this.http.post<any>(`${this.apiUrl}/time-spent`, payload);
+  }
+
+  getUserTimeSpent(
+    userId: string,
+    startDate: Date,
+    endDate: Date
+  ): Observable<any[]> {
+    const params = {
+      userId,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    return this.http.get<any[]>(`${this.apiUrl}/user-time-spent`, { params });
+  }
+
+  getLastRefresh(): Observable<{ lastRefreshedAt: string }> {
+    return this.http.get<{ lastRefreshedAt: string }>(`${this.apiUrl}/last-refresh`);
+  }
 }

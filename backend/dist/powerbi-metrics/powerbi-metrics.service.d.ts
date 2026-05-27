@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
+import { PowerBITimeSpent } from './entities/powerbi-time-spent.entity';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { ReportMappingService } from 'src/report-mapping/report-mapping.service';
@@ -93,10 +94,11 @@ export declare class PowerBIMetricsService {
     private userDashboardRepository;
     private readonly powerbiLogRepository;
     private readonly dashboardRepository;
+    private readonly powerbiTimeSpentRepository;
     private readonly reportMappingService;
     private readonly workspaceMappingService;
     private readonly userDashboardService;
-    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>, reportMappingService: ReportMappingService, workspaceMappingService: WorkspaceMappingService, userDashboardService: UserDashboardService);
+    constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>, powerbiTimeSpentRepository: Repository<PowerBITimeSpent>, reportMappingService: ReportMappingService, workspaceMappingService: WorkspaceMappingService, userDashboardService: UserDashboardService);
     private readonly logger;
     getAccessToken(): Promise<string>;
     ensureSubscription(accessToken: string): Promise<void>;
@@ -215,4 +217,18 @@ export declare class PowerBIMetricsService {
     }>;
     syncMappingsToMasterData(): Promise<void>;
     syncUsersFromLogs(): Promise<void>;
+    saveTimeSpent(data: {
+        userId: string;
+        reportId: string;
+        reportName: string;
+        workspaceId?: string;
+        workspaceName?: string;
+        tabName: string;
+        durationSeconds: number;
+    }): Promise<PowerBITimeSpent>;
+    getUserTimeSpentDistribution(userId: string, startDate: Date, endDate: Date): Promise<any[]>;
+    getTotalTimeSpentForUser(userId: string, startDate: Date, endDate: Date): Promise<number>;
+    getLastRefreshTime(): Promise<{
+        lastRefreshedAt: Date;
+    }>;
 }

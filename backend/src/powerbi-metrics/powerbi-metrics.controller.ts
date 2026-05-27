@@ -298,5 +298,38 @@ async getUserCounts(
   );
 }
 
+@Post('time-spent')
+async recordTimeSpent(
+  @Body() data: {
+    userId: string;
+    reportId: string;
+    reportName: string;
+    workspaceId?: string;
+    workspaceName?: string;
+    tabName: string;
+    durationSeconds: number;
+  }
+) {
+  if (!data.userId || !data.reportId || !data.tabName || typeof data.durationSeconds !== 'number') {
+    throw new BadRequestException('userId, reportId, tabName, and durationSeconds are required.');
+  }
+  return this.powerbiMetricsService.saveTimeSpent(data);
+}
 
+@Get('user-time-spent')
+async getUserTimeSpent(
+  @Query('userId') userId: string,
+  @Query('startDate', ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', ParseISO8601DatePipe) endDate: Date
+) {
+  if (!userId) {
+    throw new BadRequestException('userId is required.');
+  }
+  return this.powerbiMetricsService.getUserTimeSpentDistribution(userId, startDate, endDate);
+}
+
+@Get('last-refresh')
+async getLastRefresh() {
+  return this.powerbiMetricsService.getLastRefreshTime();
+}
 }

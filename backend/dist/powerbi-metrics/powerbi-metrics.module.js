@@ -13,6 +13,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const powerbi_log_entity_1 = require("./entities/powerbi-log.entity");
+const powerbi_time_spent_entity_1 = require("./entities/powerbi-time-spent.entity");
 const powerbi_metrics_controller_1 = require("./powerbi-metrics.controller");
 const powerbi_metrics_service_1 = require("./powerbi-metrics.service");
 const powerbi_logs_collector_task_1 = require("./tasks/powerbi-logs-collector.task");
@@ -28,7 +29,7 @@ exports.PowerBIMetricsModule = PowerBIMetricsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             schedule_1.ScheduleModule.forRoot(),
-            typeorm_1.TypeOrmModule.forFeature([powerbi_log_entity_1.PowerBILog, user_dashboard_entity_1.UserDashboard, dashboard_entity_1.Dashboard]),
+            typeorm_1.TypeOrmModule.forFeature([powerbi_log_entity_1.PowerBILog, user_dashboard_entity_1.UserDashboard, dashboard_entity_1.Dashboard, powerbi_time_spent_entity_1.PowerBITimeSpent]),
             axios_1.HttpModule,
             config_1.ConfigModule.forRoot(),
             workspace_mapping_module_1.WorkspaceMappingModule,

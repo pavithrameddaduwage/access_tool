@@ -105,4 +105,17 @@ export declare class PowerBIMetricsController {
             deactivatedAt: Date;
         }[];
     }>;
+    recordTimeSpent(data: {
+        userId: string;
+        reportId: string;
+        reportName: string;
+        workspaceId?: string;
+        workspaceName?: string;
+        tabName: string;
+        durationSeconds: number;
+    }): Promise<import("./entities/powerbi-time-spent.entity").PowerBITimeSpent>;
+    getUserTimeSpent(userId: string, startDate: Date, endDate: Date): Promise<any[]>;
+    getLastRefresh(): Promise<{
+        lastRefreshedAt: Date;
+    }>;
 }

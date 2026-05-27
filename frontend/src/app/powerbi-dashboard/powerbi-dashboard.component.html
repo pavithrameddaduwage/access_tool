@@ -1,19 +1,23 @@
-<div class="min-h-screen bg-slate-50/50 py-6 px-4 md:px-8">
+<div class="min-h-screen bg-slate-50/50 py-6 px-4 md:px-8" style="overflow-x: hidden;">
   <!-- Main Glassmorphic Container -->
-  <div class="card-glass max-w-7xl mx-auto p-6 md:p-8 mb-8">
+  <div class="card-glass max-w-7xl mx-auto p-6 md:p-8 mb-8" style="overflow: visible;">
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-slate-100 pb-6">
       <div class="w-full md:w-auto">
         <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 flex items-center gap-3">
-          <i class="pi pi-chart-bar text-amber-500 text-2xl"></i>
           Power BI Usage Analytics
         </h1>
-        <p class="text-xs text-slate-500 mt-1 font-medium">Real-time governance & engagement monitoring</p>
+        <p class="text-xs text-slate-500 mt-1 font-medium flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span *ngIf="lastRefreshedAt" class="text-slate-400 font-normal flex items-center gap-1">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            datas refreshed on {{ lastRefreshedAt | date:'medium' }}
+          </span>
+        </p>
       </div>
       
       <!-- Filters and Duration Controls -->
       <div class="flex flex-col md:flex-row items-stretch md:items-end gap-4 w-full md:w-auto md:max-w-4xl">
-        <div class="w-full md:w-60">
+        <div class="w-full md:w-60" *ngIf="!selectedUserId">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Workspace</label>
           <p-dropdown 
             [options]="workspaceOptions" 
@@ -27,7 +31,7 @@
           </p-dropdown>
         </div>
 
-        <div class="w-full md:w-60">
+        <div class="w-full md:w-60" *ngIf="!selectedUserId">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Report</label>
           <p-dropdown 
             [options]="reportOptions" 
@@ -47,7 +51,7 @@
         <!-- Time Duration Buttons -->
         <div class="w-full md:w-auto">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Duration</label>
-          <div class="flex gap-2">
+          <div class="flex gap-2 flex-wrap">
             <button
               *ngFor="let period of timePeriods"
               (click)="loadData(period.days)"
@@ -186,7 +190,7 @@
     <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
       <!-- User List Section -->
     <!-- User List Section -->
-    <div class="mb-8 mt-5">
+    <div class="mb-8 mt-5" *ngIf="!selectedUserId">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- User Table (left side) -->
         <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="flex flex-col p-6">
@@ -302,10 +306,10 @@
     </div>
 
 
-<!-- User Metrics -->
-<div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6">
-  <!-- Selected User Header -->
-  <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-6">
+    <!-- User Metrics -->
+    <div *ngIf="selectedUserId; else userOverview" class="user-metrics" style="overflow-x: hidden; max-width: 100%;">
+      <!-- Selected User Header -->
+      <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07); overflow: hidden;" class="p-6">
     <div class="flex justify-between items-center mb-6 pb-4" style="border-bottom: 1px solid #f0f9ff;">
       <h2 class="text-xl font-bold" style="color:#1e3a8a;">{{ getUserDisplayName(selectedUserId) }}</h2>
       <button 
@@ -336,40 +340,54 @@
         <p class="text-xl font-bold" style="color:#2563eb;">{{ userMetrics.activityByDate?.length || 0 }}</p>
       </div>
       <div style="background:#f0f5ff; border:1px solid #dbeafe; border-radius:12px;" class="p-4 text-center">
-        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Estimated Time</h3>
+        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Time Spent</h3>
         <p class="text-xl font-bold" style="color:#1e3a5f;">{{ formatTimeSpent(userMetrics.estimatedTimeSpent) }}</p>
       </div>
     </div>
 
-    <!-- Assigned Dashboards / Access Rights -->
-    <div class="mt-4 mb-6 p-4 rounded-xl flex flex-col md:flex-row md:items-center gap-3" style="background:#f0f5ff; border:1px solid #dbeafe;">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-shield text-base" style="color:#3b82f6;"></i>
-        <span class="font-semibold whitespace-nowrap text-sm" style="color:#1e3a8a;">Dashboard Access Permitted:</span>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <span 
-          *ngFor="let dashboard of userMetrics.assignedDashboards" 
-          style="background:#eff6ff; color:#1d4ed8; border-radius:12px;"
-          class="text-xs px-2.5 py-1 font-semibold"
-        >
-          {{ dashboard }}
-        </span>
-        <span 
-          *ngIf="!userMetrics.assignedDashboards || userMetrics.assignedDashboards.length === 0" 
-          style="color:#93c5fd;" class="text-xs italic"
-        >
-          No explicit dashboard access granted (inherits default permissions or personal workspace)
-        </span>
+    <!-- Workspace Wise & Tab Wise Time Spent -->
+    <div *ngIf="groupedTabTimeSpent && groupedTabTimeSpent.length > 0" style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; overflow: hidden;">
+      <h3 class="text-lg font-bold mb-4 text-slate-700 flex items-center gap-2">
+        <i class="pi pi-clock text-blue-500"></i> Time Spent by Workspace & Tab
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+        <div *ngFor="let group of groupedTabTimeSpent" class="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white flex flex-col">
+          <!-- Workspace Header -->
+          <div class="bg-slate-50/80 px-4 py-3 flex justify-between items-center border-b border-slate-100">
+            <span class="font-bold text-sm text-slate-800 flex items-center gap-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; min-width: 0;" [title]="group.workspaceName">
+              <i class="pi pi-folder text-blue-500" style="flex-shrink:0;"></i> {{ transformDisplayName(group.workspaceName) }}
+            </span>
+            <span class="font-extrabold text-[11px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 flex-shrink-0">
+              Total - {{ formatTimeSpent(group.totalSeconds) }}
+            </span>
+          </div>
+          
+          <!-- Nested Reports & Page Tabs list -->
+          <div class="p-3 flex-grow space-y-2 overflow-y-auto max-h-[220px] popup-content">
+            <div *ngFor="let item of group.items" class="flex justify-between items-center py-2 px-3 hover:bg-slate-50/80 rounded-lg transition-all border-b border-slate-50 last:border-0">
+              <div class="flex flex-col min-w-0 pr-2">
+                <span class="text-xs font-semibold text-slate-700 truncate" [title]="item.reportName">
+                  {{ transformDisplayName(item.reportName) }}
+                </span>
+                <span class="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">
+                  Tab Viewed Time
+                </span>
+              </div>
+              <span class="text-xs font-bold px-2.5 py-0.5 bg-emerald-50/40 text-emerald-600 rounded-full border border-emerald-500/40 flex-shrink-0">
+                {{ formatTimeSpent(item.totalSeconds) }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Three Pie Charts in One Row -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <!-- Workspace Views Pie Chart -->
-      <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 flex flex-col" style="min-height: 380px;">
-        <h3 class="text-lg font-semibold mb-4" style="color:#1e3a8a;">Workspace Views</h3>
-        <div class="flex-grow relative">
+    <!-- Two Pie Charts in One Row (Removed Consumption Methods) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" style="overflow: hidden;">
+      <!-- Workspace Time Spent Pie Chart -->
+      <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; display:flex; flex-direction:column; min-height: 380px; overflow: hidden;">
+        <h3 class="text-lg font-semibold mb-4 text-slate-700">Workspace Time Spent</h3>
+        <div class="flex-grow">
           <apx-chart
             *ngIf="userWorkspacePieChartOptions"
             [series]="userWorkspacePieChartOptions.series"
@@ -378,46 +396,21 @@
             [colors]="userWorkspacePieChartOptions.colors"
             [dataLabels]="userWorkspacePieChartOptions.dataLabels"
             [tooltip]="userWorkspacePieChartOptions.tooltip"
-            class="absolute inset-0 w-full h-full"
           ></apx-chart>
-          <div *ngIf="!userWorkspacePieChartOptions" class="absolute inset-0 flex flex-col items-center justify-center">
+          <div *ngIf="!userWorkspacePieChartOptions" class="flex flex-col items-center justify-center py-12">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
-            <p class="text-xs text-gray-500 text-center">No workspace views recorded</p>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Consumption Methods Pie Chart -->
-      <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 flex flex-col" style="min-height: 380px;">
-        <h3 class="text-lg font-semibold mb-4" style="color:#1e3a8a;">Consumption Methods</h3>
-        <div class="flex-grow relative">
-          <apx-chart
-            *ngIf="userConsumptionChartOptions"
-            [series]="userConsumptionChartOptions.series"
-            [chart]="userConsumptionChartOptions.chart"
-            [labels]="userConsumptionChartOptions.labels"
-            [colors]="userConsumptionChartOptions.colors"
-            [dataLabels]="userConsumptionChartOptions.dataLabels"
-            [tooltip]="userConsumptionChartOptions.tooltip"
-            class="absolute inset-0 w-full h-full"
-          ></apx-chart>
-          <div *ngIf="!userConsumptionChartOptions" class="absolute inset-0 flex flex-col items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
-            <p class="text-xs text-gray-500 text-center">No consumption methods recorded</p>
+            <p class="text-xs text-gray-500 text-center">No workspace time spent recorded</p>
           </div>
         </div>
       </div>
 
       <!-- Report Views Pie Chart -->
-      <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 flex flex-col" style="min-height: 380px;">
-        <h3 class="text-lg font-semibold mb-4" style="color:#1e3a8a;">Top Reports</h3>
-        <div class="flex-grow relative">
+      <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; display:flex; flex-direction:column; min-height: 380px; overflow: hidden;">
+        <h3 class="text-lg font-semibold mb-4 text-slate-700">Top Reports</h3>
+        <div class="flex-grow">
           <apx-chart
             *ngIf="userReportViewsChartOptions"
             [series]="userReportViewsChartOptions.series"
@@ -427,9 +420,8 @@
             [dataLabels]="userReportViewsChartOptions.dataLabels"
             [tooltip]="userReportViewsChartOptions.tooltip"
             [legend]="userReportViewsChartOptions.legend"
-            class="absolute inset-0 w-full h-full"
           ></apx-chart>
-          <div *ngIf="!userReportViewsChartOptions" class="absolute inset-0 flex flex-col items-center justify-center">
+          <div *ngIf="!userReportViewsChartOptions" class="flex flex-col items-center justify-center py-12">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -441,9 +433,9 @@
     </div>
 
     <!-- Activity Chart (Full Width) -->
-    <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="mt-8 p-4 h-[420px]">
-      <h3 class="text-lg font-semibold mb-4" style="color:#1e3a8a;">Activity Timeline</h3>
-      <div class="h-[calc(100%-40px)]">
+    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; height: 380px; margin-top: 1.5rem; overflow: hidden;">
+      <h3 class="text-lg font-semibold mb-4 text-slate-700">Activity Timeline</h3>
+      <div style="height: calc(100% - 40px); overflow: hidden;">
         <apx-chart
           *ngIf="activityTimelineChartOptions"
           [series]="activityTimelineChartOptions.series"

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { PowerBIMetricsService, PowerBIReport, PowerBIWorkspace } from '../Services/powerbi-metrics.service';
@@ -10,6 +10,7 @@ import { ToastService } from '../Services/toast.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { NameMapperService } from '../Services/name-mapper.service';
 import { AvatarComponent } from '../components/avatar/avatar.component';
+import { AuthService } from '../Auth/services/auth.service';
 
 interface ViewCount {
   date: string;
@@ -108,7 +109,52 @@ interface User {
 
   standalone: true
 })
-export class PowerBIDashboardComponent implements OnInit {
+export class PowerBIDashboardComponent implements OnInit, OnDestroy {
+  // Telemetry Time Tracking
+  private trackingStart = Date.now();
+  private currentTrackedReportId = 'powerbi-analytics';
+  private currentTrackedReportName = 'Power BI Analytics Dashboard';
+
+  @HostListener('document:visibilitychange', [])
+  onVisibilityChange() {
+    if (document.hidden) {
+      this.flushTelemetryTime();
+    } else {
+      this.trackingStart = Date.now();
+    }
+  }
+
+  @HostListener('window:beforeunload', [])
+  onBeforeUnload() {
+    this.flushTelemetryTime();
+  }
+
+  ngOnDestroy() {
+    this.flushTelemetryTime();
+  }
+
+  flushTelemetryTime() {
+    const elapsedSeconds = Math.round((Date.now() - this.trackingStart) / 1000);
+    const userEmail = this.authService.userSubject?.value?.email;
+    if (elapsedSeconds > 0 && userEmail) {
+      const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
+      const workspaceName = this.selectedWorkspace === 'all' ? 'All Workspaces' : this.workspaceOptions.find(w => w.id === this.selectedWorkspace)?.name;
+      
+      this.powerBIMetricsService.recordTimeSpent(
+        userEmail,
+        this.currentTrackedReportId,
+        this.currentTrackedReportName,
+        this.activeView,
+        elapsedSeconds,
+        workspaceId,
+        workspaceName
+      ).subscribe({
+        error: (err) => console.error('Failed to log telemetry:', err)
+      });
+    }
+    this.trackingStart = Date.now();
+  }
+
   // View state
   activeView: 'workspace' | 'user' | 'access' = 'workspace';
   selectedUserId: string | null = null;
@@ -160,10 +206,19 @@ export class PowerBIDashboardComponent implements OnInit {
   userConsumptionMethods: ConsumptionMethod[] = []; 
   // Colors
   private blueGradientColors = [
-    '#1e3a8a', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'
+    '#1e3a8a', // Deep corporate navy
+    '#2563eb', // Indigo-blue
+    '#3b82f6', // Mid blue
+    '#60a5fa', // Sky blue
+    '#0d9488', // Teal
+    '#06b6d4', // Cyan
+    '#4f46e5', // Royal indigo
+    '#64748b'  // Slate grey
   ];
 
 userReportViews: {reportId: string, reportName: string, count: number}[] = [];
+userTabTimeSpent: any[] = [];
+lastRefreshedAt: string = '';
 
   // Pagination
   currentPage = 1;
@@ -197,14 +252,21 @@ userCounts = {
     private cdr: ChangeDetectorRef,
     private toastService: ToastService,
     private nameMapper: NameMapperService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       if (params['view'] && ['workspace', 'user', 'access'].includes(params['view'])) {
+        this.flushTelemetryTime();
         this.activeView = params['view'];
       }
+    });
+
+    this.powerBIMetricsService.getLastRefresh().subscribe({
+      next: (res) => { if (res && res.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
+      error: (err) => console.error('Failed to load last refresh time:', err)
     });
 
     this.loadFilters().then(() => {
@@ -212,6 +274,7 @@ userCounts = {
     });  }
 
     toggleDashboard(dashboard: 'powerbi' | 'webtool') {
+      this.flushTelemetryTime();
       this.dashboardChange.emit(dashboard);
     }
   
@@ -671,7 +734,7 @@ userCounts = {
     const reportId = this.selectedReport === null ? undefined : this.selectedReport;
   
     try {
-      const [userMetrics, workspaceDistribution, consumptionMethods, reportViews] = await Promise.all([
+      const [userMetrics, workspaceDistribution, consumptionMethods, reportViews, tabTimeSpent] = await Promise.all([
         this.powerBIMetricsService.getUserMetrics(
           userId, 
           startDate, 
@@ -695,6 +758,11 @@ userCounts = {
           startDate,
           endDate,
           workspaceId
+        ).toPromise(),
+        this.powerBIMetricsService.getUserTimeSpent(
+          userId,
+          startDate,
+          endDate
         ).toPromise()
       ]);
   
@@ -719,6 +787,7 @@ userCounts = {
       };
   
       this.userReportViews = reportViews;
+      this.userTabTimeSpent = tabTimeSpent || [];
       
       this.prepareUserWorkspacePieChart();
       this.prepareUserConsumptionChart();
@@ -774,7 +843,7 @@ userCounts = {
       series: topReports.map(r => r.count),
       chart: {
         type: 'pie',
-        height: 300, 
+        height: 400, 
       },
       labels: topReports.map(r => r.reportName || `Report (${r.reportId.slice(0, 6)}...`),
       dataLabels: {
@@ -800,7 +869,7 @@ userCounts = {
         },
        
       },
-      colors: ['#1e3a8a', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#1d4ed8', '#1e3a8a', '#2563eb'],
+      colors: this.blueGradientColors,
     };
   }
   private generateDailyActivityData(startDate: Date, endDate: Date, activityData: {date: string, count: number}[]): any[] {
@@ -825,39 +894,19 @@ userCounts = {
   }
 
   private prepareUserWorkspacePieChart() {
-    if (!this.userMetrics?.workspaceDistribution) return;
-
-    let viewsData = this.userMetrics.workspaceDistribution as WorkspaceViewDistribution[];
-    let personalWorkspaceCount = 0;
-    viewsData.forEach((w:any)=> {
-      if (w.workspaceName === 'PersonalWorkspace') {
-        w.workspaceId = '000000'
-        personalWorkspaceCount += w.count;
-      }
-
-    })
-
-    viewsData = viewsData.filter((w:any) => w.workspaceName !== 'PersonalWorkspace');
-
-
-    if (personalWorkspaceCount > 0) {
-      viewsData.push({
-        workspaceId: '000000',
-        workspaceName: 'Personal Workspace',
-        count: personalWorkspaceCount
-      });
+    const timeSpentData = this.groupedTabTimeSpent;
+    if (!timeSpentData || timeSpentData.length === 0) {
+      this.userWorkspacePieChartOptions = null;
+      return;
     }
 
-
-    // console.log("viewsData", viewsData)
-
     this.userWorkspacePieChartOptions = {
-      series: viewsData.map(w => w.count),
+      series: timeSpentData.map(w => w.totalSeconds),
       chart: {
         type: 'pie',
-        height: 250,
+        height: 400,
       },
-      labels: viewsData.map(w => w.workspaceName),
+      labels: timeSpentData.map(w => this.transformDisplayName(w.workspaceName)),
       dataLabels: {
         enabled: true,
         formatter: (val: number) => `${val.toFixed(1)}%`,
@@ -867,11 +916,17 @@ userCounts = {
         },
       },
       legend: {
-        position: 'bottom'
+        position: 'bottom',
+        formatter: (legendName: string) => {
+          const workspaceData = timeSpentData.find(w => 
+            this.transformDisplayName(w.workspaceName) === legendName
+          );
+          return `${legendName} (${this.formatTimeSpent(workspaceData?.totalSeconds || 0)})`;
+        }
       },
       tooltip: {
         y: {
-          formatter: (value: number) => `${value} views`,
+          formatter: (value: number) => this.formatTimeSpent(value),
         },
       },
       colors: this.blueGradientColors,
@@ -1063,7 +1118,7 @@ async loadData(days: number): Promise<void> {
       series: this.userConsumptionMethods.map(m => m.count),
       chart: {
         type: 'pie',
-        height: 250,
+        height: 340,
       },
       labels: this.userConsumptionMethods.map(m => this.getConsumptionMethodDisplayName(m.method)),
       dataLabels: {
@@ -1088,7 +1143,7 @@ async loadData(days: number): Promise<void> {
           formatter: (value: number) => `${value} views`,
         },
       },
-      colors: ['#1e3a8a', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'],
+      colors: this.blueGradientColors,
     };
     
     // console.log('Chart series values:', this.userConsumptionChartOptions.series);
@@ -1344,14 +1399,23 @@ async updateReports(): Promise<void> {
   }
 }
 onWorkspaceChange() {
+  this.flushTelemetryTime();
   this.selectedReport = null; 
   this.updateReports();
   this.loadData(this.selectedPeriod); 
 }
 
 onReportChange() {
+  this.flushTelemetryTime();
   if (this.selectedReport === 'all') {
     this.selectedReport = null;
+  }
+  if (this.selectedReport) {
+    this.currentTrackedReportId = this.selectedReport;
+    this.currentTrackedReportName = this.reportOptions.find(r => r.id === this.selectedReport)?.name || 'Power BI Report';
+  } else {
+    this.currentTrackedReportId = 'powerbi-analytics';
+    this.currentTrackedReportName = 'Power BI Analytics Dashboard';
   }
   this.loadData(this.selectedPeriod); 
 }
@@ -1675,6 +1739,27 @@ changeReportPage(report: any, page: number): void {
 
 MathMin(a: number, b: number): number {
   return Math.min(a, b);
+}
+
+get groupedTabTimeSpent(): { workspaceName: string, totalSeconds: number, items: any[] }[] {
+  if (!this.userTabTimeSpent || this.userTabTimeSpent.length === 0) return [];
+  
+  const groups: { [key: string]: { workspaceName: string, totalSeconds: number, items: any[] } } = {};
+  
+  this.userTabTimeSpent.forEach(item => {
+    const wsName = item.workspaceName || 'Personal Workspace';
+    if (!groups[wsName]) {
+      groups[wsName] = {
+        workspaceName: wsName,
+        totalSeconds: 0,
+        items: []
+      };
+    }
+    groups[wsName].totalSeconds += item.totalSeconds;
+    groups[wsName].items.push(item);
+  });
+  
+  return Object.values(groups).sort((a, b) => b.totalSeconds - a.totalSeconds);
 }
 
 }

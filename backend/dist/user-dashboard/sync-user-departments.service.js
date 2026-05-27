@@ -23,7 +23,7 @@ let SyncUserDepartmentsService = class SyncUserDepartmentsService {
     constructor(userDashboardRepository, httpService) {
         this.userDashboardRepository = userDashboardRepository;
         this.httpService = httpService;
-        this.url = "http://localhost:3000/auth";
+        this.url = `http://localhost:${process.env.PORT || 4006}/auth`;
     }
     async syncDepartments() {
         const uniqueEmails = await this.userDashboardRepository

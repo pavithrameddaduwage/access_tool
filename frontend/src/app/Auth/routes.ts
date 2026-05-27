@@ -166,27 +166,8 @@ const routeConfig: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'powerbi-analytics',
-    component: PowerBIAnalyticsComponent
-  },
-  {
-    path: 'powerbi-usage',
-    component: PowerBIUsageDashboardComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'webtool-usage',
-    component: WebtoolAnalyticsComponent,
-    pathMatch: 'full'
-  },
-  {
     path: 'powerbi',
     component: PowerBIDashboardComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'webtool-dashboard',
-    component: WebtoolAnalyticsComponent,
     pathMatch: 'full'
   },
   {

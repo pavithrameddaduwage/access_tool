@@ -1,283 +1,193 @@
-/* Make first x-axis label bold */
-.first-xaxis-label {
-    font-weight: 700 !important;
-  }
-  
-  /* Ensure custom styles are applied */
-  :host ::ng-deep .first-xaxis-label {
-    font-weight: 900 !important;
-  }
+/* ══════════════════════════════════════════════════════════
+   Power BI Dashboard – scoped styles (overflow-safe)
+   ══════════════════════════════════════════════════════════ */
 
-  /* Animation for modal */
-.modal-enter {
-  opacity: 0;
+/* ── Page wrapper ────────────────────────────────────────── */
+:host {
+  display: block;
+  width: 100%;
+  overflow-x: hidden;
 }
 
-.modal-enter-active {
-  opacity: 1;
-  transition: opacity 200ms ease-out;
+/* ── Glassmorphic Card ───────────────────────────────────── */
+.card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04),
+              0 1px 1px 0 rgba(0, 0, 0, 0.01);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;           /* KEY: prevent child overflow */
 }
 
-.modal-exit {
-  opacity: 1;
+.card-glass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08),
+              0 1px 2px 0 rgba(0, 0, 0, 0.01);
 }
 
-.modal-exit-active {
-  opacity: 0;
-  transition: opacity 200ms ease-in;
-}
-
-/* Custom scrollbar for the popup content */
-.popup-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.popup-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.popup-content::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.popup-content::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
+/* ── Constrain page width ─────────────────────────────────── */
 .min-h-screen {
-  max-width: 1920px;
+  padding-top: 1.5rem !important;
+  padding-bottom: 3rem !important;
+  max-width: 1400px;
   margin: 0 auto;
-  margin-top: -2.5rem !important; /* Force the -mt-10 to work */
   position: relative;
   z-index: 0;
+  overflow-x: hidden;
 }
 
-/* Ensure consistent card heights */
-.grid .bg-white.p-4.rounded-lg.shadow-sm {
-  min-height: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+/* ── Typography ──────────────────────────────────────────── */
+h1, h2, h3 {
+  letter-spacing: -0.025em;
+  font-weight: 800;
 }
 
-/* Ensure charts maintain aspect ratio and don't overflow */
+/* ── Premium Buttons ─────────────────────────────────────── */
+.btn-premium {
+  font-weight: 700;
+  border-radius: 12px;
+  height: 40px;
+  padding: 0 1.25rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+}
+
+.btn-premium-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.35);
+  border: none;
+}
+
+.btn-premium-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.45);
+}
+
+.btn-premium-secondary {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
+}
+
+.btn-premium-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+/* ── Custom scrollbar ─────────────────────────────────────── */
+.popup-content::-webkit-scrollbar { width: 6px; }
+.popup-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+.popup-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.popup-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Chart containers ─────────────────────────────────────── */
 apx-chart {
   width: 100% !important;
-  overflow: hidden !important;
-}
-
-/* Fix chart containers to prevent overflow */
-.h-\[350px\], .h-\[400px\] {
-  overflow: hidden !important;
   max-width: 100% !important;
+  overflow: hidden !important;
 }
 
-/* Ensure text doesn't overflow in tables */
-table td, table th {
+/* Ensure chart wrapper divs don't overflow */
+.card-glass > div,
+.card-glass > .flex-grow {
+  max-width: 100%;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 300px; /* Adjust based on your needs */
 }
 
-/* Ensure responsive tables */
+/* ── Tables ───────────────────────────────────────────────── */
 .overflow-x-auto {
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Fix pagination on small screens */
-.pagination-controls {
-  flex-wrap: wrap;
+/* ── Dropdown overflow prevention ─────────────────────────── */
+select, p-dropdown {
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-/* Better responsive handling for filter controls */
-@media (max-width: 768px) {
-  .view-toggle-container {
-    width: 100%;
-    margin-top: 8px;
-    justify-content: center;
-  }
-  
-  .time-duration-buttons {
-    margin-top: 8px;
-    width: 100%;
-  }
-  
-  /* Adjust chart heights on mobile for better viewing */
-  .h-\[350px\], .h-\[400px\] {
-    height: 300px !important;
-  }
-  
-  /* Stack filter controls on mobile */
-  .flex.items-center.justify-between {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  /* Make dropdowns full width on mobile */
-  select {
-    width: 100%;
-  }
-  
-  /* Better table handling on small screens */
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+/* ── User Metrics Area ────────────────────────────────────── */
+.user-metrics {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
-/* Fix modal positioning */
-.fixed.inset-0.z-50 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+/* ── Workspace & Tab Time Spent Grid ──────────────────────── */
+.user-metrics .card-glass {
+  overflow: visible;       /* let inner scrollable lists work */
 }
 
-.fixed.inset-0.z-50 > div {
-  width: 100%;
-  max-height: 80vh;
-  max-width: 600px;
-  margin: 0 auto;
+/* ── Pie chart containers ─────────────────────────────────── */
+.card-glass.p-6.flex.flex-col {
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Prevent content from being cut off in modals */
-.overflow-y-auto {
-  -webkit-overflow-scrolling: touch;
+/* ── Access Matrix Table Overflow Fix ─────────────────────── */
+.overflow-x-auto table {
+  min-width: 600px;
 }
 
-/* Fix for chart labels that might get cut off */
-:host ::ng-deep .apexcharts-xaxis-label,
-:host ::ng-deep .apexcharts-yaxis-label {
-  overflow: visible !important;
+/* ── Fix popup modal z-index and sizing ───────────────────── */
+.fixed.inset-0 {
+  overflow-y: auto;
 }
 
-/* Ensure consistent button sizes */
-button {
-  min-height: 36px;
-}
-
-/* Fix for filter section on medium screens */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .md\:w-40 {
-    width: 100% !important;
-    margin-bottom: 8px;
+/* ── Responsive Fixes ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .min-h-screen {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
-  
-  .md\:flex-row {
+
+  .card-glass {
+    border-radius: 14px;
+    padding: 1rem !important;
+  }
+
+  /* Stack duration buttons */
+  .flex.gap-2 {
     flex-wrap: wrap;
   }
-}
 
-/* Ensure grid items maintain proper spacing */
-.grid {
-  grid-gap: 16px !important;
-}
+  .btn-premium {
+    height: 36px;
+    font-size: 0.7rem;
+    padding: 0 0.75rem;
+  }
 
-/* Fix for summary cards to ensure consistent appearance */
-.grid.grid-cols-1.md\:grid-cols-3.gap-4 > div {
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+  /* Grid adjustments */
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
 
-/* Ensure consistent heights for chart containers */
-.bg-white.p-4.rounded-lg.shadow-md, 
-.bg-white.p-2.rounded-lg.shadow-md {
-  display: flex;
-  flex-direction: column;
-}
+  .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
 
-/* Prevent content overflow in pie charts */
-:host ::ng-deep .apexcharts-pie-label {
-  width: auto !important;
-  white-space: normal !important;
-}
+  .grid.grid-cols-1.md\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
 
-/* Fix for bar chart labels */
-:host ::ng-deep .apexcharts-bar-series .apexcharts-datalabel {
-  width: auto !important;
-}
-
-/* Ensure proper spacing between stacked elements */
-.space-y-6 > * + * {
-  margin-top: 1.5rem;
-}
-
-/* Fix for dropdown menus */
-select {
-  text-overflow: ellipsis;
-}
-
-/* Prevent long dropdown items from breaking layout */
-option {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Fix user metrics container */
-.user-metrics {
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Make sure content doesn't overflow in the main container */
-.bg-white.shadow-md.rounded-lg {
-  overflow: hidden;
-}
-
-/* Fix for the time duration control */
-.w-40.pl-6 {
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .w-40.pl-6 {
-    width: 10rem;
+  .grid.grid-cols-2.md\:grid-cols-5 {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
-/* Make all chart containers have consistent padding */
-[class*="chart"] {
-  padding: 8px !important;
-}
-
-/* Ensure filter section is properly spaced */
-.flex.flex-col.md\:flex-row.gap-4 {
-  align-items: stretch;
-}
-
-/* Fix for toggle buttons */
-.view-toggle-container {
-  height: 36px;
-  align-items: center;
-}
-
-/* Make sure all buttons in filter section have same height */
-.flex.flex-col.md\:flex-row.gap-4 button,
-.flex.flex-col.md\:flex-row.gap-4 select {
-  height: 36px;
-}
-/* Add this to your component's CSS or global styles */
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.hover\:bg-gray-50:hover {
-  background-color: #f9fafb;
-}
-
-.transition-colors {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+@media (max-width: 480px) {
+  .grid.grid-cols-2.md\:grid-cols-5 {
+    grid-template-columns: 1fr !important;
+  }
 }

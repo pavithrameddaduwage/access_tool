@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { PowerBILog } from './entities/powerbi-log.entity';
+import { PowerBITimeSpent } from './entities/powerbi-time-spent.entity';
 import { PowerBIMetricsController } from './powerbi-metrics.controller';
 import { PowerBIMetricsService } from './powerbi-metrics.service';
 import { PowerBILogsCollectorTask } from './tasks/powerbi-logs-collector.task';
@@ -18,7 +19,7 @@ import { UserDashboardModule } from 'src/user-dashboard/user-dashboard.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    TypeOrmModule.forFeature([PowerBILog, UserDashboard, Dashboard]),
+    TypeOrmModule.forFeature([PowerBILog, UserDashboard, Dashboard, PowerBITimeSpent]),
     HttpModule,
     ConfigModule.forRoot(),
     WorkspaceMappingModule,  

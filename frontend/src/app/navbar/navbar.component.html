@@ -13,34 +13,34 @@
     <div class="hidden lg:flex items-center space-x-1">
       <ng-container *ngIf="isloggedIn">
         <a
-          class="text-xs font-semibold text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
+          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
           routerLink="/home"
           routerLinkActive="active-link"
         >
-          POWER BI ANALYTICS
+          Power BI Analytics
         </a>
         <a
-          class="text-xs font-semibold text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
+          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
           routerLink="/users"
           routerLinkActive="active-link"
         >
-          USERS
+          Users
         </a>
         <a
-          class="text-xs font-semibold text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
+          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
           [routerLink]="['/powerbi']"
           [queryParams]="{view: 'access'}"
           routerLinkActive="active-link"
         >
-          POWER BI ACCESS MATRIX
+          Power BI Access Matrix
         </a>
         <a
           *ngIf="isAdmin"
-          class="text-xs font-semibold text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
+          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
           routerLink="/user-management"
           routerLinkActive="active-link"
         >
-          USER MANAGEMENT
+          User Management
         </a>
       </ng-container>
     </div>
@@ -68,34 +68,34 @@
   <!-- Mobile navigation submenu for responsive layout -->
   <div *ngIf="isloggedIn" class="lg:hidden flex items-center justify-center space-x-1 py-2 px-4 bg-[#0a284a] border-t border-[#1c4775]/30 overflow-x-auto">
     <a
-      class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
+      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
       routerLink="/home"
       routerLinkActive="active-link"
     >
-      PBI ANALYTICS
+      Power BI Analytics
     </a>
     <a
-      class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
+      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
       routerLink="/users"
       routerLinkActive="active-link"
     >
-      USERS
+      Users
     </a>
     <a
-      class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
+      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
       [routerLink]="['/powerbi']"
       [queryParams]="{view: 'access'}"
       routerLinkActive="active-link"
     >
-      PBI ACCESS MATRIX
+      Power BI Access Matrix
     </a>
     <a
       *ngIf="isAdmin"
-      class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
+      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
       routerLink="/user-management"
       routerLinkActive="active-link"
     >
-      USER MANAGEMENT
+      User Management
     </a>
   </div>
 </div>

@@ -64,13 +64,13 @@ th {
   text-transform: uppercase !important;
   font-size: 0.75rem !important;
   border-bottom: 2px solid var(--table-border) !important;
-  padding: 1rem 1.5rem !important;
+  padding: 0.75rem 1rem !important;
 }
 
 td {
   border-bottom: 1px solid var(--table-border) !important;
   color: var(--text-heading) !important;
-  padding: 1rem 1.5rem !important;
+  padding: 0.75rem 1rem !important;
 }
 
 tr:hover td {
@@ -147,35 +147,43 @@ button:not(.btn-premium):not(.p-button):hover {
 
 /* PrimeNG dropdown/select and overlay improvements */
 .p-dropdown,
-.p-select,
-.p-dropdown .p-dropdown-label,
-.p-select .p-select-label,
-.p-dropdown .p-dropdown-clear,
-.p-select .p-select-clear-icon,
-.p-dropdown .p-dropdown-trigger,
-.p-select .p-select-dropdown {
-  background-color: #ffffff !important;
-}
-
-.p-dropdown,
 .p-select {
-  margin-bottom: 0.75rem !important;
-  min-width: 220px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  margin-bottom: 0 !important;
+  min-width: 180px !important;
+  max-width: 100% !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
 }
 
 .p-dropdown .p-dropdown-label,
 .p-select .p-select-label {
   color: var(--text-heading) !important;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  background: transparent !important;
 }
 
 .p-dropdown .p-dropdown-trigger,
 .p-select .p-select-dropdown {
-  color: var(--text-heading) !important;
+  color: #64748b !important;
+  background: transparent !important;
+  border: none !important;
+  width: 2.5rem !important;
 }
 
+.p-dropdown .p-dropdown-clear,
+.p-select .p-select-clear-icon {
+  background: transparent !important;
+}
+
+/* Dropdown panel (the opened overlay) */
 .p-dropdown-panel,
 .p-select-overlay,
 .p-select-panel,
@@ -183,10 +191,10 @@ button:not(.btn-premium):not(.p-button):hover {
 .p-select-list {
   background-color: #ffffff !important;
   background: #ffffff !important;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16) !important;
-  z-index: 99999 !important; /* Ensure it overrides any chart overlays or card container styles */
-  border-radius: 0.75rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12) !important;
+  z-index: 99999 !important;
+  border-radius: 10px !important;
 }
 
 .p-dropdown-items-wrapper,
@@ -198,6 +206,8 @@ button:not(.btn-premium):not(.p-button):hover {
 .p-dropdown-item,
 .p-select-option {
   color: var(--text-heading) !important;
+  font-size: 0.85rem !important;
+  padding: 0.6rem 1rem !important;
 }
 
 .p-dropdown-item.p-highlight,
@@ -205,13 +215,59 @@ button:not(.btn-premium):not(.p-button):hover {
 .p-select-option.p-select-option-selected,
 .p-select-option:hover,
 .p-select-option.p-focus {
-  background: rgba(245, 158, 11, 0.16) !important;
+  background: #f1f5f9 !important;
   color: var(--text-heading) !important;
 }
 
+/* Filter input inside dropdown panel */
+.p-dropdown-filter-container,
+.p-dropdown-header {
+  position: relative !important;
+  width: 100% !important;
+  padding: 0.625rem !important;
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
 .p-dropdown-filter-container input,
-.p-select-filter {
+.p-dropdown-header input,
+.p-dropdown-filter {
   background: #ffffff !important;
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  height: 36px !important;
+  width: 100% !important;
+  box-shadow: none !important;
+  color: #1e293b !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+.p-dropdown-filter-container input:focus,
+.p-dropdown-header input:focus,
+.p-dropdown-filter:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12) !important;
+  outline: none !important;
+}
+
+.p-dropdown-filter-icon,
+.p-dropdown-header .p-dropdown-filter-icon {
+  position: absolute !important;
+  left: 1.25rem !important;
+  color: #94a3b8 !important;
+  font-size: 0.8rem !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-top: 0 !important;
 }
 
 .p-button {
@@ -229,7 +285,7 @@ button:not(.btn-premium):not(.p-button):hover {
   background-color: rgba(30, 58, 138, 0.4) !important;
 }
 
-.bg-white.rounded-lg, .content-card, .card-glass {
+.content-card, .card-glass {
   background: rgba(255, 255, 255, 0.75) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;

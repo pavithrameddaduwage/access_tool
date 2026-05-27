@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, Repository } from 'typeorm';
 import { PowerBILog } from './entities/powerbi-log.entity';
+import { PowerBITimeSpent } from './entities/powerbi-time-spent.entity';
 import { UserDashboard } from 'src/user-dashboard/entities/user-dashboard.entity';
 import { Dashboard } from 'src/dashboard/entities/dashboard.entity';
 import { ReportMappingService } from 'src/report-mapping/report-mapping.service';
@@ -104,6 +105,8 @@ export class PowerBIMetricsService {
     private readonly powerbiLogRepository: Repository<PowerBILog>,
     @InjectRepository(Dashboard)
     private readonly dashboardRepository: Repository<Dashboard>,
+    @InjectRepository(PowerBITimeSpent)
+    private readonly powerbiTimeSpentRepository: Repository<PowerBITimeSpent>,
     private readonly reportMappingService: ReportMappingService,
     private readonly workspaceMappingService: WorkspaceMappingService,
     private readonly userDashboardService: UserDashboardService,
@@ -1603,6 +1606,28 @@ private async getUserEstimatedTimeSpent(
   reportId?: string
 ): Promise<number> {
   try {
+    // 1. Try to get precise tracked duration from the custom tracking table first
+    const preciseQuery = this.powerbiTimeSpentRepository
+      .createQueryBuilder('spent')
+      .select('SUM(spent.durationSeconds)', 'totalSeconds')
+      .where('LOWER(spent.userId) = LOWER(:userId)', { userId })
+      .andWhere('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate });
+
+    if (workspaceId) {
+      preciseQuery.andWhere('spent.workspaceId = :workspaceId', { workspaceId });
+    }
+    if (reportId) {
+      preciseQuery.andWhere('spent.reportId = :reportId', { reportId });
+    }
+
+    const preciseResult = await preciseQuery.getRawOne();
+    const preciseSeconds = parseInt(preciseResult?.totalSeconds || '0', 10);
+
+    if (preciseSeconds > 0) {
+      return preciseSeconds;
+    }
+
+    // 2. Fall back to heuristic calculations if no precise telemetry exists yet
     const query = this.powerbiLogRepository
       .createQueryBuilder('log')
       .where('log.userId = :userId', { userId })
@@ -2489,6 +2514,111 @@ public async syncUsersFromLogs(): Promise<void> {
     this.logger.log(`User roster sync complete. Added ${newUsersCount} new users from logs.`);
   } catch (err) {
     this.logger.error('Failed to sync users from logs', err.stack);
+  }
+}
+
+public async saveTimeSpent(data: {
+  userId: string;
+  reportId: string;
+  reportName: string;
+  workspaceId?: string;
+  workspaceName?: string;
+  tabName: string;
+  durationSeconds: number;
+}): Promise<PowerBITimeSpent> {
+  const entity = this.powerbiTimeSpentRepository.create({
+    userId: data.userId.toLowerCase(),
+    reportId: data.reportId,
+    reportName: data.reportName,
+    workspaceId: data.workspaceId,
+    workspaceName: data.workspaceName,
+    tabName: data.tabName,
+    durationSeconds: data.durationSeconds,
+    timestamp: new Date()
+  });
+  return this.powerbiTimeSpentRepository.save(entity);
+}
+
+public async getUserTimeSpentDistribution(
+  userId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<any[]> {
+  const query = this.powerbiTimeSpentRepository
+    .createQueryBuilder('spent')
+    .select('spent.reportId', 'reportId')
+    .addSelect('spent.reportName', 'reportName')
+    .addSelect('spent.workspaceId', 'workspaceId')
+    .addSelect('spent.workspaceName', 'workspaceName')
+    .addSelect('spent.tabName', 'tabName')
+    .addSelect('SUM(spent.durationSeconds)', 'totalSeconds')
+    .where('LOWER(spent.userId) = LOWER(:userId)', { userId })
+    .andWhere('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate })
+    .groupBy('spent.reportId, spent.reportName, spent.workspaceId, spent.workspaceName, spent.tabName')
+    .orderBy('SUM(spent.durationSeconds)', 'DESC');
+
+  const results = await query.getRawMany();
+  
+  if (results.length === 0) {
+    // FALLBACK: Heuristically estimate from views logs!
+    const logQuery = this.powerbiLogRepository
+      .createQueryBuilder('log')
+      .select('log.reportId', 'reportId')
+      .addSelect('log.reportName', 'reportName')
+      .addSelect('log.workspaceId', 'workspaceId')
+      .addSelect('log.workSpaceName', 'workspaceName')
+      .addSelect('COUNT(log.id) * 120', 'totalSeconds') // 2 mins per view
+      .where('LOWER(log.userId) = LOWER(:userId)', { userId })
+      .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere("log.operation = 'ViewReport'")
+      .groupBy('log.reportId, log.reportName, log.workspaceId, log.workSpaceName')
+      .orderBy('COUNT(log.id)', 'DESC');
+
+    const fallbackLogs = await logQuery.getRawMany();
+    return fallbackLogs.map(r => ({
+      reportId: r.reportId,
+      reportName: r.reportName || 'Unknown Report',
+      workspaceId: r.workspaceId || 'Unknown',
+      workspaceName: r.workspaceName === 'PersonalWorkspace' ? 'Personal Workspace' : (r.workspaceName || 'Personal Workspace'),
+      tabName: 'Overview',
+      totalSeconds: parseInt(r.totalSeconds || '0', 10)
+    }));
+  }
+
+  return results.map(r => ({
+    reportId: r.reportId,
+    reportName: r.reportName || 'Unknown Report',
+    workspaceId: r.workspaceId || 'Unknown',
+    workspaceName: r.workspaceName || 'Personal Workspace',
+    tabName: r.tabName || 'Overview',
+    totalSeconds: parseInt(r.totalSeconds || '0', 10)
+  }));
+}
+
+public async getTotalTimeSpentForUser(
+  userId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<number> {
+  const query = this.powerbiTimeSpentRepository
+    .createQueryBuilder('spent')
+    .select('SUM(spent.durationSeconds)', 'totalSeconds')
+    .where('LOWER(spent.userId) = LOWER(:userId)', { userId })
+    .andWhere('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate });
+
+  const result = await query.getRawOne();
+  return parseInt(result?.totalSeconds || '0', 10);
+}
+
+public async getLastRefreshTime(): Promise<{ lastRefreshedAt: Date }> {
+  try {
+    const latestLog = await this.powerbiLogRepository.findOne({
+      where: {},
+      order: { storedAt: 'DESC' }
+    });
+    return { lastRefreshedAt: latestLog ? latestLog.storedAt : new Date() };
+  } catch (e) {
+    return { lastRefreshedAt: new Date() };
   }
 }
 }

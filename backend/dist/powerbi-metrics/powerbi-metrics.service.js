@@ -21,18 +21,20 @@ const rxjs_1 = require("rxjs");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const powerbi_log_entity_1 = require("./entities/powerbi-log.entity");
+const powerbi_time_spent_entity_1 = require("./entities/powerbi-time-spent.entity");
 const user_dashboard_entity_1 = require("../user-dashboard/entities/user-dashboard.entity");
 const dashboard_entity_1 = require("../dashboard/entities/dashboard.entity");
 const report_mapping_service_1 = require("../report-mapping/report-mapping.service");
 const workspace_mapping_service_1 = require("../workspace-mapping/workspace-mapping.service");
 const user_dashboard_service_1 = require("../user-dashboard/user-dashboard.service");
 let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsService {
-    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository, reportMappingService, workspaceMappingService, userDashboardService) {
+    constructor(httpService, configService, userDashboardRepository, powerbiLogRepository, dashboardRepository, powerbiTimeSpentRepository, reportMappingService, workspaceMappingService, userDashboardService) {
         this.httpService = httpService;
         this.configService = configService;
         this.userDashboardRepository = userDashboardRepository;
         this.powerbiLogRepository = powerbiLogRepository;
         this.dashboardRepository = dashboardRepository;
+        this.powerbiTimeSpentRepository = powerbiTimeSpentRepository;
         this.reportMappingService = reportMappingService;
         this.workspaceMappingService = workspaceMappingService;
         this.userDashboardService = userDashboardService;
@@ -780,6 +782,22 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
     }
     async getUserEstimatedTimeSpent(userId, startDate, endDate, workspaceId, reportId) {
         try {
+            const preciseQuery = this.powerbiTimeSpentRepository
+                .createQueryBuilder('spent')
+                .select('SUM(spent.durationSeconds)', 'totalSeconds')
+                .where('LOWER(spent.userId) = LOWER(:userId)', { userId })
+                .andWhere('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate });
+            if (workspaceId) {
+                preciseQuery.andWhere('spent.workspaceId = :workspaceId', { workspaceId });
+            }
+            if (reportId) {
+                preciseQuery.andWhere('spent.reportId = :reportId', { reportId });
+            }
+            const preciseResult = await preciseQuery.getRawOne();
+            const preciseSeconds = parseInt(preciseResult?.totalSeconds || '0', 10);
+            if (preciseSeconds > 0) {
+                return preciseSeconds;
+            }
             const query = this.powerbiLogRepository
                 .createQueryBuilder('log')
                 .where('log.userId = :userId', { userId })
@@ -1265,6 +1283,86 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             this.logger.error('Failed to sync users from logs', err.stack);
         }
     }
+    async saveTimeSpent(data) {
+        const entity = this.powerbiTimeSpentRepository.create({
+            userId: data.userId.toLowerCase(),
+            reportId: data.reportId,
+            reportName: data.reportName,
+            workspaceId: data.workspaceId,
+            workspaceName: data.workspaceName,
+            tabName: data.tabName,
+            durationSeconds: data.durationSeconds,
+            timestamp: new Date()
+        });
+        return this.powerbiTimeSpentRepository.save(entity);
+    }
+    async getUserTimeSpentDistribution(userId, startDate, endDate) {
+        const query = this.powerbiTimeSpentRepository
+            .createQueryBuilder('spent')
+            .select('spent.reportId', 'reportId')
+            .addSelect('spent.reportName', 'reportName')
+            .addSelect('spent.workspaceId', 'workspaceId')
+            .addSelect('spent.workspaceName', 'workspaceName')
+            .addSelect('spent.tabName', 'tabName')
+            .addSelect('SUM(spent.durationSeconds)', 'totalSeconds')
+            .where('LOWER(spent.userId) = LOWER(:userId)', { userId })
+            .andWhere('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .groupBy('spent.reportId, spent.reportName, spent.workspaceId, spent.workspaceName, spent.tabName')
+            .orderBy('SUM(spent.durationSeconds)', 'DESC');
+        const results = await query.getRawMany();
+        if (results.length === 0) {
+            const logQuery = this.powerbiLogRepository
+                .createQueryBuilder('log')
+                .select('log.reportId', 'reportId')
+                .addSelect('log.reportName', 'reportName')
+                .addSelect('log.workspaceId', 'workspaceId')
+                .addSelect('log.workSpaceName', 'workspaceName')
+                .addSelect('COUNT(log.id) * 120', 'totalSeconds')
+                .where('LOWER(log.userId) = LOWER(:userId)', { userId })
+                .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+                .andWhere("log.operation = 'ViewReport'")
+                .groupBy('log.reportId, log.reportName, log.workspaceId, log.workSpaceName')
+                .orderBy('COUNT(log.id)', 'DESC');
+            const fallbackLogs = await logQuery.getRawMany();
+            return fallbackLogs.map(r => ({
+                reportId: r.reportId,
+                reportName: r.reportName || 'Unknown Report',
+                workspaceId: r.workspaceId || 'Unknown',
+                workspaceName: r.workspaceName === 'PersonalWorkspace' ? 'Personal Workspace' : (r.workspaceName || 'Personal Workspace'),
+                tabName: 'Overview',
+                totalSeconds: parseInt(r.totalSeconds || '0', 10)
+            }));
+        }
+        return results.map(r => ({
+            reportId: r.reportId,
+            reportName: r.reportName || 'Unknown Report',
+            workspaceId: r.workspaceId || 'Unknown',
+            workspaceName: r.workspaceName || 'Personal Workspace',
+            tabName: r.tabName || 'Overview',
+            totalSeconds: parseInt(r.totalSeconds || '0', 10)
+        }));
+    }
+    async getTotalTimeSpentForUser(userId, startDate, endDate) {
+        const query = this.powerbiTimeSpentRepository
+            .createQueryBuilder('spent')
+            .select('SUM(spent.durationSeconds)', 'totalSeconds')
+            .where('LOWER(spent.userId) = LOWER(:userId)', { userId })
+            .andWhere('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate });
+        const result = await query.getRawOne();
+        return parseInt(result?.totalSeconds || '0', 10);
+    }
+    async getLastRefreshTime() {
+        try {
+            const latestLog = await this.powerbiLogRepository.findOne({
+                where: {},
+                order: { storedAt: 'DESC' }
+            });
+            return { lastRefreshedAt: latestLog ? latestLog.storedAt : new Date() };
+        }
+        catch (e) {
+            return { lastRefreshedAt: new Date() };
+        }
+    }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;
 exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 = __decorate([
@@ -1272,8 +1370,10 @@ exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 
     __param(2, (0, typeorm_1.InjectRepository)(user_dashboard_entity_1.UserDashboard)),
     __param(3, (0, typeorm_1.InjectRepository)(powerbi_log_entity_1.PowerBILog)),
     __param(4, (0, typeorm_1.InjectRepository)(dashboard_entity_1.Dashboard)),
+    __param(5, (0, typeorm_1.InjectRepository)(powerbi_time_spent_entity_1.PowerBITimeSpent)),
     __metadata("design:paramtypes", [axios_1.HttpService,
         config_1.ConfigService,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
