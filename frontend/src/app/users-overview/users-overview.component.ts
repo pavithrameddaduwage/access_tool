@@ -382,16 +382,60 @@ export class UsersOverviewComponent implements OnInit {
 
   transformDisplayName(name: string | undefined): string {
     if (!name) return 'Unknown';
-    
+
     // Remove "HGU" prefix (case insensitive)
     let transformed = name.replace(/^HGU\s*-\s*/i, '')
                          .replace(/^HGU/i, '');
-    
+
     // Remove "Dashboard" suffix (case insensitive)
     transformed = transformed.replace(/\s*-\s*Dashboard$/i, '')
                             .replace(/Dashboard$/i, '');
-    
+
     // Trim any remaining whitespace
     return transformed.trim() || 'Unknown';
+  }
+
+  private normalizeDashName(s: string): string {
+    return (s || '')
+      .toLowerCase().trim()
+      .replace(/^hgu\s*[-–]\s*/i, '')
+      .replace(/\s*[-–]\s*dashboard$/i, '')
+      .replace(/dashboard$/i, '')
+      .trim();
+  }
+
+  get assignedVsUsed(): { name: string; displayName: string; timeSpent: number; views: number; isUsed: boolean }[] {
+    const assigned: string[] = this.userMetrics?.assignedDashboards || [];
+    if (!assigned.length) return [];
+
+    return assigned.map(dashName => {
+      const norm = this.normalizeDashName(dashName);
+
+      const timeSpent = this.userTabTimeSpent
+        .filter(t => {
+          const tn = this.normalizeDashName(t.reportName || '');
+          return tn === norm || tn.includes(norm) || norm.includes(tn);
+        })
+        .reduce((s, t) => s + (t.totalSeconds || 0), 0);
+
+      const matchedView = this.userReportViews.find(r => {
+        const rn = this.normalizeDashName(r.reportName || '');
+        return rn === norm || rn.includes(norm) || norm.includes(rn);
+      });
+
+      return {
+        name: dashName,
+        displayName: this.transformDisplayName(dashName),
+        timeSpent,
+        views: matchedView?.count || 0,
+        isUsed: timeSpent > 0 || (matchedView?.count || 0) > 0
+      };
+    });
+  }
+
+  get utilizationRate(): number {
+    const data = this.assignedVsUsed;
+    if (!data.length) return 0;
+    return Math.round(data.filter(d => d.isUsed).length / data.length * 100);
   }
 }

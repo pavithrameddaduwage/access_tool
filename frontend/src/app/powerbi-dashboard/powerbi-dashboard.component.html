@@ -1,773 +1,519 @@
-<div class="min-h-screen bg-slate-50/50 py-6 px-4 md:px-8" style="overflow-x: hidden;">
-  <!-- Main Glassmorphic Container -->
-  <div class="card-glass max-w-7xl mx-auto p-6 md:p-8 mb-8" style="overflow: visible;">
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-slate-100 pb-6">
-      <div class="w-full md:w-auto">
-        <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 flex items-center gap-3">
-          Power BI Usage Analytics
-        </h1>
-        <p class="text-xs text-slate-500 mt-1 font-medium flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span *ngIf="lastRefreshedAt" class="text-slate-400 font-normal flex items-center gap-1">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            datas refreshed on {{ lastRefreshedAt | date:'medium' }}
-          </span>
-        </p>
+<div class="pg-wrap">
+
+  <!-- ══ PAGE HEADER ══════════════════════════════════════════ -->
+  <div class="pg-header">
+    <div class="pg-header-left">
+      <h1 class="pg-title">Power BI Usage Analytics</h1>
+      <span *ngIf="lastRefreshedAt" class="pg-refresh">
+        <span class="pg-live-dot"></span>
+        Refreshed {{ lastRefreshedAt | date:'mediumDate' }}
+      </span>
+    </div>
+    <div class="pg-header-right">
+      <div class="ctrl-group" *ngIf="!selectedUserId">
+        <label class="ctrl-label">Workspace</label>
+        <p-dropdown [options]="workspaceOptions" optionLabel="name" optionValue="id"
+          [(ngModel)]="selectedWorkspace" (onChange)="onWorkspaceChange()"
+          [filter]="true" filterBy="name" styleClass="pg-dropdown"></p-dropdown>
       </div>
-      
-      <!-- Filters and Duration Controls -->
-      <div class="flex flex-col md:flex-row items-stretch md:items-end gap-4 w-full md:w-auto md:max-w-4xl">
-        <div class="w-full md:w-60" *ngIf="!selectedUserId">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Workspace</label>
-          <p-dropdown 
-            [options]="workspaceOptions" 
-            optionLabel="name" 
-            optionValue="id" 
-            [(ngModel)]="selectedWorkspace" 
-            (onChange)="onWorkspaceChange()" 
-            [filter]="true" 
-            filterBy="name" 
-            styleClass="w-full text-sm border-gray-200 rounded-lg shadow-sm">
-          </p-dropdown>
+      <div class="ctrl-group" *ngIf="!selectedUserId">
+        <label class="ctrl-label">Report</label>
+        <p-dropdown [options]="reportOptions" optionLabel="name" optionValue="id"
+          [(ngModel)]="selectedReport" (onChange)="onReportChange()"
+          [filter]="true" filterBy="name" [showClear]="true"
+          placeholder="All Reports" [disabled]="!reportOptions.length"
+          styleClass="pg-dropdown"></p-dropdown>
+      </div>
+      <div class="ctrl-group">
+        <label class="ctrl-label">Period</label>
+        <div class="pill-row">
+          <button *ngFor="let p of timePeriods" (click)="loadData(p.days)"
+            class="pill" [class.pill--on]="selectedPeriod === p.days">
+            {{ p.label }}
+          </button>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="w-full md:w-60" *ngIf="!selectedUserId">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Report</label>
-          <p-dropdown 
-            [options]="reportOptions" 
-            optionLabel="name" 
-            optionValue="id" 
-            [(ngModel)]="selectedReport" 
-            (onChange)="onReportChange()" 
-            [filter]="true" 
-            filterBy="name" 
-            [showClear]="true" 
-            placeholder="All Reports"
-            [disabled]="!reportOptions.length"
-            styleClass="w-full text-sm border-gray-200 rounded-lg shadow-sm">
-          </p-dropdown>
+  <!-- ══ STATES ═══════════════════════════════════════════════ -->
+  <div *ngIf="loading" class="state-loader">
+    <span class="spinner"></span>
+    <p>Loading analytics…</p>
+  </div>
+  <div *ngIf="error && !loading" class="state-error">
+    <i class="pi pi-exclamation-triangle"></i> {{ error }}
+  </div>
+
+  <!-- ══ WORKSPACE VIEW ════════════════════════════════════════ -->
+  <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
+
+    <div class="kpi-row">
+      <div class="kpi-card kpi--blue">
+        <i class="pi pi-eye kpi-icon"></i>
+        <div class="kpi-body">
+          <span class="kpi-label">Total Views</span>
+          <span class="kpi-value">{{ metrics.totalViews || 0 | number }}</span>
         </div>
+      </div>
+      <div class="kpi-card kpi--indigo">
+        <i class="pi pi-users kpi-icon"></i>
+        <div class="kpi-body">
+          <span class="kpi-label">Total Users</span>
+          <span class="kpi-value">{{ (metrics.uniqueUsers + userCounts.zeroViewUsers) | number }}</span>
+        </div>
+      </div>
+      <div class="kpi-card kpi--teal">
+        <i class="pi pi-file kpi-icon"></i>
+        <div class="kpi-body">
+          <span class="kpi-label">Active Reports</span>
+          <span class="kpi-value">{{ metrics.uniqueReports || 0 }}</span>
+        </div>
+      </div>
+      <div class="kpi-card kpi--slate" (click)="openUserListModal('zero')" style="cursor:pointer" title="Click to view">
+        <i class="pi pi-user-minus kpi-icon"></i>
+        <div class="kpi-body">
+          <span class="kpi-label">Zero-View Users</span>
+          <span class="kpi-value">{{ userCounts.zeroViewUsers || 0 }}</span>
+        </div>
+      </div>
+    </div>
 
-        <!-- Time Duration Buttons -->
-        <div class="w-full md:w-auto">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Duration</label>
-          <div class="flex gap-2 flex-wrap">
-            <button
-              *ngFor="let period of timePeriods"
-              (click)="loadData(period.days)"
-              class="btn-premium text-xs px-4 py-2.5 rounded-lg whitespace-nowrap"
-              [ngClass]="selectedPeriod === period.days ? 'btn-premium-primary' : 'btn-premium-secondary'"
-            >
-              {{ period.label }}
+    <div class="chart-grid chart-grid--2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-chart-line"></i> Views Over Time</span>
+        </div>
+        <div class="chart-body">
+          <apx-chart *ngIf="viewsChartOptions; else noData"
+            [series]="viewsChartOptions.series" [chart]="viewsChartOptions.chart"
+            [xaxis]="viewsChartOptions.xaxis" [yaxis]="viewsChartOptions.yaxis"
+            [colors]="viewsChartOptions.colors" [stroke]="viewsChartOptions.stroke"
+            [fill]="viewsChartOptions.fill" [tooltip]="viewsChartOptions.tooltip"
+            [grid]="viewsChartOptions.grid" height="260"></apx-chart>
+          <ng-template #noData><div class="chart-empty"><i class="pi pi-chart-line"></i><span>No data</span></div></ng-template>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-sort-amount-down"></i> Top Reports</span>
+        </div>
+        <div class="chart-body">
+          <apx-chart *ngIf="topReportsChartOptions; else noRpt"
+            [series]="topReportsChartOptions.series" [chart]="topReportsChartOptions.chart"
+            [xaxis]="topReportsChartOptions.xaxis" [yaxis]="topReportsChartOptions.yaxis"
+            [colors]="topReportsChartOptions.colors"
+            [plotOptions]="topReportsChartOptions.plotOptions"
+            [dataLabels]="topReportsChartOptions.dataLabels"
+            [tooltip]="topReportsChartOptions.tooltip" height="260"></apx-chart>
+          <ng-template #noRpt><div class="chart-empty"><i class="pi pi-file"></i><span>No data</span></div></ng-template>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-users"></i> Top Users</span>
+        </div>
+        <div class="chart-body">
+          <apx-chart *ngIf="topUsersChartOptions; else noUsers"
+            [series]="topUsersChartOptions.series" [chart]="topUsersChartOptions.chart"
+            [xaxis]="topUsersChartOptions.xaxis" [yaxis]="topUsersChartOptions.yaxis"
+            [plotOptions]="topUsersChartOptions.plotOptions"
+            [dataLabels]="topUsersChartOptions.dataLabels"
+            [colors]="topUsersChartOptions.colors"
+            [tooltip]="topUsersChartOptions.tooltip" height="260"></apx-chart>
+          <ng-template #noUsers><div class="chart-empty"><i class="pi pi-users"></i><span>No data</span></div></ng-template>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-chart-bar"></i> User Activity Trend</span>
+        </div>
+        <div class="chart-body">
+          <apx-chart *ngIf="activityTrendChartOptions; else noTrend"
+            [series]="activityTrendChartOptions.series" [chart]="activityTrendChartOptions.chart"
+            [xaxis]="activityTrendChartOptions.xaxis"
+            [stroke]="activityTrendChartOptions.stroke"
+            [colors]="activityTrendChartOptions.colors" height="260"></apx-chart>
+          <ng-template #noTrend><div class="chart-empty"><i class="pi pi-calendar"></i><span>No data</span></div></ng-template>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ══ USER VIEW ═════════════════════════════════════════════ -->
+  <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
+
+    <!-- ─ No user selected ─ -->
+    <div *ngIf="!selectedUserId">
+      <div class="user-split">
+
+        <!-- User table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="pi pi-users"></i> Users</span>
+            <button class="icon-btn" (click)="exportUserListToCSV()" title="Export CSV">
+              <i class="pi pi-download"></i>
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-    <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center items-center h-64">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
-    
-    <!-- Error State -->
-    <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-      {{ error }}
-    </div>
-
-    <!-- Rest of your content remains the same -->
-    <!-- Workspace View -->
-    <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
-      <!-- Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <!-- Total Views -->
-        <div class="card-glass border-l-4 border-l-blue-600 p-6 flex flex-col justify-center">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
-            <i class="pi pi-eye text-blue-500"></i> Total Views
-          </h3>
-          <p class="text-3xl font-extrabold text-slate-800">{{ metrics.totalViews || 0 }}</p>
-        </div>
-
-        <!-- Unique Users -->
-        <div class="card-glass border-l-4 border-l-indigo-600 p-6 flex flex-col justify-center">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
-            <i class="pi pi-users text-indigo-500"></i> Unique Users
-          </h3>
-          <p class="text-3xl font-extrabold text-slate-800">{{ metrics.uniqueUsers + userCounts.zeroViewUsers }}</p>
-        </div>
-
-        <!-- Unique Reports -->
-        <div class="card-glass border-l-4 border-l-amber-500 p-6 flex flex-col justify-center">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
-            <i class="pi pi-file text-amber-500"></i> Unique Reports
-          </h3>
-          <p class="text-3xl font-extrabold text-slate-800">{{ metrics.uniqueReports || 0 }}</p>
-        </div>
-      </div>
-
-      <!-- Main Charts -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Views Over Time -->
-        <div class="card-glass p-5 h-[360px]">
-          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-            <i class="pi pi-chart-line text-blue-500"></i> Views Over Time
-          </h3>
-          <div class="h-[calc(100%-48px)]">
-            <apx-chart
-              *ngIf="viewsChartOptions"
-              [series]="viewsChartOptions.series"
-              [chart]="viewsChartOptions.chart"
-              [xaxis]="viewsChartOptions.xaxis"
-              [yaxis]="viewsChartOptions.yaxis"
-              [colors]="viewsChartOptions.colors"
-              [stroke]="viewsChartOptions.stroke"
-              height="100%"
-            ></apx-chart>
+          <div class="search-wrap">
+            <i class="pi pi-search search-icon"></i>
+            <input class="search-input" type="text" placeholder="Search users…"
+              [(ngModel)]="userSearchQuery" (input)="filterUsers()" />
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Department</th>
+                  <th>Views</th>
+                  <th>Last Active</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of getPaginatedUsers()"
+                  (click)="selectUser(user.id)"
+                  class="tbl-row" [class.tbl-row--sel]="selectedUserId === user.id">
+                  <td>
+                    <div class="user-cell">
+                      <app-avatar [name]="user.name"></app-avatar>
+                      <span class="user-name">{{ user.name }}</span>
+                    </div>
+                  </td>
+                  <td class="t-muted">{{ user.department }}</td>
+                  <td class="t-bold">{{ user.totalViews }}</td>
+                  <td class="t-muted">{{ user.lastActivity === 'Never' ? '—' : (user.lastActivity | date:'shortDate') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="getPageNumbers().length > 1" class="pagination">
+            <button *ngFor="let page of getPageNumbers()" (click)="changePage(page)"
+              class="pg-btn" [class.pg-btn--on]="currentPage === page">{{ page }}</button>
           </div>
         </div>
 
-        <!-- Top Reports -->
-        <div class="card-glass p-5 h-[360px]">
-          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-            <i class="pi pi-file text-amber-500"></i> Top Reports
-          </h3>
-          <div class="h-[calc(100%-48px)]">
-            <apx-chart
-              *ngIf="topReportsChartOptions"
-              [series]="topReportsChartOptions.series"
-              [chart]="topReportsChartOptions.chart"
-              [xaxis]="topReportsChartOptions.xaxis"
-              [yaxis]="topReportsChartOptions.yaxis"
-              [colors]="topReportsChartOptions.colors"
-              [plotOptions]="topReportsChartOptions.plotOptions"
-              [dataLabels]="topReportsChartOptions.dataLabels"
-              [tooltip]="topReportsChartOptions.tooltip"
-              height="100%"
-            ></apx-chart>
+        <!-- Promo card -->
+        <div class="promo-card">
+          <div class="promo-icon-wrap"><i class="pi pi-chart-scatter"></i></div>
+          <h3 class="promo-title">Deep User Insights</h3>
+          <p class="promo-body">Per-user workspace views, time spent per dashboard, consumption methods, and full activity timeline — all in one dedicated page.</p>
+          <a routerLink="/users" class="promo-btn">
+            <i class="pi pi-arrow-right"></i> Open User Activity
+          </a>
+        </div>
+      </div>
+
+      <!-- Mini charts -->
+      <div class="chart-grid chart-grid--2" style="margin-top:1.25rem">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="pi pi-chart-bar"></i> User Activity Trend</span></div>
+          <div class="chart-body">
+            <apx-chart *ngIf="activityTrendChartOptions"
+              [series]="activityTrendChartOptions.series" [chart]="activityTrendChartOptions.chart"
+              [xaxis]="activityTrendChartOptions.xaxis" [stroke]="activityTrendChartOptions.stroke"
+              [colors]="activityTrendChartOptions.colors" height="240"></apx-chart>
           </div>
         </div>
-
-        <!-- Top Users Chart -->
-        <div class="card-glass p-5 h-[360px]">
-          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-            <i class="pi pi-users text-indigo-500"></i> Top Users
-          </h3>
-          <div class="h-[calc(100%-48px)]">
-            <apx-chart
-              *ngIf="topUsersChartOptions"
-              [series]="topUsersChartOptions.series"
-              [chart]="topUsersChartOptions.chart"
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="pi pi-users"></i> Top Users</span></div>
+          <div class="chart-body">
+            <apx-chart *ngIf="topUsersChartOptions"
+              [series]="topUsersChartOptions.series" [chart]="topUsersChartOptions.chart"
               [xaxis]="topUsersChartOptions.xaxis"
-              [yaxis]="topUsersChartOptions.yaxis"
               [plotOptions]="topUsersChartOptions.plotOptions"
               [dataLabels]="topUsersChartOptions.dataLabels"
-              [colors]="topUsersChartOptions.colors"
-              [tooltip]="topUsersChartOptions.tooltip"
-              height="100%"
-            ></apx-chart>
-          </div>
-        </div>
-
-        <!-- Activity Trend -->
-        <div class="card-glass p-5 h-[360px]">
-          <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-            <i class="pi pi-sliders-h text-emerald-500"></i> User Activity Trend
-          </h3>
-          <div class="h-[calc(100%-48px)]">
-            <apx-chart
-              *ngIf="activityTrendChartOptions"
-              [series]="activityTrendChartOptions.series"
-              [chart]="activityTrendChartOptions.chart"
-              [xaxis]="activityTrendChartOptions.xaxis"
-              [stroke]="activityTrendChartOptions.stroke"
-              [colors]="activityTrendChartOptions.colors"
-              height="100%"
-            ></apx-chart>
+              [colors]="topUsersChartOptions.colors" height="240"></apx-chart>
           </div>
         </div>
       </div>
-    </ng-container>
+    </div>
 
-    <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
-      <!-- User List Section -->
-    <!-- User List Section -->
-    <div class="mb-8 mt-5" *ngIf="!selectedUserId">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- User Table (left side) -->
-        <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="flex flex-col p-6">
-          <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom: 1px solid #f0f9ff;">
-            <h3 class="text-lg font-bold" style="color:#1e3a8a;">User List</h3>
-            <!-- Export Icon -->
-            <button
-              class="p-2 transition-colors duration-150 rounded-lg hover:bg-blue-50"
-              style="color:#3b82f6;"
-              (click)="exportUserListToCSV()"
-              title="Export to CSV"
-            >
-              <i class="pi pi-download text-sm"></i>
-            </button>
+    <!-- ─ User detail ─ -->
+    <div *ngIf="selectedUserId">
+
+      <!-- Detail header card -->
+      <div class="card detail-header-card">
+        <div class="detail-user-id">
+          <app-avatar [name]="getUserDisplayName(selectedUserId)" class="avatar-lg"></app-avatar>
+          <div>
+            <h2 class="detail-name">{{ getUserDisplayName(selectedUserId) }}</h2>
+            <p class="detail-email">{{ selectedUserId }}</p>
           </div>
-          
-          <div class="flex-1 flex flex-col">
-            <!-- Search Input -->
-            <div class="mb-4 relative">
-              <input
-                type="text"
-                placeholder="Search users..."
-                style="border:1px solid #bfdbfe; border-radius:8px; color:#1e3a5f; padding-left: 2.25rem !important;"
-                class="w-full pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-                [(ngModel)]="userSearchQuery"
-                (input)="filterUsers()"
-              />
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="color:#93c5fd;">
-                <i class="pi pi-search text-xs"></i>
+        </div>
+        <button class="back-btn" (click)="selectedUserId = null">
+          <i class="pi pi-arrow-left"></i> All Users
+        </button>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-row kpi-row--5">
+        <div class="kpi-card kpi--blue">
+          <i class="pi pi-eye kpi-icon"></i>
+          <div class="kpi-body"><span class="kpi-label">Total Views</span><span class="kpi-value">{{ userMetrics.totalViews || 0 }}</span></div>
+        </div>
+        <div class="kpi-card kpi--indigo">
+          <i class="pi pi-file kpi-icon"></i>
+          <div class="kpi-body"><span class="kpi-label">Reports</span><span class="kpi-value">{{ userMetrics.reports?.length || 0 }}</span></div>
+        </div>
+        <div class="kpi-card kpi--teal">
+          <i class="pi pi-server kpi-icon"></i>
+          <div class="kpi-body"><span class="kpi-label">Workspaces</span><span class="kpi-value">{{ userMetrics.workspaces?.length || 0 }}</span></div>
+        </div>
+        <div class="kpi-card kpi--violet">
+          <i class="pi pi-calendar kpi-icon"></i>
+          <div class="kpi-body"><span class="kpi-label">Active Days</span><span class="kpi-value">{{ userMetrics.activityByDate?.length || 0 }}</span></div>
+        </div>
+        <div class="kpi-card kpi--amber">
+          <i class="pi pi-clock kpi-icon"></i>
+          <div class="kpi-body"><span class="kpi-label">Time Spent</span><span class="kpi-value">{{ formatTimeSpent(userMetrics.estimatedTimeSpent) }}</span></div>
+        </div>
+      </div>
+
+      <!-- Time by workspace -->
+      <div *ngIf="groupedTabTimeSpent?.length" class="card time-card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-clock"></i> Time by Workspace & Report</span>
+        </div>
+        <div class="ws-grid">
+          <div *ngFor="let group of groupedTabTimeSpent" class="ws-box">
+            <div class="ws-box-header">
+              <span class="ws-name" [title]="group.workspaceName">
+                <i class="pi pi-folder"></i>{{ transformDisplayName(group.workspaceName) }}
+              </span>
+              <span class="ws-total">{{ formatTimeSpent(group.totalSeconds) }}</span>
+            </div>
+            <div class="ws-items">
+              <div *ngFor="let item of group.items" class="ws-item">
+                <div class="ws-item-left">
+                  <span class="ws-item-report" [title]="item.reportName">{{ transformDisplayName(item.reportName) }}</span>
+                  <span class="ws-item-tab">{{ item.tabName || 'Overview' }}</span>
+                </div>
+                <span class="time-badge">{{ formatTimeSpent(item.totalSeconds) }}</span>
               </div>
-            </div>
-            
-            <!-- User Table -->
-            <div class="flex-1 overflow-x-auto rounded-lg">
-              <table class="min-w-full divide-y divide-[#f0f9ff]">
-                <thead style="background:#f0f5ff; border-bottom:1px solid #dbeafe;">
-                  <tr>
-                    <th style="color:#93c5fd;" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">User</th>
-                    <th style="color:#93c5fd;" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Department</th>
-                    <th style="color:#93c5fd;" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Views</th>
-                    <th style="color:#93c5fd;" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Last Seen</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y" style="border-color: #f0f9ff;">
-                  <tr #userRow *ngFor="let user of getPaginatedUsers()"
-                      class="cursor-pointer transition-colors duration-150"
-                      [style.background]="selectedUserId === user.id ? '#eff6ff' : '#fff'"
-                      (mouseenter)="userRow.style.backgroundColor='#eff6ff'"
-                      (mouseleave)="userRow.style.backgroundColor = selectedUserId === user.id ? '#eff6ff' : '#fff'"
-                      (click)="selectUser(user.id)">
-                    <td class="px-4 py-3.5 whitespace-nowrap">
-                      <div class="flex items-center space-x-3">
-                        <app-avatar [name]="user.name"></app-avatar>
-                        <span class="text-sm font-semibold" style="color:#1e3a8a;">{{ user.name }}</span>
-                      </div>
-                    </td>
-                    <td class="px-4 py-3.5 whitespace-nowrap text-sm" style="color:#1e3a5f;">
-                      {{ user.department }}
-                    </td>
-                    <td class="px-4 py-3.5 whitespace-nowrap text-sm font-semibold" style="color:#1e3a8a;">
-                      {{ user.totalViews }}
-                    </td>
-                    <td class="px-4 py-3.5 whitespace-nowrap text-xs" style="color:#1e3a5f;">
-                      {{ user.lastActivity }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
-            <!-- Pagination Controls -->
-            <div *ngIf="getPageNumbers().length > 1" class="flex items-center justify-center gap-1 mt-4 pt-4" style="border-top:1px solid #f0f9ff;">
-              <button
-                *ngFor="let page of getPageNumbers()"
-                (click)="changePage(page)"
-                class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150"
-                [style.background]="currentPage === page ? '#f1f5f9' : '#fff'"
-                [style.color]="currentPage === page ? '#0f172a' : '#475569'"
-                [style.border]="currentPage === page ? '1.5px solid #64748b' : '1.5px solid #cbd5e1'"
-              >
-                {{ page }}
-              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Navigate to Users page -->
-        <div class="lg:col-span-1 flex flex-col gap-4 h-full">
-          <!-- Header placeholder -->
-          <div class="h-10 mb-4 hidden lg:block"></div>
-          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%); border-radius: 18px; box-shadow: 0 4px 20px rgba(29,78,216,0.18);" class="p-6 flex flex-col justify-between h-full" style="min-height: 280px;">
+      <!-- Charts: pie + wide timeline -->
+      <div class="chart-grid chart-grid--2">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="pi pi-chart-pie"></i> Workspace Time</span></div>
+          <div class="chart-body">
+            <apx-chart *ngIf="userWorkspacePieChartOptions; else noWs"
+              [series]="userWorkspacePieChartOptions.series" [chart]="userWorkspacePieChartOptions.chart"
+              [labels]="userWorkspacePieChartOptions.labels" [colors]="userWorkspacePieChartOptions.colors"
+              [dataLabels]="userWorkspacePieChartOptions.dataLabels"
+              [legend]="userWorkspacePieChartOptions.legend"
+              [tooltip]="userWorkspacePieChartOptions.tooltip" height="300"></apx-chart>
+            <ng-template #noWs><div class="chart-empty"><i class="pi pi-chart-pie"></i><span>No time data</span></div></ng-template>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="pi pi-sort-amount-down"></i> Top Reports</span></div>
+          <div class="chart-body">
+            <apx-chart *ngIf="userReportViewsChartOptions; else noRpts"
+              [series]="userReportViewsChartOptions.series" [chart]="userReportViewsChartOptions.chart"
+              [labels]="userReportViewsChartOptions.labels" [colors]="userReportViewsChartOptions.colors"
+              [dataLabels]="userReportViewsChartOptions.dataLabels"
+              [legend]="userReportViewsChartOptions.legend"
+              [tooltip]="userReportViewsChartOptions.tooltip" height="300"></apx-chart>
+            <ng-template #noRpts><div class="chart-empty"><i class="pi pi-file"></i><span>No report data</span></div></ng-template>
+          </div>
+        </div>
+
+        <div class="card card--wide">
+          <div class="card-header"><span class="card-title"><i class="pi pi-calendar"></i> Activity Timeline</span></div>
+          <div class="chart-body">
+            <apx-chart *ngIf="activityTimelineChartOptions; else noAct"
+              [series]="activityTimelineChartOptions.series" [chart]="activityTimelineChartOptions.chart"
+              [xaxis]="activityTimelineChartOptions.xaxis"
+              [colors]="activityTimelineChartOptions.colors" height="240"></apx-chart>
+            <ng-template #noAct><div class="chart-empty"><i class="pi pi-calendar-times"></i><span>No activity data</span></div></ng-template>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /selectedUserId -->
+  </ng-container>
+
+  <!-- ══ ACCESS VIEW ═══════════════════════════════════════════ -->
+  <ng-container *ngIf="activeView === 'access' && dataLoaded && !loading">
+
+    <div *ngIf="loadingAccessMatrix" class="state-loader">
+      <span class="spinner"></span>
+      <p>Building access matrix…</p>
+    </div>
+
+    <div *ngIf="!loadingAccessMatrix">
+      <div class="search-wrap search-wrap--lg">
+        <i class="pi pi-search search-icon"></i>
+        <input class="search-input" type="text"
+          placeholder="Search dashboards…" [(ngModel)]="dashboardAccessSearchQuery" />
+      </div>
+
+      <div *ngIf="getFilteredAccessDashboards().length === 0" class="empty-state">
+        <i class="pi pi-search"></i>
+        <h4>No dashboards found</h4>
+        <p>No match for "{{ dashboardAccessSearchQuery }}"</p>
+      </div>
+
+      <div *ngIf="getFilteredAccessDashboards().length > 0" class="access-list">
+
+        <div *ngFor="let report of getFilteredAccessDashboards()" class="card access-card">
+
+          <div class="access-card-head">
             <div>
-              <p style="color: rgba(255,255,255,0.7); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;" class="mb-2">User Activity</p>
-              <h3 style="color: #fff; font-size: 1.3rem; font-weight: 800; line-height: 1.3;" class="mb-3">
-                Detailed per-user analytics, time spent per dashboard & report access
-              </h3>
-              <p style="color: rgba(255,255,255,0.65); font-size: 0.8rem; line-height: 1.5;">
-                View every user's workspace views, consumption methods, top reports, and full activity timeline — all on one dedicated page.
-              </p>
+              <span class="badge badge--slate">Power BI Report</span>
+              <h3 class="access-report-name">{{ transformDisplayName(report.reportName) }}</h3>
             </div>
-            <a
-              routerLink="/users"
-              style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); color: #fff; border-radius: 10px; padding: 0.7rem 1.25rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; margin-top: 1.5rem; transition: background 0.18s; backdrop-filter: blur(6px);"
-              onmouseenter="this.style.background='rgba(255,255,255,0.25)'"
-              onmouseleave="this.style.background='rgba(255,255,255,0.15)'"
-            >
-              <i class="pi pi-arrow-right text-xs"></i>
-              Open Users Overview
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- User Metrics -->
-    <div *ngIf="selectedUserId; else userOverview" class="user-metrics" style="overflow-x: hidden; max-width: 100%;">
-      <!-- Selected User Header -->
-      <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07); overflow: hidden;" class="p-6">
-    <div class="flex justify-between items-center mb-6 pb-4" style="border-bottom: 1px solid #f0f9ff;">
-      <h2 class="text-xl font-bold" style="color:#1e3a8a;">{{ getUserDisplayName(selectedUserId) }}</h2>
-      <button 
-        style="color:#3b82f6; background:#fff; border:1px solid #bfdbfe; border-radius:8px;"
-        class="font-semibold text-xs px-4 py-2 hover:bg-blue-50 transition-colors"
-        (click)="selectedUserId = null"
-      >
-        <i class="pi pi-arrow-left mr-2 text-[10px]"></i>Back to all users
-      </button>
-    </div>
-
-    <!-- Metrics Tiles -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <div style="background:#f0f5ff; border:1px solid #dbeafe; border-radius:12px;" class="p-4 text-center">
-        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Total Views</h3>
-        <p class="text-xl font-bold" style="color:#1e3a8a;">{{ userMetrics.totalViews || 0 }}</p>
-      </div>
-      <div style="background:#f0f5ff; border:1px solid #dbeafe; border-radius:12px;" class="p-4 text-center">
-        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Reports Viewed</h3>
-        <p class="text-xl font-bold" style="color:#3b82f6;">{{ userMetrics.reports?.length || 0 }}</p>
-      </div>
-      <div style="background:#f0f5ff; border:1px solid #dbeafe; border-radius:12px;" class="p-4 text-center">
-        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Workspaces</h3>
-        <p class="text-xl font-bold" style="color:#1d4ed8;">{{ userMetrics.workspaces?.length || 0 }}</p>
-      </div>
-      <div style="background:#f0f5ff; border:1px solid #dbeafe; border-radius:12px;" class="p-4 text-center">
-        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Active Days</h3>
-        <p class="text-xl font-bold" style="color:#2563eb;">{{ userMetrics.activityByDate?.length || 0 }}</p>
-      </div>
-      <div style="background:#f0f5ff; border:1px solid #dbeafe; border-radius:12px;" class="p-4 text-center">
-        <h3 class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#93c5fd;">Time Spent</h3>
-        <p class="text-xl font-bold" style="color:#1e3a5f;">{{ formatTimeSpent(userMetrics.estimatedTimeSpent) }}</p>
-      </div>
-    </div>
-
-    <!-- Workspace Wise & Tab Wise Time Spent -->
-    <div *ngIf="groupedTabTimeSpent && groupedTabTimeSpent.length > 0" style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; overflow: hidden;">
-      <h3 class="text-lg font-bold mb-4 text-slate-700 flex items-center gap-2">
-        <i class="pi pi-clock text-blue-500"></i> Time Spent by Workspace & Tab
-      </h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
-        <div *ngFor="let group of groupedTabTimeSpent" class="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white flex flex-col">
-          <!-- Workspace Header -->
-          <div class="bg-slate-50/80 px-4 py-3 flex justify-between items-center border-b border-slate-100">
-            <span class="font-bold text-sm text-slate-800 flex items-center gap-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; min-width: 0;" [title]="group.workspaceName">
-              <i class="pi pi-folder text-blue-500" style="flex-shrink:0;"></i> {{ transformDisplayName(group.workspaceName) }}
-            </span>
-            <span class="font-extrabold text-[11px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 flex-shrink-0">
-              Total - {{ formatTimeSpent(group.totalSeconds) }}
-            </span>
-          </div>
-          
-          <!-- Nested Reports & Page Tabs list -->
-          <div class="p-3 flex-grow space-y-2 overflow-y-auto max-h-[220px] popup-content">
-            <div *ngFor="let item of group.items" class="flex justify-between items-center py-2 px-3 hover:bg-slate-50/80 rounded-lg transition-all border-b border-slate-50 last:border-0">
-              <div class="flex flex-col min-w-0 pr-2">
-                <span class="text-xs font-semibold text-slate-700 truncate" [title]="item.reportName">
-                  {{ transformDisplayName(item.reportName) }}
-                </span>
-                <span class="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">
-                  Tab Viewed Time
-                </span>
-              </div>
-              <span class="text-xs font-bold px-2.5 py-0.5 bg-emerald-50/40 text-emerald-600 rounded-full border border-emerald-500/40 flex-shrink-0">
-                {{ formatTimeSpent(item.totalSeconds) }}
-              </span>
+            <div class="access-stats">
+              <span class="stat-chip">Assigned <strong>{{ report.assignedUsersCount }}</strong></span>
+              <span class="stat-chip stat-chip--blue">Active <strong>{{ report.activeUsersCount }}</strong></span>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Two Pie Charts in One Row (Removed Consumption Methods) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" style="overflow: hidden;">
-      <!-- Workspace Time Spent Pie Chart -->
-      <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; display:flex; flex-direction:column; min-height: 380px; overflow: hidden;">
-        <h3 class="text-lg font-semibold mb-4 text-slate-700">Workspace Time Spent</h3>
-        <div class="flex-grow">
-          <apx-chart
-            *ngIf="userWorkspacePieChartOptions"
-            [series]="userWorkspacePieChartOptions.series"
-            [chart]="userWorkspacePieChartOptions.chart"
-            [labels]="userWorkspacePieChartOptions.labels"
-            [colors]="userWorkspacePieChartOptions.colors"
-            [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-            [tooltip]="userWorkspacePieChartOptions.tooltip"
-          ></apx-chart>
-          <div *ngIf="!userWorkspacePieChartOptions" class="flex flex-col items-center justify-center py-12">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
-            <p class="text-xs text-gray-500 text-center">No workspace time spent recorded</p>
-          </div>
-        </div>
-      </div>
+          <div class="access-card-body">
+            <div *ngIf="report.users.length === 0" class="empty-state empty-state--sm">
+              <i class="pi pi-users"></i><p>No users found</p>
+            </div>
 
-      <!-- Report Views Pie Chart -->
-      <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; display:flex; flex-direction:column; min-height: 380px; overflow: hidden;">
-        <h3 class="text-lg font-semibold mb-4 text-slate-700">Top Reports</h3>
-        <div class="flex-grow">
-          <apx-chart
-            *ngIf="userReportViewsChartOptions"
-            [series]="userReportViewsChartOptions.series"
-            [chart]="userReportViewsChartOptions.chart"
-            [labels]="userReportViewsChartOptions.labels"
-            [colors]="userReportViewsChartOptions.colors"
-            [dataLabels]="userReportViewsChartOptions.dataLabels"
-            [tooltip]="userReportViewsChartOptions.tooltip"
-            [legend]="userReportViewsChartOptions.legend"
-          ></apx-chart>
-          <div *ngIf="!userReportViewsChartOptions" class="flex flex-col items-center justify-center py-12">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h4 class="text-sm font-medium text-gray-700 mb-1">No Data</h4>
-            <p class="text-xs text-gray-500 text-center">No report views recorded</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Activity Chart (Full Width) -->
-    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding: 1.5rem; height: 380px; margin-top: 1.5rem; overflow: hidden;">
-      <h3 class="text-lg font-semibold mb-4 text-slate-700">Activity Timeline</h3>
-      <div style="height: calc(100% - 40px); overflow: hidden;">
-        <apx-chart
-          *ngIf="activityTimelineChartOptions"
-          [series]="activityTimelineChartOptions.series"
-          [chart]="activityTimelineChartOptions.chart"
-          [xaxis]="activityTimelineChartOptions.xaxis"
-          [colors]="activityTimelineChartOptions.colors"
-          height="100%"
-        ></apx-chart>
-      </div>
-    </div>
-          <div *ngIf="showDatePopup" class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300" style="background: rgba(30,58,138,0.4); backdrop-filter: blur(8px);">
-            <div style="background:#fff; border: 1px solid #dbeafe; border-radius: 16px; box-shadow: 0 25px 50px rgba(29,78,216,0.15);" class="w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden transform scale-100 transition-all duration-300">
-              <!-- Header -->
-              <div style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8);" class="text-white px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold tracking-tight" style="color:#fff;">
-                  Reports viewed on {{ selectedDateForPopup | date:'mediumDate' }}
-                </h3>
-                <button 
-                  (click)="closeDatePopup()"
-                  class="h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors focus:outline-none"
-                >
-                  <i class="pi pi-times"></i>
-                </button>
-              </div>
-              
-              <!-- Loading State -->
-              <div *ngIf="selectedDateReports.length === 0" class="p-8 text-center">
-                <div class="animate-spin rounded-full h-10 w-10 border-b-2 mx-auto" style="border-color:#3b82f6;"></div>
-                <p class="mt-4" style="color:#1e3a5f;">Loading report data...</p>
-              </div>
-              
-              <!-- Content -->
-              <div *ngIf="selectedDateReports.length > 0" class="flex-1 overflow-y-auto bg-white p-2">
-                <div class="divide-y" style="border-color: #f0f9ff;">
-                  <div *ngFor="let report of selectedDateReports" class="px-6 py-4 hover:bg-[#eff6ff] transition-colors duration-150">
-                    <div class="flex justify-between items-center">
-                      <div>
-                        <h4 class="font-semibold" style="color:#1e3a8a;">{{ report.reportName || 'Unnamed Report' }}</h4>
-                        <p class="text-xs mt-1" style="color:#1e3a5f;">{{ report.workspaceName }}</p>
-                      </div>
-                      <span style="background:#eff6ff; color:#1d4ed8; border-radius:12px;" class="px-3 py-1 text-xs font-semibold">
-                        {{ report.count }} {{ report.count === 1 ? 'view' : 'views' }}
-                      </span>
-                    </div>
-                  </div>
+            <div *ngIf="report.users.length > 0">
+              <div class="access-controls">
+                <div class="search-wrap">
+                  <i class="pi pi-search search-icon"></i>
+                  <input class="search-input" type="text" placeholder="Search users…"
+                    [(ngModel)]="report.searchQuery" (input)="report.currentPage = 1" />
                 </div>
-              </div>
-              
-              <!-- Empty State -->
-              <div *ngIf="selectedDateReports.length === 0 && !selectedDateForPopup" class="p-12 text-center">
-                <i class="pi pi-chart-bar text-4xl mb-3" style="color:#bfdbfe;"></i>
-                <h4 class="text-base font-semibold" style="color:#1e3a8a;">No report data</h4>
-                <p class="mt-1 text-sm max-w-md mx-auto" style="color:#93c5fd;">No reports were viewed on this date</p>
-              </div>
-              
-              <!-- Footer -->
-              <div style="border-top: 1px solid #dbeafe; background: #f0f5ff;" class="px-6 py-4 flex justify-end">
-                <button
-                  (click)="closeDatePopup()"
-                  style="background: #fff; border: 1px solid #bfdbfe; color: #3b82f6; border-radius: 8px;"
-                  class="font-semibold text-xs px-4 py-2.5 transition-colors active:scale-95"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Aggregate User Metrics -->
-      <ng-template #userOverview>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- User Activity Trend Chart -->
-          <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 h-[400px]">
-            <h3 class="text-lg font-semibold mb-2" style="color:#1e3a8a;">User Activity Trend</h3>
-            <div class="h-[calc(100%-40px)]">
-              <apx-chart
-                *ngIf="metrics.activityTrend?.length"
-                [series]="activityTrendChartOptions.series"
-                [chart]="activityTrendChartOptions.chart"
-                [xaxis]="activityTrendChartOptions.xaxis"
-                [stroke]="activityTrendChartOptions.stroke"
-                [colors]="activityTrendChartOptions.colors"
-                height="100%"
-              ></apx-chart>
-            </div>
-          </div>
-          
-          <!-- Top Users Chart -->
-          <div style="background:#fff; border:1px solid #dbeafe; border-radius:16px; box-shadow:0 1px 8px rgba(29,78,216,0.07);" class="p-4 h-[400px]">
-            <h3 class="text-lg font-semibold mb-2" style="color:#1e3a8a;">Top Users</h3>
-            <div class="h-[calc(100%-40px)]">
-              <apx-chart
-                *ngIf="metrics.topUsers?.length"
-                [series]="topUsersChartOptions.series"
-                [chart]="topUsersChartOptions.chart"
-                [xaxis]="topUsersChartOptions.xaxis"
-                [plotOptions]="topUsersChartOptions.plotOptions"
-                [dataLabels]="topUsersChartOptions.dataLabels"
-                [colors]="topUsersChartOptions.colors"
-                height="100%"
-              ></apx-chart>
-            </div>
-          </div>
-
-          <div *ngIf="false" class="bg-white p-4 rounded-lg shadow-md md:col-span-2 h-[400px]">
-            <h3 class="text-lg font-semibold text-gray-700 mb-2">Unused Reports</h3>
-            
-            <div *ngIf="loadingUnusedReports" class="flex justify-center items-center h-full">
-              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          
-            <div *ngIf="!loadingUnusedReports" class="h-[calc(100%-40px)]">
-              <div *ngIf="unusedReports.length > 0; else noUnusedReports">
-                <div class="overflow-x-auto h-full">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Report Name
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr *ngFor="let report of unusedReports">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {{ report.dashboard }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-          
-              <ng-template #noUnusedReports>
-                <div class="text-center py-4 text-gray-500 h-full flex items-center justify-center">
-                  No unused reports found in the selected period
-                </div>
-              </ng-template>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-    </ng-container>
-
-    <!-- Access Control & Engagement Card View -->
-    <ng-container *ngIf="activeView === 'access' && dataLoaded && !loading">
-      
-      <!-- Loading state -->
-      <div *ngIf="loadingAccessMatrix" class="flex flex-col justify-center items-center h-64 mt-6">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 mb-3" style="border-color: #64748b;"></div>
-        <p class="text-sm font-semibold" style="color:#64748b;">Compiling access control data...</p>
-      </div>
-
-      <!-- Access Cards Content -->
-      <div *ngIf="!loadingAccessMatrix" class="space-y-6 mt-6">
-        
-        <!-- Overall Dashboard Search -->
-        <div class="relative w-full">
-          <input 
-            type="text" 
-            placeholder="Search dashboards..." 
-            style="border: 1px solid #cbd5e1; border-radius: 8px; color: #0f172a; padding-left: 2.25rem !important; height: 42px;" 
-            class="w-full pr-4 py-2.5 text-sm focus:ring-1 focus:ring-slate-400 focus:outline-none bg-white shadow-sm transition-all" 
-            [(ngModel)]="dashboardAccessSearchQuery" 
-          />
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="color: #94a3b8;">
-            <i class="pi pi-search text-sm"></i>
-          </div>
-        </div>
-
-        <!-- Empty Search State -->
-        <div *ngIf="getFilteredAccessDashboards().length === 0" class="text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-sm">
-          <i class="pi pi-search text-slate-300 text-4xl mb-3"></i>
-          <h3 class="text-base font-bold text-slate-800">No dashboards found</h3>
-          <p class="text-sm text-slate-500 mt-1">We couldn't find any dashboards matching "{{ dashboardAccessSearchQuery }}"</p>
-        </div>
-
-        <!-- Dashboard Report Cards -->
-        <div class="grid grid-cols-1 gap-6" *ngIf="getFilteredAccessDashboards().length > 0">
-          <div *ngFor="let report of getFilteredAccessDashboards()" style="background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);" class="overflow-hidden">
-            
-            <!-- Report Card Header -->
-            <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0;" class="px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <span style="background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold uppercase tracking-wider">Power BI Report</span>
-                <h3 class="text-base font-bold mt-1" style="color:#0f172a;">{{ transformDisplayName(report.reportName) }}</h3>
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <span style="border: 1px solid #e2e8f0; color:#334155; background:#fff; border-radius:12px;" class="text-xs font-semibold px-3 py-1.5">
-                  Assigned: <strong style="color:#0f172a;">{{ report.assignedUsersCount }}</strong>
-                </span>
-                <span style="border: 1px solid #e2e8f0; color:#334155; background:#fff; border-radius:12px;" class="text-xs font-semibold px-3 py-1.5">
-                  Active: <strong style="color:#0f172a;">{{ report.activeUsersCount }}</strong>
-                </span>
-              </div>
-            </div>
-
-            <!-- Users List -->
-            <div class="p-6">
-              <div *ngIf="report.users.length === 0" class="text-center py-8">
-                <p class="text-sm font-medium" style="color:#64748b;">No assigned or active users found.</p>
+                <select class="native-select" [(ngModel)]="report.accessFilter" (change)="report.currentPage = 1">
+                  <option value="all">All Users</option>
+                  <option value="assigned">Assigned Only</option>
+                  <option value="external">External Only</option>
+                </select>
               </div>
 
-              <div *ngIf="report.users.length > 0">
-                <!-- Search -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4" style="border-bottom:1px solid #f1f5f9;">
-                  <div class="relative w-full md:max-w-xs">
-                    <input type="text" placeholder="Search users..." style="border:1px solid #cbd5e1; border-radius:8px; color:#0f172a; padding-left: 2.25rem !important;" class="w-full pr-4 py-2 text-xs focus:ring-1 focus:ring-slate-400 focus:outline-none" [(ngModel)]="report.searchQuery" (input)="report.currentPage = 1" />
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="color:#94a3b8;"><i class="pi pi-search text-xs"></i></div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span style="color:#64748b;" class="text-xs font-semibold uppercase tracking-wider">Access:</span>
-                    <select [(ngModel)]="report.accessFilter" (change)="report.currentPage = 1" style="border:1px solid #cbd5e1; border-radius:8px; color:#334155; background: #fff;" class="p-2 py-1 text-xs font-semibold cursor-pointer focus:ring-1 focus:ring-slate-400 focus:outline-none">
-                      <option value="all">All</option>
-                      <option value="assigned">Assigned Only</option>
-                      <option value="external">External Only</option>
-                    </select>
-                  </div>
-                </div>
+              <div *ngIf="getReportUsersTotalCount(report) === 0" class="empty-state empty-state--sm">
+                <i class="pi pi-filter-slash"></i><p>No users match filters</p>
+              </div>
 
-                <div *ngIf="getReportUsersTotalCount(report) === 0" class="text-center py-8">
-                  <p class="text-sm" style="color:#64748b;">No users match your filters.</p>
-                </div>
-
-                <!-- User Rows -->
-                <div *ngIf="getReportUsersTotalCount(report) > 0" class="overflow-x-auto">
-                  <table class="min-w-full">
-                    <thead>
-                      <tr>
-                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">User</th>
-                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Department</th>
-                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Access</th>
-                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Views</th>
-                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Last Viewed</th>
-                        <th style="color:#475569; border-bottom:2px solid #e2e8f0; background:#fff;" class="px-4 py-3 text-left text-xs font-semibold uppercase">Time</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let user of getPaginatedReportUsers(report)" style="border-bottom:1px solid #f1f5f9;" class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3.5 whitespace-nowrap" style="border-bottom:1px solid #f1f5f9;">
-                          <div class="flex items-center space-x-3">
-                            <app-avatar [name]="user.name"></app-avatar>
-                            <div>
-                              <div class="text-sm font-semibold" style="color:#0f172a;">{{ user.name }}</div>
-                              <div class="text-xs" style="color:#64748b;">{{ user.email }}</div>
-                            </div>
+              <div *ngIf="getReportUsersTotalCount(report) > 0" class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Department</th>
+                      <th>Access</th>
+                      <th>Views</th>
+                      <th>Last Viewed</th>
+                      <th>Time Spent</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let user of getPaginatedReportUsers(report)" class="tbl-row">
+                      <td>
+                        <div class="user-cell">
+                          <app-avatar [name]="user.name"></app-avatar>
+                          <div>
+                            <div class="user-name">{{ user.name }}</div>
+                            <div class="user-email">{{ user.email }}</div>
                           </div>
-                        </td>
-                        <td class="px-4 py-3.5 text-sm" style="color:#475569; border-bottom:1px solid #f1f5f9;">{{ user.department }}</td>
-                        <td class="px-4 py-3.5" style="border-bottom:1px solid #f1f5f9;">
-                          <span *ngIf="user.hasAccess" style="background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold">Assigned</span>
-                          <span *ngIf="!user.hasAccess" style="background:#fff; color:#64748b; border:1px solid #cbd5e1; border-radius:12px; font-size:11px;" class="inline-flex items-center px-2.5 py-1 font-semibold">External</span>
-                        </td>
-                        <td class="px-4 py-3.5 text-sm font-semibold" style="color:#0f172a; border-bottom:1px solid #f1f5f9;">{{ user.totalViews }} views</td>
-                        <td class="px-4 py-3.5 text-xs" style="color:#475569; border-bottom:1px solid #f1f5f9;">{{ user.lastActivity === 'Never' ? 'Never' : (user.lastActivity | date:'shortDate') }}</td>
-                        <td class="px-4 py-3.5 text-xs font-semibold" style="color:#0f172a; border-bottom:1px solid #f1f5f9;">{{ formatTimeSpent(user.estimatedTimeSpent) }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                        </div>
+                      </td>
+                      <td class="t-muted">{{ user.department }}</td>
+                      <td>
+                        <span *ngIf="user.hasAccess" class="badge badge--blue">Assigned</span>
+                        <span *ngIf="!user.hasAccess" class="badge badge--slate">External</span>
+                      </td>
+                      <td class="t-bold">{{ user.totalViews }}</td>
+                      <td class="t-muted">{{ user.lastActivity === 'Never' ? '—' : (user.lastActivity | date:'shortDate') }}</td>
+                      <td class="t-bold">{{ formatTimeSpent(user.estimatedTimeSpent) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
 
-                  <!-- Pagination -->
-                  <div *ngIf="getReportPageNumbers(report).length > 1" class="flex items-center justify-center gap-1 mt-4 pt-4" style="border-top:1px solid #f1f5f9;">
-                    <button [disabled]="report.currentPage === 1" (click)="changeReportPage(report, report.currentPage - 1)" style="border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569;" class="p-2 disabled:opacity-40 transition-colors hover:bg-slate-50"><i class="pi pi-chevron-left text-xs"></i></button>
-                    <button *ngFor="let page of getReportPageNumbers(report)" (click)="changeReportPage(report, page)" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors" [style.background]="report.currentPage === page ? '#f1f5f9' : '#fff'" [style.color]="report.currentPage === page ? '#0f172a' : '#475569'" [style.border]="report.currentPage === page ? '1.5px solid #64748b' : '1.5px solid #cbd5e1'">{{ page }}</button>
-                    <button [disabled]="report.currentPage === getReportPageNumbers(report).length" (click)="changeReportPage(report, report.currentPage + 1)" style="border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569;" class="p-2 disabled:opacity-40 transition-colors hover:bg-slate-50"><i class="pi pi-chevron-right text-xs"></i></button>
-                  </div>
+                <div *ngIf="getReportPageNumbers(report).length > 1" class="pagination">
+                  <button [disabled]="report.currentPage === 1"
+                    (click)="changeReportPage(report, report.currentPage - 1)"
+                    class="pg-btn"><i class="pi pi-chevron-left"></i></button>
+                  <button *ngFor="let page of getReportPageNumbers(report)"
+                    (click)="changeReportPage(report, page)"
+                    class="pg-btn" [class.pg-btn--on]="report.currentPage === page">{{ page }}</button>
+                  <button [disabled]="report.currentPage === getReportPageNumbers(report).length"
+                    (click)="changeReportPage(report, report.currentPage + 1)"
+                    class="pg-btn"><i class="pi pi-chevron-right"></i></button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+
+        </div><!-- /access-card -->
+      </div><!-- /access-list -->
+    </div>
+
+  </ng-container>
+
+</div><!-- /pg-wrap -->
+
+
+<!-- ══ DATE POPUP ════════════════════════════════════════════════ -->
+<div *ngIf="showDatePopup" class="modal-backdrop" (click)="closeDatePopup()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h3>Reports on {{ selectedDateForPopup | date:'mediumDate' }}</h3>
+      <button class="modal-close" (click)="closeDatePopup()"><i class="pi pi-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="selectedDateReports.length === 0" class="state-loader state-loader--sm">
+        <span class="spinner spinner--sm"></span><p>Loading…</p>
       </div>
-
-    </ng-container>
-  </div>
-
-
-  <div *ngIf="showUserListModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300" style="background: rgba(15,23,42,0.4); backdrop-filter: blur(8px);">
-    <div style="background:#fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);" class="w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden transform scale-100 transition-all duration-300">
-      <!-- Header -->
-      <div style="background: #ffffff; border-bottom: 1px solid #e2e8f0;" class="px-6 py-4 flex justify-between items-center">
-        <h3 class="text-lg font-bold tracking-tight" style="color:#0f172a;">
-          {{ modalTitle }} <span *ngIf="modalUsers.length > 0" class="text-[11px] ml-2 font-semibold px-2 py-0.5 rounded-full" style="color:#475569; background:#f1f5f9; border: 1px solid #e2e8f0;">{{ modalUsers.length }} users</span>
-        </h3>
-        <button 
-          (click)="closeUserListModal()"
-          class="h-8 w-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center transition-colors focus:outline-none"
-        >
-          <i class="pi pi-times"></i>
-        </button>
-      </div>
-
-      <!-- Content -->
-      <div class="flex-1 overflow-y-auto bg-white p-2">
-        <div *ngIf="modalUsers.length > 0" class="divide-y" style="border-color: #f1f5f9;">
-          <div *ngFor="let user of modalUsers" class="px-6 py-4 hover:bg-slate-50 transition-colors duration-150">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center space-x-3 min-w-0">
-                <app-avatar [name]="user.name || user.id"></app-avatar>
-                <div class="min-w-0">
-                  <h4 class="text-sm font-semibold truncate" style="color:#0f172a;">{{ user.name || user.id }}</h4>
-                  <p *ngIf="user.totalViews !== undefined" class="text-xs mt-0.5" style="color:#64748b;">
-                    <i class="pi pi-eye text-[10px] mr-1 text-slate-500"></i>{{ user.totalViews }} views
-                  </p>
-                </div>
-              </div>
-              <span *ngIf="user.lastActivity" class="text-xs whitespace-nowrap pl-2" style="color:#64748b;">
-                {{ user.lastActivity === 'Never' ? 'Never active' : (user.lastActivity | date:'shortDate') }}
-              </span>
-            </div>
-          </div>
+      <div *ngFor="let report of selectedDateReports" class="popup-row">
+        <div>
+          <div class="popup-report">{{ report.reportName || 'Unnamed Report' }}</div>
+          <div class="popup-ws t-muted">{{ report.workspaceName }}</div>
         </div>
-        <div *ngIf="modalUsers.length === 0" class="p-12 text-center">
-          <i class="pi pi-users text-4xl mb-3 text-slate-300"></i>
-          <h4 class="text-base font-semibold" style="color:#0f172a;">No users found</h4>
-          <p class="mt-1 text-sm max-w-md mx-auto" style="color:#64748b;">There are currently no users matching this criteria</p>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div style="border-top: 1px solid #e2e8f0; background: #f8fafc;" class="px-6 py-4 flex justify-end">
-        <button
-          (click)="closeUserListModal()"
-          style="background: #fff; border: 1px solid #cbd5e1; color: #334155; border-radius: 8px;"
-          class="font-semibold text-xs px-4 py-2.5 hover:bg-slate-50 transition-colors active:scale-95"
-        >
-          Close
-        </button>
+        <span class="badge badge--blue">{{ report.count }} {{ report.count === 1 ? 'view' : 'views' }}</span>
       </div>
     </div>
+    <div class="modal-foot">
+      <button class="outline-btn" (click)="closeDatePopup()">Close</button>
+    </div>
   </div>
+</div>
 
+<!-- ══ USER LIST MODAL ═══════════════════════════════════════════ -->
+<div *ngIf="showUserListModal" class="modal-backdrop" (click)="closeUserListModal()">
+  <div class="modal modal--lg" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h3>{{ modalTitle }}
+        <span *ngIf="modalUsers.length" class="badge badge--slate" style="margin-left:.5rem">{{ modalUsers.length }}</span>
+      </h3>
+      <button class="modal-close" (click)="closeUserListModal()"><i class="pi pi-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div *ngFor="let user of modalUsers" class="popup-row">
+        <div class="user-cell">
+          <app-avatar [name]="user.name || user.id"></app-avatar>
+          <div>
+            <div class="user-name">{{ user.name || user.id }}</div>
+            <div class="t-muted" style="font-size:.7rem">{{ user.totalViews }} views</div>
+          </div>
+        </div>
+        <span class="t-muted" style="font-size:.72rem;white-space:nowrap">
+          {{ user.lastActivity === 'Never' ? 'Never' : (user.lastActivity | date:'shortDate') }}
+        </span>
+      </div>
+      <div *ngIf="!modalUsers.length" class="empty-state">
+        <i class="pi pi-users"></i><p>No users found</p>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="outline-btn" (click)="closeUserListModal()">Close</button>
+    </div>
+  </div>
 </div>
