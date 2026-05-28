@@ -1,178 +1,151 @@
-<!-- user.component.html -->
-<div class="px-4">
-  <!-- Accordion -->
-  <div class="mb-4">
-    <button
-      (click)="toggleForm()"
-      class="w-96 bg-white p-4 flex items-center justify-between shadow-md rounded-lg hover:bg-gray-50"
-    >
-      <span class="font-bold text-gray-700">Add User</span>
-      <span class="text-xl">{{ isFormOpen ? '▼' : '▶' }}</span>
+<div class="mu-wrap">
+
+  <!-- ── Add User Accordion ── -->
+  <div class="mu-accordion">
+    <button class="mu-accordion-btn" (click)="toggleForm()">
+      <span class="mu-accordion-label">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mu-accordion-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Add User
+      </span>
+      <span class="mu-accordion-chevron" [class.mu-accordion-chevron--open]="isFormOpen">▼</span>
     </button>
-    
-    <!-- Form -->
-    <div *ngIf="isFormOpen" class="mt-2 bg-white shadow-md rounded-lg p-6" style="width: 24rem;">
-<form class="space-y-4">
-  <!-- Username Search Input -->
-  <div class="relative">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-      Username Search
-    </label>
-    <input
-      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      id="username"
-      type="text"
-      [(ngModel)]="editForm.username"
-      name="username"
-      placeholder="Start typing to search AD users..."
-      (input)="onUsernameSearch($event)"
-    />
-    
-    <!-- Loading indicator -->
-    <div *ngIf="isSearching" class="absolute right-3 top-9">
-      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-    </div>
-    
-    <!-- Search Results Dropdown -->
-    <div *ngIf="adUsers.length > 0" class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto">
-      <ul class="py-1">
-        <li *ngFor="let user of adUsers"
-            class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            (click)="selectADUser(user)">
-          <div class="text-sm">{{user.name}}</div>
-          <div class="text-xs text-gray-500">{{user.email}}</div>
-          <div class="text-xs text-gray-500">{{user.department}}</div>
-        </li>
-      </ul>
-    </div>
-  </div>
 
-  <!-- Name Input (readonly when filled from AD) -->
-  <div>
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
-    <input
-      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      [class.bg-gray-100]="editForm.name"
-      id="name"
-      type="text"
-      [(ngModel)]="editForm.name"
-      name="name"
-      placeholder="Name will auto-fill from AD"
-      [readonly]="editForm.name"
-    />
-  </div>
+    <!-- Form panel -->
+    <div *ngIf="isFormOpen" class="mu-form-panel">
+      <form class="mu-form">
 
-  <!-- Email Input (readonly when filled from AD) -->
-  <div>
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
-    <input
-      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      [class.bg-gray-100]="editForm.email"
-      id="email"
-      type="email"
-      [(ngModel)]="editForm.email"
-      name="email"
-      placeholder="Email will auto-fill from AD"
-      [readonly]="editForm.email"
-    />
-  </div>
-
-  <!-- Department Dropdown -->
-  <div>
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="department">Department</label>
-    <p-dropdown appendTo="body"
-      [options]="departments" 
-      optionLabel="department" 
-      optionValue="id" 
-      [(ngModel)]="editForm.departmentId" 
-      name="department"
-      [filter]="true" 
-      filterBy="department" 
-      [showClear]="true" 
-      placeholder="Select Department"
-      styleClass="w-full text-sm border-gray-300 rounded-lg shadow-sm">
-    </p-dropdown>
-  </div>
-
-  <!-- Action Buttons -->
-  <div class="flex justify-end pt-4">
-    <button
-      *ngIf="selectedRowIndex !== null"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-      (click)="saveEditedUser()"
-      type="button"
-    >
-      Save
-    </button>
-    <button
-      *ngIf="!selectedRowIndex"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-      (click)="onAddUser()"
-      type="button"
-    >
-      Add User
-    </button>
-  </div>
-</form>
-    </div>
-  </div>
-
-  <!-- Users Table Section - Full Width -->
-  <div class="bg-white rounded-lg shadow-md">
-    <!-- Search Bar -->
-    <div class="p-4">
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-          </svg>
+        <!-- AD search -->
+        <div class="mu-field">
+          <label class="mu-label">Username Search</label>
+          <div class="mu-search-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mu-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              class="mu-search-input"
+              id="username"
+              type="text"
+              [(ngModel)]="editForm.username"
+              name="username"
+              placeholder="Start typing to search AD users…"
+              (input)="onUsernameSearch($event)"
+            />
+            <div *ngIf="isSearching" class="mu-search-spinner"></div>
+          </div>
+          <!-- AD results -->
+          <div *ngIf="adUsers.length > 0" class="mu-ad-results">
+            <div *ngFor="let user of adUsers" class="mu-ad-result" (click)="selectADUser(user)">
+              <div class="mu-ad-name">{{ user.name }}</div>
+              <div class="mu-ad-email">{{ user.email }}</div>
+              <div class="mu-ad-dept">{{ user.department }}</div>
+            </div>
+          </div>
         </div>
-        <input
-          type="text"
-          class="block w-80 pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Search users..."
-        />
+
+        <!-- Name -->
+        <div class="mu-field">
+          <label class="mu-label" for="name">Name</label>
+          <input
+            class="mu-input"
+            [class.mu-input--filled]="editForm.name"
+            id="name"
+            type="text"
+            [(ngModel)]="editForm.name"
+            name="name"
+            placeholder="Auto-fills from AD"
+            [readonly]="editForm.name"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="mu-field">
+          <label class="mu-label" for="email">Email</label>
+          <input
+            class="mu-input"
+            [class.mu-input--filled]="editForm.email"
+            id="email"
+            type="email"
+            [(ngModel)]="editForm.email"
+            name="email"
+            placeholder="Auto-fills from AD"
+            [readonly]="editForm.email"
+          />
+        </div>
+
+        <!-- Department -->
+        <div class="mu-field">
+          <label class="mu-label" for="department">Department</label>
+          <p-dropdown
+            [options]="departments"
+            optionLabel="department"
+            optionValue="id"
+            [(ngModel)]="editForm.departmentId"
+            name="department"
+            [filter]="true"
+            filterBy="department"
+            [showClear]="true"
+            placeholder="Select Department"
+          ></p-dropdown>
+        </div>
+
+        <!-- Actions -->
+        <div class="mu-form-actions">
+          <button *ngIf="selectedRowIndex !== null" class="mu-save-btn" type="button" (click)="saveEditedUser()">Save</button>
+          <button *ngIf="!selectedRowIndex" class="mu-save-btn" type="button" (click)="onAddUser()">Add User</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Users Table ── -->
+  <div class="mu-card">
+    <!-- Search -->
+    <div class="mu-card-top">
+      <div class="mu-table-search-wrap">
+        <svg class="mu-table-search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+        </svg>
+        <input type="text" class="mu-table-search" placeholder="Search users…" />
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="overflow-x-auto">
-      <table class="w-full divide-y divide-gray-200">
+    <div class="mu-table-wrap">
+      <table class="mu-table">
         <thead>
           <tr>
-            <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-1/4 border-r border-gray-300">Name</th>
-            <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-1/3 border-r border-gray-300">Email</th>
-            <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-1/4 border-r border-gray-300">Department</th>
-            <th class="px-6 py-3 bg-gray-300 text-center border-gray-100 text-xs font-medium text-gray-700 uppercase tracking-wider w-0.001">Actions</th>
+            <th class="mu-th">Name</th>
+            <th class="mu-th">Email</th>
+            <th class="mu-th">Department</th>
+            <th class="mu-th mu-th--center">Actions</th>
           </tr>
         </thead>
-        
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr *ngFor="let user of users; let i = index" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300">
-              <div class="flex items-center">
+        <tbody>
+          <tr *ngFor="let user of users; let i = index" class="mu-row">
+            <td class="mu-td">
+              <div class="mu-user-cell">
                 <app-avatar [name]="user.name"></app-avatar>
                 <span>{{ user.name }}</span>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-300">{{ user.email }}</td>
-            <td class="px-6 py-4 whitespace-nowrap border-r border-gray-300">
-              <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
-                {{ user.department?.department }}
-              </span>
+            <td class="mu-td">{{ user.email }}</td>
+            <td class="mu-td">
+              <span class="mu-dept-tag">{{ user.department?.department }}</span>
             </td>
-            <td class="px-2 py-4 text-center whitespace-nowrap text-sm">
-              <div class="flex justify-center items-center space-x-2">
-                <!-- Edit Button -->
-                <button class="text-blue-600 hover:text-blue-800" (click)="onEdit(user, i)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            <td class="mu-td mu-td--center">
+              <div class="mu-actions">
+                <button class="mu-icon-btn mu-icon-btn--edit" (click)="onEdit(user, i)" title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="mu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </button>
-                <!-- Delete Button -->
-                <button class="text-red-600 hover:text-red-800" (click)="onDelete(user)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <button class="mu-icon-btn mu-icon-btn--del" (click)="onDelete(user)" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="mu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
               </div>
@@ -180,7 +153,7 @@
           </tr>
         </tbody>
       </table>
-  
     </div>
   </div>
+
 </div>

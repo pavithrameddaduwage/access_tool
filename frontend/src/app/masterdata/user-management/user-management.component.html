@@ -1,182 +1,178 @@
+<div class="um-wrap">
 
-<div class="user-management-table py-6 px-4">
-  <div>
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">User Management</h2>
-    
-    <!-- Add User Button -->
-    <div class="mb-4 flex justify-end">
-      <button
-        (click)="openForm('add')"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-all duration-200 flex items-center gap-2"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add User
-      </button>
+  <!-- ── Page Header ── -->
+  <div class="um-header">
+    <div>
+      <h1 class="um-title">User Management</h1>
+      <p class="um-subtitle">Manage portal user accounts and role assignments</p>
     </div>
-    
-    <!-- User Table -->
-    <div class="user-management-table-container overflow-x-auto pl-4">
-      <div class="user-management-table-container overflow-x-auto">
-        <table class="min-w-full bg-white table-fixed border-separate border-spacing-0">
-          <thead>
-            <tr>
-              <th class="border border-gray-300 p-2 text-center font-semibold text-sm" style="background-color: #e5e7eb; color: #334155; width: 30%;">Email</th>
-              <th class="border border-gray-300 p-2 text-center font-semibold text-sm" style="background-color: #e5e7eb; color: #334155; width: 25%;">User Name</th>
-              <th class="border border-gray-300 p-2 text-center font-semibold text-sm" style="background-color: #e5e7eb; color: #334155; width: 25%;">User Roles</th>
-              <th class="border border-gray-300 p-2 text-center font-semibold text-sm" style="background-color: #e5e7eb; color: #334155; width: 7.5%;">Is Active</th>  
-              <th class="border border-gray-300 p-2 text-center font-semibold text-sm sticky-action" style="background-color: #e5e7eb; color: #334155; width: 7.5%; position: relative; z-index: 30; box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users; let odd = odd" 
-                class="hover:bg-blue-50 transition-colors duration-150  text-sm"
-                [ngClass]="odd ? 'bg-gray-50' : 'bg-white'">
-              <td class="border border-gray-200 p-3">{{user?.email}}</td>
-              <td class="border border-gray-200 p-3 font-medium">{{user?.name}}</td>
-              <td class="border border-gray-200 p-3">
-                <div class="flex flex-wrap gap-1">
-                  <span *ngFor="let userRole of user.user_roles" 
-                        class="px-2 py-1 rounded-full text-sm inline-flex items-center" 
-                        [ngClass]="userRole.role.role === 'admin' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-blue-100 text-blue-800 border border-blue-200'">
-                    <span class="w-2 h-2 rounded-full mr-1" 
-                          [ngClass]="userRole.role.role === 'admin' ? 'bg-red-500' : 'bg-blue-500'"></span>
-                    {{userRole.role.role}}
-                  </span>
-                </div>
-              </td>
-              <td class="border border-gray-200 p-3 text-center">
-                <div class="flex justify-center">
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" 
-                           [checked]="user?.is_active"
-                           (change)="updateStatus(user?.id || 0, $event)"
-                           class="sr-only peer">
-                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
-                </div>
-              </td>
-              <td class="border border-gray-200 p-2 sticky-action" style="position: relative; z-index: 30; box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);">
-                <div class="flex items-center justify-center space-x-2">
-                  <button (click)="editUser(user)" 
-                          class="text-blue-600 hover:text-blue-800 bg-blue-100 p-1.5 rounded-full hover:bg-blue-200 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button (click)="deleteUser(user.id)"
-                          class="text-red-600 hover:text-red-800 bg-red-100 p-1.5 rounded-full hover:bg-red-200 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <button class="um-add-btn" (click)="openForm('add')">
+      <svg xmlns="http://www.w3.org/2000/svg" class="um-add-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Add User
+    </button>
+  </div>
+
+  <!-- ── Users Table ── -->
+  <div class="um-card">
+    <div class="um-table-wrap">
+      <table class="um-table">
+        <thead>
+          <tr>
+            <th class="um-th">Email</th>
+            <th class="um-th">Name</th>
+            <th class="um-th">Roles</th>
+            <th class="um-th um-th--center">Active</th>
+            <th class="um-th um-th--center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; let odd = odd" class="um-row" [class.um-row--stripe]="odd">
+            <td class="um-td um-td--email">{{ user?.email }}</td>
+            <td class="um-td um-td--name">{{ user?.name }}</td>
+            <td class="um-td">
+              <div class="um-roles">
+                <span
+                  *ngFor="let userRole of user.user_roles"
+                  class="um-role-badge"
+                  [class.um-role-badge--admin]="userRole.role.role === 'admin'"
+                >
+                  <span class="um-role-dot" [class.um-role-dot--admin]="userRole.role.role === 'admin'"></span>
+                  {{ userRole.role.role }}
+                </span>
+              </div>
+            </td>
+            <td class="um-td um-td--center">
+              <label class="um-toggle">
+                <input
+                  type="checkbox"
+                  [checked]="user?.is_active"
+                  (change)="updateStatus(user?.id || 0, $event)"
+                  class="um-toggle-input"
+                />
+                <span class="um-toggle-track"></span>
+              </label>
+            </td>
+            <td class="um-td um-td--center">
+              <div class="um-actions">
+                <button class="um-icon-btn um-icon-btn--edit" (click)="editUser(user)" title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="um-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button class="um-icon-btn um-icon-btn--del" (click)="deleteUser(user.id)" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="um-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-<!-- Modal Form (Enhanced) -->
-<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
-  <div class="bg-white rounded-lg p-8 w-full max-w-md shadow-2xl transform transition-all duration-300">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-bold text-gray-800">{{editMode ? 'Edit User' : 'Add New User'}}</h2>
-      <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-200">×</button>
+
+</div>
+
+<!-- ══════════ Modal ══════════ -->
+<div *ngIf="showModal" class="um-modal-backdrop" (click)="closeModal()">
+  <div class="um-modal" (click)="$event.stopPropagation()">
+
+    <!-- Modal header -->
+    <div class="um-modal-head">
+      <h2 class="um-modal-title">{{ editMode ? 'Edit User' : 'Add New User' }}</h2>
+      <button class="um-modal-close" (click)="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="um-close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
 
-    <form class="space-y-4">
-      <!-- AD Search Input - Show only in Add mode -->
-      <div class="relative" *ngIf="!editMode">
-        <label class="block text-gray-700 text-sm font-bold mb-2">
-          Search User
-        </label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
+    <!-- Modal body -->
+    <div class="um-modal-body">
+
+      <!-- AD Search (add mode only) -->
+      <div class="um-field" *ngIf="!editMode">
+        <label class="um-label">Search User</label>
+        <div class="um-search-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" class="um-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
           <input
-            class="shadow-sm border border-gray-300 rounded-lg w-full py-2 pl-10 pr-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+            class="um-search-input"
             type="text"
-            placeholder="Search AD users..."
+            placeholder="Search AD users…"
             (input)="onUserSearch($event)"
             [readonly]="editMode"
+          />
+          <div *ngIf="isSearching" class="um-search-spinner"></div>
+        </div>
+        <!-- AD results dropdown -->
+        <div *ngIf="adUsers.length > 0" class="um-ad-results">
+          <div
+            *ngFor="let user of adUsers"
+            class="um-ad-result"
+            (click)="selectADUser(user)"
           >
-        </div>
-        
-        <!-- Loading Indicator -->
-        <div *ngIf="isSearching" class="absolute right-3 top-9">
-          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-        </div>
-
-        <!-- Search Results -->
-        <div *ngIf="adUsers.length > 0" 
-             class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto border border-gray-200">
-          <ul class="py-1">
-            <li *ngFor="let user of adUsers"
-                class="px-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors duration-150"
-                (click)="selectADUser(user)">
-              <div class="text-sm font-medium">{{user.name}}</div>
-              <div class="text-xs text-gray-500">{{user.email}}</div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Read-only fields -->
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-        <input type="email" [value]="selectedUser?.email" readonly 
-               class="w-full p-2 border rounded-lg bg-gray-50 text-gray-700">
-      </div>
-
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-        <input type="text" [value]="selectedUser?.name" readonly 
-               class="w-full p-2 border rounded-lg bg-gray-50 text-gray-700">
-      </div>
-
-      <!-- Role Selection -->
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">Roles</label>
-        <div class="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
-          <div *ngFor="let role of roles" class="flex items-center gap-2">
-            <label class="inline-flex items-center cursor-pointer">
-              <input type="checkbox"
-                     [checked]="isRoleSelected(role.id)"
-                     (change)="toggleRole(role.id)"
-                     class="h-4 w-4 accent-blue-600">
-              <span class="ml-2 text-gray-700">{{role.role}}</span>
-            </label>
+            <div class="um-ad-name">{{ user.name }}</div>
+            <div class="um-ad-email">{{ user.email }}</div>
           </div>
         </div>
       </div>
 
-      <!-- Selected Roles Pills -->
-      <div class="flex flex-wrap gap-2 pt-2">
-        <span *ngFor="let roleId of selectedRoles" 
-              class="px-3 py-1.5 rounded-full text-sm flex items-center gap-1 shadow-sm"
-              [ngClass]="getRoleById(roleId)?.role === 'admin' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-blue-100 text-blue-800 border border-blue-200'">
-          {{getRoleById(roleId)?.role}}
-          <button (click)="toggleRole(roleId)" class="hover:text-gray-700 ml-1 bg-white rounded-full w-4 h-4 flex items-center justify-center text-xs shadow-inner">×</button>
+      <!-- Email (read-only) -->
+      <div class="um-field">
+        <label class="um-label">Email</label>
+        <input type="email" class="um-readonly-input" [value]="selectedUser?.email" readonly />
+      </div>
+
+      <!-- Name (read-only) -->
+      <div class="um-field">
+        <label class="um-label">Name</label>
+        <input type="text" class="um-readonly-input" [value]="selectedUser?.name" readonly />
+      </div>
+
+      <!-- Roles -->
+      <div class="um-field">
+        <label class="um-label">Roles</label>
+        <div class="um-roles-list">
+          <label *ngFor="let role of roles" class="um-role-check">
+            <input
+              type="checkbox"
+              class="um-check"
+              [checked]="isRoleSelected(role.id)"
+              (change)="toggleRole(role.id)"
+            />
+            <span class="um-check-label">{{ role.role }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Selected role pills -->
+      <div class="um-selected-roles">
+        <span
+          *ngFor="let roleId of selectedRoles"
+          class="um-role-pill"
+          [class.um-role-pill--admin]="getRoleById(roleId)?.role === 'admin'"
+        >
+          {{ getRoleById(roleId)?.role }}
+          <button class="um-pill-remove" (click)="toggleRole(roleId)">×</button>
         </span>
       </div>
 
-      <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-200">
-        <button type="button" (click)="closeModal()"
-                class="px-4 py-2 border rounded-lg hover:bg-gray-100 font-medium transition-colors duration-200">
-          Cancel
-        </button>
-        <button type="button" (click)="saveUser()"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm transition-all duration-200">
-          {{editMode ? 'Update' : 'Add'}} User
-        </button>
-      </div>
-    </form>
+    </div><!-- /modal-body -->
+
+    <!-- Modal footer -->
+    <div class="um-modal-foot">
+      <button class="um-cancel-btn" type="button" (click)="closeModal()">Cancel</button>
+      <button class="um-save-btn" type="button" (click)="saveUser()">
+        {{ editMode ? 'Update' : 'Add' }} User
+      </button>
+    </div>
+
   </div>
-</div>
 </div>

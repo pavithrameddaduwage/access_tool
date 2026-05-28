@@ -11,6 +11,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { NameMapperService } from '../Services/name-mapper.service';
 import { AvatarComponent } from '../components/avatar/avatar.component';
 import { AuthService } from '../Auth/services/auth.service';
+import { ActiveTimeTrackerService } from '../Services/active-time-tracker.service';
 
 interface ViewCount {
   date: string;
@@ -110,53 +111,54 @@ interface User {
   standalone: true
 })
 export class PowerBIDashboardComponent implements OnInit, OnDestroy {
-  // Telemetry Time Tracking
-  private trackingStart = Date.now();
-  private currentTrackedReportId = 'powerbi-analytics';
-  private currentTrackedReportName = 'Power BI Analytics Dashboard';
-
-  @HostListener('document:visibilitychange', [])
-  onVisibilityChange() {
-    if (document.hidden) {
-      this.flushTelemetryTime();
-    } else {
-      this.trackingStart = Date.now();
-    }
-  }
 
   @HostListener('window:beforeunload', [])
   onBeforeUnload() {
-    this.flushTelemetryTime();
+    this.tracker.flush();
   }
 
   ngOnDestroy() {
-    this.flushTelemetryTime();
+    this.tracker.stop();
+  }
+
+  private buildTrackingContext() {
+    const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
+    const workspaceName = workspaceId
+      ? (this.workspaceOptions.find(w => w.id === workspaceId)?.name || workspaceId)
+      : 'All Workspaces';
+
+    const hasReport = !!this.selectedReport;
+    const reportId = hasReport ? this.selectedReport! : 'powerbi-analytics';
+    const reportName = hasReport
+      ? (this.reportOptions.find(r => r.id === this.selectedReport)?.name || 'Power BI Report')
+      : 'Power BI Analytics Dashboard';
+
+    const tabName = this.activeView === 'workspace'
+      ? `Workspace: ${workspaceName}`
+      : this.activeView === 'user'
+        ? `Users: ${hasReport ? reportName : workspaceName}`
+        : 'Access Matrix';
+
+    return { reportId, reportName, tabName, workspaceId, workspaceName };
+  }
+
+  private startOrSwitchTracking() {
+    const ctx = this.buildTrackingContext();
+    if (!this.trackingStarted) {
+      this.tracker.startTracking(ctx);
+      this.trackingStarted = true;
+    } else {
+      this.tracker.switchContext(ctx);
+    }
   }
 
   flushTelemetryTime() {
-    const elapsedSeconds = Math.round((Date.now() - this.trackingStart) / 1000);
-    const userEmail = this.authService.userSubject?.value?.email;
-    if (elapsedSeconds > 0 && userEmail) {
-      const workspaceId = this.selectedWorkspace === 'all' ? undefined : this.selectedWorkspace;
-      const workspaceName = this.selectedWorkspace === 'all' ? 'All Workspaces' : this.workspaceOptions.find(w => w.id === this.selectedWorkspace)?.name;
-      
-      this.powerBIMetricsService.recordTimeSpent(
-        userEmail,
-        this.currentTrackedReportId,
-        this.currentTrackedReportName,
-        this.activeView,
-        elapsedSeconds,
-        workspaceId,
-        workspaceName
-      ).subscribe({
-        error: (err) => console.error('Failed to log telemetry:', err)
-      });
-    }
-    this.trackingStart = Date.now();
+    this.tracker.flush();
   }
 
   // View state
   activeView: 'workspace' | 'user' | 'access' = 'workspace';
+  private trackingStarted = false;
   selectedUserId: string | null = null;
   dashboardAccessData: any[] = [];
   loadingAccessMatrix = false;
@@ -253,14 +255,15 @@ userCounts = {
     private toastService: ToastService,
     private nameMapper: NameMapperService,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private tracker: ActiveTimeTrackerService
   ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       if (params['view'] && ['workspace', 'user', 'access'].includes(params['view'])) {
-        this.flushTelemetryTime();
-        this.activeView = params['view'];
+        this.activeView = params['view'] as 'workspace' | 'user' | 'access';
+        this.startOrSwitchTracking();
       }
     });
 
@@ -270,11 +273,13 @@ userCounts = {
     });
 
     this.loadFilters().then(() => {
+      this.startOrSwitchTracking();
       this.loadData(this.selectedPeriod);
-    });  }
+    });
+  }
 
     toggleDashboard(dashboard: 'powerbi' | 'webtool') {
-      this.flushTelemetryTime();
+      this.tracker.flush();
       this.dashboardChange.emit(dashboard);
     }
   
@@ -939,6 +944,7 @@ userCounts = {
     if (!selectedUserId) return;
 
     this.activeView = 'user';
+    this.startOrSwitchTracking();
     this.selectedUserId = selectedUserId;
     this.cdr.detectChanges();
     this.selectUser(selectedUserId);
@@ -1399,25 +1405,18 @@ async updateReports(): Promise<void> {
   }
 }
 onWorkspaceChange() {
-  this.flushTelemetryTime();
-  this.selectedReport = null; 
+  this.selectedReport = null;
   this.updateReports();
-  this.loadData(this.selectedPeriod); 
+  this.loadData(this.selectedPeriod);
+  this.startOrSwitchTracking();
 }
 
 onReportChange() {
-  this.flushTelemetryTime();
   if (this.selectedReport === 'all') {
     this.selectedReport = null;
   }
-  if (this.selectedReport) {
-    this.currentTrackedReportId = this.selectedReport;
-    this.currentTrackedReportName = this.reportOptions.find(r => r.id === this.selectedReport)?.name || 'Power BI Report';
-  } else {
-    this.currentTrackedReportId = 'powerbi-analytics';
-    this.currentTrackedReportName = 'Power BI Analytics Dashboard';
-  }
-  this.loadData(this.selectedPeriod); 
+  this.loadData(this.selectedPeriod);
+  this.startOrSwitchTracking();
 }
 
 

@@ -1,0 +1,219 @@
+/* ── Masterdata User page ───────────────────────── */
+.mu-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Accordion ──────────────────────────────────── */
+.mu-accordion {
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(30,58,138,.05);
+  max-width: 440px;
+}
+
+.mu-accordion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem;
+  background: #f8faff !important;
+  border: none !important;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 0 !important;
+}
+.mu-accordion-btn:hover { background: #eff6ff !important; }
+
+.mu-accordion-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+.mu-accordion-icon { width: 16px; height: 16px; color: #2563eb; }
+
+.mu-accordion-chevron {
+  font-size: 0.7rem;
+  color: #64748b;
+  transition: transform 0.2s;
+}
+.mu-accordion-chevron--open { transform: rotate(180deg); }
+
+/* Form panel */
+.mu-form-panel {
+  border-top: 1px solid #dbeafe;
+  padding: 1rem 1.1rem;
+  background: #ffffff;
+}
+
+.mu-form { display: flex; flex-direction: column; gap: 0.875rem; }
+
+/* Field */
+.mu-field { display: flex; flex-direction: column; gap: 0.3rem; position: relative; }
+
+.mu-label {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+
+.mu-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.75rem !important;
+  border: 1.5px solid #bfdbfe !important;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  color: #1e3a8a !important;
+  background: #ffffff !important;
+  outline: none;
+}
+.mu-input:focus { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37,99,235,.1) !important; }
+.mu-input--filled { background: #f8fafc !important; color: #64748b !important; }
+
+/* Search wrap */
+.mu-search-wrap { position: relative; display: flex; align-items: center; }
+.mu-search-icon {
+  position: absolute; left: 0.625rem;
+  width: 15px; height: 15px;
+  color: #94a3b8; pointer-events: none; z-index: 1;
+}
+.mu-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.75rem 0.55rem 2rem !important;
+  border: 1.5px solid #bfdbfe !important;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  color: #1e3a8a !important;
+  background: #ffffff !important;
+  outline: none;
+}
+.mu-search-input:focus { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37,99,235,.1) !important; }
+
+.mu-search-spinner {
+  position: absolute; right: 0.625rem;
+  width: 14px; height: 14px;
+  border: 2px solid #dbeafe; border-top-color: #2563eb;
+  border-radius: 50%; animation: mu-spin 0.7s linear infinite;
+}
+@keyframes mu-spin { to { transform: rotate(360deg); } }
+
+/* AD results */
+.mu-ad-results {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #ffffff; border: 1px solid #e2e8f0;
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(15,23,42,.12);
+  max-height: 200px; overflow-y: auto; z-index: 100;
+}
+.mu-ad-result { padding: 0.5rem 0.875rem; cursor: pointer; transition: background 0.12s; border-bottom: 1px solid #f1f5f9; }
+.mu-ad-result:last-child { border-bottom: none; }
+.mu-ad-result:hover { background: #f0f5ff; }
+.mu-ad-name { font-size: 0.78rem; font-weight: 600; color: #0f172a; }
+.mu-ad-email, .mu-ad-dept { font-size: 0.65rem; color: #64748b; }
+
+/* Form actions */
+.mu-form-actions { display: flex; justify-content: flex-end; }
+
+.mu-save-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  border: none !important;
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  transition: background 0.15s;
+}
+.mu-save-btn:hover { background: #1d4ed8 !important; }
+
+/* ── Table card ────────────────────────────────── */
+.mu-card {
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  box-shadow: 0 1px 8px rgba(30,58,138,.05);
+  overflow: hidden;
+}
+
+.mu-card-top {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8faff;
+}
+
+.mu-table-search-wrap { position: relative; display: inline-flex; align-items: center; }
+.mu-table-search-icon {
+  position: absolute; left: 0.6rem;
+  width: 14px; height: 14px; color: #94a3b8; pointer-events: none;
+}
+.mu-table-search {
+  padding: 0.45rem 0.75rem 0.45rem 2rem !important;
+  width: 220px;
+  border: 1.5px solid #bfdbfe !important;
+  border-radius: 8px !important;
+  font-size: 0.78rem !important;
+  color: #1e3a8a !important;
+  background: #ffffff !important;
+  outline: none;
+}
+.mu-table-search:focus { border-color: #2563eb !important; }
+
+.mu-table-wrap { overflow-x: auto; }
+
+.mu-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 500px; }
+
+.mu-th {
+  background: #f8faff !important;
+  color: #64748b !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1.5px solid #dbeafe !important;
+  white-space: nowrap;
+}
+.mu-th--center { text-align: center !important; }
+
+.mu-row { transition: background 0.12s; }
+.mu-row:hover td { background: #f0f5ff !important; }
+
+.mu-td {
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  font-size: 0.8rem !important;
+  color: #1e293b !important;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.mu-td--center { text-align: center !important; }
+
+.mu-user-cell { display: flex; align-items: center; gap: 0.6rem; }
+
+.mu-dept-tag {
+  background: #f1f5f9; color: #334155;
+  border-radius: 99px; font-size: 0.68rem; font-weight: 600; padding: 0.18rem 0.55rem;
+}
+
+.mu-actions { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+.mu-icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 7px;
+  border: none !important; cursor: pointer; transition: all 0.15s;
+  padding: 0 !important; min-height: unset;
+}
+.mu-icon-btn--edit { background: #eff6ff !important; color: #2563eb !important; }
+.mu-icon-btn--edit:hover { background: #dbeafe !important; }
+.mu-icon-btn--del  { background: #fef2f2 !important; color: #dc2626 !important; }
+.mu-icon-btn--del:hover { background: #fee2e2 !important; }
+.mu-icon { width: 14px; height: 14px; }
