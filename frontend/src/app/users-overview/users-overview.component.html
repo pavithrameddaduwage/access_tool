@@ -1,267 +1,530 @@
 <div class="uo-wrap">
 
-  <!-- ══════════ PAGE HEADER ══════════ -->
+  <!-- ═══ HEADER ═══ -->
   <div class="uo-header">
     <div class="uo-header-left">
-      <h1 class="uo-title">User Activity Overview</h1>
-      <p class="uo-subtitle">
-        <span *ngIf="lastRefreshedAt" class="refresh-badge">
-          <span class="live-dot"></span>
-          Data refreshed on {{ lastRefreshedAt | date:'medium' }}
-        </span>
+      <h1 class="uo-title">Power BI Access & Usage</h1>
+      <p class="uo-subtitle" *ngIf="lastRefreshedAt">
+        <span class="live-dot"></span>
+        Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
       </p>
     </div>
-    <div class="pill-row">
-      <button
-        *ngFor="let p of timePeriods"
-        (click)="loadUsers(p.days)"
-        class="pill"
-        [class.pill--on]="selectedPeriod === p.days"
-      >{{ p.label }}</button>
+    <div class="uo-header-right">
+      <div class="view-tabs">
+        <button class="view-tab" [class.view-tab--on]="activeView === 'users'" (click)="switchView('users')">
+          <i class="pi pi-users"></i> Users
+        </button>
+        <button class="view-tab" [class.view-tab--on]="activeView === 'insights'" (click)="switchView('insights')">
+          <i class="pi pi-chart-bar"></i> Insights
+        </button>
+      </div>
+      <div class="pill-row">
+        <button *ngFor="let p of timePeriods" (click)="loadAll(p.days)" class="pill" [class.pill--on]="selectedPeriod === p.days">{{ p.label }}</button>
+      </div>
     </div>
   </div>
 
-  <!-- ══════════ LOADING / ERROR ══════════ -->
+  <!-- Loading / Error -->
   <div *ngIf="loading" class="state-loader">
     <div class="spinner"></div>
-    <p>Loading user data…</p>
+    <p>Loading data…</p>
   </div>
-
   <div *ngIf="error && !loading" class="state-error">
     <i class="pi pi-exclamation-triangle"></i> {{ error }}
   </div>
 
-  <!-- ══════════ TWO-COLUMN LAYOUT ══════════ -->
-  <div *ngIf="!loading && !error" class="two-col">
+  <!-- ═══════════════════════════════════════
+       USERS VIEW
+  ════════════════════════════════════════ -->
+  <ng-container *ngIf="!loading && !error && activeView === 'users'">
 
-    <!-- ─── LEFT: User List ─── -->
-    <aside class="user-list-panel">
-      <div class="panel-header">
-        <span class="panel-title">
-          Users <span class="user-count">{{ filteredUsers.length }}</span>
-        </span>
-        <div class="search-wrap">
-          <i class="pi pi-search search-icon"></i>
-          <input
-            type="text"
-            placeholder="Search…"
-            class="search-input"
-            [(ngModel)]="userSearchQuery"
-            (input)="filterUsers()"
-          />
-        </div>
-      </div>
+    <!-- Department filter (only if multiple depts exist) -->
+    <div *ngIf="availableDepts.length > 1" class="dept-filter">
+      <button
+        *ngFor="let d of availableDepts"
+        class="dept-pill"
+        [class.dept-pill--on]="selectedDept === d"
+        (click)="selectDept(d)"
+      >{{ d }}</button>
+    </div>
 
-      <div class="user-list-scroll">
-        <div
-          *ngFor="let user of getPaginatedUsers()"
-          class="user-row"
-          [class.user-row--active]="selectedUserId === user.id"
-          (click)="selectUser(user.id)"
-        >
-          <app-avatar [name]="user.name" class="avatar-sm"></app-avatar>
-          <div class="user-row-info">
-            <span class="user-row-name">{{ user.name }}</span>
-            <span class="user-row-dept">{{ user.department }}</span>
-          </div>
-          <div class="user-row-views">
-            <span class="views-badge">{{ user.totalViews }}</span>
-            <span class="views-label">views</span>
+    <div class="two-col">
+
+      <!-- LEFT: User list -->
+      <aside class="user-list-panel">
+        <div class="panel-header">
+          <span class="panel-title">
+            Users <span class="user-count">{{ filteredUsers.length }}</span>
+          </span>
+          <div class="search-wrap">
+            <i class="pi pi-search search-icon"></i>
+            <input
+              type="text"
+              placeholder="Search…"
+              class="search-input"
+              [(ngModel)]="userSearchQuery"
+              (input)="filterUsers()"
+            />
           </div>
         </div>
 
-        <div *ngIf="filteredUsers.length === 0" class="empty-state">
-          <i class="pi pi-inbox"></i>
-          <p>No users found</p>
-        </div>
-      </div>
-
-      <div *ngIf="getPageNumbers().length > 1" class="pagination">
-        <button
-          *ngFor="let page of getPageNumbers()"
-          (click)="changePage(page)"
-          class="page-btn"
-          [class.page-btn--active]="currentPage === page"
-        >{{ page }}</button>
-      </div>
-    </aside>
-
-    <!-- ─── RIGHT: Detail Panel ─── -->
-    <section class="detail-panel">
-
-      <!-- Nothing selected -->
-      <div *ngIf="!selectedUserId" class="no-selection">
-        <i class="pi pi-user no-selection-icon"></i>
-        <p>Select a user from the list to view their activity summary</p>
-      </div>
-
-      <!-- Loading -->
-      <div *ngIf="selectedUserId && detailLoading" class="detail-loader">
-        <div class="spinner spinner--sm"></div>
-      </div>
-
-      <!-- Detail content -->
-      <ng-container *ngIf="selectedUserId && !detailLoading">
-
-        <!-- User header -->
-        <div class="detail-header">
-          <div class="detail-identity">
-            <app-avatar [name]="selectedUser?.name || selectedUserId!" class="avatar-lg"></app-avatar>
-            <div class="detail-identity-text">
-              <h2 class="detail-username">{{ selectedUser?.name || selectedUserId }}</h2>
-              <p class="detail-email">{{ selectedUserId }}</p>
-              <span class="dept-tag" *ngIf="selectedUser?.department && selectedUser?.department !== '—'">
-                {{ selectedUser?.department }}
-              </span>
+        <div class="user-list-scroll">
+          <div
+            *ngFor="let user of getPaginatedUsers()"
+            class="user-row"
+            [class.user-row--active]="selectedUserId === user.id"
+            [class.user-row--zero]="user.isZeroView"
+            (click)="selectUser(user.id)"
+          >
+            <app-avatar [name]="user.name" class="avatar-sm"></app-avatar>
+            <div class="user-row-info">
+              <span class="user-row-name">{{ user.name }}</span>
+              <span class="user-row-dept">{{ user.department }}</span>
+            </div>
+            <div class="user-row-views">
+              <span class="views-badge" [class.views-badge--zero]="user.isZeroView">{{ user.totalViews }}</span>
+              <span class="views-label">views</span>
             </div>
           </div>
-        </div>
 
-        <!-- KPI tiles -->
-        <div class="kpi-grid">
-          <div class="kpi-tile kpi-tile--blue">
-            <div class="kpi-label">Total Views</div>
-            <div class="kpi-value">{{ userMetrics.totalViews || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Reports Viewed</div>
-            <div class="kpi-value kpi-value--indigo">{{ userMetrics.reports?.length || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Workspaces</div>
-            <div class="kpi-value kpi-value--violet">{{ userMetrics.workspaces?.length || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Active Days</div>
-            <div class="kpi-value kpi-value--teal">{{ userMetrics.activityByDate?.length || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Time Spent</div>
-            <div class="kpi-value kpi-value--amber">{{ formatTime(userMetrics.estimatedTimeSpent) }}</div>
+          <div *ngIf="filteredUsers.length === 0" class="empty-state">
+            <i class="pi pi-inbox"></i>
+            <p>No users found</p>
           </div>
         </div>
 
-        <!-- Access Utilization -->
-        <div *ngIf="assignedVsUsed.length > 0" class="util-section">
-          <div class="util-header">
-            <span class="util-title">
-              <i class="pi pi-chart-bar util-icon"></i> Access Utilization
-            </span>
-            <span class="util-rate"
-              [class.util-rate--green]="utilizationRate >= 70"
-              [class.util-rate--amber]="utilizationRate >= 40 && utilizationRate < 70"
-              [class.util-rate--red]="utilizationRate < 40"
-            >
-              <i [class]="utilizationRate >= 70 ? 'pi pi-check-circle' : utilizationRate >= 40 ? 'pi pi-exclamation-circle' : 'pi pi-times-circle'"></i>
-              {{ utilizationRate }}% of assigned reports accessed
-            </span>
-          </div>
-          <div class="util-tags">
-            <div
-              *ngFor="let item of assignedVsUsed"
-              class="util-tag"
-              [class.util-tag--used]="item.isUsed"
-              [class.util-tag--unused]="!item.isUsed"
-              [title]="item.isUsed
-                ? 'Used — ' + (item.timeSpent > 0 ? formatTime(item.timeSpent) : '') + (item.views > 0 ? ' · ' + item.views + ' views' : '')
-                : 'Not accessed in selected period'"
-            >
-              <i [class]="item.isUsed ? 'pi pi-check-circle' : 'pi pi-minus-circle'" class="util-tag-icon"></i>
-              {{ item.displayName }}
-              <span *ngIf="item.timeSpent > 0" class="util-tag-meta">({{ formatTime(item.timeSpent) }})</span>
-              <span *ngIf="item.views > 0 && item.timeSpent === 0" class="util-tag-meta">({{ item.views }} views)</span>
-            </div>
-          </div>
+        <div *ngIf="getPageNumbers().length > 1" class="pagination">
+          <button
+            *ngFor="let page of getPageNumbers()"
+            (click)="changePage(page)"
+            class="page-btn"
+            [class.page-btn--active]="currentPage === page"
+          >{{ page }}</button>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Detail panel -->
+      <section class="detail-panel">
+
+        <div *ngIf="!selectedUserId" class="no-selection">
+          <i class="pi pi-user no-selection-icon"></i>
+          <p>Select a user to view their activity</p>
         </div>
 
-        <!-- Workspace & Tab Time Breakdown -->
-        <div *ngIf="groupedTabTimeSpent && groupedTabTimeSpent.length > 0" class="ws-time-section">
-          <h3 class="section-title">
-            <i class="pi pi-clock section-title-icon"></i> Time Spent by Report &amp; Tab
-          </h3>
-          <div class="ws-list">
-            <div *ngFor="let group of groupedTabTimeSpent" class="ws-block">
-              <!-- Workspace header row -->
-              <div class="ws-block-head">
-                <span class="ws-block-name">
-                  <i class="pi pi-folder ws-folder-icon"></i>
-                  {{ transformDisplayName(group.workspaceName) }}
-                </span>
-                <span class="ws-block-total">{{ formatTime(group.totalSeconds) }}</span>
-              </div>
-              <!-- Report / tab rows -->
-              <div class="ws-block-rows">
-                <div *ngFor="let item of group.items" class="ws-block-row">
-                  <div class="ws-block-row-left">
-                    <span class="ws-block-report">{{ transformDisplayName(item.reportName) }}</span>
-                    <span class="ws-block-tab" *ngIf="item.tabName">{{ item.tabName }}</span>
-                  </div>
-                  <span class="ws-block-time">{{ formatTime(item.totalSeconds) }}</span>
+        <div *ngIf="selectedUserId && detailLoading" class="detail-loader">
+          <div class="spinner spinner--sm"></div>
+        </div>
+
+        <ng-container *ngIf="selectedUserId && !detailLoading">
+
+          <!-- User header -->
+          <div class="detail-header">
+            <div class="detail-identity">
+              <app-avatar [name]="selectedUser?.name || selectedUserId!" class="avatar-lg"></app-avatar>
+              <div class="detail-identity-text">
+                <h2 class="detail-username">{{ selectedUser?.name || selectedUserId }}</h2>
+                <p class="detail-email">{{ selectedUserId }}</p>
+                <div class="detail-tags">
+                  <span class="dept-tag" *ngIf="selectedUser?.department && selectedUser?.department !== '—'">
+                    {{ selectedUser?.department }}
+                  </span>
+                  <span class="zero-tag" *ngIf="selectedUser?.isZeroView">No Activity This Period</span>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Zero-view notice with assigned reports -->
+          <div *ngIf="selectedUser?.isZeroView" class="zero-notice">
+            <div class="zero-notice-row">
+              <i class="pi pi-eye-slash zero-notice-icon"></i>
+              <span>No activity recorded in the last <strong>{{ getPeriodLabel() }}</strong>. This user's access should be reviewed.</span>
+            </div>
+            <div *ngIf="assignedVsUsed.length > 0" class="zero-assigned">
+              <span class="zero-assigned-label">Assigned Reports:</span>
+              <div class="zero-report-tags">
+                <span *ngFor="let a of assignedVsUsed" class="zero-report-tag">{{ a.displayName }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI tiles -->
+          <div class="kpi-grid">
+            <div class="kpi-tile kpi-tile--blue">
+              <i class="pi pi-eye kpi-icon"></i>
+              <div class="kpi-label">Total Views</div>
+              <div class="kpi-value">{{ userMetrics.totalViews || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-file kpi-icon"></i>
+              <div class="kpi-label">Reports</div>
+              <div class="kpi-value kpi-value--indigo">{{ userMetrics.reports?.length || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-th-large kpi-icon"></i>
+              <div class="kpi-label">Workspaces</div>
+              <div class="kpi-value kpi-value--violet">{{ userMetrics.workspaces?.length || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-calendar kpi-icon"></i>
+              <div class="kpi-label">Active Days</div>
+              <div class="kpi-value kpi-value--teal">{{ userMetrics.activityByDate?.length || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-clock kpi-icon"></i>
+              <div class="kpi-label">Time Spent</div>
+              <div class="kpi-value kpi-value--amber">{{ formatTime(userMetrics.estimatedTimeSpent) }}</div>
+            </div>
+          </div>
+
+          <!-- Charts (decision-first — moved above the drill-down list) -->
+          <div class="chart-grid" *ngIf="userWorkspacePieChartOptions || userReportViewsChartOptions">
+            <div class="chart-card" *ngIf="userWorkspacePieChartOptions">
+              <h3 class="chart-title">Time by Workspace</h3>
+              <apx-chart
+                [series]="userWorkspacePieChartOptions.series"
+                [chart]="userWorkspacePieChartOptions.chart"
+                [labels]="userWorkspacePieChartOptions.labels"
+                [colors]="userWorkspacePieChartOptions.colors"
+                [dataLabels]="userWorkspacePieChartOptions.dataLabels"
+                [legend]="userWorkspacePieChartOptions.legend"
+                [tooltip]="userWorkspacePieChartOptions.tooltip"
+              ></apx-chart>
+            </div>
+            <div class="chart-card" *ngIf="userReportViewsChartOptions">
+              <h3 class="chart-title">Top Reports Accessed</h3>
+              <apx-chart
+                [series]="userReportViewsChartOptions.series"
+                [chart]="userReportViewsChartOptions.chart"
+                [plotOptions]="userReportViewsChartOptions.plotOptions"
+                [xaxis]="userReportViewsChartOptions.xaxis"
+                [colors]="userReportViewsChartOptions.colors"
+                [dataLabels]="userReportViewsChartOptions.dataLabels"
+                [tooltip]="userReportViewsChartOptions.tooltip"
+              ></apx-chart>
+            </div>
+          </div>
+
+          <!-- Access Utilization -->
+          <div *ngIf="assignedVsUsed.length > 0" class="util-section">
+            <div class="util-header">
+              <span class="util-title">Access Utilization</span>
+              <span class="util-rate"
+                [class.util-rate--green]="utilizationRate >= 70"
+                [class.util-rate--amber]="utilizationRate >= 40 && utilizationRate < 70"
+                [class.util-rate--red]="utilizationRate < 40"
+              >{{ utilizationRate }}% reports accessed</span>
+            </div>
+            <div class="util-tags">
+              <div
+                *ngFor="let item of assignedVsUsed"
+                class="util-tag"
+                [class.util-tag--used]="item.isUsed"
+                [class.util-tag--unused]="!item.isUsed"
+                [title]="item.isUsed ? 'Accessed this period' : 'Not accessed in period'"
+              >
+                <i [class]="item.isUsed ? 'pi pi-check-circle' : 'pi pi-minus-circle'" class="util-tag-icon"></i>
+                {{ item.displayName }}
+                <span *ngIf="item.timeSpent > 0" class="util-tag-meta">({{ formatTime(item.timeSpent) }})</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time breakdown: workspace → report → tab -->
+          <div *ngIf="groupedTabTimeSpent.length > 0" class="ws-time-section">
+            <h3 class="section-title">
+              <i class="pi pi-clock section-title-icon"></i> Time Spent by Report &amp; Tab
+            </h3>
+            <div class="ws-list">
+              <div *ngFor="let group of groupedTabTimeSpent" class="ws-block">
+                <div class="ws-block-head">
+                  <span class="ws-block-name">
+                    <i class="pi pi-folder ws-folder-icon"></i>
+                    {{ transformDisplayName(group.workspaceName) }}
+                  </span>
+                  <span class="ws-block-total">{{ formatTime(group.totalSeconds) }}</span>
+                </div>
+                <div class="ws-block-rows">
+                  <div *ngFor="let item of group.items" class="ws-block-row">
+                    <div class="ws-block-row-left">
+                      <span class="ws-block-report">{{ transformDisplayName(item.reportName) }}</span>
+                      <span class="ws-block-tab" *ngIf="item.tabName">{{ item.tabName }}</span>
+                    </div>
+                    <span class="ws-block-time">{{ formatTime(item.totalSeconds) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ng-container>
+      </section>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════════════════════════════
+       INSIGHTS VIEW
+  ════════════════════════════════════════ -->
+  <ng-container *ngIf="!loading && !error && activeView === 'insights'">
+
+    <div *ngIf="insightsLoading" class="state-loader">
+      <div class="spinner"></div>
+      <p>Loading insights…</p>
+    </div>
+
+    <ng-container *ngIf="!insightsLoading">
+
+      <!-- KPI overview row -->
+      <div class="insights-kpi">
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--navy"><i class="pi pi-users"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Total Users with Access</div>
+            <div class="ikpi-value">{{ allUsers.length }}</div>
+          </div>
+        </div>
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--green"><i class="pi pi-check-circle"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Active in Period</div>
+            <div class="ikpi-value">{{ allUsers.length - insightsZeroViewUsers.length }}</div>
+            <div class="ikpi-sub">{{ getPeriodLabel() }}</div>
+          </div>
+        </div>
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--amber"><i class="pi pi-eye-slash"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Zero Activity</div>
+            <div class="ikpi-value">{{ insightsZeroViewUsers.length }}</div>
+            <div class="ikpi-sub">Review access</div>
+          </div>
+        </div>
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--red"><i class="pi pi-ban"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Unused Reports</div>
+            <div class="ikpi-value">{{ unusedReports.length }}</div>
+            <div class="ikpi-sub">Candidates for removal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main insights grid -->
+      <div class="insights-grid">
+
+        <!-- Most Accessed Reports — full width bar chart -->
+        <div class="insights-card insights-card--full">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Most Accessed Reports</h3>
+              <p class="insights-card-sub">Ranked by total views in the last {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--blue">Top 15</span>
+          </div>
+          <div class="chart-pad">
+            <apx-chart
+              *ngIf="topReportsChartOptions; else noTopReports"
+              [series]="topReportsChartOptions.series"
+              [chart]="topReportsChartOptions.chart"
+              [plotOptions]="topReportsChartOptions.plotOptions"
+              [xaxis]="topReportsChartOptions.xaxis"
+              [colors]="topReportsChartOptions.colors"
+              [dataLabels]="topReportsChartOptions.dataLabels"
+              [legend]="topReportsChartOptions.legend"
+              [tooltip]="topReportsChartOptions.tooltip"
+            ></apx-chart>
+            <ng-template #noTopReports>
+              <div class="no-data">No report data available for this period</div>
+            </ng-template>
+          </div>
         </div>
 
-        <!-- Charts grid -->
-        <div class="chart-grid">
-
-          <!-- Workspace Time Spent Pie -->
-          <div class="chart-card">
-            <h3 class="chart-title">Workspace Time Spent</h3>
-            <apx-chart
-              *ngIf="userWorkspacePieChartOptions; else noData"
-              [series]="userWorkspacePieChartOptions.series"
-              [chart]="userWorkspacePieChartOptions.chart"
-              [labels]="userWorkspacePieChartOptions.labels"
-              [colors]="userWorkspacePieChartOptions.colors"
-              [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-              [legend]="userWorkspacePieChartOptions.legend"
-              [tooltip]="userWorkspacePieChartOptions.tooltip"
-            ></apx-chart>
-            <ng-template #noData>
-              <div class="no-chart-data">No workspace time spent recorded</div>
-            </ng-template>
+        <!-- Most Active Users -->
+        <div class="insights-card">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Most Active Users</h3>
+              <p class="insights-card-sub">Ranked by total views in {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--blue">Top 10</span>
           </div>
-
-          <!-- Top Reports bar -->
-          <div class="chart-card">
-            <h3 class="chart-title">Top Reports</h3>
-            <apx-chart
-              *ngIf="userReportViewsChartOptions; else noReports"
-              [series]="userReportViewsChartOptions.series"
-              [chart]="userReportViewsChartOptions.chart"
-              [plotOptions]="userReportViewsChartOptions.plotOptions"
-              [xaxis]="userReportViewsChartOptions.xaxis"
-              [colors]="userReportViewsChartOptions.colors"
-              [dataLabels]="userReportViewsChartOptions.dataLabels"
-              [tooltip]="userReportViewsChartOptions.tooltip"
-            ></apx-chart>
-            <ng-template #noReports>
-              <div class="no-chart-data">No report data</div>
-            </ng-template>
+          <div class="rank-list">
+            <div
+              *ngFor="let u of insightsTopUsers; let i = index"
+              class="rank-row"
+              (click)="navigateToUser(u.id)"
+              title="Click to view user details"
+            >
+              <span class="rank-num"
+                [class.rank-num--gold]="i === 0"
+                [class.rank-num--silver]="i === 1"
+                [class.rank-num--bronze]="i === 2"
+              >{{ i + 1 }}</span>
+              <app-avatar [name]="u.name" class="avatar-xs"></app-avatar>
+              <div class="rank-info">
+                <span class="rank-name">{{ u.name }}</span>
+                <span class="rank-dept" *ngIf="u.department !== '—'">{{ u.department }}</span>
+              </div>
+              <div class="rank-stat">
+                <span class="rank-views">{{ u.totalViews }}</span>
+                <span class="rank-views-label">views</span>
+              </div>
+            </div>
+            <div *ngIf="insightsTopUsers.length === 0" class="no-data">No active users in this period</div>
           </div>
+        </div>
 
-          <!-- Activity Timeline -->
-          <div class="chart-card chart-card--wide">
-            <h3 class="chart-title">Activity Timeline</h3>
-            <apx-chart
-              *ngIf="activityTimelineChartOptions; else noTimeline"
-              [series]="activityTimelineChartOptions.series"
-              [chart]="activityTimelineChartOptions.chart"
-              [xaxis]="activityTimelineChartOptions.xaxis"
-              [colors]="activityTimelineChartOptions.colors"
-              [dataLabels]="activityTimelineChartOptions.dataLabels"
-              [tooltip]="activityTimelineChartOptions.tooltip"
-            ></apx-chart>
-            <ng-template #noTimeline>
-              <div class="no-chart-data">No activity data</div>
-            </ng-template>
+        <!-- Zero Activity Users -->
+        <div class="insights-card">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Zero Activity Users</h3>
+              <p class="insights-card-sub">Have access but no views in {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--red">Review Access</span>
           </div>
+          <div class="rank-list">
+            <div
+              *ngFor="let u of insightsZeroViewUsers.slice(0, 15)"
+              class="rank-row rank-row--inactive"
+              (click)="navigateToUser(u.id)"
+              title="Click to view user details"
+            >
+              <app-avatar [name]="u.name" class="avatar-xs"></app-avatar>
+              <div class="rank-info">
+                <span class="rank-name">{{ u.name }}</span>
+                <span class="rank-dept" *ngIf="u.department !== '—'">{{ u.department }}</span>
+              </div>
+              <span class="rank-zero">0 views</span>
+            </div>
+            <div *ngIf="insightsZeroViewUsers.length === 0" class="no-data no-data--green">
+              <i class="pi pi-check-circle"></i> All users are active this period
+            </div>
+            <div *ngIf="insightsZeroViewUsers.length > 15" class="rank-more">
+              +{{ insightsZeroViewUsers.length - 15 }} more —
+              <span class="rank-more-link" (click)="selectDept('All'); switchView('users')">view all</span>
+            </div>
+          </div>
+        </div>
 
-        </div><!-- /chart-grid -->
-      </ng-container>
+        <!-- Reports Not Accessed — full width table -->
+        <div class="insights-card insights-card--full">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Reports Not Accessed This Period</h3>
+              <p class="insights-card-sub">Zero views in the last {{ getPeriodLabel() }} — consider removing access or retiring</p>
+            </div>
+            <span class="insights-badge insights-badge--red">{{ unusedReports.length }} reports</span>
+          </div>
+          <div *ngIf="unusedReports.length > 0" class="unused-wrap">
+            <table class="unused-table">
+              <thead>
+                <tr>
+                  <th class="unused-th unused-th--num">#</th>
+                  <th class="unused-th">Report Name</th>
+                  <th class="unused-th unused-th--center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of unusedReports; let i = index" class="unused-row">
+                  <td class="unused-td unused-td--num">{{ i + 1 }}</td>
+                  <td class="unused-td">{{ transformDisplayName(r.dashboard) }}</td>
+                  <td class="unused-td unused-td--center">
+                    <span class="unused-badge">Not accessed</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="unusedReports.length === 0" class="no-data no-data--green">
+            <i class="pi pi-check-circle"></i> All reports have been accessed in this period
+          </div>
+        </div>
 
-    </section>
-  </div><!-- /two-col -->
+        <!-- Lowest Activity Reports (bottom 10 of top-100) — click to see who viewed -->
+        <div *ngIf="insightsLowestActiveReports.length > 0" class="insights-card insights-card--full">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Lowest Activity Reports</h3>
+              <p class="insights-card-sub">Fewest views among accessed reports — click a row to see who viewed it</p>
+            </div>
+            <span class="insights-badge insights-badge--amber">Low usage</span>
+          </div>
+          <div class="unused-wrap">
+            <table class="unused-table">
+              <thead>
+                <tr>
+                  <th class="unused-th unused-th--num">#</th>
+                  <th class="unused-th">Report Name</th>
+                  <th class="unused-th unused-th--center">Views</th>
+                  <th class="unused-th unused-th--center">Viewers</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let r of insightsLowestActiveReports; let i = index">
+                  <!-- Report row -->
+                  <tr class="unused-row lr-row"
+                      [class.lr-row--open]="selectedReportId === r.reportId"
+                      (click)="selectReport(r)">
+                    <td class="unused-td unused-td--num">{{ i + 1 }}</td>
+                    <td class="unused-td lr-name-cell">
+                      <i class="pi lr-chevron"
+                         [class.pi-chevron-right]="selectedReportId !== r.reportId"
+                         [class.pi-chevron-down]="selectedReportId === r.reportId"></i>
+                      {{ transformDisplayName(r.reportName) }}
+                    </td>
+                    <td class="unused-td unused-td--center">
+                      <span class="low-views-badge">{{ r.count }} views</span>
+                    </td>
+                    <td class="unused-td unused-td--center lr-expand-hint">
+                      <span *ngIf="selectedReportId !== r.reportId" class="lr-hint">Click to expand</span>
+                      <span *ngIf="selectedReportId === r.reportId" class="lr-hint lr-hint--open">Collapse</span>
+                    </td>
+                  </tr>
+
+                  <!-- Expanded viewer list -->
+                  <tr *ngIf="selectedReportId === r.reportId" class="lr-detail-row">
+                    <td colspan="4" class="lr-detail-cell">
+
+                      <!-- Loading -->
+                      <div *ngIf="reportViewersLoading" class="lr-loading">
+                        <div class="spinner spinner--sm"></div>
+                        <span>Loading viewers…</span>
+                      </div>
+
+                      <!-- Viewers -->
+                      <ng-container *ngIf="!reportViewersLoading">
+                        <div *ngIf="reportViewers.length > 0" class="lr-viewers">
+                          <div class="lr-viewers-label">
+                            <i class="pi pi-users"></i>
+                            {{ reportViewers.length }} user{{ reportViewers.length !== 1 ? 's' : '' }} accessed this report
+                          </div>
+                          <div class="lr-viewer-grid">
+                            <div *ngFor="let v of reportViewers" class="lr-viewer-card" (click)="navigateToUser(v.userId); $event.stopPropagation()">
+                              <app-avatar [name]="v.name" class="avatar-xs"></app-avatar>
+                              <div class="lr-viewer-info">
+                                <span class="lr-viewer-name">{{ v.name }}</span>
+                                <span class="lr-viewer-dept" *ngIf="v.department !== '—'">{{ v.department }}</span>
+                              </div>
+                              <span class="lr-viewer-count">{{ v.count }}<span class="lr-viewer-count-label">views</span></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div *ngIf="reportViewers.length === 0" class="lr-no-viewers">
+                          <i class="pi pi-eye-slash"></i> No viewer data found for this report
+                        </div>
+                      </ng-container>
+
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /insights-grid -->
+    </ng-container>
+  </ng-container>
+
 </div>

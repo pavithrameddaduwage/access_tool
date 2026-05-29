@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { DropdownModule } from 'primeng/dropdown';
 import { PowerBIMetricsService } from '../Services/powerbi-metrics.service';
+import { UserService } from '../Services/user.service';
 import { AvatarComponent } from '../components/avatar/avatar.component';
 
 interface UserSummary {
@@ -11,133 +11,217 @@ interface UserSummary {
   name: string;
   department: string;
   totalViews: number;
-  lastActivity: string;
+  hasAccess: boolean;
+  isZeroView: boolean;
 }
 
 @Component({
   selector: 'app-users-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgApexchartsModule, DropdownModule, AvatarComponent],
+  imports: [CommonModule, FormsModule, NgApexchartsModule, AvatarComponent],
   templateUrl: './users-overview.component.html',
   styleUrls: ['./users-overview.component.css']
 })
 export class UsersOverviewComponent implements OnInit {
-  // --- State ---
+  // State
   loading = true;
   detailLoading = false;
+  insightsLoading = false;
   error = '';
+  activeView: 'users' | 'insights' = 'users';
 
-  // --- Filters ---
+  // Time periods (weeks / months)
   selectedPeriod = 30;
   timePeriods = [
-    { label: '7D', days: 7 },
-    { label: '30D', days: 30 },
-    { label: '90D', days: 90 }
+    { label: '1W',  days: 7   },
+    { label: '2W',  days: 14  },
+    { label: '1M',  days: 30  },
+    { label: '3M',  days: 90  },
+    { label: '6M',  days: 180 },
+    { label: '1Y',  days: 365 }
   ];
-  userSearchQuery = '';
 
-  // --- User list ---
+  // Users
   allUsers: UserSummary[] = [];
   filteredUsers: UserSummary[] = [];
   selectedUserId: string | null = null;
   currentPage = 1;
   usersPerPage = 15;
+  userSearchQuery = '';
 
-  // --- User detail ---
+  // Department filter
+  selectedDept = 'All';
+  availableDepts: string[] = [];
+
+  // User detail
   userMetrics: any = {};
   userWorkspacePieChartOptions: any = null;
-  userConsumptionChartOptions: any = null;
   userReportViewsChartOptions: any = null;
-  activityTimelineChartOptions: any = null;
   userConsumptionMethods: { method: string; count: number }[] = [];
   userReportViews: { reportId: string; reportName: string; count: number }[] = [];
   userTabTimeSpent: any[] = [];
-  lastRefreshedAt: string = '';
+  lastRefreshedAt = '';
+
+  // Insights
+  topReports: { reportId: string; reportName: string; count: number }[] = [];
+  unusedReports: { id: number; dashboard: string; groupId: number | null }[] = [];
+  topReportsChartOptions: any = null;
+  insightsLoaded = false;
+
+  // Report viewer drill-down
+  selectedReportId: string | null = null;
+  reportViewers: { userId: string; name: string; department: string; count: number }[] = [];
+  reportViewersLoading = false;
 
   private readonly blueGradientColors = [
-    '#1e3a8a', // Deep corporate navy
-    '#2563eb', // Indigo-blue
-    '#3b82f6', // Mid blue
-    '#60a5fa', // Sky blue
-    '#0d9488', // Teal
-    '#06b6d4', // Cyan
-    '#4f46e5', // Royal indigo
-    '#64748b'  // Slate grey
+    '#1e3a8a', '#2563eb', '#3b82f6', '#60a5fa',
+    '#0d9488', '#06b6d4', '#4f46e5', '#64748b'
   ];
 
   constructor(
     private powerBIMetricsService: PowerBIMetricsService,
+    private userService: UserService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.powerBIMetricsService.getLastRefresh().subscribe({
-      next: (res) => { if (res && res.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
-      error: (err) => console.error('Failed to load last refresh time:', err)
+      next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
+      error: () => {}
     });
-    this.loadUsers(this.selectedPeriod);
+    this.loadAll(this.selectedPeriod);
   }
 
-  // ── Data Loading ────────────────────────────────────────────────
-  async loadUsers(days: number) {
-    this.loading = true;
-    this.error = '';
-    this.selectedPeriod = days;
-    
-    // Save current active user ID to preserve selection
-    const activeUserIdBefore = this.selectedUserId;
-    this.clearDetail();
- 
+  private getDateRange(days: number) {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - days);
- 
+    return { startDate, endDate };
+  }
+
+  async loadAll(days: number) {
+    this.loading = true;
+    this.error = '';
+    this.selectedPeriod = days;
+    this.insightsLoaded = false;
+
+    const { startDate, endDate } = this.getDateRange(days);
+    const prevSelectedId = this.selectedUserId;
+    this.clearDetail();
+
     try {
-      const topUsers = await this.powerBIMetricsService
-        .getTopUsers(startDate, endDate, 200)
-        .toPromise()
-        .catch(() => [] as any[]);
- 
-      if (!topUsers || topUsers.length === 0) {
-        this.allUsers = [];
-        this.filteredUsers = [];
-        this.selectedUserId = null;
-        this.loading = false;
-        return;
+      // Load all registered users and active users in parallel
+      const [masterResult, topUsers] = await Promise.all([
+        this.userService.getUsers().toPromise().catch(() => [] as any[]),
+        this.powerBIMetricsService.getTopUsers(startDate, endDate, 500).toPromise().catch(() => [] as any[])
+      ]);
+
+      // Build activity map: lowercased email → view count
+      const activityMap = new Map<string, number>();
+      for (const u of (topUsers || [])) {
+        activityMap.set((u.userId || '').toLowerCase(), u.count || 0);
       }
- 
-      const nameDept = await this.powerBIMetricsService
-        .getUserNameMappings(topUsers.map((u: any) => u.userId))
-        .toPromise()
-        .catch(() => ({ names: {}, departments: {} })) as any;
- 
-      const names: Record<string, string> = nameDept?.names || {};
-      const depts: Record<string, string> = nameDept?.departments || {};
- 
-      this.allUsers = topUsers.map((u: any) => ({
-        id: u.userId,
-        name: names[u.userId] || u.userId.split('@')[0],
-        department: depts[u.userId] || '—',
-        totalViews: u.count,
-        lastActivity: u.lastActivity || ''
-      }));
- 
+
+      // Fetch display names for active users from AD mapping
+      const activeEmails: string[] = (topUsers || []).map((u: any) => u.userId).filter(Boolean);
+      let names: Record<string, string> = {};
+      let depts: Record<string, string> = {};
+      if (activeEmails.length > 0) {
+        const mapping = await this.powerBIMetricsService
+          .getUserNameMappings(activeEmails).toPromise()
+          .catch(() => ({ names: {}, departments: {} })) as any;
+        names = mapping?.names || {};
+        depts = mapping?.departments || {};
+      }
+
+      // Build combined user list: registered users first (they HAVE access)
+      const seenEmails = new Set<string>();
+      const userList: UserSummary[] = [];
+
+      for (const mu of (masterResult || [])) {
+        const email = (mu.email || '').toLowerCase();
+        if (!email || seenEmails.has(email)) continue;
+        seenEmails.add(email);
+        const views = activityMap.get(email) || 0;
+        userList.push({
+          id: mu.email,
+          name: mu.name || email.split('@')[0],
+          department: mu.department?.department || mu.department || '—',
+          totalViews: views,
+          hasAccess: true,
+          isZeroView: views === 0
+        });
+      }
+
+      // Include active users not in masterdata (they appear in activity logs)
+      for (const au of (topUsers || [])) {
+        const email = (au.userId || '').toLowerCase();
+        if (!email || seenEmails.has(email)) continue;
+        seenEmails.add(email);
+        userList.push({
+          id: au.userId,
+          name: names[au.userId] || au.userId.split('@')[0],
+          department: depts[au.userId] || '—',
+          totalViews: au.count || 0,
+          hasAccess: true,
+          isZeroView: false
+        });
+      }
+
+      // Active users first (desc by views), then zero-view users (asc by name)
+      this.allUsers = userList.sort((a, b) => {
+        if (a.isZeroView !== b.isZeroView) return a.isZeroView ? 1 : -1;
+        return b.totalViews - a.totalViews;
+      });
+
+      // Build department filter options from available data
+      const deptSet = new Set<string>();
+      this.allUsers.forEach(u => { if (u.department && u.department !== '—') deptSet.add(u.department); });
+      this.availableDepts = deptSet.size > 0 ? ['All', ...Array.from(deptSet).sort()] : [];
+
       this.filterUsers();
- 
-      // Preserve selection if possible, otherwise select the first user
-      const stillExists = this.allUsers.find(u => u.id === activeUserIdBefore);
-      if (stillExists && activeUserIdBefore) {
-        await this.selectUser(activeUserIdBefore);
+
+      // Restore previous selection or auto-select first
+      const stillExists = this.allUsers.find(u => u.id === prevSelectedId);
+      if (stillExists && prevSelectedId) {
+        await this.selectUser(prevSelectedId);
       } else if (this.allUsers.length > 0) {
         await this.selectUser(this.allUsers[0].id);
-      } else {
-        this.selectedUserId = null;
+      }
+
+      // Reload insights if that view is active
+      if (this.activeView === 'insights') {
+        await this.loadInsights();
       }
     } catch (err) {
-      console.error('Error loading users:', err);
-      this.error = 'Failed to load user data. Please try again.';
+      this.error = 'Failed to load data. Please try again.';
     } finally {
       this.loading = false;
+    }
+  }
+
+  async switchView(view: 'users' | 'insights') {
+    this.activeView = view;
+    if (view === 'insights' && !this.insightsLoaded && !this.insightsLoading) {
+      await this.loadInsights();
+    }
+  }
+
+  async loadInsights() {
+    this.insightsLoading = true;
+    const { startDate, endDate } = this.getDateRange(this.selectedPeriod);
+    try {
+      const [topReps, unused] = await Promise.all([
+        this.powerBIMetricsService.getTopReports(startDate, endDate, 100).toPromise().catch(() => [] as any[]),
+        this.powerBIMetricsService.getUnusedReports(startDate, endDate).toPromise().catch(() => [] as any[])
+      ]);
+      this.topReports = (topReps || []) as any[];
+      this.unusedReports = (unused || []) as any[];
+      this.prepareTopReportsInsightChart();
+      this.insightsLoaded = true;
+      this.cdr.detectChanges();
+    } finally {
+      this.insightsLoading = false;
     }
   }
 
@@ -145,15 +229,10 @@ export class UsersOverviewComponent implements OnInit {
     this.selectedUserId = userId;
     this.detailLoading = true;
     this.clearDetail();
-
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - this.selectedPeriod);
-
+    const { startDate, endDate } = this.getDateRange(this.selectedPeriod);
     try {
-      const [metrics, workspaceDist, consumptionMethods, reportViews, tabTimeSpent] = await Promise.all([
+      const [metrics, consumptionMethods, reportViews, tabTimeSpent] = await Promise.all([
         this.powerBIMetricsService.getUserMetrics(userId, startDate, endDate).toPromise(),
-        this.powerBIMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate).toPromise(),
         this.powerBIMetricsService.getUserConsumptionMethods(userId, startDate, endDate).toPromise(),
         this.powerBIMetricsService.getUserReportViewsDistribution(userId, startDate, endDate).toPromise(),
         this.powerBIMetricsService.getUserTimeSpent(userId, startDate, endDate).toPromise()
@@ -163,24 +242,15 @@ export class UsersOverviewComponent implements OnInit {
         method: m.method === null ? 'Microsoft Teams' : m.method,
         count: m.count
       }));
-
       this.userMetrics = {
         ...(metrics || {}),
-        workspaceDistribution: workspaceDist || [],
-        consumptionMethods: this.userConsumptionMethods,
-        activityChartData: (metrics?.activityByDate || []).map((a: any) => ({
-          x: a.date,
-          y: a.count
-        }))
+        activityChartData: (metrics?.activityByDate || []).map((a: any) => ({ x: a.date, y: a.count }))
       };
-
       this.userReportViews = reportViews || [];
       this.userTabTimeSpent = tabTimeSpent || [];
 
       this.prepareWorkspacePieChart();
-      this.prepareConsumptionChart();
       this.prepareReportViewsChart();
-      this.prepareActivityTimeline();
       this.cdr.detectChanges();
     } catch (err) {
       console.error('Error loading user detail:', err);
@@ -189,118 +259,72 @@ export class UsersOverviewComponent implements OnInit {
     }
   }
 
-  // ── Chart Builders ───────────────────────────────────────────────
-  private prepareWorkspacePieChart() {
-    const timeSpentData = this.groupedTabTimeSpent;
-    if (!timeSpentData || timeSpentData.length === 0) {
-      this.userWorkspacePieChartOptions = null;
-      return;
-    }
+  navigateToUser(userId: string) {
+    this.activeView = 'users';
+    this.selectUser(userId);
+  }
 
+  // ── Chart builders ───────────────────────────────────────────────
+  private prepareWorkspacePieChart() {
+    const data = this.groupedTabTimeSpent;
+    if (!data.length) { this.userWorkspacePieChartOptions = null; return; }
     this.userWorkspacePieChartOptions = {
-      series: timeSpentData.map(w => w.totalSeconds),
-      chart: { type: 'pie', height: 400 },
-      labels: timeSpentData.map(w => this.transformDisplayName(w.workspaceName)),
+      series: data.map(w => w.totalSeconds),
+      chart: { type: 'pie', height: 280, toolbar: { show: false } },
+      labels: data.map(w => this.transformDisplayName(w.workspaceName)),
       colors: this.blueGradientColors,
-      dataLabels: { enabled: true, formatter: (v: number) => `${v.toFixed(1)}%`, style: { fontSize: '11px', colors: ['#fff'] } },
-      legend: { 
-        position: 'bottom', 
-        fontSize: '11px',
-        formatter: (legendName: string) => {
-          const workspaceData = timeSpentData.find(w => 
-            this.transformDisplayName(w.workspaceName) === legendName
-          );
-          return `${legendName} (${this.formatTime(workspaceData?.totalSeconds || 0)})`;
+      dataLabels: {
+        enabled: true,
+        formatter: (v: number) => `${v.toFixed(0)}%`,
+        style: { fontSize: '10px', colors: ['#fff'] }
+      },
+      legend: {
+        position: 'bottom', fontSize: '10px',
+        formatter: (n: string) => {
+          const w = data.find(d => this.transformDisplayName(d.workspaceName) === n);
+          return `${n} (${this.formatTime(w?.totalSeconds || 0)})`;
         }
       },
       tooltip: { y: { formatter: (v: number) => this.formatTime(v) } }
     };
   }
 
-  private prepareConsumptionChart() {
-    if (!this.userConsumptionMethods || this.userConsumptionMethods.length === 0) {
-      this.userConsumptionChartOptions = null;
-      return;
-    }
-    const labels = this.userConsumptionMethods.map(m => this.getMethodDisplayName(m.method));
-    this.userConsumptionChartOptions = {
-      series: this.userConsumptionMethods.map(m => m.count),
-      chart: { type: 'donut', height: 340 },
-      labels,
-      colors: this.blueGradientColors,
-      dataLabels: { enabled: true, formatter: (v: number) => `${v.toFixed(1)}%`, style: { fontSize: '11px', colors: ['#fff'] } },
-      legend: { position: 'bottom', fontSize: '11px' },
-      tooltip: { y: { formatter: (v: number) => `${v} views` } }
-    };
-  }
-
   private prepareReportViewsChart() {
-    if (!this.userReportViews || this.userReportViews.length === 0) {
-      this.userReportViewsChartOptions = null;
-      return;
-    }
-    const top = this.userReportViews.slice(0, 10);
+    if (!this.userReportViews.length) { this.userReportViewsChartOptions = null; return; }
+    const top = this.userReportViews.slice(0, 8);
     const categories = top.map(r => {
-      let name = r.reportName || `Report (${r.reportId.slice(0, 6)}…)`;
-      name = name.replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '');
-      name = name.replace(/\s*-\s*Dashboard$/i, '').replace(/Dashboard$/i, '');
-      name = name.trim();
-      return name.length > 25 ? name.substring(0, 25) + '...' : name;
+      let name = r.reportName || `(${r.reportId?.slice(0, 6)}…)`;
+      name = name.replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '').replace(/\s*-\s*Dashboard$/i, '').trim();
+      return name.length > 22 ? name.substring(0, 22) + '…' : name;
     });
-
     this.userReportViewsChartOptions = {
       series: [{ name: 'Views', data: top.map(r => r.count) }],
       chart: { type: 'bar', height: 280, toolbar: { show: false } },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-          barHeight: '55%',
-          borderRadius: 4,
-          borderRadiusApplication: 'end'
-        }
-      },
-      xaxis: {
-        categories: categories,
-        labels: {
-          style: {
-            fontSize: '10px',
-            colors: '#64748b' // slate-500
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            fontSize: '11px',
-            colors: '#334155', // slate-700
-            fontWeight: 500
-          }
-        }
-      },
-      colors: this.blueGradientColors,
-      dataLabels: {
-        enabled: true,
-        style: {
-          fontSize: '10px',
-          colors: ['#ffffff'],
-          fontWeight: '600'
-        },
-        offsetX: -6
-      },
+      plotOptions: { bar: { horizontal: true, barHeight: '60%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
+      colors: ['#2563eb'],
+      dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6 },
       tooltip: { y: { formatter: (v: number) => `${v} views` } }
     };
   }
 
-  private prepareActivityTimeline() {
-    const data: { x: string; y: number }[] = this.userMetrics?.activityChartData || [];
-    if (!data.length) { this.activityTimelineChartOptions = null; return; }
-    this.activityTimelineChartOptions = {
-      series: [{ name: 'Views', data }],
-      chart: { type: 'bar', height: 220, toolbar: { show: false } },
-      xaxis: { type: 'datetime', labels: { format: 'dd MMM', style: { fontSize: '10px' } } },
-      colors: ['#6366f1'],
-      dataLabels: { enabled: false },
-      tooltip: { x: { format: 'dd MMM yyyy' }, y: { formatter: (v: number) => `${v} views` } }
+  private prepareTopReportsInsightChart() {
+    if (!this.topReports.length) { this.topReportsChartOptions = null; return; }
+    const top = this.topReports.slice(0, 15);
+    const categories = top.map(r => {
+      let name = r.reportName || `(${r.reportId?.slice(0, 6)}…)`;
+      name = name.replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '').replace(/\s*-\s*Dashboard$/i, '').trim();
+      return name.length > 35 ? name.substring(0, 35) + '…' : name;
+    });
+    this.topReportsChartOptions = {
+      series: [{ name: 'Total Views', data: top.map(r => r.count) }],
+      chart: { type: 'bar', height: 480, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '65%', borderRadius: 4, borderRadiusApplication: 'end', distributed: true } },
+      xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
+      colors: this.blueGradientColors,
+      dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6 },
+      legend: { show: false },
+      tooltip: { y: { formatter: (v: number) => `${v} views` } }
     };
   }
 
@@ -308,20 +332,26 @@ export class UsersOverviewComponent implements OnInit {
   private clearDetail() {
     this.userMetrics = {};
     this.userWorkspacePieChartOptions = null;
-    this.userConsumptionChartOptions = null;
     this.userReportViewsChartOptions = null;
-    this.activityTimelineChartOptions = null;
     this.userReportViews = [];
     this.userConsumptionMethods = [];
     this.userTabTimeSpent = [];
   }
 
   filterUsers() {
+    let list = [...this.allUsers];
+    if (this.selectedDept !== 'All') {
+      list = list.filter(u => u.department === this.selectedDept);
+    }
     const q = this.userSearchQuery.toLowerCase();
-    this.filteredUsers = q
-      ? this.allUsers.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))
-      : [...this.allUsers];
+    if (q) list = list.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q));
+    this.filteredUsers = list;
     this.currentPage = 1;
+  }
+
+  selectDept(dept: string) {
+    this.selectedDept = dept;
+    this.filterUsers();
   }
 
   getPaginatedUsers(): UserSummary[] {
@@ -330,7 +360,10 @@ export class UsersOverviewComponent implements OnInit {
   }
 
   getPageNumbers(): number[] {
-    return Array.from({ length: Math.ceil(this.filteredUsers.length / this.usersPerPage) }, (_, i) => i + 1);
+    return Array.from(
+      { length: Math.ceil(this.filteredUsers.length / this.usersPerPage) },
+      (_, i) => i + 1
+    );
   }
 
   changePage(page: number) { this.currentPage = page; }
@@ -343,86 +376,53 @@ export class UsersOverviewComponent implements OnInit {
     return `${(seconds / 3600).toFixed(1)}h`;
   }
 
-  getMethodDisplayName(method: string): string {
-    const map: Record<string, string> = {
-      'Microsoft Teams': 'Teams',
-      'EmbeddingForYourOrganization': 'Embedded',
-      'PowerPointAddIn': 'PowerPoint',
-      'Web': 'Web Browser',
-      'Mobile': 'Mobile',
-      'Desktop': 'Desktop'
-    };
-    return map[method] || method;
+  getPeriodLabel(): string {
+    return this.timePeriods.find(t => t.days === this.selectedPeriod)?.label || `${this.selectedPeriod}D`;
   }
 
   get selectedUser(): UserSummary | undefined {
     return this.allUsers.find(u => u.id === this.selectedUserId);
   }
 
-  get groupedTabTimeSpent(): { workspaceName: string, totalSeconds: number, items: any[] }[] {
-    if (!this.userTabTimeSpent || this.userTabTimeSpent.length === 0) return [];
-    
-    const groups: { [key: string]: { workspaceName: string, totalSeconds: number, items: any[] } } = {};
-    
+  get groupedTabTimeSpent(): { workspaceName: string; totalSeconds: number; items: any[] }[] {
+    if (!this.userTabTimeSpent?.length) return [];
+    const groups: Record<string, { workspaceName: string; totalSeconds: number; items: any[] }> = {};
     this.userTabTimeSpent.forEach(item => {
-      const wsName = item.workspaceName || 'Personal Workspace';
-      if (!groups[wsName]) {
-        groups[wsName] = {
-          workspaceName: wsName,
-          totalSeconds: 0,
-          items: []
-        };
-      }
-      groups[wsName].totalSeconds += item.totalSeconds;
-      groups[wsName].items.push(item);
+      const ws = item.workspaceName || 'Personal Workspace';
+      if (!groups[ws]) groups[ws] = { workspaceName: ws, totalSeconds: 0, items: [] };
+      groups[ws].totalSeconds += item.totalSeconds;
+      groups[ws].items.push(item);
     });
-    
     return Object.values(groups).sort((a, b) => b.totalSeconds - a.totalSeconds);
   }
 
   transformDisplayName(name: string | undefined): string {
     if (!name) return 'Unknown';
-
-    // Remove "HGU" prefix (case insensitive)
-    let transformed = name.replace(/^HGU\s*-\s*/i, '')
-                         .replace(/^HGU/i, '');
-
-    // Remove "Dashboard" suffix (case insensitive)
-    transformed = transformed.replace(/\s*-\s*Dashboard$/i, '')
-                            .replace(/Dashboard$/i, '');
-
-    // Trim any remaining whitespace
-    return transformed.trim() || 'Unknown';
+    return name
+      .replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '')
+      .replace(/\s*-\s*Dashboard$/i, '').replace(/Dashboard$/i, '')
+      .trim() || 'Unknown';
   }
 
   private normalizeDashName(s: string): string {
-    return (s || '')
-      .toLowerCase().trim()
+    return (s || '').toLowerCase().trim()
       .replace(/^hgu\s*[-–]\s*/i, '')
       .replace(/\s*[-–]\s*dashboard$/i, '')
-      .replace(/dashboard$/i, '')
-      .trim();
+      .replace(/dashboard$/i, '').trim();
   }
 
   get assignedVsUsed(): { name: string; displayName: string; timeSpent: number; views: number; isUsed: boolean }[] {
     const assigned: string[] = this.userMetrics?.assignedDashboards || [];
     if (!assigned.length) return [];
-
     return assigned.map(dashName => {
       const norm = this.normalizeDashName(dashName);
-
       const timeSpent = this.userTabTimeSpent
-        .filter(t => {
-          const tn = this.normalizeDashName(t.reportName || '');
-          return tn === norm || tn.includes(norm) || norm.includes(tn);
-        })
+        .filter(t => { const tn = this.normalizeDashName(t.reportName || ''); return tn === norm || tn.includes(norm) || norm.includes(tn); })
         .reduce((s, t) => s + (t.totalSeconds || 0), 0);
-
       const matchedView = this.userReportViews.find(r => {
         const rn = this.normalizeDashName(r.reportName || '');
         return rn === norm || rn.includes(norm) || norm.includes(rn);
       });
-
       return {
         name: dashName,
         displayName: this.transformDisplayName(dashName),
@@ -437,5 +437,57 @@ export class UsersOverviewComponent implements OnInit {
     const data = this.assignedVsUsed;
     if (!data.length) return 0;
     return Math.round(data.filter(d => d.isUsed).length / data.length * 100);
+  }
+
+  async selectReport(report: any) {
+    const reportId = report.reportId;
+    if (this.selectedReportId === reportId) {
+      this.selectedReportId = null;
+      this.reportViewers = [];
+      return;
+    }
+    this.selectedReportId = reportId;
+    this.reportViewers = [];
+    this.reportViewersLoading = true;
+
+    const { startDate, endDate } = this.getDateRange(this.selectedPeriod);
+    try {
+      const viewers = await this.powerBIMetricsService
+        .getTopUsers(startDate, endDate, 50, undefined, reportId)
+        .toPromise().catch(() => [] as any[]);
+
+      const userIds: string[] = (viewers || []).map((v: any) => v.userId).filter(Boolean);
+      let names: Record<string, string> = {};
+      let depts: Record<string, string> = {};
+      if (userIds.length > 0) {
+        const mapping = await this.powerBIMetricsService
+          .getUserNameMappings(userIds).toPromise()
+          .catch(() => ({ names: {}, departments: {} })) as any;
+        names = mapping?.names || {};
+        depts = mapping?.departments || {};
+      }
+      this.reportViewers = (viewers || []).map((v: any) => ({
+        userId: v.userId,
+        name: names[v.userId] || v.userId.split('@')[0],
+        department: depts[v.userId] || '—',
+        count: v.count || 0
+      }));
+      this.cdr.detectChanges();
+    } finally {
+      this.reportViewersLoading = false;
+    }
+  }
+
+  // ── Insights computed properties ─────────────────────────────────
+  get insightsTopUsers(): UserSummary[] {
+    return this.allUsers.filter(u => !u.isZeroView).slice(0, 10);
+  }
+
+  get insightsZeroViewUsers(): UserSummary[] {
+    return this.allUsers.filter(u => u.isZeroView);
+  }
+
+  get insightsLowestActiveReports(): any[] {
+    return [...this.topReports].reverse().slice(0, 10);
   }
 }
