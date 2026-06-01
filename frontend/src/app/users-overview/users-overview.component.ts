@@ -37,9 +37,9 @@ export class UsersOverviewComponent implements OnInit {
     { label: '2W',  days: 14  },
     { label: '1M',  days: 30  },
     { label: '3M',  days: 90  },
-    { label: '6M',  days: 180 },
-    { label: '1Y',  days: 365 }
+    { label: '6M',  days: 180 }
   ];
+  wsTimeShowAll = false;
 
   // Users
   allUsers: UserSummary[] = [];
@@ -310,16 +310,16 @@ export class UsersOverviewComponent implements OnInit {
 
   private prepareTopReportsInsightChart() {
     if (!this.topReports.length) { this.topReportsChartOptions = null; return; }
-    const top = this.topReports.slice(0, 15);
+    const top = this.topReports.slice(0, 10);
     const categories = top.map(r => {
       let name = r.reportName || `(${r.reportId?.slice(0, 6)}…)`;
       name = name.replace(/^HGU\s*-\s*/i, '').replace(/^HGU/i, '').replace(/\s*-\s*Dashboard$/i, '').trim();
-      return name.length > 35 ? name.substring(0, 35) + '…' : name;
+      return name.length > 28 ? name.substring(0, 28) + '…' : name;
     });
     this.topReportsChartOptions = {
       series: [{ name: 'Total Views', data: top.map(r => r.count) }],
-      chart: { type: 'bar', height: 480, toolbar: { show: false } },
-      plotOptions: { bar: { horizontal: true, barHeight: '65%', borderRadius: 4, borderRadiusApplication: 'end', distributed: true } },
+      chart: { type: 'bar', height: 320, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end', distributed: true } },
       xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
       colors: this.blueGradientColors,
       dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6 },

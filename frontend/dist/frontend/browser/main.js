@@ -51615,8 +51615,8 @@ var ActiveTimeTrackerService = class _ActiveTimeTrackerService {
 // src/app/powerbi-dashboard/powerbi-dashboard.component.ts
 function PowerBIDashboardComponent_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 22);
-    \u0275\u0275element(1, "span", 23);
+    \u0275\u0275elementStart(0, "span", 21);
+    \u0275\u0275element(1, "span", 22);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "date");
     \u0275\u0275elementEnd();
@@ -51630,10 +51630,10 @@ function PowerBIDashboardComponent_span_5_Template(rf, ctx) {
 function PowerBIDashboardComponent_div_7_Template(rf, ctx) {
   if (rf & 1) {
     const _r2 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 14)(1, "label", 15);
+    \u0275\u0275elementStart(0, "div", 13)(1, "label", 14);
     \u0275\u0275text(2, "Workspace");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "p-dropdown", 24);
+    \u0275\u0275elementStart(3, "p-dropdown", 23);
     \u0275\u0275twoWayListener("ngModelChange", function PowerBIDashboardComponent_div_7_Template_p_dropdown_ngModelChange_3_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
@@ -51658,10 +51658,10 @@ function PowerBIDashboardComponent_div_7_Template(rf, ctx) {
 function PowerBIDashboardComponent_div_8_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 14)(1, "label", 15);
+    \u0275\u0275elementStart(0, "div", 13)(1, "label", 14);
     \u0275\u0275text(2, "Report");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "p-dropdown", 25);
+    \u0275\u0275elementStart(3, "p-dropdown", 24);
     \u0275\u0275twoWayListener("ngModelChange", function PowerBIDashboardComponent_div_8_Template_p_dropdown_ngModelChange_3_listener($event) {
       \u0275\u0275restoreView(_r3);
       const ctx_r0 = \u0275\u0275nextContext();
@@ -51686,7 +51686,7 @@ function PowerBIDashboardComponent_div_8_Template(rf, ctx) {
 function PowerBIDashboardComponent_button_13_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 26);
+    \u0275\u0275elementStart(0, "button", 25);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_button_13_Template_button_click_0_listener() {
       const p_r5 = \u0275\u0275restoreView(_r4).$implicit;
       const ctx_r0 = \u0275\u0275nextContext();
@@ -51705,8 +51705,8 @@ function PowerBIDashboardComponent_button_13_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_14_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 27);
-    \u0275\u0275element(1, "span", 28);
+    \u0275\u0275elementStart(0, "div", 26);
+    \u0275\u0275element(1, "span", 27);
     \u0275\u0275elementStart(2, "p");
     \u0275\u0275text(3, "Loading analytics\u2026");
     \u0275\u0275elementEnd()();
@@ -51714,8 +51714,8 @@ function PowerBIDashboardComponent_div_14_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_15_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 29);
-    \u0275\u0275element(1, "i", 30);
+    \u0275\u0275elementStart(0, "div", 28);
+    \u0275\u0275element(1, "i", 29);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
   }
@@ -51727,7 +51727,7 @@ function PowerBIDashboardComponent_div_15_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_ng_container_16_apx_chart_39_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 56);
+    \u0275\u0275element(0, "apx-chart", 53);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(2);
@@ -51736,8 +51736,8 @@ function PowerBIDashboardComponent_ng_container_16_apx_chart_39_Template(rf, ctx
 }
 function PowerBIDashboardComponent_ng_container_16_ng_template_40_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 47);
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275element(1, "i", 46);
     \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3, "No data");
     \u0275\u0275elementEnd()();
@@ -51745,7 +51745,7 @@ function PowerBIDashboardComponent_ng_container_16_ng_template_40_Template(rf, c
 }
 function PowerBIDashboardComponent_ng_container_16_apx_chart_48_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 58);
+    \u0275\u0275element(0, "apx-chart", 55);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(2);
@@ -51754,8 +51754,8 @@ function PowerBIDashboardComponent_ng_container_16_apx_chart_48_Template(rf, ctx
 }
 function PowerBIDashboardComponent_ng_container_16_ng_template_49_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 59);
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275element(1, "i", 56);
     \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3, "No data");
     \u0275\u0275elementEnd()();
@@ -51763,7 +51763,7 @@ function PowerBIDashboardComponent_ng_container_16_ng_template_49_Template(rf, c
 }
 function PowerBIDashboardComponent_ng_container_16_apx_chart_57_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 60);
+    \u0275\u0275element(0, "apx-chart", 57);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(2);
@@ -51772,26 +51772,8 @@ function PowerBIDashboardComponent_ng_container_16_apx_chart_57_Template(rf, ctx
 }
 function PowerBIDashboardComponent_ng_container_16_ng_template_58_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 52);
-    \u0275\u0275elementStart(2, "span");
-    \u0275\u0275text(3, "No data");
-    \u0275\u0275elementEnd()();
-  }
-}
-function PowerBIDashboardComponent_ng_container_16_apx_chart_66_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 61);
-  }
-  if (rf & 2) {
-    const ctx_r0 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("series", ctx_r0.activityTrendChartOptions.series)("chart", ctx_r0.activityTrendChartOptions.chart)("xaxis", ctx_r0.activityTrendChartOptions.xaxis)("stroke", ctx_r0.activityTrendChartOptions.stroke)("colors", ctx_r0.activityTrendChartOptions.colors);
-  }
-}
-function PowerBIDashboardComponent_ng_container_16_ng_template_67_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 62);
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275element(1, "i", 51);
     \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3, "No data");
     \u0275\u0275elementEnd()();
@@ -51801,72 +51783,65 @@ function PowerBIDashboardComponent_ng_container_16_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 31)(2, "div", 32);
-    \u0275\u0275element(3, "i", 33);
-    \u0275\u0275elementStart(4, "div", 34)(5, "span", 35);
+    \u0275\u0275elementStart(1, "div", 30)(2, "div", 31);
+    \u0275\u0275element(3, "i", 32);
+    \u0275\u0275elementStart(4, "div", 33)(5, "span", 34);
     \u0275\u0275text(6, "Total Views");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "span", 36);
+    \u0275\u0275elementStart(7, "span", 35);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "number");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(10, "div", 37);
-    \u0275\u0275element(11, "i", 38);
-    \u0275\u0275elementStart(12, "div", 34)(13, "span", 35);
+    \u0275\u0275elementStart(10, "div", 36);
+    \u0275\u0275element(11, "i", 37);
+    \u0275\u0275elementStart(12, "div", 33)(13, "span", 34);
     \u0275\u0275text(14, "Total Users");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(15, "span", 36);
+    \u0275\u0275elementStart(15, "span", 35);
     \u0275\u0275text(16);
     \u0275\u0275pipe(17, "number");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(18, "div", 39);
-    \u0275\u0275element(19, "i", 40);
-    \u0275\u0275elementStart(20, "div", 34)(21, "span", 35);
+    \u0275\u0275elementStart(18, "div", 38);
+    \u0275\u0275element(19, "i", 39);
+    \u0275\u0275elementStart(20, "div", 33)(21, "span", 34);
     \u0275\u0275text(22, "Active Reports");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(23, "span", 36);
+    \u0275\u0275elementStart(23, "span", 35);
     \u0275\u0275text(24);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(25, "div", 41);
+    \u0275\u0275elementStart(25, "div", 40);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_16_Template_div_click_25_listener() {
       \u0275\u0275restoreView(_r6);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.openUserListModal("zero"));
     });
-    \u0275\u0275element(26, "i", 42);
-    \u0275\u0275elementStart(27, "div", 34)(28, "span", 35);
+    \u0275\u0275element(26, "i", 41);
+    \u0275\u0275elementStart(27, "div", 33)(28, "span", 34);
     \u0275\u0275text(29, "Zero-View Users");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(30, "span", 36);
+    \u0275\u0275elementStart(30, "span", 35);
     \u0275\u0275text(31);
     \u0275\u0275elementEnd()()()();
-    \u0275\u0275elementStart(32, "div", 43)(33, "div", 44)(34, "div", 45)(35, "span", 46);
-    \u0275\u0275element(36, "i", 47);
+    \u0275\u0275elementStart(32, "div", 42)(33, "div", 43)(34, "div", 44)(35, "span", 45);
+    \u0275\u0275element(36, "i", 46);
     \u0275\u0275text(37, " Views Over Time");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(38, "div", 48);
-    \u0275\u0275template(39, PowerBIDashboardComponent_ng_container_16_apx_chart_39_Template, 1, 9, "apx-chart", 49)(40, PowerBIDashboardComponent_ng_container_16_ng_template_40_Template, 4, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementStart(38, "div", 47);
+    \u0275\u0275template(39, PowerBIDashboardComponent_ng_container_16_apx_chart_39_Template, 1, 9, "apx-chart", 48)(40, PowerBIDashboardComponent_ng_container_16_ng_template_40_Template, 4, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(42, "div", 44)(43, "div", 45)(44, "span", 46);
-    \u0275\u0275element(45, "i", 50);
+    \u0275\u0275elementStart(42, "div", 43)(43, "div", 44)(44, "span", 45);
+    \u0275\u0275element(45, "i", 49);
     \u0275\u0275text(46, " Top Reports");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(47, "div", 48);
-    \u0275\u0275template(48, PowerBIDashboardComponent_ng_container_16_apx_chart_48_Template, 1, 8, "apx-chart", 51)(49, PowerBIDashboardComponent_ng_container_16_ng_template_49_Template, 4, 0, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementStart(47, "div", 47);
+    \u0275\u0275template(48, PowerBIDashboardComponent_ng_container_16_apx_chart_48_Template, 1, 8, "apx-chart", 50)(49, PowerBIDashboardComponent_ng_container_16_ng_template_49_Template, 4, 0, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(51, "div", 44)(52, "div", 45)(53, "span", 46);
-    \u0275\u0275element(54, "i", 52);
+    \u0275\u0275elementStart(51, "div", 43)(52, "div", 44)(53, "span", 45);
+    \u0275\u0275element(54, "i", 51);
     \u0275\u0275text(55, " Top Users");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(56, "div", 48);
-    \u0275\u0275template(57, PowerBIDashboardComponent_ng_container_16_apx_chart_57_Template, 1, 8, "apx-chart", 53)(58, PowerBIDashboardComponent_ng_container_16_ng_template_58_Template, 4, 0, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(60, "div", 44)(61, "div", 45)(62, "span", 46);
-    \u0275\u0275element(63, "i", 54);
-    \u0275\u0275text(64, " User Activity Trend");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(65, "div", 48);
-    \u0275\u0275template(66, PowerBIDashboardComponent_ng_container_16_apx_chart_66_Template, 1, 5, "apx-chart", 55)(67, PowerBIDashboardComponent_ng_container_16_ng_template_67_Template, 4, 0, "ng-template", null, 3, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementStart(56, "div", 47);
+    \u0275\u0275template(57, PowerBIDashboardComponent_ng_container_16_apx_chart_57_Template, 1, 8, "apx-chart", 52)(58, PowerBIDashboardComponent_ng_container_16_ng_template_58_Template, 4, 0, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementContainerEnd();
   }
@@ -51874,12 +51849,11 @@ function PowerBIDashboardComponent_ng_container_16_Template(rf, ctx) {
     const noData_r7 = \u0275\u0275reference(41);
     const noRpt_r8 = \u0275\u0275reference(50);
     const noUsers_r9 = \u0275\u0275reference(59);
-    const noTrend_r10 = \u0275\u0275reference(68);
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance(8);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 12, ctx_r0.metrics.totalViews || 0));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 10, ctx_r0.metrics.totalViews || 0));
     \u0275\u0275advance(8);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 14, ctx_r0.metrics.uniqueUsers + ctx_r0.userCounts.zeroViewUsers));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 12, ctx_r0.metrics.uniqueUsers + ctx_r0.userCounts.zeroViewUsers));
     \u0275\u0275advance(8);
     \u0275\u0275textInterpolate(ctx_r0.metrics.uniqueReports || 0);
     \u0275\u0275advance(7);
@@ -51890,75 +51864,73 @@ function PowerBIDashboardComponent_ng_container_16_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r0.topReportsChartOptions)("ngIfElse", noRpt_r8);
     \u0275\u0275advance(9);
     \u0275\u0275property("ngIf", ctx_r0.topUsersChartOptions)("ngIfElse", noUsers_r9);
-    \u0275\u0275advance(9);
-    \u0275\u0275property("ngIf", ctx_r0.activityTrendChartOptions)("ngIfElse", noTrend_r10);
   }
 }
 function PowerBIDashboardComponent_ng_container_17_div_1_tr_25_Template(rf, ctx) {
   if (rf & 1) {
-    const _r12 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "tr", 83);
+    const _r11 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "tr", 79);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_17_div_1_tr_25_Template_tr_click_0_listener() {
-      const user_r13 = \u0275\u0275restoreView(_r12).$implicit;
+      const user_r12 = \u0275\u0275restoreView(_r11).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(3);
-      return \u0275\u0275resetView(ctx_r0.selectUser(user_r13.id));
+      return \u0275\u0275resetView(ctx_r0.selectUser(user_r12.id));
     });
-    \u0275\u0275elementStart(1, "td")(2, "div", 84);
-    \u0275\u0275element(3, "app-avatar", 85);
-    \u0275\u0275elementStart(4, "span", 86);
+    \u0275\u0275elementStart(1, "td")(2, "div", 80);
+    \u0275\u0275element(3, "app-avatar", 81);
+    \u0275\u0275elementStart(4, "span", 82);
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(6, "td", 87);
+    \u0275\u0275elementStart(6, "td", 83);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "td", 88);
+    \u0275\u0275elementStart(8, "td", 84);
     \u0275\u0275text(9);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "td", 87);
+    \u0275\u0275elementStart(10, "td", 83);
     \u0275\u0275text(11);
     \u0275\u0275pipe(12, "date");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const user_r13 = ctx.$implicit;
+    const user_r12 = ctx.$implicit;
     const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275classProp("tbl-row--sel", ctx_r0.selectedUserId === user_r13.id);
+    \u0275\u0275classProp("tbl-row--sel", ctx_r0.selectedUserId === user_r12.id);
     \u0275\u0275advance(3);
-    \u0275\u0275property("name", user_r13.name);
+    \u0275\u0275property("name", user_r12.name);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r13.name);
+    \u0275\u0275textInterpolate(user_r12.name);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r13.department);
+    \u0275\u0275textInterpolate(user_r12.department);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r13.totalViews);
+    \u0275\u0275textInterpolate(user_r12.totalViews);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r13.lastActivity === "Never" ? "\u2014" : \u0275\u0275pipeBind2(12, 7, user_r13.lastActivity, "shortDate"));
+    \u0275\u0275textInterpolate(user_r12.lastActivity === "Never" ? "\u2014" : \u0275\u0275pipeBind2(12, 7, user_r12.lastActivity, "shortDate"));
   }
 }
 function PowerBIDashboardComponent_ng_container_17_div_1_div_26_button_1_Template(rf, ctx) {
   if (rf & 1) {
-    const _r14 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 91);
+    const _r13 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 87);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_17_div_1_div_26_button_1_Template_button_click_0_listener() {
-      const page_r15 = \u0275\u0275restoreView(_r14).$implicit;
+      const page_r14 = \u0275\u0275restoreView(_r13).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(4);
-      return \u0275\u0275resetView(ctx_r0.changePage(page_r15));
+      return \u0275\u0275resetView(ctx_r0.changePage(page_r14));
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const page_r15 = ctx.$implicit;
+    const page_r14 = ctx.$implicit;
     const ctx_r0 = \u0275\u0275nextContext(4);
-    \u0275\u0275classProp("pg-btn--on", ctx_r0.currentPage === page_r15);
+    \u0275\u0275classProp("pg-btn--on", ctx_r0.currentPage === page_r14);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(page_r15);
+    \u0275\u0275textInterpolate(page_r14);
   }
 }
 function PowerBIDashboardComponent_ng_container_17_div_1_div_26_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 89);
-    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_17_div_1_div_26_button_1_Template, 2, 3, "button", 90);
+    \u0275\u0275elementStart(0, "div", 85);
+    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_17_div_1_div_26_button_1_Template, 2, 3, "button", 86);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -51969,7 +51941,7 @@ function PowerBIDashboardComponent_ng_container_17_div_1_div_26_Template(rf, ctx
 }
 function PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_44_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 92);
+    \u0275\u0275element(0, "apx-chart", 88);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
@@ -51978,7 +51950,7 @@ function PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_44_Template(r
 }
 function PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_51_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 93);
+    \u0275\u0275element(0, "apx-chart", 89);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
@@ -51987,35 +51959,35 @@ function PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_51_Template(r
 }
 function PowerBIDashboardComponent_ng_container_17_div_1_Template(rf, ctx) {
   if (rf & 1) {
-    const _r11 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div")(1, "div", 63)(2, "div", 44)(3, "div", 45)(4, "span", 46);
-    \u0275\u0275element(5, "i", 52);
+    const _r10 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div")(1, "div", 58)(2, "div", 43)(3, "div", 44)(4, "span", 45);
+    \u0275\u0275element(5, "i", 51);
     \u0275\u0275text(6, " Users");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "button", 64);
+    \u0275\u0275elementStart(7, "button", 59);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_17_div_1_Template_button_click_7_listener() {
-      \u0275\u0275restoreView(_r11);
+      \u0275\u0275restoreView(_r10);
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.exportUserListToCSV());
     });
-    \u0275\u0275element(8, "i", 65);
+    \u0275\u0275element(8, "i", 60);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "div", 66);
-    \u0275\u0275element(10, "i", 67);
-    \u0275\u0275elementStart(11, "input", 68);
+    \u0275\u0275elementStart(9, "div", 61);
+    \u0275\u0275element(10, "i", 62);
+    \u0275\u0275elementStart(11, "input", 63);
     \u0275\u0275twoWayListener("ngModelChange", function PowerBIDashboardComponent_ng_container_17_div_1_Template_input_ngModelChange_11_listener($event) {
-      \u0275\u0275restoreView(_r11);
+      \u0275\u0275restoreView(_r10);
       const ctx_r0 = \u0275\u0275nextContext(2);
       \u0275\u0275twoWayBindingSet(ctx_r0.userSearchQuery, $event) || (ctx_r0.userSearchQuery = $event);
       return \u0275\u0275resetView($event);
     });
     \u0275\u0275listener("input", function PowerBIDashboardComponent_ng_container_17_div_1_Template_input_input_11_listener() {
-      \u0275\u0275restoreView(_r11);
+      \u0275\u0275restoreView(_r10);
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.filterUsers());
     });
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(12, "div", 69)(13, "table", 70)(14, "thead")(15, "tr")(16, "th");
+    \u0275\u0275elementStart(12, "div", 64)(13, "table", 65)(14, "thead")(15, "tr")(16, "th");
     \u0275\u0275text(17, "User");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(18, "th");
@@ -52028,36 +52000,36 @@ function PowerBIDashboardComponent_ng_container_17_div_1_Template(rf, ctx) {
     \u0275\u0275text(23, "Last Active");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(24, "tbody");
-    \u0275\u0275template(25, PowerBIDashboardComponent_ng_container_17_div_1_tr_25_Template, 13, 10, "tr", 71);
+    \u0275\u0275template(25, PowerBIDashboardComponent_ng_container_17_div_1_tr_25_Template, 13, 10, "tr", 66);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275template(26, PowerBIDashboardComponent_ng_container_17_div_1_div_26_Template, 2, 1, "div", 72);
+    \u0275\u0275template(26, PowerBIDashboardComponent_ng_container_17_div_1_div_26_Template, 2, 1, "div", 67);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(27, "div", 73)(28, "div", 74);
-    \u0275\u0275element(29, "i", 75);
+    \u0275\u0275elementStart(27, "div", 68)(28, "div", 69);
+    \u0275\u0275element(29, "i", 70);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(30, "h3", 76);
+    \u0275\u0275elementStart(30, "h3", 71);
     \u0275\u0275text(31, "Deep User Insights");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(32, "p", 77);
+    \u0275\u0275elementStart(32, "p", 72);
     \u0275\u0275text(33, "Per-user workspace views, time spent per dashboard, consumption methods, and full activity timeline \u2014 all in one dedicated page.");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(34, "a", 78);
-    \u0275\u0275element(35, "i", 79);
+    \u0275\u0275elementStart(34, "a", 73);
+    \u0275\u0275element(35, "i", 74);
     \u0275\u0275text(36, " Open User Activity ");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(37, "div", 80)(38, "div", 44)(39, "div", 45)(40, "span", 46);
-    \u0275\u0275element(41, "i", 54);
+    \u0275\u0275elementStart(37, "div", 75)(38, "div", 43)(39, "div", 44)(40, "span", 45);
+    \u0275\u0275element(41, "i", 76);
     \u0275\u0275text(42, " User Activity Trend");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(43, "div", 48);
-    \u0275\u0275template(44, PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_44_Template, 1, 5, "apx-chart", 81);
+    \u0275\u0275elementStart(43, "div", 47);
+    \u0275\u0275template(44, PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_44_Template, 1, 5, "apx-chart", 77);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(45, "div", 44)(46, "div", 45)(47, "span", 46);
-    \u0275\u0275element(48, "i", 52);
+    \u0275\u0275elementStart(45, "div", 43)(46, "div", 44)(47, "span", 45);
+    \u0275\u0275element(48, "i", 51);
     \u0275\u0275text(49, " Top Users");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(50, "div", 48);
-    \u0275\u0275template(51, PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_51_Template, 1, 6, "apx-chart", 82);
+    \u0275\u0275elementStart(50, "div", 47);
+    \u0275\u0275template(51, PowerBIDashboardComponent_ng_container_17_div_1_apx_chart_51_Template, 1, 6, "apx-chart", 78);
     \u0275\u0275elementEnd()()()();
   }
   if (rf & 2) {
@@ -52074,7 +52046,25 @@ function PowerBIDashboardComponent_ng_container_17_div_1_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r0.topUsersChartOptions);
   }
 }
-function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_6_div_8_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_17_div_2_div_48_button_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r16 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 114);
+    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_17_div_2_div_48_button_5_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r16);
+      const ctx_r0 = \u0275\u0275nextContext(4);
+      return \u0275\u0275resetView(ctx_r0.userWsShowAll = !ctx_r0.userWsShowAll);
+    });
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r0.userWsShowAll ? "Show less" : "Show all (" + ctx_r0.groupedTabTimeSpent.length + ")", " ");
+  }
+}
+function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_7_div_8_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 123)(1, "div", 124)(2, "span", 125);
     \u0275\u0275text(3);
@@ -52099,17 +52089,29 @@ function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_6_div_8_Temp
     \u0275\u0275textInterpolate(ctx_r0.formatTimeSpent(item_r17.totalSeconds));
   }
 }
-function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_6_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_7_div_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 116)(1, "div", 117)(2, "span", 118);
-    \u0275\u0275element(3, "i", 119);
+    \u0275\u0275elementStart(0, "div", 128);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const group_r18 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" +", group_r18.items.length - 5, " more tabs ");
+  }
+}
+function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 115)(1, "div", 116)(2, "span", 117);
+    \u0275\u0275element(3, "i", 118);
     \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "span", 120);
+    \u0275\u0275elementStart(5, "span", 119);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 121);
-    \u0275\u0275template(8, PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_6_div_8_Template, 8, 4, "div", 122);
+    \u0275\u0275elementStart(7, "div", 120);
+    \u0275\u0275template(8, PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_7_div_8_Template, 8, 4, "div", 121)(9, PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_7_div_9_Template, 2, 1, "div", 122);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -52122,28 +52124,34 @@ function PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_6_Template(r
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(ctx_r0.formatTimeSpent(group_r18.totalSeconds));
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", group_r18.items);
+    \u0275\u0275property("ngForOf", group_r18.items.slice(0, ctx_r0.userWsShowAll ? 9999 : 5));
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r0.userWsShowAll && group_r18.items.length > 5);
   }
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_div_48_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 112)(1, "div", 45)(2, "span", 46);
-    \u0275\u0275element(3, "i", 113);
+    \u0275\u0275elementStart(0, "div", 109)(1, "div", 44)(2, "span", 45);
+    \u0275\u0275element(3, "i", 110);
     \u0275\u0275text(4, " Time by Workspace & Report");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(5, "div", 114);
-    \u0275\u0275template(6, PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_6_Template, 9, 4, "div", 115);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(5, PowerBIDashboardComponent_ng_container_17_div_2_div_48_button_5_Template, 2, 1, "button", 111);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "div", 112);
+    \u0275\u0275template(7, PowerBIDashboardComponent_ng_container_17_div_2_div_48_div_7_Template, 10, 5, "div", 113);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275advance(6);
-    \u0275\u0275property("ngForOf", ctx_r0.groupedTabTimeSpent);
+    \u0275\u0275advance(5);
+    \u0275\u0275property("ngIf", ctx_r0.groupedTabTimeSpent.length > 4);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r0.userWsShowAll ? ctx_r0.groupedTabTimeSpent : ctx_r0.groupedTabTimeSpent.slice(0, 4));
   }
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_56_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 128);
+    \u0275\u0275element(0, "apx-chart", 129);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
@@ -52152,8 +52160,8 @@ function PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_56_Template(r
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_ng_template_57_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 108);
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275element(1, "i", 104);
     \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3, "No time data");
     \u0275\u0275elementEnd()();
@@ -52161,7 +52169,7 @@ function PowerBIDashboardComponent_ng_container_17_div_2_ng_template_57_Template
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_65_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 128);
+    \u0275\u0275element(0, "apx-chart", 129);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
@@ -52170,8 +52178,8 @@ function PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_65_Template(r
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_ng_template_66_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 59);
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275element(1, "i", 56);
     \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3, "No report data");
     \u0275\u0275elementEnd()();
@@ -52179,7 +52187,7 @@ function PowerBIDashboardComponent_ng_container_17_div_2_ng_template_66_Template
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_74_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 129);
+    \u0275\u0275element(0, "apx-chart", 130);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
@@ -52188,8 +52196,8 @@ function PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_74_Template(r
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_ng_template_75_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 57);
-    \u0275\u0275element(1, "i", 130);
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275element(1, "i", 131);
     \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3, "No activity data");
     \u0275\u0275elementEnd()();
@@ -52197,85 +52205,85 @@ function PowerBIDashboardComponent_ng_container_17_div_2_ng_template_75_Template
 }
 function PowerBIDashboardComponent_ng_container_17_div_2_Template(rf, ctx) {
   if (rf & 1) {
-    const _r16 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div")(1, "div", 94)(2, "div", 95);
-    \u0275\u0275element(3, "app-avatar", 96);
-    \u0275\u0275elementStart(4, "div")(5, "h2", 97);
+    const _r15 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div")(1, "div", 90)(2, "div", 91);
+    \u0275\u0275element(3, "app-avatar", 92);
+    \u0275\u0275elementStart(4, "div")(5, "h2", 93);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 98);
+    \u0275\u0275elementStart(7, "p", 94);
     \u0275\u0275text(8);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(9, "button", 99);
+    \u0275\u0275elementStart(9, "button", 95);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_17_div_2_Template_button_click_9_listener() {
-      \u0275\u0275restoreView(_r16);
+      \u0275\u0275restoreView(_r15);
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.selectedUserId = null);
     });
-    \u0275\u0275element(10, "i", 100);
+    \u0275\u0275element(10, "i", 96);
     \u0275\u0275text(11, " All Users ");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(12, "div", 101)(13, "div", 32);
-    \u0275\u0275element(14, "i", 33);
-    \u0275\u0275elementStart(15, "div", 34)(16, "span", 35);
+    \u0275\u0275elementStart(12, "div", 97)(13, "div", 31);
+    \u0275\u0275element(14, "i", 32);
+    \u0275\u0275elementStart(15, "div", 33)(16, "span", 34);
     \u0275\u0275text(17, "Total Views");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(18, "span", 36);
+    \u0275\u0275elementStart(18, "span", 35);
     \u0275\u0275text(19);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(20, "div", 37);
-    \u0275\u0275element(21, "i", 40);
-    \u0275\u0275elementStart(22, "div", 34)(23, "span", 35);
+    \u0275\u0275elementStart(20, "div", 36);
+    \u0275\u0275element(21, "i", 39);
+    \u0275\u0275elementStart(22, "div", 33)(23, "span", 34);
     \u0275\u0275text(24, "Reports");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(25, "span", 36);
+    \u0275\u0275elementStart(25, "span", 35);
     \u0275\u0275text(26);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(27, "div", 39);
-    \u0275\u0275element(28, "i", 102);
-    \u0275\u0275elementStart(29, "div", 34)(30, "span", 35);
+    \u0275\u0275elementStart(27, "div", 38);
+    \u0275\u0275element(28, "i", 98);
+    \u0275\u0275elementStart(29, "div", 33)(30, "span", 34);
     \u0275\u0275text(31, "Workspaces");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(32, "span", 36);
+    \u0275\u0275elementStart(32, "span", 35);
     \u0275\u0275text(33);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(34, "div", 103);
-    \u0275\u0275element(35, "i", 104);
-    \u0275\u0275elementStart(36, "div", 34)(37, "span", 35);
+    \u0275\u0275elementStart(34, "div", 99);
+    \u0275\u0275element(35, "i", 100);
+    \u0275\u0275elementStart(36, "div", 33)(37, "span", 34);
     \u0275\u0275text(38, "Active Days");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(39, "span", 36);
+    \u0275\u0275elementStart(39, "span", 35);
     \u0275\u0275text(40);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(41, "div", 105);
-    \u0275\u0275element(42, "i", 106);
-    \u0275\u0275elementStart(43, "div", 34)(44, "span", 35);
+    \u0275\u0275elementStart(41, "div", 101);
+    \u0275\u0275element(42, "i", 102);
+    \u0275\u0275elementStart(43, "div", 33)(44, "span", 34);
     \u0275\u0275text(45, "Time Spent");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(46, "span", 36);
+    \u0275\u0275elementStart(46, "span", 35);
     \u0275\u0275text(47);
     \u0275\u0275elementEnd()()()();
-    \u0275\u0275template(48, PowerBIDashboardComponent_ng_container_17_div_2_div_48_Template, 7, 1, "div", 107);
-    \u0275\u0275elementStart(49, "div", 43)(50, "div", 44)(51, "div", 45)(52, "span", 46);
-    \u0275\u0275element(53, "i", 108);
+    \u0275\u0275template(48, PowerBIDashboardComponent_ng_container_17_div_2_div_48_Template, 8, 2, "div", 103);
+    \u0275\u0275elementStart(49, "div", 42)(50, "div", 43)(51, "div", 44)(52, "span", 45);
+    \u0275\u0275element(53, "i", 104);
     \u0275\u0275text(54, " Workspace Time");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(55, "div", 48);
-    \u0275\u0275template(56, PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_56_Template, 1, 7, "apx-chart", 109)(57, PowerBIDashboardComponent_ng_container_17_div_2_ng_template_57_Template, 4, 0, "ng-template", null, 4, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementStart(55, "div", 47);
+    \u0275\u0275template(56, PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_56_Template, 1, 7, "apx-chart", 105)(57, PowerBIDashboardComponent_ng_container_17_div_2_ng_template_57_Template, 4, 0, "ng-template", null, 3, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(59, "div", 44)(60, "div", 45)(61, "span", 46);
-    \u0275\u0275element(62, "i", 50);
+    \u0275\u0275elementStart(59, "div", 43)(60, "div", 44)(61, "span", 45);
+    \u0275\u0275element(62, "i", 49);
     \u0275\u0275text(63, " Top Reports");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(64, "div", 48);
-    \u0275\u0275template(65, PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_65_Template, 1, 7, "apx-chart", 109)(66, PowerBIDashboardComponent_ng_container_17_div_2_ng_template_66_Template, 4, 0, "ng-template", null, 5, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementStart(64, "div", 47);
+    \u0275\u0275template(65, PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_65_Template, 1, 7, "apx-chart", 105)(66, PowerBIDashboardComponent_ng_container_17_div_2_ng_template_66_Template, 4, 0, "ng-template", null, 4, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(68, "div", 110)(69, "div", 45)(70, "span", 46);
-    \u0275\u0275element(71, "i", 62);
+    \u0275\u0275elementStart(68, "div", 106)(69, "div", 44)(70, "span", 45);
+    \u0275\u0275element(71, "i", 107);
     \u0275\u0275text(72, " Activity Timeline");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(73, "div", 48);
-    \u0275\u0275template(74, PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_74_Template, 1, 4, "apx-chart", 111)(75, PowerBIDashboardComponent_ng_container_17_div_2_ng_template_75_Template, 4, 0, "ng-template", null, 6, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementStart(73, "div", 47);
+    \u0275\u0275template(74, PowerBIDashboardComponent_ng_container_17_div_2_apx_chart_74_Template, 1, 4, "apx-chart", 108)(75, PowerBIDashboardComponent_ng_container_17_div_2_ng_template_75_Template, 4, 0, "ng-template", null, 5, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()()()();
   }
   if (rf & 2) {
@@ -52312,7 +52320,7 @@ function PowerBIDashboardComponent_ng_container_17_div_2_Template(rf, ctx) {
 function PowerBIDashboardComponent_ng_container_17_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_17_div_1_Template, 52, 5, "div", 20)(2, PowerBIDashboardComponent_ng_container_17_div_2_Template, 77, 15, "div", 20);
+    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_17_div_1_Template, 52, 5, "div", 19)(2, PowerBIDashboardComponent_ng_container_17_div_2_Template, 77, 15, "div", 19);
     \u0275\u0275elementContainerEnd();
   }
   if (rf & 2) {
@@ -52325,8 +52333,8 @@ function PowerBIDashboardComponent_ng_container_17_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_ng_container_18_div_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 27);
-    \u0275\u0275element(1, "span", 28);
+    \u0275\u0275elementStart(0, "div", 26);
+    \u0275\u0275element(1, "span", 27);
     \u0275\u0275elementStart(2, "p");
     \u0275\u0275text(3, "Building access matrix\u2026");
     \u0275\u0275elementEnd()();
@@ -52334,8 +52342,8 @@ function PowerBIDashboardComponent_ng_container_18_div_1_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_ng_container_18_div_2_div_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 135);
-    \u0275\u0275element(1, "i", 136);
+    \u0275\u0275elementStart(0, "div", 136);
+    \u0275\u0275element(1, "i", 137);
     \u0275\u0275elementStart(2, "h4");
     \u0275\u0275text(3, "No dashboards found");
     \u0275\u0275elementEnd();
@@ -52349,274 +52357,218 @@ function PowerBIDashboardComponent_ng_container_18_div_2_div_4_Template(rf, ctx)
     \u0275\u0275textInterpolate1('No match for "', ctx_r0.dashboardAccessSearchQuery, '"');
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_17_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_span_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 148);
-    \u0275\u0275element(1, "i", 52);
+    \u0275\u0275elementStart(0, "span", 152);
+    \u0275\u0275element(1, "i", 153);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const report_r23 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", report_r23.assignedUsersCount - report_r23.activeUsersCount, " inactive ");
+  }
+}
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_13_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 154);
+    \u0275\u0275element(1, "i", 51);
     \u0275\u0275elementStart(2, "p");
     \u0275\u0275text(3, "No users found");
     \u0275\u0275elementEnd()();
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_12_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_div_7_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 148);
-    \u0275\u0275element(1, "i", 155);
-    \u0275\u0275elementStart(2, "p");
-    \u0275\u0275text(3, "No users match filters");
-    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(0, "div", 163);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const user_r24 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(user_r24.department);
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_tr_17_span_12_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_span_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 161);
+    \u0275\u0275elementStart(0, "span", 164);
     \u0275\u0275text(1, "Assigned");
     \u0275\u0275elementEnd();
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_tr_17_span_13_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_span_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 141);
+    \u0275\u0275elementStart(0, "span", 165);
     \u0275\u0275text(1, "External");
     \u0275\u0275elementEnd();
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_tr_17_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr", 157)(1, "td")(2, "div", 84);
-    \u0275\u0275element(3, "app-avatar", 85);
-    \u0275\u0275elementStart(4, "div")(5, "div", 86);
+    \u0275\u0275elementStart(0, "tr", 157)(1, "td")(2, "div", 80);
+    \u0275\u0275element(3, "app-avatar", 81);
+    \u0275\u0275elementStart(4, "div")(5, "div", 82);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "div", 158);
-    \u0275\u0275text(8);
-    \u0275\u0275elementEnd()()()();
-    \u0275\u0275elementStart(9, "td", 87);
-    \u0275\u0275text(10);
+    \u0275\u0275template(7, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_div_7_Template, 2, 1, "div", 158);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(8, "td");
+    \u0275\u0275template(9, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_span_9_Template, 2, 0, "span", 159)(10, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_span_10_Template, 2, 0, "span", 160);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "td");
-    \u0275\u0275template(12, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_tr_17_span_12_Template, 2, 0, "span", 159)(13, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_tr_17_span_13_Template, 2, 0, "span", 160);
+    \u0275\u0275elementStart(11, "td", 161);
+    \u0275\u0275text(12);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "td", 88);
-    \u0275\u0275text(15);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(16, "td", 87);
-    \u0275\u0275text(17);
-    \u0275\u0275pipe(18, "date");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(19, "td", 88);
-    \u0275\u0275text(20);
+    \u0275\u0275elementStart(13, "td", 162);
+    \u0275\u0275text(14);
+    \u0275\u0275pipe(15, "date");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const user_r25 = ctx.$implicit;
-    const ctx_r0 = \u0275\u0275nextContext(7);
+    const user_r24 = ctx.$implicit;
     \u0275\u0275advance(3);
-    \u0275\u0275property("name", user_r25.name);
+    \u0275\u0275property("name", user_r24.name);
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(user_r25.name);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r25.email);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r25.department);
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngIf", user_r25.hasAccess);
+    \u0275\u0275textInterpolate(user_r24.name);
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", !user_r25.hasAccess);
+    \u0275\u0275property("ngIf", user_r24.department && user_r24.department !== "\u2014");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r25.totalViews);
+    \u0275\u0275property("ngIf", user_r24.hasAccess);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !user_r24.hasAccess);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r25.lastActivity === "Never" ? "\u2014" : \u0275\u0275pipeBind2(18, 9, user_r25.lastActivity, "shortDate"));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(ctx_r0.formatTimeSpent(user_r25.estimatedTimeSpent));
+    \u0275\u0275textInterpolate(user_r24.totalViews);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", user_r24.lastActivity === "Never" ? "\u2014" : \u0275\u0275pipeBind2(15, 7, user_r24.lastActivity, "d MMM"), " ");
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_button_3_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_button_3_Template(rf, ctx) {
   if (rf & 1) {
-    const _r27 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 91);
-    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_button_3_Template_button_click_0_listener() {
-      const page_r28 = \u0275\u0275restoreView(_r27).$implicit;
-      const report_r24 = \u0275\u0275nextContext(4).$implicit;
+    const _r26 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 87);
+    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_button_3_Template_button_click_0_listener() {
+      const page_r27 = \u0275\u0275restoreView(_r26).$implicit;
+      const report_r23 = \u0275\u0275nextContext(3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(4);
-      return \u0275\u0275resetView(ctx_r0.changeReportPage(report_r24, page_r28));
+      return \u0275\u0275resetView(ctx_r0.changeReportPage(report_r23, page_r27));
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const page_r28 = ctx.$implicit;
-    const report_r24 = \u0275\u0275nextContext(4).$implicit;
-    \u0275\u0275classProp("pg-btn--on", report_r24.currentPage === page_r28);
+    const page_r27 = ctx.$implicit;
+    const report_r23 = \u0275\u0275nextContext(3).$implicit;
+    \u0275\u0275classProp("pg-btn--on", report_r23.currentPage === page_r27);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(page_r28);
+    \u0275\u0275textInterpolate(page_r27);
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_Template(rf, ctx) {
   if (rf & 1) {
-    const _r26 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 89)(1, "button", 162);
-    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_Template_button_click_1_listener() {
-      \u0275\u0275restoreView(_r26);
-      const report_r24 = \u0275\u0275nextContext(3).$implicit;
+    const _r25 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 85)(1, "button", 166);
+    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_Template_button_click_1_listener() {
+      \u0275\u0275restoreView(_r25);
+      const report_r23 = \u0275\u0275nextContext(2).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(4);
-      return \u0275\u0275resetView(ctx_r0.changeReportPage(report_r24, report_r24.currentPage - 1));
+      return \u0275\u0275resetView(ctx_r0.changeReportPage(report_r23, report_r23.currentPage - 1));
     });
-    \u0275\u0275element(2, "i", 163);
+    \u0275\u0275element(2, "i", 167);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(3, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_button_3_Template, 2, 3, "button", 90);
-    \u0275\u0275elementStart(4, "button", 162);
-    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_Template_button_click_4_listener() {
-      \u0275\u0275restoreView(_r26);
-      const report_r24 = \u0275\u0275nextContext(3).$implicit;
+    \u0275\u0275template(3, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_button_3_Template, 2, 3, "button", 86);
+    \u0275\u0275elementStart(4, "button", 166);
+    \u0275\u0275listener("click", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_Template_button_click_4_listener() {
+      \u0275\u0275restoreView(_r25);
+      const report_r23 = \u0275\u0275nextContext(2).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(4);
-      return \u0275\u0275resetView(ctx_r0.changeReportPage(report_r24, report_r24.currentPage + 1));
+      return \u0275\u0275resetView(ctx_r0.changeReportPage(report_r23, report_r23.currentPage + 1));
     });
-    \u0275\u0275element(5, "i", 164);
+    \u0275\u0275element(5, "i", 168);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const report_r24 = \u0275\u0275nextContext(3).$implicit;
+    const report_r23 = \u0275\u0275nextContext(2).$implicit;
     const ctx_r0 = \u0275\u0275nextContext(4);
     \u0275\u0275advance();
-    \u0275\u0275property("disabled", report_r24.currentPage === 1);
+    \u0275\u0275property("disabled", report_r23.currentPage === 1);
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", ctx_r0.getReportPageNumbers(report_r24));
+    \u0275\u0275property("ngForOf", ctx_r0.getReportPageNumbers(report_r23));
     \u0275\u0275advance();
-    \u0275\u0275property("disabled", report_r24.currentPage === ctx_r0.getReportPageNumbers(report_r24).length);
+    \u0275\u0275property("disabled", report_r23.currentPage === ctx_r0.getReportPageNumbers(report_r23).length);
   }
 }
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_Template(rf, ctx) {
+function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 69)(1, "table", 70)(2, "thead")(3, "tr")(4, "th");
+    \u0275\u0275elementStart(0, "div", 64)(1, "table", 65)(2, "thead")(3, "tr")(4, "th");
     \u0275\u0275text(5, "User");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(6, "th");
-    \u0275\u0275text(7, "Department");
+    \u0275\u0275text(7, "Access");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "th");
-    \u0275\u0275text(9, "Access");
+    \u0275\u0275elementStart(8, "th", 155);
+    \u0275\u0275text(9, "Views");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "th");
-    \u0275\u0275text(11, "Views");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "th");
-    \u0275\u0275text(13, "Last Viewed");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "th");
-    \u0275\u0275text(15, "Time Spent");
+    \u0275\u0275elementStart(10, "th", 155);
+    \u0275\u0275text(11, "Last Active");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(16, "tbody");
-    \u0275\u0275template(17, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_tr_17_Template, 21, 12, "tr", 156);
+    \u0275\u0275elementStart(12, "tbody");
+    \u0275\u0275template(13, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_tr_13_Template, 16, 10, "tr", 156);
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(18, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_div_18_Template, 6, 3, "div", 72);
+    \u0275\u0275template(14, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_div_14_Template, 6, 3, "div", 67);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const report_r24 = \u0275\u0275nextContext(2).$implicit;
+    const report_r23 = \u0275\u0275nextContext().$implicit;
     const ctx_r0 = \u0275\u0275nextContext(4);
-    \u0275\u0275advance(17);
-    \u0275\u0275property("ngForOf", ctx_r0.getPaginatedReportUsers(report_r24));
+    \u0275\u0275advance(13);
+    \u0275\u0275property("ngForOf", ctx_r0.getPaginatedReportUsers(report_r23));
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r0.getReportPageNumbers(report_r24).length > 1);
-  }
-}
-function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r23 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div")(1, "div", 149)(2, "div", 66);
-    \u0275\u0275element(3, "i", 67);
-    \u0275\u0275elementStart(4, "input", 68);
-    \u0275\u0275twoWayListener("ngModelChange", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_Template_input_ngModelChange_4_listener($event) {
-      \u0275\u0275restoreView(_r23);
-      const report_r24 = \u0275\u0275nextContext().$implicit;
-      \u0275\u0275twoWayBindingSet(report_r24.searchQuery, $event) || (report_r24.searchQuery = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275listener("input", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_Template_input_input_4_listener() {
-      \u0275\u0275restoreView(_r23);
-      const report_r24 = \u0275\u0275nextContext().$implicit;
-      return \u0275\u0275resetView(report_r24.currentPage = 1);
-    });
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(5, "select", 150);
-    \u0275\u0275twoWayListener("ngModelChange", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_Template_select_ngModelChange_5_listener($event) {
-      \u0275\u0275restoreView(_r23);
-      const report_r24 = \u0275\u0275nextContext().$implicit;
-      \u0275\u0275twoWayBindingSet(report_r24.accessFilter, $event) || (report_r24.accessFilter = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275listener("change", function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_Template_select_change_5_listener() {
-      \u0275\u0275restoreView(_r23);
-      const report_r24 = \u0275\u0275nextContext().$implicit;
-      return \u0275\u0275resetView(report_r24.currentPage = 1);
-    });
-    \u0275\u0275elementStart(6, "option", 151);
-    \u0275\u0275text(7, "All Users");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "option", 152);
-    \u0275\u0275text(9, "Assigned Only");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "option", 153);
-    \u0275\u0275text(11, "External Only");
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275template(12, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_12_Template, 4, 0, "div", 147)(13, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_div_13_Template, 19, 2, "div", 154);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const report_r24 = \u0275\u0275nextContext().$implicit;
-    const ctx_r0 = \u0275\u0275nextContext(4);
-    \u0275\u0275advance(4);
-    \u0275\u0275twoWayProperty("ngModel", report_r24.searchQuery);
-    \u0275\u0275advance();
-    \u0275\u0275twoWayProperty("ngModel", report_r24.accessFilter);
-    \u0275\u0275advance(7);
-    \u0275\u0275property("ngIf", ctx_r0.getReportUsersTotalCount(report_r24) === 0);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r0.getReportUsersTotalCount(report_r24) > 0);
+    \u0275\u0275property("ngIf", ctx_r0.getReportPageNumbers(report_r23).length > 1);
   }
 }
 function PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 139)(1, "div", 140)(2, "div")(3, "span", 141);
-    \u0275\u0275text(4, "Power BI Report");
+    \u0275\u0275elementStart(0, "div", 140)(1, "div", 141)(2, "h3", 142);
+    \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "h3", 142);
-    \u0275\u0275text(6);
+    \u0275\u0275elementStart(4, "div", 143)(5, "span", 144);
+    \u0275\u0275element(6, "i", 145);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "span", 146);
+    \u0275\u0275element(9, "i", 147);
+    \u0275\u0275text(10);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(11, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_span_11_Template, 3, 1, "span", 148);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 143)(8, "span", 144);
-    \u0275\u0275text(9, "Assigned ");
-    \u0275\u0275elementStart(10, "strong");
-    \u0275\u0275text(11);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(12, "span", 145);
-    \u0275\u0275text(13, "Active ");
-    \u0275\u0275elementStart(14, "strong");
-    \u0275\u0275text(15);
-    \u0275\u0275elementEnd()()()();
-    \u0275\u0275elementStart(16, "div", 146);
-    \u0275\u0275template(17, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_17_Template, 4, 0, "div", 147)(18, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_18_Template, 14, 4, "div", 20);
+    \u0275\u0275elementStart(12, "div", 149);
+    \u0275\u0275template(13, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_13_Template, 4, 0, "div", 150)(14, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_div_14_Template, 15, 2, "div", 151);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const report_r24 = ctx.$implicit;
+    const report_r23 = ctx.$implicit;
     const ctx_r0 = \u0275\u0275nextContext(4);
-    \u0275\u0275advance(6);
-    \u0275\u0275textInterpolate(ctx_r0.transformDisplayName(report_r24.reportName));
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate(report_r24.assignedUsersCount);
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate(report_r24.activeUsersCount);
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngIf", report_r24.users.length === 0);
+    \u0275\u0275property("title", ctx_r0.transformDisplayName(report_r23.reportName));
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", report_r24.users.length > 0);
+    \u0275\u0275textInterpolate1(" ", ctx_r0.transformDisplayName(report_r23.reportName), " ");
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1(" ", report_r23.assignedUsersCount, " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", report_r23.activeUsersCount, " active ");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", report_r23.assignedUsersCount - report_r23.activeUsersCount > 0);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", report_r23.users.length === 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", report_r23.users.length > 0);
   }
 }
 function PowerBIDashboardComponent_ng_container_18_div_2_div_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 137);
-    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_Template, 19, 5, "div", 138);
+    \u0275\u0275elementStart(0, "div", 138);
+    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_18_div_2_div_5_div_1_Template, 15, 7, "div", 139);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -52628,9 +52580,9 @@ function PowerBIDashboardComponent_ng_container_18_div_2_div_5_Template(rf, ctx)
 function PowerBIDashboardComponent_ng_container_18_div_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r22 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div")(1, "div", 131);
-    \u0275\u0275element(2, "i", 67);
-    \u0275\u0275elementStart(3, "input", 132);
+    \u0275\u0275elementStart(0, "div")(1, "div", 132);
+    \u0275\u0275element(2, "i", 62);
+    \u0275\u0275elementStart(3, "input", 133);
     \u0275\u0275twoWayListener("ngModelChange", function PowerBIDashboardComponent_ng_container_18_div_2_Template_input_ngModelChange_3_listener($event) {
       \u0275\u0275restoreView(_r22);
       const ctx_r0 = \u0275\u0275nextContext(2);
@@ -52638,7 +52590,7 @@ function PowerBIDashboardComponent_ng_container_18_div_2_Template(rf, ctx) {
       return \u0275\u0275resetView($event);
     });
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(4, PowerBIDashboardComponent_ng_container_18_div_2_div_4_Template, 6, 1, "div", 133)(5, PowerBIDashboardComponent_ng_container_18_div_2_div_5_Template, 2, 1, "div", 134);
+    \u0275\u0275template(4, PowerBIDashboardComponent_ng_container_18_div_2_div_4_Template, 6, 1, "div", 134)(5, PowerBIDashboardComponent_ng_container_18_div_2_div_5_Template, 2, 1, "div", 135);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -52654,7 +52606,7 @@ function PowerBIDashboardComponent_ng_container_18_div_2_Template(rf, ctx) {
 function PowerBIDashboardComponent_ng_container_18_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_18_div_1_Template, 4, 0, "div", 18)(2, PowerBIDashboardComponent_ng_container_18_div_2_Template, 6, 3, "div", 20);
+    \u0275\u0275template(1, PowerBIDashboardComponent_ng_container_18_div_1_Template, 4, 0, "div", 17)(2, PowerBIDashboardComponent_ng_container_18_div_2_Template, 6, 3, "div", 19);
     \u0275\u0275elementContainerEnd();
   }
   if (rf & 2) {
@@ -52667,8 +52619,8 @@ function PowerBIDashboardComponent_ng_container_18_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_19_div_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 175);
-    \u0275\u0275element(1, "span", 176);
+    \u0275\u0275elementStart(0, "div", 179);
+    \u0275\u0275element(1, "span", 180);
     \u0275\u0275elementStart(2, "p");
     \u0275\u0275text(3, "Loading\u2026");
     \u0275\u0275elementEnd()();
@@ -52676,58 +52628,58 @@ function PowerBIDashboardComponent_div_19_div_9_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_19_div_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 177)(1, "div")(2, "div", 178);
+    \u0275\u0275elementStart(0, "div", 181)(1, "div")(2, "div", 182);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 179);
+    \u0275\u0275elementStart(4, "div", 183);
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(6, "span", 161);
+    \u0275\u0275elementStart(6, "span", 164);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const report_r30 = ctx.$implicit;
+    const report_r29 = ctx.$implicit;
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(report_r30.reportName || "Unnamed Report");
+    \u0275\u0275textInterpolate(report_r29.reportName || "Unnamed Report");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(report_r30.workspaceName);
+    \u0275\u0275textInterpolate(report_r29.workspaceName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", report_r30.count, " ", report_r30.count === 1 ? "view" : "views", "");
+    \u0275\u0275textInterpolate2("", report_r29.count, " ", report_r29.count === 1 ? "view" : "views", "");
   }
 }
 function PowerBIDashboardComponent_div_19_Template(rf, ctx) {
   if (rf & 1) {
-    const _r29 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 165);
+    const _r28 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 169);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_19_Template_div_click_0_listener() {
-      \u0275\u0275restoreView(_r29);
+      \u0275\u0275restoreView(_r28);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closeDatePopup());
     });
-    \u0275\u0275elementStart(1, "div", 166);
+    \u0275\u0275elementStart(1, "div", 170);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_19_Template_div_click_1_listener($event) {
-      \u0275\u0275restoreView(_r29);
+      \u0275\u0275restoreView(_r28);
       return \u0275\u0275resetView($event.stopPropagation());
     });
-    \u0275\u0275elementStart(2, "div", 167)(3, "h3");
+    \u0275\u0275elementStart(2, "div", 171)(3, "h3");
     \u0275\u0275text(4);
     \u0275\u0275pipe(5, "date");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "button", 168);
+    \u0275\u0275elementStart(6, "button", 172);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_19_Template_button_click_6_listener() {
-      \u0275\u0275restoreView(_r29);
+      \u0275\u0275restoreView(_r28);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closeDatePopup());
     });
-    \u0275\u0275element(7, "i", 169);
+    \u0275\u0275element(7, "i", 173);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "div", 170);
-    \u0275\u0275template(9, PowerBIDashboardComponent_div_19_div_9_Template, 4, 0, "div", 171)(10, PowerBIDashboardComponent_div_19_div_10_Template, 8, 4, "div", 172);
+    \u0275\u0275elementStart(8, "div", 174);
+    \u0275\u0275template(9, PowerBIDashboardComponent_div_19_div_9_Template, 4, 0, "div", 175)(10, PowerBIDashboardComponent_div_19_div_10_Template, 8, 4, "div", 176);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "div", 173)(12, "button", 174);
+    \u0275\u0275elementStart(11, "div", 177)(12, "button", 178);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_19_Template_button_click_12_listener() {
-      \u0275\u0275restoreView(_r29);
+      \u0275\u0275restoreView(_r28);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closeDatePopup());
     });
@@ -52746,7 +52698,7 @@ function PowerBIDashboardComponent_div_19_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_20_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 182);
+    \u0275\u0275elementStart(0, "span", 186);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -52758,35 +52710,35 @@ function PowerBIDashboardComponent_div_20_span_5_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_20_div_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 177)(1, "div", 84);
-    \u0275\u0275element(2, "app-avatar", 85);
-    \u0275\u0275elementStart(3, "div")(4, "div", 86);
+    \u0275\u0275elementStart(0, "div", 181)(1, "div", 80);
+    \u0275\u0275element(2, "app-avatar", 81);
+    \u0275\u0275elementStart(3, "div")(4, "div", 82);
     \u0275\u0275text(5);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "div", 183);
+    \u0275\u0275elementStart(6, "div", 187);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(8, "span", 184);
+    \u0275\u0275elementStart(8, "span", 188);
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "date");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const user_r32 = ctx.$implicit;
+    const user_r31 = ctx.$implicit;
     \u0275\u0275advance(2);
-    \u0275\u0275property("name", user_r32.name || user_r32.id);
+    \u0275\u0275property("name", user_r31.name || user_r31.id);
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(user_r32.name || user_r32.id);
+    \u0275\u0275textInterpolate(user_r31.name || user_r31.id);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1("", user_r32.totalViews, " views");
+    \u0275\u0275textInterpolate1("", user_r31.totalViews, " views");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", user_r32.lastActivity === "Never" ? "Never" : \u0275\u0275pipeBind2(10, 4, user_r32.lastActivity, "shortDate"), " ");
+    \u0275\u0275textInterpolate1(" ", user_r31.lastActivity === "Never" ? "Never" : \u0275\u0275pipeBind2(10, 4, user_r31.lastActivity, "shortDate"), " ");
   }
 }
 function PowerBIDashboardComponent_div_20_div_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 135);
-    \u0275\u0275element(1, "i", 52);
+    \u0275\u0275elementStart(0, "div", 136);
+    \u0275\u0275element(1, "i", 51);
     \u0275\u0275elementStart(2, "p");
     \u0275\u0275text(3, "No users found");
     \u0275\u0275elementEnd()();
@@ -52794,36 +52746,36 @@ function PowerBIDashboardComponent_div_20_div_10_Template(rf, ctx) {
 }
 function PowerBIDashboardComponent_div_20_Template(rf, ctx) {
   if (rf & 1) {
-    const _r31 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 165);
+    const _r30 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 169);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_20_Template_div_click_0_listener() {
-      \u0275\u0275restoreView(_r31);
+      \u0275\u0275restoreView(_r30);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closeUserListModal());
     });
-    \u0275\u0275elementStart(1, "div", 180);
+    \u0275\u0275elementStart(1, "div", 184);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_20_Template_div_click_1_listener($event) {
-      \u0275\u0275restoreView(_r31);
+      \u0275\u0275restoreView(_r30);
       return \u0275\u0275resetView($event.stopPropagation());
     });
-    \u0275\u0275elementStart(2, "div", 167)(3, "h3");
+    \u0275\u0275elementStart(2, "div", 171)(3, "h3");
     \u0275\u0275text(4);
-    \u0275\u0275template(5, PowerBIDashboardComponent_div_20_span_5_Template, 2, 1, "span", 181);
+    \u0275\u0275template(5, PowerBIDashboardComponent_div_20_span_5_Template, 2, 1, "span", 185);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "button", 168);
+    \u0275\u0275elementStart(6, "button", 172);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_20_Template_button_click_6_listener() {
-      \u0275\u0275restoreView(_r31);
+      \u0275\u0275restoreView(_r30);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closeUserListModal());
     });
-    \u0275\u0275element(7, "i", 169);
+    \u0275\u0275element(7, "i", 173);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "div", 170);
-    \u0275\u0275template(9, PowerBIDashboardComponent_div_20_div_9_Template, 11, 7, "div", 172)(10, PowerBIDashboardComponent_div_20_div_10_Template, 4, 0, "div", 133);
+    \u0275\u0275elementStart(8, "div", 174);
+    \u0275\u0275template(9, PowerBIDashboardComponent_div_20_div_9_Template, 11, 7, "div", 176)(10, PowerBIDashboardComponent_div_20_div_10_Template, 4, 0, "div", 134);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "div", 173)(12, "button", 174);
+    \u0275\u0275elementStart(11, "div", 177)(12, "button", 178);
     \u0275\u0275listener("click", function PowerBIDashboardComponent_div_20_Template_button_click_12_listener() {
-      \u0275\u0275restoreView(_r31);
+      \u0275\u0275restoreView(_r30);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closeUserListModal());
     });
@@ -52883,6 +52835,7 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
   activeView = "workspace";
   trackingStarted = false;
   selectedUserId = null;
+  userWsShowAll = false;
   dashboardAccessData = [];
   loadingAccessMatrix = false;
   dashboardAccessSearchQuery = "";
@@ -54176,24 +54129,24 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
         return ctx.onBeforeUnload();
       }, false, \u0275\u0275resolveWindow);
     }
-  }, inputs: { activeDashboard: "activeDashboard" }, outputs: { dashboardChange: "dashboardChange" }, decls: 21, vars: 11, consts: [["noData", ""], ["noRpt", ""], ["noUsers", ""], ["noTrend", ""], ["noWs", ""], ["noRpts", ""], ["noAct", ""], [1, "pg-wrap"], [1, "pg-header"], [1, "pg-header-left"], [1, "pg-title"], ["class", "pg-refresh", 4, "ngIf"], [1, "pg-header-right"], ["class", "ctrl-group", 4, "ngIf"], [1, "ctrl-group"], [1, "ctrl-label"], [1, "pill-row"], ["class", "pill", 3, "pill--on", "click", 4, "ngFor", "ngForOf"], ["class", "state-loader", 4, "ngIf"], ["class", "state-error", 4, "ngIf"], [4, "ngIf"], ["class", "modal-backdrop", 3, "click", 4, "ngIf"], [1, "pg-refresh"], [1, "pg-live-dot"], ["optionLabel", "name", "optionValue", "id", "filterBy", "name", "styleClass", "pg-dropdown", 3, "ngModelChange", "onChange", "options", "ngModel", "filter"], ["optionLabel", "name", "optionValue", "id", "filterBy", "name", "placeholder", "All Reports", "styleClass", "pg-dropdown", 3, "ngModelChange", "onChange", "options", "ngModel", "filter", "showClear", "disabled"], [1, "pill", 3, "click"], [1, "state-loader"], [1, "spinner"], [1, "state-error"], [1, "pi", "pi-exclamation-triangle"], [1, "kpi-row"], [1, "kpi-card", "kpi--blue"], [1, "pi", "pi-eye", "kpi-icon"], [1, "kpi-body"], [1, "kpi-label"], [1, "kpi-value"], [1, "kpi-card", "kpi--indigo"], [1, "pi", "pi-users", "kpi-icon"], [1, "kpi-card", "kpi--teal"], [1, "pi", "pi-file", "kpi-icon"], ["title", "Click to view", 1, "kpi-card", "kpi--slate", 2, "cursor", "pointer", 3, "click"], [1, "pi", "pi-user-minus", "kpi-icon"], [1, "chart-grid", "chart-grid--2"], [1, "card"], [1, "card-header"], [1, "card-title"], [1, "pi", "pi-chart-line"], [1, "chart-body"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "stroke", "fill", "tooltip", "grid", 4, "ngIf", "ngIfElse"], [1, "pi", "pi-sort-amount-down"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "plotOptions", "dataLabels", "tooltip", 4, "ngIf", "ngIfElse"], [1, "pi", "pi-users"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "plotOptions", "dataLabels", "colors", "tooltip", 4, "ngIf", "ngIfElse"], [1, "pi", "pi-chart-bar"], ["height", "260", 3, "series", "chart", "xaxis", "stroke", "colors", 4, "ngIf", "ngIfElse"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "stroke", "fill", "tooltip", "grid"], [1, "chart-empty"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "plotOptions", "dataLabels", "tooltip"], [1, "pi", "pi-file"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "plotOptions", "dataLabels", "colors", "tooltip"], ["height", "260", 3, "series", "chart", "xaxis", "stroke", "colors"], [1, "pi", "pi-calendar"], [1, "user-split"], ["title", "Export CSV", 1, "icon-btn", 3, "click"], [1, "pi", "pi-download"], [1, "search-wrap"], [1, "pi", "pi-search", "search-icon"], ["type", "text", "placeholder", "Search users\u2026", 1, "search-input", 3, "ngModelChange", "input", "ngModel"], [1, "table-wrap"], [1, "data-table"], ["class", "tbl-row", 3, "tbl-row--sel", "click", 4, "ngFor", "ngForOf"], ["class", "pagination", 4, "ngIf"], [1, "promo-card"], [1, "promo-icon-wrap"], [1, "pi", "pi-chart-scatter"], [1, "promo-title"], [1, "promo-body"], ["routerLink", "/users", 1, "promo-btn"], [1, "pi", "pi-arrow-right"], [1, "chart-grid", "chart-grid--2", 2, "margin-top", "1.25rem"], ["height", "240", 3, "series", "chart", "xaxis", "stroke", "colors", 4, "ngIf"], ["height", "240", 3, "series", "chart", "xaxis", "plotOptions", "dataLabels", "colors", 4, "ngIf"], [1, "tbl-row", 3, "click"], [1, "user-cell"], [3, "name"], [1, "user-name"], [1, "t-muted"], [1, "t-bold"], [1, "pagination"], ["class", "pg-btn", 3, "pg-btn--on", "click", 4, "ngFor", "ngForOf"], [1, "pg-btn", 3, "click"], ["height", "240", 3, "series", "chart", "xaxis", "stroke", "colors"], ["height", "240", 3, "series", "chart", "xaxis", "plotOptions", "dataLabels", "colors"], [1, "card", "detail-header-card"], [1, "detail-user-id"], [1, "avatar-lg", 3, "name"], [1, "detail-name"], [1, "detail-email"], [1, "back-btn", 3, "click"], [1, "pi", "pi-arrow-left"], [1, "kpi-row", "kpi-row--5"], [1, "pi", "pi-server", "kpi-icon"], [1, "kpi-card", "kpi--violet"], [1, "pi", "pi-calendar", "kpi-icon"], [1, "kpi-card", "kpi--amber"], [1, "pi", "pi-clock", "kpi-icon"], ["class", "card time-card", 4, "ngIf"], [1, "pi", "pi-chart-pie"], ["height", "300", 3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip", 4, "ngIf", "ngIfElse"], [1, "card", "card--wide"], ["height", "240", 3, "series", "chart", "xaxis", "colors", 4, "ngIf", "ngIfElse"], [1, "card", "time-card"], [1, "pi", "pi-clock"], [1, "ws-grid"], ["class", "ws-box", 4, "ngFor", "ngForOf"], [1, "ws-box"], [1, "ws-box-header"], [1, "ws-name", 3, "title"], [1, "pi", "pi-folder"], [1, "ws-total"], [1, "ws-items"], ["class", "ws-item", 4, "ngFor", "ngForOf"], [1, "ws-item"], [1, "ws-item-left"], [1, "ws-item-report", 3, "title"], [1, "ws-item-tab"], [1, "time-badge"], ["height", "300", 3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip"], ["height", "240", 3, "series", "chart", "xaxis", "colors"], [1, "pi", "pi-calendar-times"], [1, "search-wrap", "search-wrap--lg"], ["type", "text", "placeholder", "Search dashboards\u2026", 1, "search-input", 3, "ngModelChange", "ngModel"], ["class", "empty-state", 4, "ngIf"], ["class", "access-list", 4, "ngIf"], [1, "empty-state"], [1, "pi", "pi-search"], [1, "access-list"], ["class", "card access-card", 4, "ngFor", "ngForOf"], [1, "card", "access-card"], [1, "access-card-head"], [1, "badge", "badge--slate"], [1, "access-report-name"], [1, "access-stats"], [1, "stat-chip"], [1, "stat-chip", "stat-chip--blue"], [1, "access-card-body"], ["class", "empty-state empty-state--sm", 4, "ngIf"], [1, "empty-state", "empty-state--sm"], [1, "access-controls"], [1, "native-select", 3, "ngModelChange", "change", "ngModel"], ["value", "all"], ["value", "assigned"], ["value", "external"], ["class", "table-wrap", 4, "ngIf"], [1, "pi", "pi-filter-slash"], ["class", "tbl-row", 4, "ngFor", "ngForOf"], [1, "tbl-row"], [1, "user-email"], ["class", "badge badge--blue", 4, "ngIf"], ["class", "badge badge--slate", 4, "ngIf"], [1, "badge", "badge--blue"], [1, "pg-btn", 3, "click", "disabled"], [1, "pi", "pi-chevron-left"], [1, "pi", "pi-chevron-right"], [1, "modal-backdrop", 3, "click"], [1, "modal", 3, "click"], [1, "modal-head"], [1, "modal-close", 3, "click"], [1, "pi", "pi-times"], [1, "modal-body"], ["class", "state-loader state-loader--sm", 4, "ngIf"], ["class", "popup-row", 4, "ngFor", "ngForOf"], [1, "modal-foot"], [1, "outline-btn", 3, "click"], [1, "state-loader", "state-loader--sm"], [1, "spinner", "spinner--sm"], [1, "popup-row"], [1, "popup-report"], [1, "popup-ws", "t-muted"], [1, "modal", "modal--lg", 3, "click"], ["class", "badge badge--slate", "style", "margin-left:.5rem", 4, "ngIf"], [1, "badge", "badge--slate", 2, "margin-left", ".5rem"], [1, "t-muted", 2, "font-size", ".7rem"], [1, "t-muted", 2, "font-size", ".72rem", "white-space", "nowrap"]], template: function PowerBIDashboardComponent_Template(rf, ctx) {
+  }, inputs: { activeDashboard: "activeDashboard" }, outputs: { dashboardChange: "dashboardChange" }, decls: 21, vars: 11, consts: [["noData", ""], ["noRpt", ""], ["noUsers", ""], ["noWs", ""], ["noRpts", ""], ["noAct", ""], [1, "pg-wrap"], [1, "pg-header"], [1, "pg-header-left"], [1, "pg-title"], ["class", "pg-refresh", 4, "ngIf"], [1, "pg-header-right"], ["class", "ctrl-group", 4, "ngIf"], [1, "ctrl-group"], [1, "ctrl-label"], [1, "pill-row"], ["class", "pill", 3, "pill--on", "click", 4, "ngFor", "ngForOf"], ["class", "state-loader", 4, "ngIf"], ["class", "state-error", 4, "ngIf"], [4, "ngIf"], ["class", "modal-backdrop", 3, "click", 4, "ngIf"], [1, "pg-refresh"], [1, "pg-live-dot"], ["optionLabel", "name", "optionValue", "id", "filterBy", "name", "styleClass", "pg-dropdown", 3, "ngModelChange", "onChange", "options", "ngModel", "filter"], ["optionLabel", "name", "optionValue", "id", "filterBy", "name", "placeholder", "All Reports", "styleClass", "pg-dropdown", 3, "ngModelChange", "onChange", "options", "ngModel", "filter", "showClear", "disabled"], [1, "pill", 3, "click"], [1, "state-loader"], [1, "spinner"], [1, "state-error"], [1, "pi", "pi-exclamation-triangle"], [1, "kpi-row"], [1, "kpi-card", "kpi--blue"], [1, "pi", "pi-eye", "kpi-icon"], [1, "kpi-body"], [1, "kpi-label"], [1, "kpi-value"], [1, "kpi-card", "kpi--indigo"], [1, "pi", "pi-users", "kpi-icon"], [1, "kpi-card", "kpi--teal"], [1, "pi", "pi-file", "kpi-icon"], ["title", "Click to view", 1, "kpi-card", "kpi--slate", 2, "cursor", "pointer", 3, "click"], [1, "pi", "pi-user-minus", "kpi-icon"], [1, "chart-grid", "chart-grid--2"], [1, "card"], [1, "card-header"], [1, "card-title"], [1, "pi", "pi-chart-line"], [1, "chart-body"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "stroke", "fill", "tooltip", "grid", 4, "ngIf", "ngIfElse"], [1, "pi", "pi-sort-amount-down"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "plotOptions", "dataLabels", "tooltip", 4, "ngIf", "ngIfElse"], [1, "pi", "pi-users"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "plotOptions", "dataLabels", "colors", "tooltip", 4, "ngIf", "ngIfElse"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "stroke", "fill", "tooltip", "grid"], [1, "chart-empty"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "colors", "plotOptions", "dataLabels", "tooltip"], [1, "pi", "pi-file"], ["height", "260", 3, "series", "chart", "xaxis", "yaxis", "plotOptions", "dataLabels", "colors", "tooltip"], [1, "user-split"], ["title", "Export CSV", 1, "icon-btn", 3, "click"], [1, "pi", "pi-download"], [1, "search-wrap"], [1, "pi", "pi-search", "search-icon"], ["type", "text", "placeholder", "Search users\u2026", 1, "search-input", 3, "ngModelChange", "input", "ngModel"], [1, "table-wrap"], [1, "data-table"], ["class", "tbl-row", 3, "tbl-row--sel", "click", 4, "ngFor", "ngForOf"], ["class", "pagination", 4, "ngIf"], [1, "promo-card"], [1, "promo-icon-wrap"], [1, "pi", "pi-chart-scatter"], [1, "promo-title"], [1, "promo-body"], ["routerLink", "/users", 1, "promo-btn"], [1, "pi", "pi-arrow-right"], [1, "chart-grid", "chart-grid--2", 2, "margin-top", "1.25rem"], [1, "pi", "pi-chart-bar"], ["height", "240", 3, "series", "chart", "xaxis", "stroke", "colors", 4, "ngIf"], ["height", "240", 3, "series", "chart", "xaxis", "plotOptions", "dataLabels", "colors", 4, "ngIf"], [1, "tbl-row", 3, "click"], [1, "user-cell"], [3, "name"], [1, "user-name"], [1, "t-muted"], [1, "t-bold"], [1, "pagination"], ["class", "pg-btn", 3, "pg-btn--on", "click", 4, "ngFor", "ngForOf"], [1, "pg-btn", 3, "click"], ["height", "240", 3, "series", "chart", "xaxis", "stroke", "colors"], ["height", "240", 3, "series", "chart", "xaxis", "plotOptions", "dataLabels", "colors"], [1, "card", "detail-header-card"], [1, "detail-user-id"], [1, "avatar-lg", 3, "name"], [1, "detail-name"], [1, "detail-email"], [1, "back-btn", 3, "click"], [1, "pi", "pi-arrow-left"], [1, "kpi-row", "kpi-row--5"], [1, "pi", "pi-server", "kpi-icon"], [1, "kpi-card", "kpi--violet"], [1, "pi", "pi-calendar", "kpi-icon"], [1, "kpi-card", "kpi--amber"], [1, "pi", "pi-clock", "kpi-icon"], ["class", "card time-card", 4, "ngIf"], [1, "pi", "pi-chart-pie"], ["height", "300", 3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip", 4, "ngIf", "ngIfElse"], [1, "card", "card--wide"], [1, "pi", "pi-calendar"], ["height", "240", 3, "series", "chart", "xaxis", "colors", 4, "ngIf", "ngIfElse"], [1, "card", "time-card"], [1, "pi", "pi-clock"], ["style", "font-size:.68rem;font-weight:600;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;", 3, "click", 4, "ngIf"], [1, "ws-grid"], ["class", "ws-box", 4, "ngFor", "ngForOf"], [2, "font-size", ".68rem", "font-weight", "600", "color", "#2563eb", "background", "none", "border", "none", "cursor", "pointer", "padding", "0", 3, "click"], [1, "ws-box"], [1, "ws-box-header"], [1, "ws-name", 3, "title"], [1, "pi", "pi-folder"], [1, "ws-total"], [1, "ws-items"], ["class", "ws-item", 4, "ngFor", "ngForOf"], ["style", "padding:.3rem .55rem;font-size:.65rem;color:#94a3b8;", 4, "ngIf"], [1, "ws-item"], [1, "ws-item-left"], [1, "ws-item-report", 3, "title"], [1, "ws-item-tab"], [1, "time-badge"], [2, "padding", ".3rem .55rem", "font-size", ".65rem", "color", "#94a3b8"], ["height", "300", 3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip"], ["height", "240", 3, "series", "chart", "xaxis", "colors"], [1, "pi", "pi-calendar-times"], [1, "search-wrap", "search-wrap--lg"], ["type", "text", "placeholder", "Search dashboards\u2026", 1, "search-input", 3, "ngModelChange", "ngModel"], ["class", "empty-state", 4, "ngIf"], ["class", "access-list", 4, "ngIf"], [1, "empty-state"], [1, "pi", "pi-search"], [1, "access-list"], ["class", "card access-card", 4, "ngFor", "ngForOf"], [1, "card", "access-card"], [1, "access-card-head"], [1, "access-report-name", 3, "title"], [1, "access-stats"], [1, "stat-chip"], [1, "pi", "pi-users", 2, "font-size", ".6rem", "margin-right", ".2rem"], [1, "stat-chip", "stat-chip--blue"], [1, "pi", "pi-check", 2, "font-size", ".6rem", "margin-right", ".2rem"], ["class", "stat-chip stat-chip--red", 4, "ngIf"], [1, "access-card-body"], ["class", "empty-state empty-state--sm", 4, "ngIf"], ["class", "table-wrap", 4, "ngIf"], [1, "stat-chip", "stat-chip--red"], [1, "pi", "pi-ban", 2, "font-size", ".6rem", "margin-right", ".2rem"], [1, "empty-state", "empty-state--sm"], [2, "text-align", "right"], ["class", "tbl-row", 4, "ngFor", "ngForOf"], [1, "tbl-row"], ["class", "user-email", 4, "ngIf"], ["class", "badge badge--blue", 4, "ngIf"], ["class", "badge badge--slate", 4, "ngIf"], [1, "t-bold", 2, "text-align", "right"], [1, "t-muted", 2, "text-align", "right"], [1, "user-email"], [1, "badge", "badge--blue"], [1, "badge", "badge--slate"], [1, "pg-btn", 3, "click", "disabled"], [1, "pi", "pi-chevron-left"], [1, "pi", "pi-chevron-right"], [1, "modal-backdrop", 3, "click"], [1, "modal", 3, "click"], [1, "modal-head"], [1, "modal-close", 3, "click"], [1, "pi", "pi-times"], [1, "modal-body"], ["class", "state-loader state-loader--sm", 4, "ngIf"], ["class", "popup-row", 4, "ngFor", "ngForOf"], [1, "modal-foot"], [1, "outline-btn", 3, "click"], [1, "state-loader", "state-loader--sm"], [1, "spinner", "spinner--sm"], [1, "popup-row"], [1, "popup-report"], [1, "popup-ws", "t-muted"], [1, "modal", "modal--lg", 3, "click"], ["class", "badge badge--slate", "style", "margin-left:.5rem", 4, "ngIf"], [1, "badge", "badge--slate", 2, "margin-left", ".5rem"], [1, "t-muted", 2, "font-size", ".7rem"], [1, "t-muted", 2, "font-size", ".72rem", "white-space", "nowrap"]], template: function PowerBIDashboardComponent_Template(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275elementStart(0, "div", 7)(1, "div", 8)(2, "div", 9)(3, "h1", 10);
+      \u0275\u0275elementStart(0, "div", 6)(1, "div", 7)(2, "div", 8)(3, "h1", 9);
       \u0275\u0275text(4, "Power BI Usage Analytics");
       \u0275\u0275elementEnd();
-      \u0275\u0275template(5, PowerBIDashboardComponent_span_5_Template, 4, 4, "span", 11);
+      \u0275\u0275template(5, PowerBIDashboardComponent_span_5_Template, 4, 4, "span", 10);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(6, "div", 12);
-      \u0275\u0275template(7, PowerBIDashboardComponent_div_7_Template, 4, 3, "div", 13)(8, PowerBIDashboardComponent_div_8_Template, 4, 5, "div", 13);
-      \u0275\u0275elementStart(9, "div", 14)(10, "label", 15);
+      \u0275\u0275elementStart(6, "div", 11);
+      \u0275\u0275template(7, PowerBIDashboardComponent_div_7_Template, 4, 3, "div", 12)(8, PowerBIDashboardComponent_div_8_Template, 4, 5, "div", 12);
+      \u0275\u0275elementStart(9, "div", 13)(10, "label", 14);
       \u0275\u0275text(11, "Period");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(12, "div", 16);
-      \u0275\u0275template(13, PowerBIDashboardComponent_button_13_Template, 2, 3, "button", 17);
+      \u0275\u0275elementStart(12, "div", 15);
+      \u0275\u0275template(13, PowerBIDashboardComponent_button_13_Template, 2, 3, "button", 16);
       \u0275\u0275elementEnd()()()();
-      \u0275\u0275template(14, PowerBIDashboardComponent_div_14_Template, 4, 0, "div", 18)(15, PowerBIDashboardComponent_div_15_Template, 3, 1, "div", 19)(16, PowerBIDashboardComponent_ng_container_16_Template, 69, 16, "ng-container", 20)(17, PowerBIDashboardComponent_ng_container_17_Template, 3, 2, "ng-container", 20)(18, PowerBIDashboardComponent_ng_container_18_Template, 3, 2, "ng-container", 20);
+      \u0275\u0275template(14, PowerBIDashboardComponent_div_14_Template, 4, 0, "div", 17)(15, PowerBIDashboardComponent_div_15_Template, 3, 1, "div", 18)(16, PowerBIDashboardComponent_ng_container_16_Template, 60, 14, "ng-container", 19)(17, PowerBIDashboardComponent_ng_container_17_Template, 3, 2, "ng-container", 19)(18, PowerBIDashboardComponent_ng_container_18_Template, 3, 2, "ng-container", 19);
       \u0275\u0275elementEnd();
-      \u0275\u0275template(19, PowerBIDashboardComponent_div_19_Template, 14, 6, "div", 21)(20, PowerBIDashboardComponent_div_20_Template, 14, 4, "div", 21);
+      \u0275\u0275template(19, PowerBIDashboardComponent_div_19_Template, 14, 6, "div", 20)(20, PowerBIDashboardComponent_div_20_Template, 14, 4, "div", 20);
     }
     if (rf & 2) {
       \u0275\u0275advance(5);
@@ -54219,7 +54172,7 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.showUserListModal);
     }
-  }, dependencies: [CommonModule, NgForOf, NgIf, DecimalPipe, DatePipe, NgApexchartsModule, ChartComponent, ReactiveFormsModule, NgSelectOption, \u0275NgSelectMultipleOption, DefaultValueAccessor, SelectControlValueAccessor, NgControlStatus, FormsModule, NgModel, DropdownModule, Dropdown, AvatarComponent, RouterModule, RouterLink], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n  width: 100%;\n  overflow-x: hidden;\n}\n.pg-wrap[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.75rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n@media (max-width: 768px) {\n  .pg-wrap[_ngcontent-%COMP%] {\n    padding: 1.25rem 1rem 2rem;\n  }\n}\n.pg-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.75rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #e2e8f0;\n}\n.pg-header-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.pg-title[_ngcontent-%COMP%] {\n  font-size: 1.35rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n  letter-spacing: -.02em;\n}\n.pg-refresh[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: .35rem;\n  font-size: .72rem;\n  color: #64748b;\n  font-weight: 500;\n}\n.pg-live-dot[_ngcontent-%COMP%] {\n  width: 7px;\n  height: 7px;\n  border-radius: 50%;\n  background: #10b981;\n  animation: _ngcontent-%COMP%_pulse 2s infinite;\n}\n@keyframes _ngcontent-%COMP%_pulse {\n  0%, 100% {\n    opacity: 1;\n  }\n  50% {\n    opacity: .4;\n  }\n}\n@keyframes _ngcontent-%COMP%_spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pg-header-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  flex-wrap: wrap;\n  gap: 1rem;\n}\n.ctrl-group[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.ctrl-label[_ngcontent-%COMP%] {\n  font-size: .68rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #94a3b8 !important;\n}\n.pg-dropdown[_ngcontent-%COMP%] {\n  width: 210px !important;\n}\n.pill-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: .4rem;\n}\n.pill[_ngcontent-%COMP%] {\n  padding: .4rem .95rem;\n  border-radius: 99px;\n  font-size: .72rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  cursor: pointer;\n  transition: all .15s;\n}\n.pill[_ngcontent-%COMP%]:hover {\n  background: #f1f5f9 !important;\n  border-color: #94a3b8 !important;\n}\n.pill--on[_ngcontent-%COMP%] {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.state-loader[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .75rem;\n  padding: 4rem 0;\n  color: #64748b;\n  font-size: .85rem;\n}\n.state-loader--sm[_ngcontent-%COMP%] {\n  padding: 2rem 0;\n}\n.spinner[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #3b82f6;\n  animation: _ngcontent-%COMP%_spin .7s linear infinite;\n}\n.spinner--sm[_ngcontent-%COMP%] {\n  width: 20px;\n  height: 20px;\n  border-width: 2.5px;\n}\n.state-error[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 10px;\n  padding: .9rem 1.25rem;\n  font-size: .85rem;\n  display: flex;\n  align-items: center;\n  gap: .5rem;\n  margin-bottom: 1.25rem;\n}\n.card[_ngcontent-%COMP%] {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  box-shadow: 0 1px 6px rgba(15, 23, 42, .05);\n  overflow: hidden;\n}\n.card-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .9rem 1.25rem;\n  border-bottom: 1px solid #f1f5f9;\n}\n.card-title[_ngcontent-%COMP%] {\n  font-size: .75rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: .06em;\n  color: #1e3a8a;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n}\n.card-title[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.card--wide[_ngcontent-%COMP%] {\n  grid-column: span 2;\n}\n@media (max-width: 900px) {\n  .card--wide[_ngcontent-%COMP%] {\n    grid-column: span 1;\n  }\n}\n.kpi-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n}\n.kpi-row--5[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(5, 1fr);\n}\n@media (max-width: 1100px) {\n  .kpi-row[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .kpi-row--5[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-row[_ngcontent-%COMP%], \n   .kpi-row--5[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr 1fr;\n  }\n}\n.kpi-card[_ngcontent-%COMP%] {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  padding: 1rem 1.25rem;\n  display: flex;\n  align-items: center;\n  gap: .9rem;\n  box-shadow: 0 1px 4px rgba(15, 23, 42, .04);\n  transition: box-shadow .15s, transform .15s;\n}\n.kpi-card[_ngcontent-%COMP%]:hover {\n  box-shadow: 0 4px 16px rgba(15, 23, 42, .09);\n  transform: translateY(-1px);\n}\n.kpi-icon[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1rem;\n  flex-shrink: 0;\n}\n.kpi-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: .15rem;\n}\n.kpi-label[_ngcontent-%COMP%] {\n  font-size: .65rem !important;\n  font-weight: 600 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #64748b !important;\n}\n.kpi-value[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  font-weight: 800;\n  line-height: 1;\n  color: #0f172a;\n}\n.kpi--blue[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #eff6ff;\n  color: #2563eb;\n}\n.kpi--indigo[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #eef2ff;\n  color: #4f46e5;\n}\n.kpi--teal[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #f0fdfa;\n  color: #0d9488;\n}\n.kpi--violet[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #f5f3ff;\n  color: #7c3aed;\n}\n.kpi--amber[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #fffbeb;\n  color: #d97706;\n}\n.kpi--slate[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #f8fafc;\n  color: #475569;\n}\n.chart-grid[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n.chart-grid--2[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(2, 1fr);\n}\n@media (max-width: 900px) {\n  .chart-grid--2[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.chart-body[_ngcontent-%COMP%] {\n  padding: .75rem 1rem 1rem;\n}\n.chart-empty[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .5rem;\n  height: 200px;\n  color: #94a3b8;\n  font-size: .8rem;\n}\n.chart-empty[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.user-split[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1fr 300px;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n@media (max-width: 900px) {\n  .user-split[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.promo-card[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      145deg,\n      #1e3a8a 0%,\n      #1d4ed8 100%);\n  border-radius: 14px;\n  padding: 2rem 1.5rem;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  gap: 1rem;\n  box-shadow: 0 4px 20px rgba(29, 78, 216, .2);\n}\n.promo-icon-wrap[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  color: rgba(255, 255, 255, .5);\n}\n.promo-title[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: #fff;\n  margin: 0;\n}\n.promo-body[_ngcontent-%COMP%] {\n  font-size: .78rem;\n  color: rgba(255, 255, 255, .7);\n  line-height: 1.55;\n  margin: 0;\n}\n.promo-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: .45rem;\n  background: rgba(255, 255, 255, .15);\n  border: 1.5px solid rgba(255, 255, 255, .3) !important;\n  color: #fff !important;\n  border-radius: 9px;\n  padding: .55rem 1rem;\n  font-size: .77rem;\n  font-weight: 700;\n  text-decoration: none;\n  transition: background .15s;\n  width: fit-content;\n}\n.promo-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, .25);\n}\n.detail-header-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1.25rem 1.5rem;\n  margin-bottom: 1.25rem;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.detail-user-id[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.detail-name[_ngcontent-%COMP%] {\n  font-size: 1.1rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0 0 .15rem;\n}\n.detail-email[_ngcontent-%COMP%] {\n  font-size: .72rem;\n  color: #64748b;\n  margin: 0;\n}\n.back-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: .4rem;\n  background: #fff !important;\n  border: 1.5px solid #dbeafe !important;\n  color: #1e3a8a !important;\n  border-radius: 9px;\n  padding: .5rem 1rem !important;\n  font-size: .75rem;\n  font-weight: 700;\n  cursor: pointer;\n  white-space: nowrap;\n  transition: background .15s;\n}\n.back-btn[_ngcontent-%COMP%]:hover {\n  background: #eff6ff !important;\n}\n.time-card[_ngcontent-%COMP%] {\n  margin-bottom: 1.25rem;\n}\n.ws-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n  padding: 1rem 1.25rem;\n}\n.ws-box[_ngcontent-%COMP%] {\n  border: 1px solid #e2e8f0;\n  border-radius: 11px;\n  overflow: hidden;\n}\n.ws-box-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .65rem 1rem;\n  background: #f8fafc;\n  border-bottom: 1px solid #e2e8f0;\n  gap: .5rem;\n}\n.ws-name[_ngcontent-%COMP%] {\n  font-size: .73rem;\n  font-weight: 700;\n  color: #1e293b;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n.ws-name[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  color: #3b82f6;\n  flex-shrink: 0;\n}\n.ws-total[_ngcontent-%COMP%] {\n  font-size: .68rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #dbeafe;\n  border-radius: 99px;\n  padding: .18rem .55rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-items[_ngcontent-%COMP%] {\n  padding: .5rem;\n  overflow-y: auto;\n  max-height: 190px;\n}\n.ws-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .4rem .55rem;\n  border-radius: 7px;\n  transition: background .12s;\n}\n.ws-item[_ngcontent-%COMP%]:hover {\n  background: #f8fafc;\n}\n.ws-item-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  flex: 1;\n  padding-right: .5rem;\n}\n.ws-item-report[_ngcontent-%COMP%] {\n  font-size: .72rem;\n  font-weight: 600;\n  color: #334155;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-item-tab[_ngcontent-%COMP%] {\n  font-size: .63rem;\n  color: #94a3b8;\n  margin-top: .08rem;\n}\n.time-badge[_ngcontent-%COMP%] {\n  font-size: .68rem;\n  font-weight: 700;\n  color: #059669;\n  background: rgba(16, 185, 129, .08);\n  border: 1px solid rgba(16, 185, 129, .3);\n  border-radius: 99px;\n  padding: .12rem .5rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  background: #f8fafc !important;\n  color: #64748b !important;\n  font-size: .67rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .06em !important;\n  padding: .65rem 1rem !important;\n  border-bottom: 1.5px solid #e2e8f0 !important;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: .7rem 1rem !important;\n  font-size: .8rem;\n  color: #1e293b !important;\n  border-bottom: 1px solid #f1f5f9 !important;\n  vertical-align: middle;\n}\n.tbl-row[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: background .12s;\n}\n.tbl-row[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: #f8faff !important;\n}\n.tbl-row--sel[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  background: #eff6ff !important;\n}\n.user-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: .65rem;\n}\n.user-name[_ngcontent-%COMP%] {\n  font-size: .8rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.user-email[_ngcontent-%COMP%] {\n  font-size: .67rem;\n  color: #64748b;\n  margin-top: .1rem;\n}\n.t-muted[_ngcontent-%COMP%] {\n  color: #64748b !important;\n}\n.t-bold[_ngcontent-%COMP%] {\n  font-weight: 700 !important;\n  color: #0f172a !important;\n}\n.search-wrap[_ngcontent-%COMP%] {\n  position: relative;\n  padding: .7rem 1rem;\n}\n.search-wrap--lg[_ngcontent-%COMP%] {\n  padding: 0;\n  margin-bottom: 1rem;\n}\n.search-icon[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 1.65rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #94a3b8;\n  font-size: .73rem;\n  pointer-events: none;\n}\n.search-wrap--lg[_ngcontent-%COMP%]   .search-icon[_ngcontent-%COMP%] {\n  left: .85rem;\n}\n.search-input[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  padding: .48rem .75rem .48rem 2.1rem !important;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 9px !important;\n  font-size: .79rem !important;\n  color: #1e293b !important;\n  background: #f8fafc !important;\n  outline: none;\n  transition: border-color .15s;\n}\n.search-input[_ngcontent-%COMP%]:focus {\n  border-color: #3b82f6 !important;\n  background: #fff !important;\n  box-shadow: 0 0 0 3px rgba(59, 130, 246, .1) !important;\n}\n.native-select[_ngcontent-%COMP%] {\n  height: 36px;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 8px !important;\n  font-size: .77rem !important;\n  color: #334155 !important;\n  background: #fff !important;\n  padding: 0 .75rem !important;\n  cursor: pointer;\n  outline: none;\n}\n.native-select[_ngcontent-%COMP%]:focus {\n  border-color: #3b82f6 !important;\n}\n.pagination[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: .3rem;\n  padding: .75rem 1rem;\n  border-top: 1px solid #f1f5f9;\n  flex-wrap: wrap;\n}\n.pg-btn[_ngcontent-%COMP%] {\n  min-width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  font-size: .72rem;\n  font-weight: 600;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 .45rem !important;\n  transition: all .12s;\n}\n.pg-btn[_ngcontent-%COMP%]:hover {\n  background: #f1f5f9 !important;\n}\n.pg-btn--on[_ngcontent-%COMP%] {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.pg-btn[_ngcontent-%COMP%]:disabled {\n  opacity: .4;\n  cursor: not-allowed;\n}\n.icon-btn[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #3b82f6 !important;\n  font-size: .8rem;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.icon-btn[_ngcontent-%COMP%]:hover {\n  background: #eff6ff !important;\n}\n.badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  font-size: .67rem;\n  font-weight: 700;\n  border-radius: 99px;\n  padding: .2rem .6rem;\n  white-space: nowrap;\n}\n.badge--blue[_ngcontent-%COMP%] {\n  background: #eff6ff;\n  color: #1d4ed8;\n  border: 1px solid #dbeafe;\n}\n.badge--slate[_ngcontent-%COMP%] {\n  background: #f1f5f9;\n  color: #475569;\n  border: 1px solid #e2e8f0;\n}\n.badge--green[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  color: #16a34a;\n  border: 1px solid #bbf7d0;\n}\n.badge--red[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fecaca;\n}\n.empty-state[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .6rem;\n  padding: 3rem 1rem;\n  text-align: center;\n  color: #94a3b8;\n}\n.empty-state[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 2.2rem;\n  color: #dbeafe;\n}\n.empty-state[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%] {\n  font-size: .88rem;\n  font-weight: 700;\n  color: #64748b;\n  margin: 0;\n}\n.empty-state[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: .78rem;\n  margin: 0;\n}\n.empty-state--sm[_ngcontent-%COMP%] {\n  padding: 1.5rem 1rem;\n}\n.empty-state--sm[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 1.4rem;\n}\n.access-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1.25rem;\n}\n.access-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: .75rem;\n  padding: 1rem 1.25rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n}\n.access-report-name[_ngcontent-%COMP%] {\n  font-size: .98rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: .3rem 0 0;\n}\n.access-stats[_ngcontent-%COMP%] {\n  display: flex;\n  gap: .5rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.stat-chip[_ngcontent-%COMP%] {\n  font-size: .71rem;\n  font-weight: 600;\n  color: #475569;\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 99px;\n  padding: .28rem .75rem;\n}\n.stat-chip--blue[_ngcontent-%COMP%] {\n  color: #1d4ed8;\n  background: #eff6ff;\n  border-color: #dbeafe;\n}\n.access-card-body[_ngcontent-%COMP%] {\n  padding: 1.25rem;\n}\n.access-controls[_ngcontent-%COMP%] {\n  display: flex;\n  gap: .75rem;\n  align-items: center;\n  flex-wrap: wrap;\n  margin-bottom: 1rem;\n}\n.access-controls[_ngcontent-%COMP%]   .search-wrap[_ngcontent-%COMP%] {\n  padding: 0;\n  flex: 1;\n  min-width: 180px;\n}\n.access-controls[_ngcontent-%COMP%]   .search-icon[_ngcontent-%COMP%] {\n  left: .85rem;\n}\n.modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1rem;\n  background: rgba(15, 23, 42, .45);\n  backdrop-filter: blur(6px);\n}\n.modal[_ngcontent-%COMP%] {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 16px;\n  box-shadow: 0 25px 60px rgba(15, 23, 42, .18);\n  width: 100%;\n  max-width: 560px;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.modal--lg[_ngcontent-%COMP%] {\n  max-width: 760px;\n}\n.modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n  flex-shrink: 0;\n}\n.modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: .95rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.modal-close[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 30px;\n  border-radius: 99px;\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #64748b !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  font-size: .78rem;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.modal-close[_ngcontent-%COMP%]:hover {\n  background: #f1f5f9 !important;\n}\n.modal-body[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow-y: auto;\n  padding: .25rem 0;\n}\n.modal-foot[_ngcontent-%COMP%] {\n  padding: .9rem 1.5rem;\n  border-top: 1px solid #f1f5f9;\n  display: flex;\n  justify-content: flex-end;\n  flex-shrink: 0;\n}\n.outline-btn[_ngcontent-%COMP%] {\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #475569 !important;\n  border-radius: 8px !important;\n  font-size: .77rem;\n  font-weight: 600;\n  padding: .5rem 1.1rem !important;\n  cursor: pointer;\n  transition: background .12s;\n}\n.outline-btn[_ngcontent-%COMP%]:hover {\n  background: #f8fafc !important;\n}\n.popup-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .75rem 1.5rem;\n  border-bottom: 1px solid #f8fafc;\n  gap: .75rem;\n}\n.popup-row[_ngcontent-%COMP%]:last-child {\n  border-bottom: none;\n}\n.popup-row[_ngcontent-%COMP%]:hover {\n  background: #f8fafc;\n}\n.popup-report[_ngcontent-%COMP%] {\n  font-size: .82rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.popup-ws[_ngcontent-%COMP%] {\n  font-size: .68rem;\n  color: #64748b;\n  margin-top: .12rem;\n}\n/*# sourceMappingURL=powerbi-dashboard.component.css.map */"] });
+  }, dependencies: [CommonModule, NgForOf, NgIf, DecimalPipe, DatePipe, NgApexchartsModule, ChartComponent, ReactiveFormsModule, DefaultValueAccessor, NgControlStatus, FormsModule, NgModel, DropdownModule, Dropdown, AvatarComponent, RouterModule, RouterLink], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n  width: 100%;\n  overflow-x: hidden;\n}\n.pg-wrap[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.75rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n@media (max-width: 768px) {\n  .pg-wrap[_ngcontent-%COMP%] {\n    padding: 1.25rem 1rem 2rem;\n  }\n}\n.pg-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.75rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #e2e8f0;\n}\n.pg-header-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.pg-title[_ngcontent-%COMP%] {\n  font-size: 1.35rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n  letter-spacing: -.02em;\n}\n.pg-refresh[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: .35rem;\n  font-size: .72rem;\n  color: #64748b;\n  font-weight: 500;\n}\n.pg-live-dot[_ngcontent-%COMP%] {\n  width: 7px;\n  height: 7px;\n  border-radius: 50%;\n  background: #10b981;\n  animation: _ngcontent-%COMP%_pulse 2s infinite;\n}\n@keyframes _ngcontent-%COMP%_pulse {\n  0%, 100% {\n    opacity: 1;\n  }\n  50% {\n    opacity: .4;\n  }\n}\n@keyframes _ngcontent-%COMP%_spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pg-header-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  flex-wrap: wrap;\n  gap: 1rem;\n}\n.ctrl-group[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.ctrl-label[_ngcontent-%COMP%] {\n  font-size: .68rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #94a3b8 !important;\n}\n.pg-dropdown[_ngcontent-%COMP%] {\n  width: 210px !important;\n}\n.pill-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: .4rem;\n}\n.pill[_ngcontent-%COMP%] {\n  padding: .4rem .95rem;\n  border-radius: 99px;\n  font-size: .72rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  cursor: pointer;\n  transition: all .15s;\n}\n.pill[_ngcontent-%COMP%]:hover {\n  background: #f1f5f9 !important;\n  border-color: #94a3b8 !important;\n}\n.pill--on[_ngcontent-%COMP%] {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.state-loader[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .75rem;\n  padding: 4rem 0;\n  color: #64748b;\n  font-size: .85rem;\n}\n.state-loader--sm[_ngcontent-%COMP%] {\n  padding: 2rem 0;\n}\n.spinner[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #3b82f6;\n  animation: _ngcontent-%COMP%_spin .7s linear infinite;\n}\n.spinner--sm[_ngcontent-%COMP%] {\n  width: 20px;\n  height: 20px;\n  border-width: 2.5px;\n}\n.state-error[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 10px;\n  padding: .9rem 1.25rem;\n  font-size: .85rem;\n  display: flex;\n  align-items: center;\n  gap: .5rem;\n  margin-bottom: 1.25rem;\n}\n.card[_ngcontent-%COMP%] {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  box-shadow: 0 1px 6px rgba(15, 23, 42, .05);\n  overflow: hidden;\n}\n.card-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .9rem 1.25rem;\n  border-bottom: 1px solid #f1f5f9;\n}\n.card-title[_ngcontent-%COMP%] {\n  font-size: .75rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: .06em;\n  color: #1e3a8a;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n}\n.card-title[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.card--wide[_ngcontent-%COMP%] {\n  grid-column: span 2;\n}\n@media (max-width: 900px) {\n  .card--wide[_ngcontent-%COMP%] {\n    grid-column: span 1;\n  }\n}\n.kpi-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n}\n.kpi-row--5[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(5, 1fr);\n}\n@media (max-width: 1100px) {\n  .kpi-row[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .kpi-row--5[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-row[_ngcontent-%COMP%], \n   .kpi-row--5[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr 1fr;\n  }\n}\n.kpi-card[_ngcontent-%COMP%] {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  padding: 0.6rem 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: .65rem;\n  box-shadow: 0 1px 4px rgba(15, 23, 42, .04);\n  transition: box-shadow .15s, transform .15s;\n}\n.kpi-card[_ngcontent-%COMP%]:hover {\n  box-shadow: 0 4px 16px rgba(15, 23, 42, .09);\n  transform: translateY(-1px);\n}\n.kpi-icon[_ngcontent-%COMP%] {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.85rem;\n  flex-shrink: 0;\n}\n.kpi-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: .1rem;\n}\n.kpi-label[_ngcontent-%COMP%] {\n  font-size: .62rem !important;\n  font-weight: 600 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #64748b !important;\n}\n.kpi-value[_ngcontent-%COMP%] {\n  font-size: 1.1rem;\n  font-weight: 800;\n  line-height: 1;\n  color: #0f172a;\n}\n.kpi--blue[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #eff6ff;\n  color: #2563eb;\n}\n.kpi--indigo[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #eef2ff;\n  color: #4f46e5;\n}\n.kpi--teal[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #f0fdfa;\n  color: #0d9488;\n}\n.kpi--violet[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #f5f3ff;\n  color: #7c3aed;\n}\n.kpi--amber[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #fffbeb;\n  color: #d97706;\n}\n.kpi--slate[_ngcontent-%COMP%]   .kpi-icon[_ngcontent-%COMP%] {\n  background: #f8fafc;\n  color: #475569;\n}\n.chart-grid[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n.chart-grid--2[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(2, 1fr);\n}\n@media (max-width: 900px) {\n  .chart-grid--2[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.chart-body[_ngcontent-%COMP%] {\n  padding: .75rem 1rem 1rem;\n}\n.chart-empty[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .5rem;\n  height: 200px;\n  color: #94a3b8;\n  font-size: .8rem;\n}\n.chart-empty[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.user-split[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1fr 300px;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n@media (max-width: 900px) {\n  .user-split[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.promo-card[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      145deg,\n      #1e3a8a 0%,\n      #1d4ed8 100%);\n  border-radius: 14px;\n  padding: 2rem 1.5rem;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  gap: 1rem;\n  box-shadow: 0 4px 20px rgba(29, 78, 216, .2);\n}\n.promo-icon-wrap[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  color: rgba(255, 255, 255, .5);\n}\n.promo-title[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: #fff;\n  margin: 0;\n}\n.promo-body[_ngcontent-%COMP%] {\n  font-size: .78rem;\n  color: rgba(255, 255, 255, .7);\n  line-height: 1.55;\n  margin: 0;\n}\n.promo-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: .45rem;\n  background: rgba(255, 255, 255, .15);\n  border: 1.5px solid rgba(255, 255, 255, .3) !important;\n  color: #fff !important;\n  border-radius: 9px;\n  padding: .55rem 1rem;\n  font-size: .77rem;\n  font-weight: 700;\n  text-decoration: none;\n  transition: background .15s;\n  width: fit-content;\n}\n.promo-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, .25);\n}\n.detail-header-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1.25rem 1.5rem;\n  margin-bottom: 1.25rem;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.detail-user-id[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.detail-name[_ngcontent-%COMP%] {\n  font-size: 1.1rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0 0 .15rem;\n}\n.detail-email[_ngcontent-%COMP%] {\n  font-size: .72rem;\n  color: #64748b;\n  margin: 0;\n}\n.back-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: .4rem;\n  background: #fff !important;\n  border: 1.5px solid #dbeafe !important;\n  color: #1e3a8a !important;\n  border-radius: 9px;\n  padding: .5rem 1rem !important;\n  font-size: .75rem;\n  font-weight: 700;\n  cursor: pointer;\n  white-space: nowrap;\n  transition: background .15s;\n}\n.back-btn[_ngcontent-%COMP%]:hover {\n  background: #eff6ff !important;\n}\n.time-card[_ngcontent-%COMP%] {\n  margin-bottom: 1.25rem;\n}\n.ws-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n  padding: 1rem 1.25rem;\n}\n.ws-box[_ngcontent-%COMP%] {\n  border: 1px solid #e2e8f0;\n  border-radius: 11px;\n  overflow: hidden;\n}\n.ws-box-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .65rem 1rem;\n  background: #f8fafc;\n  border-bottom: 1px solid #e2e8f0;\n  gap: .5rem;\n}\n.ws-name[_ngcontent-%COMP%] {\n  font-size: .73rem;\n  font-weight: 700;\n  color: #1e293b;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n.ws-name[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  color: #3b82f6;\n  flex-shrink: 0;\n}\n.ws-total[_ngcontent-%COMP%] {\n  font-size: .68rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #dbeafe;\n  border-radius: 99px;\n  padding: .18rem .55rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-items[_ngcontent-%COMP%] {\n  padding: .5rem;\n  overflow-y: auto;\n  max-height: 190px;\n}\n.ws-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .4rem .55rem;\n  border-radius: 7px;\n  transition: background .12s;\n}\n.ws-item[_ngcontent-%COMP%]:hover {\n  background: #f8fafc;\n}\n.ws-item-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  flex: 1;\n  padding-right: .5rem;\n}\n.ws-item-report[_ngcontent-%COMP%] {\n  font-size: .72rem;\n  font-weight: 600;\n  color: #334155;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-item-tab[_ngcontent-%COMP%] {\n  font-size: .63rem;\n  color: #94a3b8;\n  margin-top: .08rem;\n}\n.time-badge[_ngcontent-%COMP%] {\n  font-size: .68rem;\n  font-weight: 700;\n  color: #059669;\n  background: rgba(16, 185, 129, .08);\n  border: 1px solid rgba(16, 185, 129, .3);\n  border-radius: 99px;\n  padding: .12rem .5rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  background: #f8fafc !important;\n  color: #64748b !important;\n  font-size: .67rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .06em !important;\n  padding: .65rem 1rem !important;\n  border-bottom: 1.5px solid #e2e8f0 !important;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: .7rem 1rem !important;\n  font-size: .8rem;\n  color: #1e293b !important;\n  border-bottom: 1px solid #f1f5f9 !important;\n  vertical-align: middle;\n}\n.tbl-row[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: background .12s;\n}\n.tbl-row[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: #f8faff !important;\n}\n.tbl-row--sel[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  background: #eff6ff !important;\n}\n.user-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: .65rem;\n}\n.user-name[_ngcontent-%COMP%] {\n  font-size: .8rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.user-email[_ngcontent-%COMP%] {\n  font-size: .67rem;\n  color: #64748b;\n  margin-top: .1rem;\n}\n.t-muted[_ngcontent-%COMP%] {\n  color: #64748b !important;\n}\n.t-bold[_ngcontent-%COMP%] {\n  font-weight: 700 !important;\n  color: #0f172a !important;\n}\n.search-wrap[_ngcontent-%COMP%] {\n  position: relative;\n  padding: .7rem 1rem;\n}\n.search-wrap--lg[_ngcontent-%COMP%] {\n  padding: 0;\n  margin-bottom: 1rem;\n}\n.search-icon[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 1.65rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #94a3b8;\n  font-size: .73rem;\n  pointer-events: none;\n}\n.search-wrap--lg[_ngcontent-%COMP%]   .search-icon[_ngcontent-%COMP%] {\n  left: .85rem;\n}\n.search-input[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  padding: .48rem .75rem .48rem 2.1rem !important;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 9px !important;\n  font-size: .79rem !important;\n  color: #1e293b !important;\n  background: #f8fafc !important;\n  outline: none;\n  transition: border-color .15s;\n}\n.search-input[_ngcontent-%COMP%]:focus {\n  border-color: #3b82f6 !important;\n  background: #fff !important;\n  box-shadow: 0 0 0 3px rgba(59, 130, 246, .1) !important;\n}\n.native-select[_ngcontent-%COMP%] {\n  height: 36px;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 8px !important;\n  font-size: .77rem !important;\n  color: #334155 !important;\n  background: #fff !important;\n  padding: 0 .75rem !important;\n  cursor: pointer;\n  outline: none;\n}\n.native-select[_ngcontent-%COMP%]:focus {\n  border-color: #3b82f6 !important;\n}\n.pagination[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: .3rem;\n  padding: .75rem 1rem;\n  border-top: 1px solid #f1f5f9;\n  flex-wrap: wrap;\n}\n.pg-btn[_ngcontent-%COMP%] {\n  min-width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  font-size: .72rem;\n  font-weight: 600;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 .45rem !important;\n  transition: all .12s;\n}\n.pg-btn[_ngcontent-%COMP%]:hover {\n  background: #f1f5f9 !important;\n}\n.pg-btn--on[_ngcontent-%COMP%] {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.pg-btn[_ngcontent-%COMP%]:disabled {\n  opacity: .4;\n  cursor: not-allowed;\n}\n.icon-btn[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #3b82f6 !important;\n  font-size: .8rem;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.icon-btn[_ngcontent-%COMP%]:hover {\n  background: #eff6ff !important;\n}\n.badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  font-size: .67rem;\n  font-weight: 700;\n  border-radius: 99px;\n  padding: .2rem .6rem;\n  white-space: nowrap;\n}\n.badge--blue[_ngcontent-%COMP%] {\n  background: #eff6ff;\n  color: #1d4ed8;\n  border: 1px solid #dbeafe;\n}\n.badge--slate[_ngcontent-%COMP%] {\n  background: #f1f5f9;\n  color: #475569;\n  border: 1px solid #e2e8f0;\n}\n.badge--green[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  color: #16a34a;\n  border: 1px solid #bbf7d0;\n}\n.badge--red[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fecaca;\n}\n.empty-state[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .6rem;\n  padding: 3rem 1rem;\n  text-align: center;\n  color: #94a3b8;\n}\n.empty-state[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 2.2rem;\n  color: #dbeafe;\n}\n.empty-state[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%] {\n  font-size: .88rem;\n  font-weight: 700;\n  color: #64748b;\n  margin: 0;\n}\n.empty-state[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: .78rem;\n  margin: 0;\n}\n.empty-state--sm[_ngcontent-%COMP%] {\n  padding: 1.5rem 1rem;\n}\n.empty-state--sm[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 1.4rem;\n}\n.access-list[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1rem;\n}\n@media (max-width: 1200px) {\n  .access-list[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n@media (max-width: 700px) {\n  .access-list[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.access-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: .5rem;\n  padding: .65rem 1rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n}\n.access-report-name[_ngcontent-%COMP%] {\n  font-size: .82rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: .15rem 0 0;\n}\n.access-stats[_ngcontent-%COMP%] {\n  display: flex;\n  gap: .4rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.access-card[_ngcontent-%COMP%]   .table-wrap[_ngcontent-%COMP%] {\n  max-height: 240px;\n  overflow-y: auto;\n  overflow-x: auto;\n}\n.access-card[_ngcontent-%COMP%]   .access-controls[_ngcontent-%COMP%] {\n  padding: .5rem .75rem;\n  display: flex;\n  gap: .5rem;\n  flex-wrap: wrap;\n  align-items: center;\n}\n.access-card[_ngcontent-%COMP%]   .search-wrap[_ngcontent-%COMP%] {\n  padding: 0;\n  flex: 1;\n  min-width: 120px;\n}\n.access-card[_ngcontent-%COMP%]   .search-icon[_ngcontent-%COMP%] {\n  left: .65rem;\n}\n.access-card[_ngcontent-%COMP%]   .search-input[_ngcontent-%COMP%] {\n  padding: .38rem .6rem .38rem 1.8rem !important;\n  font-size: .72rem !important;\n}\n.access-card[_ngcontent-%COMP%]   .native-select[_ngcontent-%COMP%] {\n  height: 30px;\n  font-size: .72rem !important;\n  padding: 0 .5rem !important;\n}\n.access-card[_ngcontent-%COMP%]   .data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: .45rem .75rem !important;\n  font-size: .74rem !important;\n}\n.access-card[_ngcontent-%COMP%]   .data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  padding: .45rem .75rem !important;\n}\n.stat-chip[_ngcontent-%COMP%] {\n  font-size: .71rem;\n  font-weight: 600;\n  color: #475569;\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 99px;\n  padding: .28rem .75rem;\n}\n.stat-chip--blue[_ngcontent-%COMP%] {\n  color: #1d4ed8;\n  background: #eff6ff;\n  border-color: #dbeafe;\n}\n.stat-chip--red[_ngcontent-%COMP%] {\n  color: #b91c1c;\n  background: #fef2f2;\n  border-color: #fecaca;\n}\n.access-card-body[_ngcontent-%COMP%] {\n  padding: 0;\n}\n.access-controls[_ngcontent-%COMP%] {\n  display: flex;\n  gap: .5rem;\n  align-items: center;\n  flex-wrap: wrap;\n  margin-bottom: 0;\n}\n.access-controls[_ngcontent-%COMP%]   .search-wrap[_ngcontent-%COMP%] {\n  padding: 0;\n  flex: 1;\n  min-width: 120px;\n}\n.access-controls[_ngcontent-%COMP%]   .search-icon[_ngcontent-%COMP%] {\n  left: .85rem;\n}\n.modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1rem;\n  background: rgba(15, 23, 42, .45);\n  backdrop-filter: blur(6px);\n}\n.modal[_ngcontent-%COMP%] {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 16px;\n  box-shadow: 0 25px 60px rgba(15, 23, 42, .18);\n  width: 100%;\n  max-width: 560px;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.modal--lg[_ngcontent-%COMP%] {\n  max-width: 760px;\n}\n.modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n  flex-shrink: 0;\n}\n.modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: .95rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.modal-close[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 30px;\n  border-radius: 99px;\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #64748b !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  font-size: .78rem;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.modal-close[_ngcontent-%COMP%]:hover {\n  background: #f1f5f9 !important;\n}\n.modal-body[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow-y: auto;\n  padding: .25rem 0;\n}\n.modal-foot[_ngcontent-%COMP%] {\n  padding: .9rem 1.5rem;\n  border-top: 1px solid #f1f5f9;\n  display: flex;\n  justify-content: flex-end;\n  flex-shrink: 0;\n}\n.outline-btn[_ngcontent-%COMP%] {\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #475569 !important;\n  border-radius: 8px !important;\n  font-size: .77rem;\n  font-weight: 600;\n  padding: .5rem 1.1rem !important;\n  cursor: pointer;\n  transition: background .12s;\n}\n.outline-btn[_ngcontent-%COMP%]:hover {\n  background: #f8fafc !important;\n}\n.popup-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .75rem 1.5rem;\n  border-bottom: 1px solid #f8fafc;\n  gap: .75rem;\n}\n.popup-row[_ngcontent-%COMP%]:last-child {\n  border-bottom: none;\n}\n.popup-row[_ngcontent-%COMP%]:hover {\n  background: #f8fafc;\n}\n.popup-report[_ngcontent-%COMP%] {\n  font-size: .82rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.popup-ws[_ngcontent-%COMP%] {\n  font-size: .68rem;\n  color: #64748b;\n  margin-top: .12rem;\n}\n/*# sourceMappingURL=powerbi-dashboard.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PowerBIDashboardComponent, [{
@@ -54353,19 +54306,6 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="pi pi-chart-bar"></i> User Activity Trend</span>
-        </div>
-        <div class="chart-body">
-          <apx-chart *ngIf="activityTrendChartOptions; else noTrend"
-            [series]="activityTrendChartOptions.series" [chart]="activityTrendChartOptions.chart"
-            [xaxis]="activityTrendChartOptions.xaxis"
-            [stroke]="activityTrendChartOptions.stroke"
-            [colors]="activityTrendChartOptions.colors" height="260"></apx-chart>
-          <ng-template #noTrend><div class="chart-empty"><i class="pi pi-calendar"></i><span>No data</span></div></ng-template>
-        </div>
-      </div>
     </div>
 
   </ng-container>
@@ -54504,9 +54444,14 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
       <div *ngIf="groupedTabTimeSpent?.length" class="card time-card">
         <div class="card-header">
           <span class="card-title"><i class="pi pi-clock"></i> Time by Workspace & Report</span>
+          <button *ngIf="groupedTabTimeSpent.length > 4"
+            (click)="userWsShowAll = !userWsShowAll"
+            style="font-size:.68rem;font-weight:600;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;">
+            {{ userWsShowAll ? 'Show less' : 'Show all (' + groupedTabTimeSpent.length + ')' }}
+          </button>
         </div>
         <div class="ws-grid">
-          <div *ngFor="let group of groupedTabTimeSpent" class="ws-box">
+          <div *ngFor="let group of (userWsShowAll ? groupedTabTimeSpent : groupedTabTimeSpent.slice(0,4))" class="ws-box">
             <div class="ws-box-header">
               <span class="ws-name" [title]="group.workspaceName">
                 <i class="pi pi-folder"></i>{{ transformDisplayName(group.workspaceName) }}
@@ -54514,12 +54459,16 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
               <span class="ws-total">{{ formatTimeSpent(group.totalSeconds) }}</span>
             </div>
             <div class="ws-items">
-              <div *ngFor="let item of group.items" class="ws-item">
+              <div *ngFor="let item of group.items.slice(0, userWsShowAll ? 9999 : 5)" class="ws-item">
                 <div class="ws-item-left">
                   <span class="ws-item-report" [title]="item.reportName">{{ transformDisplayName(item.reportName) }}</span>
                   <span class="ws-item-tab">{{ item.tabName || 'Overview' }}</span>
                 </div>
                 <span class="time-badge">{{ formatTimeSpent(item.totalSeconds) }}</span>
+              </div>
+              <div *ngIf="!userWsShowAll && group.items.length > 5"
+                style="padding:.3rem .55rem;font-size:.65rem;color:#94a3b8;">
+                +{{ group.items.length - 5 }} more tabs
               </div>
             </div>
           </div>
@@ -54594,86 +54543,76 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
 
         <div *ngFor="let report of getFilteredAccessDashboards()" class="card access-card">
 
+          <!-- Compact header: report name + stat chips inline -->
           <div class="access-card-head">
-            <div>
-              <span class="badge badge--slate">Power BI Report</span>
-              <h3 class="access-report-name">{{ transformDisplayName(report.reportName) }}</h3>
-            </div>
+            <h3 class="access-report-name" [title]="transformDisplayName(report.reportName)">
+              {{ transformDisplayName(report.reportName) }}
+            </h3>
             <div class="access-stats">
-              <span class="stat-chip">Assigned <strong>{{ report.assignedUsersCount }}</strong></span>
-              <span class="stat-chip stat-chip--blue">Active <strong>{{ report.activeUsersCount }}</strong></span>
+              <span class="stat-chip">
+                <i class="pi pi-users" style="font-size:.6rem;margin-right:.2rem;"></i>
+                {{ report.assignedUsersCount }}
+              </span>
+              <span class="stat-chip stat-chip--blue">
+                <i class="pi pi-check" style="font-size:.6rem;margin-right:.2rem;"></i>
+                {{ report.activeUsersCount }} active
+              </span>
+              <span class="stat-chip stat-chip--red" *ngIf="report.assignedUsersCount - report.activeUsersCount > 0">
+                <i class="pi pi-ban" style="font-size:.6rem;margin-right:.2rem;"></i>
+                {{ report.assignedUsersCount - report.activeUsersCount }} inactive
+              </span>
             </div>
           </div>
 
+          <!-- User list: no per-card search, compact table -->
           <div class="access-card-body">
             <div *ngIf="report.users.length === 0" class="empty-state empty-state--sm">
               <i class="pi pi-users"></i><p>No users found</p>
             </div>
 
-            <div *ngIf="report.users.length > 0">
-              <div class="access-controls">
-                <div class="search-wrap">
-                  <i class="pi pi-search search-icon"></i>
-                  <input class="search-input" type="text" placeholder="Search users\u2026"
-                    [(ngModel)]="report.searchQuery" (input)="report.currentPage = 1" />
-                </div>
-                <select class="native-select" [(ngModel)]="report.accessFilter" (change)="report.currentPage = 1">
-                  <option value="all">All Users</option>
-                  <option value="assigned">Assigned Only</option>
-                  <option value="external">External Only</option>
-                </select>
-              </div>
-
-              <div *ngIf="getReportUsersTotalCount(report) === 0" class="empty-state empty-state--sm">
-                <i class="pi pi-filter-slash"></i><p>No users match filters</p>
-              </div>
-
-              <div *ngIf="getReportUsersTotalCount(report) > 0" class="table-wrap">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Department</th>
-                      <th>Access</th>
-                      <th>Views</th>
-                      <th>Last Viewed</th>
-                      <th>Time Spent</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let user of getPaginatedReportUsers(report)" class="tbl-row">
-                      <td>
-                        <div class="user-cell">
-                          <app-avatar [name]="user.name"></app-avatar>
-                          <div>
-                            <div class="user-name">{{ user.name }}</div>
-                            <div class="user-email">{{ user.email }}</div>
-                          </div>
+            <div *ngIf="report.users.length > 0" class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Access</th>
+                    <th style="text-align:right;">Views</th>
+                    <th style="text-align:right;">Last Active</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of getPaginatedReportUsers(report)" class="tbl-row">
+                    <td>
+                      <div class="user-cell">
+                        <app-avatar [name]="user.name"></app-avatar>
+                        <div>
+                          <div class="user-name">{{ user.name }}</div>
+                          <div class="user-email" *ngIf="user.department && user.department !== '\u2014'">{{ user.department }}</div>
                         </div>
-                      </td>
-                      <td class="t-muted">{{ user.department }}</td>
-                      <td>
-                        <span *ngIf="user.hasAccess" class="badge badge--blue">Assigned</span>
-                        <span *ngIf="!user.hasAccess" class="badge badge--slate">External</span>
-                      </td>
-                      <td class="t-bold">{{ user.totalViews }}</td>
-                      <td class="t-muted">{{ user.lastActivity === 'Never' ? '\u2014' : (user.lastActivity | date:'shortDate') }}</td>
-                      <td class="t-bold">{{ formatTimeSpent(user.estimatedTimeSpent) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </div>
+                    </td>
+                    <td>
+                      <span *ngIf="user.hasAccess" class="badge badge--blue">Assigned</span>
+                      <span *ngIf="!user.hasAccess" class="badge badge--slate">External</span>
+                    </td>
+                    <td class="t-bold" style="text-align:right;">{{ user.totalViews }}</td>
+                    <td class="t-muted" style="text-align:right;">
+                      {{ user.lastActivity === 'Never' ? '\u2014' : (user.lastActivity | date:'d MMM') }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-                <div *ngIf="getReportPageNumbers(report).length > 1" class="pagination">
-                  <button [disabled]="report.currentPage === 1"
-                    (click)="changeReportPage(report, report.currentPage - 1)"
-                    class="pg-btn"><i class="pi pi-chevron-left"></i></button>
-                  <button *ngFor="let page of getReportPageNumbers(report)"
-                    (click)="changeReportPage(report, page)"
-                    class="pg-btn" [class.pg-btn--on]="report.currentPage === page">{{ page }}</button>
-                  <button [disabled]="report.currentPage === getReportPageNumbers(report).length"
-                    (click)="changeReportPage(report, report.currentPage + 1)"
-                    class="pg-btn"><i class="pi pi-chevron-right"></i></button>
-                </div>
+              <div *ngIf="getReportPageNumbers(report).length > 1" class="pagination">
+                <button [disabled]="report.currentPage === 1"
+                  (click)="changeReportPage(report, report.currentPage - 1)"
+                  class="pg-btn"><i class="pi pi-chevron-left"></i></button>
+                <button *ngFor="let page of getReportPageNumbers(report)"
+                  (click)="changeReportPage(report, page)"
+                  class="pg-btn" [class.pg-btn--on]="report.currentPage === page">{{ page }}</button>
+                <button [disabled]="report.currentPage === getReportPageNumbers(report).length"
+                  (click)="changeReportPage(report, report.currentPage + 1)"
+                  class="pg-btn"><i class="pi pi-chevron-right"></i></button>
               </div>
             </div>
           </div>
@@ -54743,7 +54682,7 @@ var PowerBIDashboardComponent = class _PowerBIDashboardComponent {
     </div>
   </div>
 </div>
-`, styles: ["/* src/app/powerbi-dashboard/powerbi-dashboard.component.css */\n:host {\n  display: block;\n  width: 100%;\n  overflow-x: hidden;\n}\n.pg-wrap {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.75rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n@media (max-width: 768px) {\n  .pg-wrap {\n    padding: 1.25rem 1rem 2rem;\n  }\n}\n.pg-header {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.75rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #e2e8f0;\n}\n.pg-header-left {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.pg-title {\n  font-size: 1.35rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n  letter-spacing: -.02em;\n}\n.pg-refresh {\n  display: inline-flex;\n  align-items: center;\n  gap: .35rem;\n  font-size: .72rem;\n  color: #64748b;\n  font-weight: 500;\n}\n.pg-live-dot {\n  width: 7px;\n  height: 7px;\n  border-radius: 50%;\n  background: #10b981;\n  animation: pulse 2s infinite;\n}\n@keyframes pulse {\n  0%, 100% {\n    opacity: 1;\n  }\n  50% {\n    opacity: .4;\n  }\n}\n@keyframes spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pg-header-right {\n  display: flex;\n  align-items: flex-end;\n  flex-wrap: wrap;\n  gap: 1rem;\n}\n.ctrl-group {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.ctrl-label {\n  font-size: .68rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #94a3b8 !important;\n}\n.pg-dropdown {\n  width: 210px !important;\n}\n.pill-row {\n  display: flex;\n  gap: .4rem;\n}\n.pill {\n  padding: .4rem .95rem;\n  border-radius: 99px;\n  font-size: .72rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  cursor: pointer;\n  transition: all .15s;\n}\n.pill:hover {\n  background: #f1f5f9 !important;\n  border-color: #94a3b8 !important;\n}\n.pill--on {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.state-loader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .75rem;\n  padding: 4rem 0;\n  color: #64748b;\n  font-size: .85rem;\n}\n.state-loader--sm {\n  padding: 2rem 0;\n}\n.spinner {\n  width: 34px;\n  height: 34px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #3b82f6;\n  animation: spin .7s linear infinite;\n}\n.spinner--sm {\n  width: 20px;\n  height: 20px;\n  border-width: 2.5px;\n}\n.state-error {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 10px;\n  padding: .9rem 1.25rem;\n  font-size: .85rem;\n  display: flex;\n  align-items: center;\n  gap: .5rem;\n  margin-bottom: 1.25rem;\n}\n.card {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  box-shadow: 0 1px 6px rgba(15, 23, 42, .05);\n  overflow: hidden;\n}\n.card-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .9rem 1.25rem;\n  border-bottom: 1px solid #f1f5f9;\n}\n.card-title {\n  font-size: .75rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: .06em;\n  color: #1e3a8a;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n}\n.card-title .pi {\n  color: #3b82f6;\n}\n.card--wide {\n  grid-column: span 2;\n}\n@media (max-width: 900px) {\n  .card--wide {\n    grid-column: span 1;\n  }\n}\n.kpi-row {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n}\n.kpi-row--5 {\n  grid-template-columns: repeat(5, 1fr);\n}\n@media (max-width: 1100px) {\n  .kpi-row {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .kpi-row--5 {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-row,\n  .kpi-row--5 {\n    grid-template-columns: 1fr 1fr;\n  }\n}\n.kpi-card {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  padding: 1rem 1.25rem;\n  display: flex;\n  align-items: center;\n  gap: .9rem;\n  box-shadow: 0 1px 4px rgba(15, 23, 42, .04);\n  transition: box-shadow .15s, transform .15s;\n}\n.kpi-card:hover {\n  box-shadow: 0 4px 16px rgba(15, 23, 42, .09);\n  transform: translateY(-1px);\n}\n.kpi-icon {\n  width: 40px;\n  height: 40px;\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1rem;\n  flex-shrink: 0;\n}\n.kpi-body {\n  display: flex;\n  flex-direction: column;\n  gap: .15rem;\n}\n.kpi-label {\n  font-size: .65rem !important;\n  font-weight: 600 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #64748b !important;\n}\n.kpi-value {\n  font-size: 1.5rem;\n  font-weight: 800;\n  line-height: 1;\n  color: #0f172a;\n}\n.kpi--blue .kpi-icon {\n  background: #eff6ff;\n  color: #2563eb;\n}\n.kpi--indigo .kpi-icon {\n  background: #eef2ff;\n  color: #4f46e5;\n}\n.kpi--teal .kpi-icon {\n  background: #f0fdfa;\n  color: #0d9488;\n}\n.kpi--violet .kpi-icon {\n  background: #f5f3ff;\n  color: #7c3aed;\n}\n.kpi--amber .kpi-icon {\n  background: #fffbeb;\n  color: #d97706;\n}\n.kpi--slate .kpi-icon {\n  background: #f8fafc;\n  color: #475569;\n}\n.chart-grid {\n  display: grid;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n.chart-grid--2 {\n  grid-template-columns: repeat(2, 1fr);\n}\n@media (max-width: 900px) {\n  .chart-grid--2 {\n    grid-template-columns: 1fr;\n  }\n}\n.chart-body {\n  padding: .75rem 1rem 1rem;\n}\n.chart-empty {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .5rem;\n  height: 200px;\n  color: #94a3b8;\n  font-size: .8rem;\n}\n.chart-empty .pi {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.user-split {\n  display: grid;\n  grid-template-columns: 1fr 300px;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n@media (max-width: 900px) {\n  .user-split {\n    grid-template-columns: 1fr;\n  }\n}\n.promo-card {\n  background:\n    linear-gradient(\n      145deg,\n      #1e3a8a 0%,\n      #1d4ed8 100%);\n  border-radius: 14px;\n  padding: 2rem 1.5rem;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  gap: 1rem;\n  box-shadow: 0 4px 20px rgba(29, 78, 216, .2);\n}\n.promo-icon-wrap {\n  font-size: 2rem;\n  color: rgba(255, 255, 255, .5);\n}\n.promo-title {\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: #fff;\n  margin: 0;\n}\n.promo-body {\n  font-size: .78rem;\n  color: rgba(255, 255, 255, .7);\n  line-height: 1.55;\n  margin: 0;\n}\n.promo-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: .45rem;\n  background: rgba(255, 255, 255, .15);\n  border: 1.5px solid rgba(255, 255, 255, .3) !important;\n  color: #fff !important;\n  border-radius: 9px;\n  padding: .55rem 1rem;\n  font-size: .77rem;\n  font-weight: 700;\n  text-decoration: none;\n  transition: background .15s;\n  width: fit-content;\n}\n.promo-btn:hover {\n  background: rgba(255, 255, 255, .25);\n}\n.detail-header-card {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1.25rem 1.5rem;\n  margin-bottom: 1.25rem;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.detail-user-id {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg {\n  flex-shrink: 0;\n}\n.detail-name {\n  font-size: 1.1rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0 0 .15rem;\n}\n.detail-email {\n  font-size: .72rem;\n  color: #64748b;\n  margin: 0;\n}\n.back-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: .4rem;\n  background: #fff !important;\n  border: 1.5px solid #dbeafe !important;\n  color: #1e3a8a !important;\n  border-radius: 9px;\n  padding: .5rem 1rem !important;\n  font-size: .75rem;\n  font-weight: 700;\n  cursor: pointer;\n  white-space: nowrap;\n  transition: background .15s;\n}\n.back-btn:hover {\n  background: #eff6ff !important;\n}\n.time-card {\n  margin-bottom: 1.25rem;\n}\n.ws-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n  padding: 1rem 1.25rem;\n}\n.ws-box {\n  border: 1px solid #e2e8f0;\n  border-radius: 11px;\n  overflow: hidden;\n}\n.ws-box-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .65rem 1rem;\n  background: #f8fafc;\n  border-bottom: 1px solid #e2e8f0;\n  gap: .5rem;\n}\n.ws-name {\n  font-size: .73rem;\n  font-weight: 700;\n  color: #1e293b;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n.ws-name .pi {\n  color: #3b82f6;\n  flex-shrink: 0;\n}\n.ws-total {\n  font-size: .68rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #dbeafe;\n  border-radius: 99px;\n  padding: .18rem .55rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-items {\n  padding: .5rem;\n  overflow-y: auto;\n  max-height: 190px;\n}\n.ws-item {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .4rem .55rem;\n  border-radius: 7px;\n  transition: background .12s;\n}\n.ws-item:hover {\n  background: #f8fafc;\n}\n.ws-item-left {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  flex: 1;\n  padding-right: .5rem;\n}\n.ws-item-report {\n  font-size: .72rem;\n  font-weight: 600;\n  color: #334155;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-item-tab {\n  font-size: .63rem;\n  color: #94a3b8;\n  margin-top: .08rem;\n}\n.time-badge {\n  font-size: .68rem;\n  font-weight: 700;\n  color: #059669;\n  background: rgba(16, 185, 129, .08);\n  border: 1px solid rgba(16, 185, 129, .3);\n  border-radius: 99px;\n  padding: .12rem .5rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.table-wrap {\n  overflow-x: auto;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n}\n.data-table th {\n  background: #f8fafc !important;\n  color: #64748b !important;\n  font-size: .67rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .06em !important;\n  padding: .65rem 1rem !important;\n  border-bottom: 1.5px solid #e2e8f0 !important;\n  white-space: nowrap;\n}\n.data-table td {\n  padding: .7rem 1rem !important;\n  font-size: .8rem;\n  color: #1e293b !important;\n  border-bottom: 1px solid #f1f5f9 !important;\n  vertical-align: middle;\n}\n.tbl-row {\n  cursor: pointer;\n  transition: background .12s;\n}\n.tbl-row:hover td {\n  background: #f8faff !important;\n}\n.tbl-row--sel td {\n  background: #eff6ff !important;\n}\n.user-cell {\n  display: flex;\n  align-items: center;\n  gap: .65rem;\n}\n.user-name {\n  font-size: .8rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.user-email {\n  font-size: .67rem;\n  color: #64748b;\n  margin-top: .1rem;\n}\n.t-muted {\n  color: #64748b !important;\n}\n.t-bold {\n  font-weight: 700 !important;\n  color: #0f172a !important;\n}\n.search-wrap {\n  position: relative;\n  padding: .7rem 1rem;\n}\n.search-wrap--lg {\n  padding: 0;\n  margin-bottom: 1rem;\n}\n.search-icon {\n  position: absolute;\n  left: 1.65rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #94a3b8;\n  font-size: .73rem;\n  pointer-events: none;\n}\n.search-wrap--lg .search-icon {\n  left: .85rem;\n}\n.search-input {\n  width: 100%;\n  box-sizing: border-box;\n  padding: .48rem .75rem .48rem 2.1rem !important;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 9px !important;\n  font-size: .79rem !important;\n  color: #1e293b !important;\n  background: #f8fafc !important;\n  outline: none;\n  transition: border-color .15s;\n}\n.search-input:focus {\n  border-color: #3b82f6 !important;\n  background: #fff !important;\n  box-shadow: 0 0 0 3px rgba(59, 130, 246, .1) !important;\n}\n.native-select {\n  height: 36px;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 8px !important;\n  font-size: .77rem !important;\n  color: #334155 !important;\n  background: #fff !important;\n  padding: 0 .75rem !important;\n  cursor: pointer;\n  outline: none;\n}\n.native-select:focus {\n  border-color: #3b82f6 !important;\n}\n.pagination {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: .3rem;\n  padding: .75rem 1rem;\n  border-top: 1px solid #f1f5f9;\n  flex-wrap: wrap;\n}\n.pg-btn {\n  min-width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  font-size: .72rem;\n  font-weight: 600;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 .45rem !important;\n  transition: all .12s;\n}\n.pg-btn:hover {\n  background: #f1f5f9 !important;\n}\n.pg-btn--on {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.pg-btn:disabled {\n  opacity: .4;\n  cursor: not-allowed;\n}\n.icon-btn {\n  width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #3b82f6 !important;\n  font-size: .8rem;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.icon-btn:hover {\n  background: #eff6ff !important;\n}\n.badge {\n  display: inline-flex;\n  align-items: center;\n  font-size: .67rem;\n  font-weight: 700;\n  border-radius: 99px;\n  padding: .2rem .6rem;\n  white-space: nowrap;\n}\n.badge--blue {\n  background: #eff6ff;\n  color: #1d4ed8;\n  border: 1px solid #dbeafe;\n}\n.badge--slate {\n  background: #f1f5f9;\n  color: #475569;\n  border: 1px solid #e2e8f0;\n}\n.badge--green {\n  background: #f0fdf4;\n  color: #16a34a;\n  border: 1px solid #bbf7d0;\n}\n.badge--red {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fecaca;\n}\n.empty-state {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .6rem;\n  padding: 3rem 1rem;\n  text-align: center;\n  color: #94a3b8;\n}\n.empty-state .pi {\n  font-size: 2.2rem;\n  color: #dbeafe;\n}\n.empty-state h4 {\n  font-size: .88rem;\n  font-weight: 700;\n  color: #64748b;\n  margin: 0;\n}\n.empty-state p {\n  font-size: .78rem;\n  margin: 0;\n}\n.empty-state--sm {\n  padding: 1.5rem 1rem;\n}\n.empty-state--sm .pi {\n  font-size: 1.4rem;\n}\n.access-list {\n  display: flex;\n  flex-direction: column;\n  gap: 1.25rem;\n}\n.access-card-head {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: .75rem;\n  padding: 1rem 1.25rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n}\n.access-report-name {\n  font-size: .98rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: .3rem 0 0;\n}\n.access-stats {\n  display: flex;\n  gap: .5rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.stat-chip {\n  font-size: .71rem;\n  font-weight: 600;\n  color: #475569;\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 99px;\n  padding: .28rem .75rem;\n}\n.stat-chip--blue {\n  color: #1d4ed8;\n  background: #eff6ff;\n  border-color: #dbeafe;\n}\n.access-card-body {\n  padding: 1.25rem;\n}\n.access-controls {\n  display: flex;\n  gap: .75rem;\n  align-items: center;\n  flex-wrap: wrap;\n  margin-bottom: 1rem;\n}\n.access-controls .search-wrap {\n  padding: 0;\n  flex: 1;\n  min-width: 180px;\n}\n.access-controls .search-icon {\n  left: .85rem;\n}\n.modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1rem;\n  background: rgba(15, 23, 42, .45);\n  backdrop-filter: blur(6px);\n}\n.modal {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 16px;\n  box-shadow: 0 25px 60px rgba(15, 23, 42, .18);\n  width: 100%;\n  max-width: 560px;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.modal--lg {\n  max-width: 760px;\n}\n.modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n  flex-shrink: 0;\n}\n.modal-head h3 {\n  font-size: .95rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.modal-close {\n  width: 30px;\n  height: 30px;\n  border-radius: 99px;\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #64748b !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  font-size: .78rem;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.modal-close:hover {\n  background: #f1f5f9 !important;\n}\n.modal-body {\n  flex: 1;\n  overflow-y: auto;\n  padding: .25rem 0;\n}\n.modal-foot {\n  padding: .9rem 1.5rem;\n  border-top: 1px solid #f1f5f9;\n  display: flex;\n  justify-content: flex-end;\n  flex-shrink: 0;\n}\n.outline-btn {\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #475569 !important;\n  border-radius: 8px !important;\n  font-size: .77rem;\n  font-weight: 600;\n  padding: .5rem 1.1rem !important;\n  cursor: pointer;\n  transition: background .12s;\n}\n.outline-btn:hover {\n  background: #f8fafc !important;\n}\n.popup-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .75rem 1.5rem;\n  border-bottom: 1px solid #f8fafc;\n  gap: .75rem;\n}\n.popup-row:last-child {\n  border-bottom: none;\n}\n.popup-row:hover {\n  background: #f8fafc;\n}\n.popup-report {\n  font-size: .82rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.popup-ws {\n  font-size: .68rem;\n  color: #64748b;\n  margin-top: .12rem;\n}\n/*# sourceMappingURL=powerbi-dashboard.component.css.map */\n"] }]
+`, styles: ["/* src/app/powerbi-dashboard/powerbi-dashboard.component.css */\n:host {\n  display: block;\n  width: 100%;\n  overflow-x: hidden;\n}\n.pg-wrap {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.75rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n@media (max-width: 768px) {\n  .pg-wrap {\n    padding: 1.25rem 1rem 2rem;\n  }\n}\n.pg-header {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.75rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #e2e8f0;\n}\n.pg-header-left {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.pg-title {\n  font-size: 1.35rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n  letter-spacing: -.02em;\n}\n.pg-refresh {\n  display: inline-flex;\n  align-items: center;\n  gap: .35rem;\n  font-size: .72rem;\n  color: #64748b;\n  font-weight: 500;\n}\n.pg-live-dot {\n  width: 7px;\n  height: 7px;\n  border-radius: 50%;\n  background: #10b981;\n  animation: pulse 2s infinite;\n}\n@keyframes pulse {\n  0%, 100% {\n    opacity: 1;\n  }\n  50% {\n    opacity: .4;\n  }\n}\n@keyframes spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pg-header-right {\n  display: flex;\n  align-items: flex-end;\n  flex-wrap: wrap;\n  gap: 1rem;\n}\n.ctrl-group {\n  display: flex;\n  flex-direction: column;\n  gap: .3rem;\n}\n.ctrl-label {\n  font-size: .68rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #94a3b8 !important;\n}\n.pg-dropdown {\n  width: 210px !important;\n}\n.pill-row {\n  display: flex;\n  gap: .4rem;\n}\n.pill {\n  padding: .4rem .95rem;\n  border-radius: 99px;\n  font-size: .72rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  cursor: pointer;\n  transition: all .15s;\n}\n.pill:hover {\n  background: #f1f5f9 !important;\n  border-color: #94a3b8 !important;\n}\n.pill--on {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.state-loader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .75rem;\n  padding: 4rem 0;\n  color: #64748b;\n  font-size: .85rem;\n}\n.state-loader--sm {\n  padding: 2rem 0;\n}\n.spinner {\n  width: 34px;\n  height: 34px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #3b82f6;\n  animation: spin .7s linear infinite;\n}\n.spinner--sm {\n  width: 20px;\n  height: 20px;\n  border-width: 2.5px;\n}\n.state-error {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 10px;\n  padding: .9rem 1.25rem;\n  font-size: .85rem;\n  display: flex;\n  align-items: center;\n  gap: .5rem;\n  margin-bottom: 1.25rem;\n}\n.card {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  box-shadow: 0 1px 6px rgba(15, 23, 42, .05);\n  overflow: hidden;\n}\n.card-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .9rem 1.25rem;\n  border-bottom: 1px solid #f1f5f9;\n}\n.card-title {\n  font-size: .75rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: .06em;\n  color: #1e3a8a;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n}\n.card-title .pi {\n  color: #3b82f6;\n}\n.card--wide {\n  grid-column: span 2;\n}\n@media (max-width: 900px) {\n  .card--wide {\n    grid-column: span 1;\n  }\n}\n.kpi-row {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n}\n.kpi-row--5 {\n  grid-template-columns: repeat(5, 1fr);\n}\n@media (max-width: 1100px) {\n  .kpi-row {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .kpi-row--5 {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-row,\n  .kpi-row--5 {\n    grid-template-columns: 1fr 1fr;\n  }\n}\n.kpi-card {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 14px;\n  padding: 0.6rem 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: .65rem;\n  box-shadow: 0 1px 4px rgba(15, 23, 42, .04);\n  transition: box-shadow .15s, transform .15s;\n}\n.kpi-card:hover {\n  box-shadow: 0 4px 16px rgba(15, 23, 42, .09);\n  transform: translateY(-1px);\n}\n.kpi-icon {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.85rem;\n  flex-shrink: 0;\n}\n.kpi-body {\n  display: flex;\n  flex-direction: column;\n  gap: .1rem;\n}\n.kpi-label {\n  font-size: .62rem !important;\n  font-weight: 600 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .07em;\n  color: #64748b !important;\n}\n.kpi-value {\n  font-size: 1.1rem;\n  font-weight: 800;\n  line-height: 1;\n  color: #0f172a;\n}\n.kpi--blue .kpi-icon {\n  background: #eff6ff;\n  color: #2563eb;\n}\n.kpi--indigo .kpi-icon {\n  background: #eef2ff;\n  color: #4f46e5;\n}\n.kpi--teal .kpi-icon {\n  background: #f0fdfa;\n  color: #0d9488;\n}\n.kpi--violet .kpi-icon {\n  background: #f5f3ff;\n  color: #7c3aed;\n}\n.kpi--amber .kpi-icon {\n  background: #fffbeb;\n  color: #d97706;\n}\n.kpi--slate .kpi-icon {\n  background: #f8fafc;\n  color: #475569;\n}\n.chart-grid {\n  display: grid;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n.chart-grid--2 {\n  grid-template-columns: repeat(2, 1fr);\n}\n@media (max-width: 900px) {\n  .chart-grid--2 {\n    grid-template-columns: 1fr;\n  }\n}\n.chart-body {\n  padding: .75rem 1rem 1rem;\n}\n.chart-empty {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .5rem;\n  height: 200px;\n  color: #94a3b8;\n  font-size: .8rem;\n}\n.chart-empty .pi {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.user-split {\n  display: grid;\n  grid-template-columns: 1fr 300px;\n  gap: 1.25rem;\n  margin-bottom: 1.25rem;\n}\n@media (max-width: 900px) {\n  .user-split {\n    grid-template-columns: 1fr;\n  }\n}\n.promo-card {\n  background:\n    linear-gradient(\n      145deg,\n      #1e3a8a 0%,\n      #1d4ed8 100%);\n  border-radius: 14px;\n  padding: 2rem 1.5rem;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  gap: 1rem;\n  box-shadow: 0 4px 20px rgba(29, 78, 216, .2);\n}\n.promo-icon-wrap {\n  font-size: 2rem;\n  color: rgba(255, 255, 255, .5);\n}\n.promo-title {\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: #fff;\n  margin: 0;\n}\n.promo-body {\n  font-size: .78rem;\n  color: rgba(255, 255, 255, .7);\n  line-height: 1.55;\n  margin: 0;\n}\n.promo-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: .45rem;\n  background: rgba(255, 255, 255, .15);\n  border: 1.5px solid rgba(255, 255, 255, .3) !important;\n  color: #fff !important;\n  border-radius: 9px;\n  padding: .55rem 1rem;\n  font-size: .77rem;\n  font-weight: 700;\n  text-decoration: none;\n  transition: background .15s;\n  width: fit-content;\n}\n.promo-btn:hover {\n  background: rgba(255, 255, 255, .25);\n}\n.detail-header-card {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1.25rem 1.5rem;\n  margin-bottom: 1.25rem;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.detail-user-id {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg {\n  flex-shrink: 0;\n}\n.detail-name {\n  font-size: 1.1rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0 0 .15rem;\n}\n.detail-email {\n  font-size: .72rem;\n  color: #64748b;\n  margin: 0;\n}\n.back-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: .4rem;\n  background: #fff !important;\n  border: 1.5px solid #dbeafe !important;\n  color: #1e3a8a !important;\n  border-radius: 9px;\n  padding: .5rem 1rem !important;\n  font-size: .75rem;\n  font-weight: 700;\n  cursor: pointer;\n  white-space: nowrap;\n  transition: background .15s;\n}\n.back-btn:hover {\n  background: #eff6ff !important;\n}\n.time-card {\n  margin-bottom: 1.25rem;\n}\n.ws-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n  padding: 1rem 1.25rem;\n}\n.ws-box {\n  border: 1px solid #e2e8f0;\n  border-radius: 11px;\n  overflow: hidden;\n}\n.ws-box-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .65rem 1rem;\n  background: #f8fafc;\n  border-bottom: 1px solid #e2e8f0;\n  gap: .5rem;\n}\n.ws-name {\n  font-size: .73rem;\n  font-weight: 700;\n  color: #1e293b;\n  display: flex;\n  align-items: center;\n  gap: .4rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n.ws-name .pi {\n  color: #3b82f6;\n  flex-shrink: 0;\n}\n.ws-total {\n  font-size: .68rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #dbeafe;\n  border-radius: 99px;\n  padding: .18rem .55rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-items {\n  padding: .5rem;\n  overflow-y: auto;\n  max-height: 190px;\n}\n.ws-item {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .4rem .55rem;\n  border-radius: 7px;\n  transition: background .12s;\n}\n.ws-item:hover {\n  background: #f8fafc;\n}\n.ws-item-left {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  flex: 1;\n  padding-right: .5rem;\n}\n.ws-item-report {\n  font-size: .72rem;\n  font-weight: 600;\n  color: #334155;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-item-tab {\n  font-size: .63rem;\n  color: #94a3b8;\n  margin-top: .08rem;\n}\n.time-badge {\n  font-size: .68rem;\n  font-weight: 700;\n  color: #059669;\n  background: rgba(16, 185, 129, .08);\n  border: 1px solid rgba(16, 185, 129, .3);\n  border-radius: 99px;\n  padding: .12rem .5rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.table-wrap {\n  overflow-x: auto;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n}\n.data-table th {\n  background: #f8fafc !important;\n  color: #64748b !important;\n  font-size: .67rem !important;\n  font-weight: 700 !important;\n  text-transform: uppercase !important;\n  letter-spacing: .06em !important;\n  padding: .65rem 1rem !important;\n  border-bottom: 1.5px solid #e2e8f0 !important;\n  white-space: nowrap;\n}\n.data-table td {\n  padding: .7rem 1rem !important;\n  font-size: .8rem;\n  color: #1e293b !important;\n  border-bottom: 1px solid #f1f5f9 !important;\n  vertical-align: middle;\n}\n.tbl-row {\n  cursor: pointer;\n  transition: background .12s;\n}\n.tbl-row:hover td {\n  background: #f8faff !important;\n}\n.tbl-row--sel td {\n  background: #eff6ff !important;\n}\n.user-cell {\n  display: flex;\n  align-items: center;\n  gap: .65rem;\n}\n.user-name {\n  font-size: .8rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.user-email {\n  font-size: .67rem;\n  color: #64748b;\n  margin-top: .1rem;\n}\n.t-muted {\n  color: #64748b !important;\n}\n.t-bold {\n  font-weight: 700 !important;\n  color: #0f172a !important;\n}\n.search-wrap {\n  position: relative;\n  padding: .7rem 1rem;\n}\n.search-wrap--lg {\n  padding: 0;\n  margin-bottom: 1rem;\n}\n.search-icon {\n  position: absolute;\n  left: 1.65rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #94a3b8;\n  font-size: .73rem;\n  pointer-events: none;\n}\n.search-wrap--lg .search-icon {\n  left: .85rem;\n}\n.search-input {\n  width: 100%;\n  box-sizing: border-box;\n  padding: .48rem .75rem .48rem 2.1rem !important;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 9px !important;\n  font-size: .79rem !important;\n  color: #1e293b !important;\n  background: #f8fafc !important;\n  outline: none;\n  transition: border-color .15s;\n}\n.search-input:focus {\n  border-color: #3b82f6 !important;\n  background: #fff !important;\n  box-shadow: 0 0 0 3px rgba(59, 130, 246, .1) !important;\n}\n.native-select {\n  height: 36px;\n  border: 1.5px solid #e2e8f0 !important;\n  border-radius: 8px !important;\n  font-size: .77rem !important;\n  color: #334155 !important;\n  background: #fff !important;\n  padding: 0 .75rem !important;\n  cursor: pointer;\n  outline: none;\n}\n.native-select:focus {\n  border-color: #3b82f6 !important;\n}\n.pagination {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: .3rem;\n  padding: .75rem 1rem;\n  border-top: 1px solid #f1f5f9;\n  flex-wrap: wrap;\n}\n.pg-btn {\n  min-width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #475569 !important;\n  font-size: .72rem;\n  font-weight: 600;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 .45rem !important;\n  transition: all .12s;\n}\n.pg-btn:hover {\n  background: #f1f5f9 !important;\n}\n.pg-btn--on {\n  background: #1e3a8a !important;\n  color: #fff !important;\n  border-color: #1e3a8a !important;\n}\n.pg-btn:disabled {\n  opacity: .4;\n  cursor: not-allowed;\n}\n.icon-btn {\n  width: 30px;\n  height: 30px;\n  border-radius: 7px;\n  border: 1.5px solid #e2e8f0 !important;\n  background: #fff !important;\n  color: #3b82f6 !important;\n  font-size: .8rem;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.icon-btn:hover {\n  background: #eff6ff !important;\n}\n.badge {\n  display: inline-flex;\n  align-items: center;\n  font-size: .67rem;\n  font-weight: 700;\n  border-radius: 99px;\n  padding: .2rem .6rem;\n  white-space: nowrap;\n}\n.badge--blue {\n  background: #eff6ff;\n  color: #1d4ed8;\n  border: 1px solid #dbeafe;\n}\n.badge--slate {\n  background: #f1f5f9;\n  color: #475569;\n  border: 1px solid #e2e8f0;\n}\n.badge--green {\n  background: #f0fdf4;\n  color: #16a34a;\n  border: 1px solid #bbf7d0;\n}\n.badge--red {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fecaca;\n}\n.empty-state {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: .6rem;\n  padding: 3rem 1rem;\n  text-align: center;\n  color: #94a3b8;\n}\n.empty-state .pi {\n  font-size: 2.2rem;\n  color: #dbeafe;\n}\n.empty-state h4 {\n  font-size: .88rem;\n  font-weight: 700;\n  color: #64748b;\n  margin: 0;\n}\n.empty-state p {\n  font-size: .78rem;\n  margin: 0;\n}\n.empty-state--sm {\n  padding: 1.5rem 1rem;\n}\n.empty-state--sm .pi {\n  font-size: 1.4rem;\n}\n.access-list {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1rem;\n}\n@media (max-width: 1200px) {\n  .access-list {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n@media (max-width: 700px) {\n  .access-list {\n    grid-template-columns: 1fr;\n  }\n}\n.access-card-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: .5rem;\n  padding: .65rem 1rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n}\n.access-report-name {\n  font-size: .82rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: .15rem 0 0;\n}\n.access-stats {\n  display: flex;\n  gap: .4rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.access-card .table-wrap {\n  max-height: 240px;\n  overflow-y: auto;\n  overflow-x: auto;\n}\n.access-card .access-controls {\n  padding: .5rem .75rem;\n  display: flex;\n  gap: .5rem;\n  flex-wrap: wrap;\n  align-items: center;\n}\n.access-card .search-wrap {\n  padding: 0;\n  flex: 1;\n  min-width: 120px;\n}\n.access-card .search-icon {\n  left: .65rem;\n}\n.access-card .search-input {\n  padding: .38rem .6rem .38rem 1.8rem !important;\n  font-size: .72rem !important;\n}\n.access-card .native-select {\n  height: 30px;\n  font-size: .72rem !important;\n  padding: 0 .5rem !important;\n}\n.access-card .data-table td {\n  padding: .45rem .75rem !important;\n  font-size: .74rem !important;\n}\n.access-card .data-table th {\n  padding: .45rem .75rem !important;\n}\n.stat-chip {\n  font-size: .71rem;\n  font-weight: 600;\n  color: #475569;\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 99px;\n  padding: .28rem .75rem;\n}\n.stat-chip--blue {\n  color: #1d4ed8;\n  background: #eff6ff;\n  border-color: #dbeafe;\n}\n.stat-chip--red {\n  color: #b91c1c;\n  background: #fef2f2;\n  border-color: #fecaca;\n}\n.access-card-body {\n  padding: 0;\n}\n.access-controls {\n  display: flex;\n  gap: .5rem;\n  align-items: center;\n  flex-wrap: wrap;\n  margin-bottom: 0;\n}\n.access-controls .search-wrap {\n  padding: 0;\n  flex: 1;\n  min-width: 120px;\n}\n.access-controls .search-icon {\n  left: .85rem;\n}\n.modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1rem;\n  background: rgba(15, 23, 42, .45);\n  backdrop-filter: blur(6px);\n}\n.modal {\n  background: #fff;\n  border: 1px solid #e2e8f0;\n  border-radius: 16px;\n  box-shadow: 0 25px 60px rgba(15, 23, 42, .18);\n  width: 100%;\n  max-width: 560px;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.modal--lg {\n  max-width: 760px;\n}\n.modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8fafc;\n  flex-shrink: 0;\n}\n.modal-head h3 {\n  font-size: .95rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.modal-close {\n  width: 30px;\n  height: 30px;\n  border-radius: 99px;\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #64748b !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  font-size: .78rem;\n  padding: 0 !important;\n  transition: background .12s;\n}\n.modal-close:hover {\n  background: #f1f5f9 !important;\n}\n.modal-body {\n  flex: 1;\n  overflow-y: auto;\n  padding: .25rem 0;\n}\n.modal-foot {\n  padding: .9rem 1.5rem;\n  border-top: 1px solid #f1f5f9;\n  display: flex;\n  justify-content: flex-end;\n  flex-shrink: 0;\n}\n.outline-btn {\n  background: #fff !important;\n  border: 1.5px solid #e2e8f0 !important;\n  color: #475569 !important;\n  border-radius: 8px !important;\n  font-size: .77rem;\n  font-weight: 600;\n  padding: .5rem 1.1rem !important;\n  cursor: pointer;\n  transition: background .12s;\n}\n.outline-btn:hover {\n  background: #f8fafc !important;\n}\n.popup-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: .75rem 1.5rem;\n  border-bottom: 1px solid #f8fafc;\n  gap: .75rem;\n}\n.popup-row:last-child {\n  border-bottom: none;\n}\n.popup-row:hover {\n  background: #f8fafc;\n}\n.popup-report {\n  font-size: .82rem;\n  font-weight: 600;\n  color: #0f172a;\n}\n.popup-ws {\n  font-size: .68rem;\n  color: #64748b;\n  margin-top: .12rem;\n}\n/*# sourceMappingURL=powerbi-dashboard.component.css.map */\n"] }]
   }], () => [{ type: PowerBIMetricsService }, { type: HomeService }, { type: FormBuilder }, { type: ChangeDetectorRef }, { type: ToastService }, { type: NameMapperService }, { type: ActivatedRoute }, { type: AuthService }, { type: ActiveTimeTrackerService }], { onBeforeUnload: [{
     type: HostListener,
     args: ["window:beforeunload", []]
@@ -60819,10 +60758,10 @@ var AnalyticsComponent = class _AnalyticsComponent {
 })();
 
 // src/app/users-overview/users-overview.component.ts
-function UsersOverviewComponent_span_6_Template(rf, ctx) {
+function UsersOverviewComponent_p_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 14);
-    \u0275\u0275element(1, "span", 15);
+    \u0275\u0275elementStart(0, "p", 16);
+    \u0275\u0275element(1, "span", 17);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "date");
     \u0275\u0275elementEnd();
@@ -60830,17 +60769,17 @@ function UsersOverviewComponent_span_6_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" Data refreshed on ", \u0275\u0275pipeBind2(3, 1, ctx_r0.lastRefreshedAt, "medium"), " ");
+    \u0275\u0275textInterpolate1(" Refreshed ", \u0275\u0275pipeBind2(3, 1, ctx_r0.lastRefreshedAt, "dd MMM yyyy, HH:mm"), " ");
   }
 }
-function UsersOverviewComponent_button_8_Template(rf, ctx) {
+function UsersOverviewComponent_button_15_Template(rf, ctx) {
   if (rf & 1) {
     const _r2 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 16);
-    \u0275\u0275listener("click", function UsersOverviewComponent_button_8_Template_button_click_0_listener() {
+    \u0275\u0275elementStart(0, "button", 18);
+    \u0275\u0275listener("click", function UsersOverviewComponent_button_15_Template_button_click_0_listener() {
       const p_r3 = \u0275\u0275restoreView(_r2).$implicit;
       const ctx_r0 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r0.loadUsers(p_r3.days));
+      return \u0275\u0275resetView(ctx_r0.loadAll(p_r3.days));
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
@@ -60853,19 +60792,19 @@ function UsersOverviewComponent_button_8_Template(rf, ctx) {
     \u0275\u0275textInterpolate(p_r3.label);
   }
 }
-function UsersOverviewComponent_div_9_Template(rf, ctx) {
+function UsersOverviewComponent_div_16_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 17);
-    \u0275\u0275element(1, "div", 18);
+    \u0275\u0275elementStart(0, "div", 19);
+    \u0275\u0275element(1, "div", 20);
     \u0275\u0275elementStart(2, "p");
-    \u0275\u0275text(3, "Loading user data\u2026");
+    \u0275\u0275text(3, "Loading data\u2026");
     \u0275\u0275elementEnd()();
   }
 }
-function UsersOverviewComponent_div_10_Template(rf, ctx) {
+function UsersOverviewComponent_div_17_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 19);
-    \u0275\u0275element(1, "i", 20);
+    \u0275\u0275elementStart(0, "div", 21);
+    \u0275\u0275element(1, "i", 22);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
   }
@@ -60875,76 +60814,110 @@ function UsersOverviewComponent_div_10_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", ctx_r0.error, " ");
   }
 }
-function UsersOverviewComponent_div_11_div_11_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_div_1_button_1_Template(rf, ctx) {
   if (rf & 1) {
     const _r5 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 37);
-    \u0275\u0275listener("click", function UsersOverviewComponent_div_11_div_11_Template_div_click_0_listener() {
-      const user_r6 = \u0275\u0275restoreView(_r5).$implicit;
-      const ctx_r0 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r0.selectUser(user_r6.id));
-    });
-    \u0275\u0275element(1, "app-avatar", 38);
-    \u0275\u0275elementStart(2, "div", 39)(3, "span", 40);
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "span", 41);
-    \u0275\u0275text(6);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 42)(8, "span", 43);
-    \u0275\u0275text(9);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "span", 44);
-    \u0275\u0275text(11, "views");
-    \u0275\u0275elementEnd()()();
-  }
-  if (rf & 2) {
-    const user_r6 = ctx.$implicit;
-    const ctx_r0 = \u0275\u0275nextContext(2);
-    \u0275\u0275classProp("user-row--active", ctx_r0.selectedUserId === user_r6.id);
-    \u0275\u0275advance();
-    \u0275\u0275property("name", user_r6.name);
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(user_r6.name);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(user_r6.department);
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(user_r6.totalViews);
-  }
-}
-function UsersOverviewComponent_div_11_div_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 45);
-    \u0275\u0275element(1, "i", 46);
-    \u0275\u0275elementStart(2, "p");
-    \u0275\u0275text(3, "No users found");
-    \u0275\u0275elementEnd()();
-  }
-}
-function UsersOverviewComponent_div_11_div_13_button_1_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r7 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 49);
-    \u0275\u0275listener("click", function UsersOverviewComponent_div_11_div_13_button_1_Template_button_click_0_listener() {
-      const page_r8 = \u0275\u0275restoreView(_r7).$implicit;
+    \u0275\u0275elementStart(0, "button", 41);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_18_div_1_button_1_Template_button_click_0_listener() {
+      const d_r6 = \u0275\u0275restoreView(_r5).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(3);
-      return \u0275\u0275resetView(ctx_r0.changePage(page_r8));
+      return \u0275\u0275resetView(ctx_r0.selectDept(d_r6));
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const page_r8 = ctx.$implicit;
+    const d_r6 = ctx.$implicit;
     const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275classProp("page-btn--active", ctx_r0.currentPage === page_r8);
+    \u0275\u0275classProp("dept-pill--on", ctx_r0.selectedDept === d_r6);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(page_r8);
+    \u0275\u0275textInterpolate(d_r6);
   }
 }
-function UsersOverviewComponent_div_11_div_13_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_div_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 47);
-    \u0275\u0275template(1, UsersOverviewComponent_div_11_div_13_button_1_Template, 2, 3, "button", 48);
+    \u0275\u0275elementStart(0, "div", 39);
+    \u0275\u0275template(1, UsersOverviewComponent_ng_container_18_div_1_button_1_Template, 2, 3, "button", 40);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r0.availableDepts);
+  }
+}
+function UsersOverviewComponent_ng_container_18_div_13_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r7 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 42);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_18_div_13_Template_div_click_0_listener() {
+      const user_r8 = \u0275\u0275restoreView(_r7).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r0.selectUser(user_r8.id));
+    });
+    \u0275\u0275element(1, "app-avatar", 43);
+    \u0275\u0275elementStart(2, "div", 44)(3, "span", 45);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "span", 46);
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "div", 47)(8, "span", 48);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "span", 49);
+    \u0275\u0275text(11, "views");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const user_r8 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275classProp("user-row--active", ctx_r0.selectedUserId === user_r8.id)("user-row--zero", user_r8.isZeroView);
+    \u0275\u0275advance();
+    \u0275\u0275property("name", user_r8.name);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(user_r8.name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(user_r8.department);
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("views-badge--zero", user_r8.isZeroView);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(user_r8.totalViews);
+  }
+}
+function UsersOverviewComponent_ng_container_18_div_14_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 50);
+    \u0275\u0275element(1, "i", 51);
+    \u0275\u0275elementStart(2, "p");
+    \u0275\u0275text(3, "No users found");
+    \u0275\u0275elementEnd()();
+  }
+}
+function UsersOverviewComponent_ng_container_18_div_15_button_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r9 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 54);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_18_div_15_button_1_Template_button_click_0_listener() {
+      const page_r10 = \u0275\u0275restoreView(_r9).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r0.changePage(page_r10));
+    });
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const page_r10 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275classProp("page-btn--active", ctx_r0.currentPage === page_r10);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(page_r10);
+  }
+}
+function UsersOverviewComponent_ng_container_18_div_15_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 52);
+    \u0275\u0275template(1, UsersOverviewComponent_ng_container_18_div_15_button_1_Template, 2, 3, "button", 53);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -60953,25 +60926,25 @@ function UsersOverviewComponent_div_11_div_13_Template(rf, ctx) {
     \u0275\u0275property("ngForOf", ctx_r0.getPageNumbers());
   }
 }
-function UsersOverviewComponent_div_11_div_15_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_div_17_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 50);
-    \u0275\u0275element(1, "i", 51);
+    \u0275\u0275elementStart(0, "div", 55);
+    \u0275\u0275element(1, "i", 56);
     \u0275\u0275elementStart(2, "p");
-    \u0275\u0275text(3, "Select a user from the list to view their activity summary");
+    \u0275\u0275text(3, "Select a user to view their activity");
     \u0275\u0275elementEnd()();
   }
 }
-function UsersOverviewComponent_div_11_div_16_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_div_18_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 52);
-    \u0275\u0275element(1, "div", 53);
+    \u0275\u0275elementStart(0, "div", 57);
+    \u0275\u0275element(1, "div", 58);
     \u0275\u0275elementEnd();
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_span_9_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_span_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 79);
+    \u0275\u0275elementStart(0, "span", 86);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -60981,267 +60954,330 @@ function UsersOverviewComponent_div_11_ng_container_17_span_9_Template(rf, ctx) 
     \u0275\u0275textInterpolate1(" ", ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.department, " ");
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_div_36_div_9_span_3_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_span_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 90);
+    \u0275\u0275elementStart(0, "span", 87);
+    \u0275\u0275text(1, "No Activity This Period");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_12_div_8_span_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 96);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const item_r9 = \u0275\u0275nextContext().$implicit;
-    const ctx_r0 = \u0275\u0275nextContext(4);
+    const a_r11 = ctx.$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("(", ctx_r0.formatTime(item_r9.timeSpent), ")");
+    \u0275\u0275textInterpolate(a_r11.displayName);
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_div_36_div_9_span_4_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_12_div_8_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 90);
-    \u0275\u0275text(1);
+    \u0275\u0275elementStart(0, "div", 92)(1, "span", 93);
+    \u0275\u0275text(2, "Assigned Reports:");
     \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const item_r9 = \u0275\u0275nextContext().$implicit;
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("(", item_r9.views, " views)");
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_div_36_div_9_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 87);
-    \u0275\u0275element(1, "i", 88);
-    \u0275\u0275text(2);
-    \u0275\u0275template(3, UsersOverviewComponent_div_11_ng_container_17_div_36_div_9_span_3_Template, 2, 1, "span", 89)(4, UsersOverviewComponent_div_11_ng_container_17_div_36_div_9_span_4_Template, 2, 1, "span", 89);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const item_r9 = ctx.$implicit;
-    const ctx_r0 = \u0275\u0275nextContext(4);
-    \u0275\u0275classProp("util-tag--used", item_r9.isUsed)("util-tag--unused", !item_r9.isUsed);
-    \u0275\u0275property("title", item_r9.isUsed ? "Used \u2014 " + (item_r9.timeSpent > 0 ? ctx_r0.formatTime(item_r9.timeSpent) : "") + (item_r9.views > 0 ? " \xB7 " + item_r9.views + " views" : "") : "Not accessed in selected period");
-    \u0275\u0275advance();
-    \u0275\u0275classMap(item_r9.isUsed ? "pi pi-check-circle" : "pi pi-minus-circle");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", item_r9.displayName, " ");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", item_r9.timeSpent > 0);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", item_r9.views > 0 && item_r9.timeSpent === 0);
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_div_36_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 80)(1, "div", 81)(2, "span", 82);
-    \u0275\u0275element(3, "i", 83);
-    \u0275\u0275text(4, " Access Utilization ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "span", 84);
-    \u0275\u0275element(6, "i");
-    \u0275\u0275text(7);
+    \u0275\u0275elementStart(3, "div", 94);
+    \u0275\u0275template(4, UsersOverviewComponent_ng_container_18_ng_container_19_div_12_div_8_span_4_Template, 2, 1, "span", 95);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "div", 85);
-    \u0275\u0275template(9, UsersOverviewComponent_div_11_ng_container_17_div_36_div_9_Template, 5, 10, "div", 86);
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngForOf", ctx_r0.assignedVsUsed);
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 88)(1, "div", 89);
+    \u0275\u0275element(2, "i", 90);
+    \u0275\u0275elementStart(3, "span");
+    \u0275\u0275text(4, "No activity recorded in the last ");
+    \u0275\u0275elementStart(5, "strong");
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(7, ". This user's access should be reviewed.");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(8, UsersOverviewComponent_ng_container_18_ng_container_19_div_12_div_8_Template, 5, 1, "div", 91);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(6);
+    \u0275\u0275textInterpolate(ctx_r0.getPeriodLabel());
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r0.assignedVsUsed.length > 0);
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_44_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 99)(1, "h3", 100);
+    \u0275\u0275text(2, "Time by Workspace");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(3, "apx-chart", 101);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("series", ctx_r0.userWorkspacePieChartOptions.series)("chart", ctx_r0.userWorkspacePieChartOptions.chart)("labels", ctx_r0.userWorkspacePieChartOptions.labels)("colors", ctx_r0.userWorkspacePieChartOptions.colors)("dataLabels", ctx_r0.userWorkspacePieChartOptions.dataLabels)("legend", ctx_r0.userWorkspacePieChartOptions.legend)("tooltip", ctx_r0.userWorkspacePieChartOptions.tooltip);
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_44_div_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 99)(1, "h3", 100);
+    \u0275\u0275text(2, "Top Reports Accessed");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(3, "apx-chart", 102);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("series", ctx_r0.userReportViewsChartOptions.series)("chart", ctx_r0.userReportViewsChartOptions.chart)("plotOptions", ctx_r0.userReportViewsChartOptions.plotOptions)("xaxis", ctx_r0.userReportViewsChartOptions.xaxis)("colors", ctx_r0.userReportViewsChartOptions.colors)("dataLabels", ctx_r0.userReportViewsChartOptions.dataLabels)("tooltip", ctx_r0.userReportViewsChartOptions.tooltip);
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_44_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 97);
+    \u0275\u0275template(1, UsersOverviewComponent_ng_container_18_ng_container_19_div_44_div_1_Template, 4, 7, "div", 98)(2, UsersOverviewComponent_ng_container_18_ng_container_19_div_44_div_2_Template, 4, 7, "div", 98);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.userWorkspacePieChartOptions);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.userReportViewsChartOptions);
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_45_div_7_span_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 112);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const item_r12 = \u0275\u0275nextContext().$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("(", ctx_r0.formatTime(item_r12.timeSpent), ")");
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_45_div_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 109);
+    \u0275\u0275element(1, "i", 110);
+    \u0275\u0275text(2);
+    \u0275\u0275template(3, UsersOverviewComponent_ng_container_18_ng_container_19_div_45_div_7_span_3_Template, 2, 1, "span", 111);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const item_r12 = ctx.$implicit;
+    \u0275\u0275classProp("util-tag--used", item_r12.isUsed)("util-tag--unused", !item_r12.isUsed);
+    \u0275\u0275property("title", item_r12.isUsed ? "Accessed this period" : "Not accessed in period");
+    \u0275\u0275advance();
+    \u0275\u0275classMap(item_r12.isUsed ? "pi pi-check-circle" : "pi pi-minus-circle");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", item_r12.displayName, " ");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", item_r12.timeSpent > 0);
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_45_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 103)(1, "div", 104)(2, "span", 105);
+    \u0275\u0275text(3, "Access Utilization");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span", 106);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(6, "div", 107);
+    \u0275\u0275template(7, UsersOverviewComponent_ng_container_18_ng_container_19_div_45_div_7_Template, 4, 9, "div", 108);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275advance(5);
+    \u0275\u0275advance(4);
     \u0275\u0275classProp("util-rate--green", ctx_r0.utilizationRate >= 70)("util-rate--amber", ctx_r0.utilizationRate >= 40 && ctx_r0.utilizationRate < 70)("util-rate--red", ctx_r0.utilizationRate < 40);
     \u0275\u0275advance();
-    \u0275\u0275classMap(ctx_r0.utilizationRate >= 70 ? "pi pi-check-circle" : ctx_r0.utilizationRate >= 40 ? "pi pi-exclamation-circle" : "pi pi-times-circle");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", ctx_r0.utilizationRate, "% of assigned reports accessed ");
+    \u0275\u0275textInterpolate1("", ctx_r0.utilizationRate, "% reports accessed");
     \u0275\u0275advance(2);
     \u0275\u0275property("ngForOf", ctx_r0.assignedVsUsed);
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_div_37_div_5_div_8_span_4_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_button_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 108);
+    const _r13 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 120);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_button_5_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r13);
+      const ctx_r0 = \u0275\u0275nextContext(4);
+      return \u0275\u0275resetView(ctx_r0.wsTimeShowAll = !ctx_r0.wsTimeShowAll);
+    });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const item_r10 = \u0275\u0275nextContext().$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(4);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(item_r10.tabName);
+    \u0275\u0275textInterpolate1(" ", ctx_r0.wsTimeShowAll ? "Show less" : "Show all (" + ctx_r0.groupedTabTimeSpent.length + ")", " ");
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_div_37_div_5_div_8_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_div_8_span_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 103)(1, "div", 104)(2, "span", 105);
+    \u0275\u0275elementStart(0, "span", 134);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const item_r14 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("\xB7 ", item_r14.tabName, "");
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_div_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 129)(1, "div", 130)(2, "span", 131);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(4, UsersOverviewComponent_div_11_ng_container_17_div_37_div_5_div_8_span_4_Template, 2, 1, "span", 106);
+    \u0275\u0275template(4, UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_div_8_span_4_Template, 2, 1, "span", 132);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "span", 107);
+    \u0275\u0275elementStart(5, "span", 133);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const item_r10 = ctx.$implicit;
+    const item_r14 = ctx.$implicit;
     const ctx_r0 = \u0275\u0275nextContext(5);
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(ctx_r0.transformDisplayName(item_r10.reportName));
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", item_r10.tabName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(ctx_r0.formatTime(item_r10.totalSeconds));
+    \u0275\u0275property("title", ctx_r0.transformDisplayName(item_r14.reportName));
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r0.transformDisplayName(item_r14.reportName));
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", item_r14.tabName);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r0.formatTime(item_r14.totalSeconds));
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_div_37_div_5_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_div_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 96)(1, "div", 97)(2, "span", 98);
-    \u0275\u0275element(3, "i", 99);
+    \u0275\u0275elementStart(0, "div", 135);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const group_r15 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" +", group_r15.items.length - 6, " more tabs ");
+  }
+}
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 121)(1, "div", 122)(2, "span", 123);
+    \u0275\u0275element(3, "i", 124);
     \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "span", 100);
+    \u0275\u0275elementStart(5, "span", 125);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 101);
-    \u0275\u0275template(8, UsersOverviewComponent_div_11_ng_container_17_div_37_div_5_div_8_Template, 7, 3, "div", 102);
+    \u0275\u0275elementStart(7, "div", 126);
+    \u0275\u0275template(8, UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_div_8_Template, 7, 4, "div", 127)(9, UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_div_9_Template, 2, 1, "div", 128);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const group_r11 = ctx.$implicit;
+    const group_r15 = ctx.$implicit;
     const ctx_r0 = \u0275\u0275nextContext(4);
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1(" ", ctx_r0.transformDisplayName(group_r11.workspaceName), " ");
+    \u0275\u0275textInterpolate1(" ", ctx_r0.transformDisplayName(group_r15.workspaceName), " ");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(ctx_r0.formatTime(group_r11.totalSeconds));
+    \u0275\u0275textInterpolate(ctx_r0.formatTime(group_r15.totalSeconds));
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", group_r11.items);
+    \u0275\u0275property("ngForOf", group_r15.items.slice(0, ctx_r0.wsTimeShowAll ? 9999 : 6));
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r0.wsTimeShowAll && group_r15.items.length > 6);
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_div_37_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_div_46_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 91)(1, "h3", 92);
-    \u0275\u0275element(2, "i", 93);
-    \u0275\u0275text(3, " Time Spent by Report & Tab ");
+    \u0275\u0275elementStart(0, "div", 113)(1, "h3", 114)(2, "span", 115);
+    \u0275\u0275element(3, "i", 116);
+    \u0275\u0275text(4, " Time Spent by Report & Tab ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 94);
-    \u0275\u0275template(5, UsersOverviewComponent_div_11_ng_container_17_div_37_div_5_Template, 9, 3, "div", 95);
+    \u0275\u0275template(5, UsersOverviewComponent_ng_container_18_ng_container_19_div_46_button_5_Template, 2, 1, "button", 117);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "div", 118);
+    \u0275\u0275template(7, UsersOverviewComponent_ng_container_18_ng_container_19_div_46_div_7_Template, 10, 4, "div", 119);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(3);
     \u0275\u0275advance(5);
-    \u0275\u0275property("ngForOf", ctx_r0.groupedTabTimeSpent);
+    \u0275\u0275property("ngIf", ctx_r0.groupedTabTimeSpent.length > 3);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r0.wsTimeShowAll ? ctx_r0.groupedTabTimeSpent : ctx_r0.groupedTabTimeSpent.slice(0, 3));
   }
 }
-function UsersOverviewComponent_div_11_ng_container_17_apx_chart_42_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 109);
-  }
-  if (rf & 2) {
-    const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275property("series", ctx_r0.userWorkspacePieChartOptions.series)("chart", ctx_r0.userWorkspacePieChartOptions.chart)("labels", ctx_r0.userWorkspacePieChartOptions.labels)("colors", ctx_r0.userWorkspacePieChartOptions.colors)("dataLabels", ctx_r0.userWorkspacePieChartOptions.dataLabels)("legend", ctx_r0.userWorkspacePieChartOptions.legend)("tooltip", ctx_r0.userWorkspacePieChartOptions.tooltip);
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_ng_template_43_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 110);
-    \u0275\u0275text(1, "No workspace time spent recorded");
-    \u0275\u0275elementEnd();
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_apx_chart_48_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 111);
-  }
-  if (rf & 2) {
-    const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275property("series", ctx_r0.userReportViewsChartOptions.series)("chart", ctx_r0.userReportViewsChartOptions.chart)("plotOptions", ctx_r0.userReportViewsChartOptions.plotOptions)("xaxis", ctx_r0.userReportViewsChartOptions.xaxis)("colors", ctx_r0.userReportViewsChartOptions.colors)("dataLabels", ctx_r0.userReportViewsChartOptions.dataLabels)("tooltip", ctx_r0.userReportViewsChartOptions.tooltip);
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_ng_template_49_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 110);
-    \u0275\u0275text(1, "No report data");
-    \u0275\u0275elementEnd();
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_apx_chart_54_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "apx-chart", 112);
-  }
-  if (rf & 2) {
-    const ctx_r0 = \u0275\u0275nextContext(3);
-    \u0275\u0275property("series", ctx_r0.activityTimelineChartOptions.series)("chart", ctx_r0.activityTimelineChartOptions.chart)("xaxis", ctx_r0.activityTimelineChartOptions.xaxis)("colors", ctx_r0.activityTimelineChartOptions.colors)("dataLabels", ctx_r0.activityTimelineChartOptions.dataLabels)("tooltip", ctx_r0.activityTimelineChartOptions.tooltip);
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_ng_template_55_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 110);
-    \u0275\u0275text(1, "No activity data");
-    \u0275\u0275elementEnd();
-  }
-}
-function UsersOverviewComponent_div_11_ng_container_17_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_ng_container_19_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 54)(2, "div", 55);
-    \u0275\u0275element(3, "app-avatar", 56);
-    \u0275\u0275elementStart(4, "div", 57)(5, "h2", 58);
+    \u0275\u0275elementStart(1, "div", 59)(2, "div", 60);
+    \u0275\u0275element(3, "app-avatar", 61);
+    \u0275\u0275elementStart(4, "div", 62)(5, "h2", 63);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 59);
+    \u0275\u0275elementStart(7, "p", 64);
     \u0275\u0275text(8);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(9, UsersOverviewComponent_div_11_ng_container_17_span_9_Template, 2, 1, "span", 60);
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(10, "div", 61)(11, "div", 62)(12, "div", 63);
-    \u0275\u0275text(13, "Total Views");
+    \u0275\u0275elementStart(9, "div", 65);
+    \u0275\u0275template(10, UsersOverviewComponent_ng_container_18_ng_container_19_span_10_Template, 2, 1, "span", 66)(11, UsersOverviewComponent_ng_container_18_ng_container_19_span_11_Template, 2, 0, "span", 67);
+    \u0275\u0275elementEnd()()()();
+    \u0275\u0275template(12, UsersOverviewComponent_ng_container_18_ng_container_19_div_12_Template, 9, 2, "div", 68);
+    \u0275\u0275elementStart(13, "div", 69)(14, "div", 70);
+    \u0275\u0275element(15, "i", 71);
+    \u0275\u0275elementStart(16, "div", 72);
+    \u0275\u0275text(17, "Total Views");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "div", 64);
-    \u0275\u0275text(15);
+    \u0275\u0275elementStart(18, "div", 73);
+    \u0275\u0275text(19);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(16, "div", 65)(17, "div", 63);
-    \u0275\u0275text(18, "Reports Viewed");
+    \u0275\u0275elementStart(20, "div", 74);
+    \u0275\u0275element(21, "i", 75);
+    \u0275\u0275elementStart(22, "div", 72);
+    \u0275\u0275text(23, "Reports");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(19, "div", 66);
-    \u0275\u0275text(20);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(21, "div", 65)(22, "div", 63);
-    \u0275\u0275text(23, "Workspaces");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(24, "div", 67);
+    \u0275\u0275elementStart(24, "div", 76);
     \u0275\u0275text(25);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(26, "div", 65)(27, "div", 63);
-    \u0275\u0275text(28, "Active Days");
+    \u0275\u0275elementStart(26, "div", 74);
+    \u0275\u0275element(27, "i", 77);
+    \u0275\u0275elementStart(28, "div", 72);
+    \u0275\u0275text(29, "Workspaces");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(29, "div", 68);
-    \u0275\u0275text(30);
+    \u0275\u0275elementStart(30, "div", 78);
+    \u0275\u0275text(31);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(31, "div", 65)(32, "div", 63);
-    \u0275\u0275text(33, "Time Spent");
+    \u0275\u0275elementStart(32, "div", 74);
+    \u0275\u0275element(33, "i", 79);
+    \u0275\u0275elementStart(34, "div", 72);
+    \u0275\u0275text(35, "Active Days");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(34, "div", 69);
-    \u0275\u0275text(35);
+    \u0275\u0275elementStart(36, "div", 80);
+    \u0275\u0275text(37);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(38, "div", 74);
+    \u0275\u0275element(39, "i", 81);
+    \u0275\u0275elementStart(40, "div", 72);
+    \u0275\u0275text(41, "Time Spent");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(42, "div", 82);
+    \u0275\u0275text(43);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275template(36, UsersOverviewComponent_div_11_ng_container_17_div_36_Template, 10, 10, "div", 70)(37, UsersOverviewComponent_div_11_ng_container_17_div_37_Template, 6, 1, "div", 71);
-    \u0275\u0275elementStart(38, "div", 72)(39, "div", 73)(40, "h3", 74);
-    \u0275\u0275text(41, "Workspace Time Spent");
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(42, UsersOverviewComponent_div_11_ng_container_17_apx_chart_42_Template, 1, 7, "apx-chart", 75)(43, UsersOverviewComponent_div_11_ng_container_17_ng_template_43_Template, 2, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(45, "div", 73)(46, "h3", 74);
-    \u0275\u0275text(47, "Top Reports");
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(48, UsersOverviewComponent_div_11_ng_container_17_apx_chart_48_Template, 1, 7, "apx-chart", 76)(49, UsersOverviewComponent_div_11_ng_container_17_ng_template_49_Template, 2, 0, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(51, "div", 77)(52, "h3", 74);
-    \u0275\u0275text(53, "Activity Timeline");
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(54, UsersOverviewComponent_div_11_ng_container_17_apx_chart_54_Template, 1, 6, "apx-chart", 78)(55, UsersOverviewComponent_div_11_ng_container_17_ng_template_55_Template, 2, 0, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
-    \u0275\u0275elementEnd()();
+    \u0275\u0275template(44, UsersOverviewComponent_ng_container_18_ng_container_19_div_44_Template, 3, 2, "div", 83)(45, UsersOverviewComponent_ng_container_18_ng_container_19_div_45_Template, 8, 8, "div", 84)(46, UsersOverviewComponent_ng_container_18_ng_container_19_div_46_Template, 8, 2, "div", 85);
     \u0275\u0275elementContainerEnd();
   }
   if (rf & 2) {
-    const noData_r12 = \u0275\u0275reference(44);
-    const noReports_r13 = \u0275\u0275reference(50);
-    const noTimeline_r14 = \u0275\u0275reference(56);
     const ctx_r0 = \u0275\u0275nextContext(2);
     \u0275\u0275advance(3);
     \u0275\u0275property("name", (ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.name) || ctx_r0.selectedUserId);
@@ -61249,65 +61285,70 @@ function UsersOverviewComponent_div_11_ng_container_17_Template(rf, ctx) {
     \u0275\u0275textInterpolate((ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.name) || ctx_r0.selectedUserId);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(ctx_r0.selectedUserId);
-    \u0275\u0275advance();
+    \u0275\u0275advance(2);
     \u0275\u0275property("ngIf", (ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.department) && (ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.department) !== "\u2014");
-    \u0275\u0275advance(6);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.isZeroView);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.selectedUser == null ? null : ctx_r0.selectedUser.isZeroView);
+    \u0275\u0275advance(7);
     \u0275\u0275textInterpolate(ctx_r0.userMetrics.totalViews || 0);
-    \u0275\u0275advance(5);
+    \u0275\u0275advance(6);
     \u0275\u0275textInterpolate((ctx_r0.userMetrics.reports == null ? null : ctx_r0.userMetrics.reports.length) || 0);
-    \u0275\u0275advance(5);
+    \u0275\u0275advance(6);
     \u0275\u0275textInterpolate((ctx_r0.userMetrics.workspaces == null ? null : ctx_r0.userMetrics.workspaces.length) || 0);
-    \u0275\u0275advance(5);
+    \u0275\u0275advance(6);
     \u0275\u0275textInterpolate((ctx_r0.userMetrics.activityByDate == null ? null : ctx_r0.userMetrics.activityByDate.length) || 0);
-    \u0275\u0275advance(5);
+    \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(ctx_r0.formatTime(ctx_r0.userMetrics.estimatedTimeSpent));
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.userWorkspacePieChartOptions || ctx_r0.userReportViewsChartOptions);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r0.assignedVsUsed.length > 0);
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r0.groupedTabTimeSpent && ctx_r0.groupedTabTimeSpent.length > 0);
-    \u0275\u0275advance(5);
-    \u0275\u0275property("ngIf", ctx_r0.userWorkspacePieChartOptions)("ngIfElse", noData_r12);
-    \u0275\u0275advance(6);
-    \u0275\u0275property("ngIf", ctx_r0.userReportViewsChartOptions)("ngIfElse", noReports_r13);
-    \u0275\u0275advance(6);
-    \u0275\u0275property("ngIf", ctx_r0.activityTimelineChartOptions)("ngIfElse", noTimeline_r14);
+    \u0275\u0275property("ngIf", ctx_r0.groupedTabTimeSpent.length > 0);
   }
 }
-function UsersOverviewComponent_div_11_Template(rf, ctx) {
+function UsersOverviewComponent_ng_container_18_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 21)(1, "aside", 22)(2, "div", 23)(3, "span", 24);
-    \u0275\u0275text(4, " Users ");
-    \u0275\u0275elementStart(5, "span", 25);
-    \u0275\u0275text(6);
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, UsersOverviewComponent_ng_container_18_div_1_Template, 2, 1, "div", 23);
+    \u0275\u0275elementStart(2, "div", 24)(3, "aside", 25)(4, "div", 26)(5, "span", 27);
+    \u0275\u0275text(6, " Users ");
+    \u0275\u0275elementStart(7, "span", 28);
+    \u0275\u0275text(8);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 26);
-    \u0275\u0275element(8, "i", 27);
-    \u0275\u0275elementStart(9, "input", 28);
-    \u0275\u0275twoWayListener("ngModelChange", function UsersOverviewComponent_div_11_Template_input_ngModelChange_9_listener($event) {
+    \u0275\u0275elementStart(9, "div", 29);
+    \u0275\u0275element(10, "i", 30);
+    \u0275\u0275elementStart(11, "input", 31);
+    \u0275\u0275twoWayListener("ngModelChange", function UsersOverviewComponent_ng_container_18_Template_input_ngModelChange_11_listener($event) {
       \u0275\u0275restoreView(_r4);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.userSearchQuery, $event) || (ctx_r0.userSearchQuery = $event);
       return \u0275\u0275resetView($event);
     });
-    \u0275\u0275listener("input", function UsersOverviewComponent_div_11_Template_input_input_9_listener() {
+    \u0275\u0275listener("input", function UsersOverviewComponent_ng_container_18_Template_input_input_11_listener() {
       \u0275\u0275restoreView(_r4);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.filterUsers());
     });
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(10, "div", 29);
-    \u0275\u0275template(11, UsersOverviewComponent_div_11_div_11_Template, 12, 6, "div", 30)(12, UsersOverviewComponent_div_11_div_12_Template, 4, 0, "div", 31);
+    \u0275\u0275elementStart(12, "div", 32);
+    \u0275\u0275template(13, UsersOverviewComponent_ng_container_18_div_13_Template, 12, 10, "div", 33)(14, UsersOverviewComponent_ng_container_18_div_14_Template, 4, 0, "div", 34);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(13, UsersOverviewComponent_div_11_div_13_Template, 2, 1, "div", 32);
+    \u0275\u0275template(15, UsersOverviewComponent_ng_container_18_div_15_Template, 2, 1, "div", 35);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "section", 33);
-    \u0275\u0275template(15, UsersOverviewComponent_div_11_div_15_Template, 4, 0, "div", 34)(16, UsersOverviewComponent_div_11_div_16_Template, 2, 0, "div", 35)(17, UsersOverviewComponent_div_11_ng_container_17_Template, 57, 17, "ng-container", 36);
+    \u0275\u0275elementStart(16, "section", 36);
+    \u0275\u0275template(17, UsersOverviewComponent_ng_container_18_div_17_Template, 4, 0, "div", 37)(18, UsersOverviewComponent_ng_container_18_div_18_Template, 2, 0, "div", 38)(19, UsersOverviewComponent_ng_container_18_ng_container_19_Template, 47, 14, "ng-container", 15);
     \u0275\u0275elementEnd()();
+    \u0275\u0275elementContainerEnd();
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
-    \u0275\u0275advance(6);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.availableDepts.length > 1);
+    \u0275\u0275advance(7);
     \u0275\u0275textInterpolate(ctx_r0.filteredUsers.length);
     \u0275\u0275advance(3);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.userSearchQuery);
@@ -61325,113 +61366,754 @@ function UsersOverviewComponent_div_11_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r0.selectedUserId && !ctx_r0.detailLoading);
   }
 }
+function UsersOverviewComponent_ng_container_19_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 19);
+    \u0275\u0275element(1, "div", 20);
+    \u0275\u0275elementStart(2, "p");
+    \u0275\u0275text(3, "Loading insights\u2026");
+    \u0275\u0275elementEnd()();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_apx_chart_51_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "apx-chart", 166);
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("series", ctx_r0.topReportsChartOptions.series)("chart", ctx_r0.topReportsChartOptions.chart)("plotOptions", ctx_r0.topReportsChartOptions.plotOptions)("xaxis", ctx_r0.topReportsChartOptions.xaxis)("colors", ctx_r0.topReportsChartOptions.colors)("dataLabels", ctx_r0.topReportsChartOptions.dataLabels)("legend", ctx_r0.topReportsChartOptions.legend)("tooltip", ctx_r0.topReportsChartOptions.tooltip);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_ng_template_52_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 167);
+    \u0275\u0275text(1, "No report data available for this period");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_64_span_6_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 176);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const u_r17 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("\xB7 ", u_r17.department, "");
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_64_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r16 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 168);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_19_ng_container_2_div_64_Template_div_click_0_listener() {
+      const u_r17 = \u0275\u0275restoreView(_r16).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r0.navigateToUser(u_r17.id));
+    });
+    \u0275\u0275elementStart(1, "span", 169);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "div", 170)(4, "span", 171);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(6, UsersOverviewComponent_ng_container_19_ng_container_2_div_64_span_6_Template, 2, 1, "span", 172);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "div", 173)(8, "span", 174);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "span", 175);
+    \u0275\u0275text(11, "views");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const u_r17 = ctx.$implicit;
+    const i_r18 = ctx.index;
+    \u0275\u0275advance();
+    \u0275\u0275classProp("rank-num--gold", i_r18 === 0)("rank-num--silver", i_r18 === 1)("rank-num--bronze", i_r18 === 2);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(i_r18 + 1);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(u_r17.name);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", u_r17.department !== "\u2014");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(u_r17.totalViews);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_65_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 167);
+    \u0275\u0275text(1, "No active users in this period");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_76_span_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 176);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const u_r20 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("\xB7 ", u_r20.department, "");
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_76_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r19 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 177);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_19_ng_container_2_div_76_Template_div_click_0_listener() {
+      const u_r20 = \u0275\u0275restoreView(_r19).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r0.navigateToUser(u_r20.id));
+    });
+    \u0275\u0275elementStart(1, "div", 170)(2, "span", 171);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(4, UsersOverviewComponent_ng_container_19_ng_container_2_div_76_span_4_Template, 2, 1, "span", 172);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "span", 178);
+    \u0275\u0275text(6, "0 views");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const u_r20 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(u_r20.name);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", u_r20.department !== "\u2014");
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_77_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 179);
+    \u0275\u0275element(1, "i", 143);
+    \u0275\u0275text(2, " All users are active this period ");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_78_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r21 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 180);
+    \u0275\u0275text(1);
+    \u0275\u0275elementStart(2, "span", 181);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_19_ng_container_2_div_78_Template_span_click_2_listener() {
+      \u0275\u0275restoreView(_r21);
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      ctx_r0.selectDept("All");
+      return \u0275\u0275resetView(ctx_r0.switchView("users"));
+    });
+    \u0275\u0275text(3, "view all");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" +", ctx_r0.insightsZeroViewUsers.length - 25, " more \u2014 ");
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_88_tr_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr", 188)(1, "td", 189);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "td", 190);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "td", 191)(6, "span", 192);
+    \u0275\u0275text(7, "Not accessed");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const r_r22 = ctx.$implicit;
+    const i_r23 = ctx.index;
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(i_r23 + 1);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r0.transformDisplayName(r_r22.dashboard));
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_88_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 182)(1, "table", 183)(2, "thead")(3, "tr")(4, "th", 184);
+    \u0275\u0275text(5, "#");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "th", 185);
+    \u0275\u0275text(7, "Report Name");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "th", 186);
+    \u0275\u0275text(9, "Status");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(10, "tbody");
+    \u0275\u0275template(11, UsersOverviewComponent_ng_container_19_ng_container_2_div_88_tr_11_Template, 8, 2, "tr", 187);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(11);
+    \u0275\u0275property("ngForOf", ctx_r0.unusedReports);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_89_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 179);
+    \u0275\u0275element(1, "i", 143);
+    \u0275\u0275text(2, " All reports accessed this period ");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_span_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 204);
+    \u0275\u0275text(1, "Click to expand");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_span_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 205);
+    \u0275\u0275text(1, "Collapse");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_div_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 209);
+    \u0275\u0275element(1, "div", 58);
+    \u0275\u0275elementStart(2, "span");
+    \u0275\u0275text(3, "Loading viewers\u2026");
+    \u0275\u0275elementEnd()();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_div_5_span_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 220);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const v_r27 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("\xB7 ", v_r27.department, "");
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_div_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r26 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 214);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_div_5_Template_div_click_0_listener($event) {
+      const v_r27 = \u0275\u0275restoreView(_r26).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(8);
+      ctx_r0.navigateToUser(v_r27.userId);
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275elementStart(1, "div", 215)(2, "span", 216);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(4, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_div_5_span_4_Template, 2, 1, "span", 217);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "span", 218);
+    \u0275\u0275text(6);
+    \u0275\u0275elementStart(7, "span", 219);
+    \u0275\u0275text(8, "views");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const v_r27 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(v_r27.name);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", v_r27.department !== "\u2014");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1("", v_r27.count, " ");
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div")(1, "div", 211);
+    \u0275\u0275element(2, "i", 9);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 212);
+    \u0275\u0275template(5, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_div_5_Template, 9, 3, "div", 213);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(7);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2(" ", ctx_r0.reportViewers.length, " user", ctx_r0.reportViewers.length !== 1 ? "s" : "", " accessed this report ");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r0.reportViewers);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 221);
+    \u0275\u0275element(1, "i", 146);
+    \u0275\u0275text(2, " No viewer data found for this report ");
+    \u0275\u0275elementEnd();
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_1_Template, 6, 3, "div", 15)(2, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_div_2_Template, 3, 0, "div", 210);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(6);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.reportViewers.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.reportViewers.length === 0);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr", 206)(1, "td", 207);
+    \u0275\u0275template(2, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_div_2_Template, 4, 0, "div", 208)(3, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_ng_container_3_Template, 3, 2, "ng-container", 15);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(5);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r0.reportViewersLoading);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r0.reportViewersLoading);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r24 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "tr", 197);
+    \u0275\u0275listener("click", function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_Template_tr_click_1_listener() {
+      const r_r25 = \u0275\u0275restoreView(_r24).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(4);
+      return \u0275\u0275resetView(ctx_r0.selectReport(r_r25));
+    });
+    \u0275\u0275elementStart(2, "td", 189);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "td", 198);
+    \u0275\u0275element(5, "i", 199);
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "td", 191)(8, "span", 200);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(10, "td", 191);
+    \u0275\u0275template(11, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_span_11_Template, 2, 0, "span", 201)(12, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_span_12_Template, 2, 0, "span", 202);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(13, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_tr_13_Template, 4, 2, "tr", 203);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const r_r25 = ctx.$implicit;
+    const i_r28 = ctx.index;
+    const ctx_r0 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance();
+    \u0275\u0275classProp("lr-row--open", ctx_r0.selectedReportId === r_r25.reportId);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(i_r28 + 1);
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("pi-chevron-right", ctx_r0.selectedReportId !== r_r25.reportId)("pi-chevron-down", ctx_r0.selectedReportId === r_r25.reportId);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r0.transformDisplayName(r_r25.reportName), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", r_r25.count, " views");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r0.selectedReportId !== r_r25.reportId);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.selectedReportId === r_r25.reportId);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.selectedReportId === r_r25.reportId);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_div_90_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 193)(1, "div", 151)(2, "div")(3, "h3", 152);
+    \u0275\u0275text(4, "Lowest Activity Reports");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "p", 153);
+    \u0275\u0275text(6, "Fewest views among accessed reports \u2014 click to see who viewed");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "span", 194);
+    \u0275\u0275text(8, "Low usage");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(9, "div", 195)(10, "table", 183)(11, "thead")(12, "tr")(13, "th", 184);
+    \u0275\u0275text(14, "#");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "th", 185);
+    \u0275\u0275text(16, "Report Name");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "th", 186);
+    \u0275\u0275text(18, "Views");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(19, "th", 186);
+    \u0275\u0275text(20, "Who Viewed");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(21, "tbody");
+    \u0275\u0275template(22, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_ng_container_22_Template, 14, 12, "ng-container", 196);
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(22);
+    \u0275\u0275property("ngForOf", ctx_r0.insightsLowestActiveReports);
+  }
+}
+function UsersOverviewComponent_ng_container_19_ng_container_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "div", 136)(2, "div", 137)(3, "div", 138);
+    \u0275\u0275element(4, "i", 9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "div", 139)(6, "div", 140);
+    \u0275\u0275text(7, "Total Users with Access");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "div", 141);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(10, "div", 137)(11, "div", 142);
+    \u0275\u0275element(12, "i", 143);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "div", 139)(14, "div", 140);
+    \u0275\u0275text(15, "Active in Period");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "div", 141);
+    \u0275\u0275text(17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "div", 144);
+    \u0275\u0275text(19);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(20, "div", 137)(21, "div", 145);
+    \u0275\u0275element(22, "i", 146);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "div", 139)(24, "div", 140);
+    \u0275\u0275text(25, "Zero Activity");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(26, "div", 141);
+    \u0275\u0275text(27);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(28, "div", 144);
+    \u0275\u0275text(29, "Review access");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(30, "div", 137)(31, "div", 147);
+    \u0275\u0275element(32, "i", 148);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(33, "div", 139)(34, "div", 140);
+    \u0275\u0275text(35, "Unused Reports");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(36, "div", 141);
+    \u0275\u0275text(37);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(38, "div", 144);
+    \u0275\u0275text(39, "Candidates for removal");
+    \u0275\u0275elementEnd()()()();
+    \u0275\u0275elementStart(40, "div", 149)(41, "div", 150)(42, "div", 151)(43, "div")(44, "h3", 152);
+    \u0275\u0275text(45, "Most Accessed Reports");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(46, "p", 153);
+    \u0275\u0275text(47);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(48, "span", 154);
+    \u0275\u0275text(49, "Top 10");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(50, "div", 155);
+    \u0275\u0275template(51, UsersOverviewComponent_ng_container_19_ng_container_2_apx_chart_51_Template, 1, 8, "apx-chart", 156)(52, UsersOverviewComponent_ng_container_19_ng_container_2_ng_template_52_Template, 2, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(54, "div", 150)(55, "div", 151)(56, "div")(57, "h3", 152);
+    \u0275\u0275text(58, "Most Active Users");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(59, "p", 153);
+    \u0275\u0275text(60);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(61, "span", 154);
+    \u0275\u0275text(62, "Top 10");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(63, "div", 157);
+    \u0275\u0275template(64, UsersOverviewComponent_ng_container_19_ng_container_2_div_64_Template, 12, 10, "div", 158)(65, UsersOverviewComponent_ng_container_19_ng_container_2_div_65_Template, 2, 0, "div", 159);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(66, "div", 150)(67, "div", 151)(68, "div")(69, "h3", 152);
+    \u0275\u0275text(70, "Zero Activity Users");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(71, "p", 153);
+    \u0275\u0275text(72);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(73, "span", 160);
+    \u0275\u0275text(74);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(75, "div", 157);
+    \u0275\u0275template(76, UsersOverviewComponent_ng_container_19_ng_container_2_div_76_Template, 7, 2, "div", 161)(77, UsersOverviewComponent_ng_container_19_ng_container_2_div_77_Template, 3, 0, "div", 162)(78, UsersOverviewComponent_ng_container_19_ng_container_2_div_78_Template, 4, 1, "div", 163);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(79, "div", 150)(80, "div", 151)(81, "div")(82, "h3", 152);
+    \u0275\u0275text(83, "Reports Not Accessed");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(84, "p", 153);
+    \u0275\u0275text(85);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(86, "span", 160);
+    \u0275\u0275text(87);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(88, UsersOverviewComponent_ng_container_19_ng_container_2_div_88_Template, 12, 1, "div", 164)(89, UsersOverviewComponent_ng_container_19_ng_container_2_div_89_Template, 3, 0, "div", 162);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(90, UsersOverviewComponent_ng_container_19_ng_container_2_div_90_Template, 23, 1, "div", 165);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const noTopReports_r29 = \u0275\u0275reference(53);
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(9);
+    \u0275\u0275textInterpolate(ctx_r0.allUsers.length);
+    \u0275\u0275advance(8);
+    \u0275\u0275textInterpolate(ctx_r0.allUsers.length - ctx_r0.insightsZeroViewUsers.length);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r0.getPeriodLabel());
+    \u0275\u0275advance(8);
+    \u0275\u0275textInterpolate(ctx_r0.insightsZeroViewUsers.length);
+    \u0275\u0275advance(10);
+    \u0275\u0275textInterpolate(ctx_r0.unusedReports.length);
+    \u0275\u0275advance(10);
+    \u0275\u0275textInterpolate1("Top views \xB7 ", ctx_r0.getPeriodLabel(), "");
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngIf", ctx_r0.topReportsChartOptions)("ngIfElse", noTopReports_r29);
+    \u0275\u0275advance(9);
+    \u0275\u0275textInterpolate1("Ranked by views \xB7 ", ctx_r0.getPeriodLabel(), "");
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngForOf", ctx_r0.insightsTopUsers);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.insightsTopUsers.length === 0);
+    \u0275\u0275advance(7);
+    \u0275\u0275textInterpolate1("No views \xB7 ", ctx_r0.getPeriodLabel(), "");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r0.insightsZeroViewUsers.length);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r0.insightsZeroViewUsers.slice(0, 25));
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.insightsZeroViewUsers.length === 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.insightsZeroViewUsers.length > 25);
+    \u0275\u0275advance(7);
+    \u0275\u0275textInterpolate1("Zero views \xB7 last ", ctx_r0.getPeriodLabel(), "");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r0.unusedReports.length);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.unusedReports.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.unusedReports.length === 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.insightsLowestActiveReports.length > 0);
+  }
+}
+function UsersOverviewComponent_ng_container_19_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, UsersOverviewComponent_ng_container_19_div_1_Template, 4, 0, "div", 13)(2, UsersOverviewComponent_ng_container_19_ng_container_2_Template, 91, 21, "ng-container", 15);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.insightsLoading);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r0.insightsLoading);
+  }
+}
 var UsersOverviewComponent = class _UsersOverviewComponent {
   powerBIMetricsService;
+  userService;
   cdr;
-  // --- State ---
+  // State
   loading = true;
   detailLoading = false;
+  insightsLoading = false;
   error = "";
-  // --- Filters ---
+  activeView = "users";
+  // Time periods (weeks / months)
   selectedPeriod = 30;
   timePeriods = [
-    { label: "7D", days: 7 },
-    { label: "30D", days: 30 },
-    { label: "90D", days: 90 }
+    { label: "1W", days: 7 },
+    { label: "2W", days: 14 },
+    { label: "1M", days: 30 },
+    { label: "3M", days: 90 },
+    { label: "6M", days: 180 }
   ];
-  userSearchQuery = "";
-  // --- User list ---
+  wsTimeShowAll = false;
+  // Users
   allUsers = [];
   filteredUsers = [];
   selectedUserId = null;
   currentPage = 1;
   usersPerPage = 15;
-  // --- User detail ---
+  userSearchQuery = "";
+  // Department filter
+  selectedDept = "All";
+  availableDepts = [];
+  // User detail
   userMetrics = {};
   userWorkspacePieChartOptions = null;
-  userConsumptionChartOptions = null;
   userReportViewsChartOptions = null;
-  activityTimelineChartOptions = null;
   userConsumptionMethods = [];
   userReportViews = [];
   userTabTimeSpent = [];
   lastRefreshedAt = "";
+  // Insights
+  topReports = [];
+  unusedReports = [];
+  topReportsChartOptions = null;
+  insightsLoaded = false;
+  // Report viewer drill-down
+  selectedReportId = null;
+  reportViewers = [];
+  reportViewersLoading = false;
   blueGradientColors = [
     "#1e3a8a",
-    // Deep corporate navy
     "#2563eb",
-    // Indigo-blue
     "#3b82f6",
-    // Mid blue
     "#60a5fa",
-    // Sky blue
     "#0d9488",
-    // Teal
     "#06b6d4",
-    // Cyan
     "#4f46e5",
-    // Royal indigo
     "#64748b"
-    // Slate grey
   ];
-  constructor(powerBIMetricsService, cdr) {
+  constructor(powerBIMetricsService, userService, cdr) {
     this.powerBIMetricsService = powerBIMetricsService;
+    this.userService = userService;
     this.cdr = cdr;
   }
   ngOnInit() {
     this.powerBIMetricsService.getLastRefresh().subscribe({
       next: (res) => {
-        if (res && res.lastRefreshedAt)
+        if (res?.lastRefreshedAt)
           this.lastRefreshedAt = res.lastRefreshedAt;
       },
-      error: (err) => console.error("Failed to load last refresh time:", err)
+      error: () => {
+      }
     });
-    this.loadUsers(this.selectedPeriod);
+    this.loadAll(this.selectedPeriod);
   }
-  // ── Data Loading ────────────────────────────────────────────────
-  loadUsers(days) {
+  getDateRange(days) {
+    const endDate = /* @__PURE__ */ new Date();
+    const startDate = /* @__PURE__ */ new Date();
+    startDate.setDate(endDate.getDate() - days);
+    return { startDate, endDate };
+  }
+  loadAll(days) {
     return __async(this, null, function* () {
       this.loading = true;
       this.error = "";
       this.selectedPeriod = days;
-      const activeUserIdBefore = this.selectedUserId;
+      this.insightsLoaded = false;
+      const { startDate, endDate } = this.getDateRange(days);
+      const prevSelectedId = this.selectedUserId;
       this.clearDetail();
-      const endDate = /* @__PURE__ */ new Date();
-      const startDate = /* @__PURE__ */ new Date();
-      startDate.setDate(endDate.getDate() - days);
       try {
-        const topUsers = yield this.powerBIMetricsService.getTopUsers(startDate, endDate, 200).toPromise().catch(() => []);
-        if (!topUsers || topUsers.length === 0) {
-          this.allUsers = [];
-          this.filteredUsers = [];
-          this.selectedUserId = null;
-          this.loading = false;
-          return;
+        const [masterResult, topUsers] = yield Promise.all([
+          this.userService.getUsers().toPromise().catch(() => []),
+          this.powerBIMetricsService.getTopUsers(startDate, endDate, 500).toPromise().catch(() => [])
+        ]);
+        const activityMap = /* @__PURE__ */ new Map();
+        for (const u of topUsers || []) {
+          activityMap.set((u.userId || "").toLowerCase(), u.count || 0);
         }
-        const nameDept = yield this.powerBIMetricsService.getUserNameMappings(topUsers.map((u) => u.userId)).toPromise().catch(() => ({ names: {}, departments: {} }));
-        const names2 = nameDept?.names || {};
-        const depts = nameDept?.departments || {};
-        this.allUsers = topUsers.map((u) => ({
-          id: u.userId,
-          name: names2[u.userId] || u.userId.split("@")[0],
-          department: depts[u.userId] || "\u2014",
-          totalViews: u.count,
-          lastActivity: u.lastActivity || ""
-        }));
+        const activeEmails = (topUsers || []).map((u) => u.userId).filter(Boolean);
+        let names2 = {};
+        let depts = {};
+        if (activeEmails.length > 0) {
+          const mapping = yield this.powerBIMetricsService.getUserNameMappings(activeEmails).toPromise().catch(() => ({ names: {}, departments: {} }));
+          names2 = mapping?.names || {};
+          depts = mapping?.departments || {};
+        }
+        const seenEmails = /* @__PURE__ */ new Set();
+        const userList = [];
+        for (const mu of masterResult || []) {
+          const email = (mu.email || "").toLowerCase();
+          if (!email || seenEmails.has(email))
+            continue;
+          seenEmails.add(email);
+          const views = activityMap.get(email) || 0;
+          userList.push({
+            id: mu.email,
+            name: mu.name || email.split("@")[0],
+            department: mu.department?.department || mu.department || "\u2014",
+            totalViews: views,
+            hasAccess: true,
+            isZeroView: views === 0
+          });
+        }
+        for (const au of topUsers || []) {
+          const email = (au.userId || "").toLowerCase();
+          if (!email || seenEmails.has(email))
+            continue;
+          seenEmails.add(email);
+          userList.push({
+            id: au.userId,
+            name: names2[au.userId] || au.userId.split("@")[0],
+            department: depts[au.userId] || "\u2014",
+            totalViews: au.count || 0,
+            hasAccess: true,
+            isZeroView: false
+          });
+        }
+        this.allUsers = userList.sort((a, b) => {
+          if (a.isZeroView !== b.isZeroView)
+            return a.isZeroView ? 1 : -1;
+          return b.totalViews - a.totalViews;
+        });
+        const deptSet = /* @__PURE__ */ new Set();
+        this.allUsers.forEach((u) => {
+          if (u.department && u.department !== "\u2014")
+            deptSet.add(u.department);
+        });
+        this.availableDepts = deptSet.size > 0 ? ["All", ...Array.from(deptSet).sort()] : [];
         this.filterUsers();
-        const stillExists = this.allUsers.find((u) => u.id === activeUserIdBefore);
-        if (stillExists && activeUserIdBefore) {
-          yield this.selectUser(activeUserIdBefore);
+        const stillExists = this.allUsers.find((u) => u.id === prevSelectedId);
+        if (stillExists && prevSelectedId) {
+          yield this.selectUser(prevSelectedId);
         } else if (this.allUsers.length > 0) {
           yield this.selectUser(this.allUsers[0].id);
-        } else {
-          this.selectedUserId = null;
+        }
+        if (this.activeView === "insights") {
+          yield this.loadInsights();
         }
       } catch (err) {
-        console.error("Error loading users:", err);
-        this.error = "Failed to load user data. Please try again.";
+        this.error = "Failed to load data. Please try again.";
       } finally {
         this.loading = false;
+      }
+    });
+  }
+  switchView(view) {
+    return __async(this, null, function* () {
+      this.activeView = view;
+      if (view === "insights" && !this.insightsLoaded && !this.insightsLoading) {
+        yield this.loadInsights();
+      }
+    });
+  }
+  loadInsights() {
+    return __async(this, null, function* () {
+      this.insightsLoading = true;
+      const { startDate, endDate } = this.getDateRange(this.selectedPeriod);
+      try {
+        const [topReps, unused] = yield Promise.all([
+          this.powerBIMetricsService.getTopReports(startDate, endDate, 100).toPromise().catch(() => []),
+          this.powerBIMetricsService.getUnusedReports(startDate, endDate).toPromise().catch(() => [])
+        ]);
+        this.topReports = topReps || [];
+        this.unusedReports = unused || [];
+        this.prepareTopReportsInsightChart();
+        this.insightsLoaded = true;
+        this.cdr.detectChanges();
+      } finally {
+        this.insightsLoading = false;
       }
     });
   }
@@ -61440,13 +62122,10 @@ var UsersOverviewComponent = class _UsersOverviewComponent {
       this.selectedUserId = userId;
       this.detailLoading = true;
       this.clearDetail();
-      const endDate = /* @__PURE__ */ new Date();
-      const startDate = /* @__PURE__ */ new Date();
-      startDate.setDate(endDate.getDate() - this.selectedPeriod);
+      const { startDate, endDate } = this.getDateRange(this.selectedPeriod);
       try {
-        const [metrics, workspaceDist, consumptionMethods, reportViews, tabTimeSpent] = yield Promise.all([
+        const [metrics, consumptionMethods, reportViews, tabTimeSpent] = yield Promise.all([
           this.powerBIMetricsService.getUserMetrics(userId, startDate, endDate).toPromise(),
-          this.powerBIMetricsService.getWorkspaceViewsDistribution(userId, startDate, endDate).toPromise(),
           this.powerBIMetricsService.getUserConsumptionMethods(userId, startDate, endDate).toPromise(),
           this.powerBIMetricsService.getUserReportViewsDistribution(userId, startDate, endDate).toPromise(),
           this.powerBIMetricsService.getUserTimeSpent(userId, startDate, endDate).toPromise()
@@ -61456,19 +62135,12 @@ var UsersOverviewComponent = class _UsersOverviewComponent {
           count: m.count
         }));
         this.userMetrics = __spreadProps(__spreadValues({}, metrics || {}), {
-          workspaceDistribution: workspaceDist || [],
-          consumptionMethods: this.userConsumptionMethods,
-          activityChartData: (metrics?.activityByDate || []).map((a) => ({
-            x: a.date,
-            y: a.count
-          }))
+          activityChartData: (metrics?.activityByDate || []).map((a) => ({ x: a.date, y: a.count }))
         });
         this.userReportViews = reportViews || [];
         this.userTabTimeSpent = tabTimeSpent || [];
         this.prepareWorkspacePieChart();
-        this.prepareConsumptionChart();
         this.prepareReportViewsChart();
-        this.prepareActivityTimeline();
         this.cdr.detectChanges();
       } catch (err) {
         console.error("Error loading user detail:", err);
@@ -61477,133 +62149,104 @@ var UsersOverviewComponent = class _UsersOverviewComponent {
       }
     });
   }
-  // ── Chart Builders ───────────────────────────────────────────────
+  navigateToUser(userId) {
+    this.activeView = "users";
+    this.selectUser(userId);
+  }
+  // ── Chart builders ───────────────────────────────────────────────
   prepareWorkspacePieChart() {
-    const timeSpentData = this.groupedTabTimeSpent;
-    if (!timeSpentData || timeSpentData.length === 0) {
+    const data = this.groupedTabTimeSpent;
+    if (!data.length) {
       this.userWorkspacePieChartOptions = null;
       return;
     }
     this.userWorkspacePieChartOptions = {
-      series: timeSpentData.map((w) => w.totalSeconds),
-      chart: { type: "pie", height: 400 },
-      labels: timeSpentData.map((w) => this.transformDisplayName(w.workspaceName)),
+      series: data.map((w) => w.totalSeconds),
+      chart: { type: "pie", height: 280, toolbar: { show: false } },
+      labels: data.map((w) => this.transformDisplayName(w.workspaceName)),
       colors: this.blueGradientColors,
-      dataLabels: { enabled: true, formatter: (v) => `${v.toFixed(1)}%`, style: { fontSize: "11px", colors: ["#fff"] } },
+      dataLabels: {
+        enabled: true,
+        formatter: (v) => `${v.toFixed(0)}%`,
+        style: { fontSize: "10px", colors: ["#fff"] }
+      },
       legend: {
         position: "bottom",
-        fontSize: "11px",
-        formatter: (legendName) => {
-          const workspaceData = timeSpentData.find((w) => this.transformDisplayName(w.workspaceName) === legendName);
-          return `${legendName} (${this.formatTime(workspaceData?.totalSeconds || 0)})`;
+        fontSize: "10px",
+        formatter: (n) => {
+          const w = data.find((d) => this.transformDisplayName(d.workspaceName) === n);
+          return `${n} (${this.formatTime(w?.totalSeconds || 0)})`;
         }
       },
       tooltip: { y: { formatter: (v) => this.formatTime(v) } }
     };
   }
-  prepareConsumptionChart() {
-    if (!this.userConsumptionMethods || this.userConsumptionMethods.length === 0) {
-      this.userConsumptionChartOptions = null;
-      return;
-    }
-    const labels = this.userConsumptionMethods.map((m) => this.getMethodDisplayName(m.method));
-    this.userConsumptionChartOptions = {
-      series: this.userConsumptionMethods.map((m) => m.count),
-      chart: { type: "donut", height: 340 },
-      labels,
-      colors: this.blueGradientColors,
-      dataLabels: { enabled: true, formatter: (v) => `${v.toFixed(1)}%`, style: { fontSize: "11px", colors: ["#fff"] } },
-      legend: { position: "bottom", fontSize: "11px" },
-      tooltip: { y: { formatter: (v) => `${v} views` } }
-    };
-  }
   prepareReportViewsChart() {
-    if (!this.userReportViews || this.userReportViews.length === 0) {
+    if (!this.userReportViews.length) {
       this.userReportViewsChartOptions = null;
       return;
     }
-    const top = this.userReportViews.slice(0, 10);
+    const top = this.userReportViews.slice(0, 8);
     const categories = top.map((r) => {
-      let name = r.reportName || `Report (${r.reportId.slice(0, 6)}\u2026)`;
-      name = name.replace(/^HGU\s*-\s*/i, "").replace(/^HGU/i, "");
-      name = name.replace(/\s*-\s*Dashboard$/i, "").replace(/Dashboard$/i, "");
-      name = name.trim();
-      return name.length > 25 ? name.substring(0, 25) + "..." : name;
+      let name = r.reportName || `(${r.reportId?.slice(0, 6)}\u2026)`;
+      name = name.replace(/^HGU\s*-\s*/i, "").replace(/^HGU/i, "").replace(/\s*-\s*Dashboard$/i, "").trim();
+      return name.length > 22 ? name.substring(0, 22) + "\u2026" : name;
     });
     this.userReportViewsChartOptions = {
       series: [{ name: "Views", data: top.map((r) => r.count) }],
       chart: { type: "bar", height: 280, toolbar: { show: false } },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-          barHeight: "55%",
-          borderRadius: 4,
-          borderRadiusApplication: "end"
-        }
-      },
-      xaxis: {
-        categories,
-        labels: {
-          style: {
-            fontSize: "10px",
-            colors: "#64748b"
-            // slate-500
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            fontSize: "11px",
-            colors: "#334155",
-            // slate-700
-            fontWeight: 500
-          }
-        }
-      },
-      colors: this.blueGradientColors,
-      dataLabels: {
-        enabled: true,
-        style: {
-          fontSize: "10px",
-          colors: ["#ffffff"],
-          fontWeight: "600"
-        },
-        offsetX: -6
-      },
+      plotOptions: { bar: { horizontal: true, barHeight: "60%", borderRadius: 4, borderRadiusApplication: "end" } },
+      xaxis: { categories, labels: { style: { fontSize: "10px", colors: "#64748b" } } },
+      colors: ["#2563eb"],
+      dataLabels: { enabled: true, style: { fontSize: "10px", colors: ["#fff"], fontWeight: "600" }, offsetX: -6 },
       tooltip: { y: { formatter: (v) => `${v} views` } }
     };
   }
-  prepareActivityTimeline() {
-    const data = this.userMetrics?.activityChartData || [];
-    if (!data.length) {
-      this.activityTimelineChartOptions = null;
+  prepareTopReportsInsightChart() {
+    if (!this.topReports.length) {
+      this.topReportsChartOptions = null;
       return;
     }
-    this.activityTimelineChartOptions = {
-      series: [{ name: "Views", data }],
-      chart: { type: "bar", height: 220, toolbar: { show: false } },
-      xaxis: { type: "datetime", labels: { format: "dd MMM", style: { fontSize: "10px" } } },
-      colors: ["#6366f1"],
-      dataLabels: { enabled: false },
-      tooltip: { x: { format: "dd MMM yyyy" }, y: { formatter: (v) => `${v} views` } }
+    const top = this.topReports.slice(0, 10);
+    const categories = top.map((r) => {
+      let name = r.reportName || `(${r.reportId?.slice(0, 6)}\u2026)`;
+      name = name.replace(/^HGU\s*-\s*/i, "").replace(/^HGU/i, "").replace(/\s*-\s*Dashboard$/i, "").trim();
+      return name.length > 28 ? name.substring(0, 28) + "\u2026" : name;
+    });
+    this.topReportsChartOptions = {
+      series: [{ name: "Total Views", data: top.map((r) => r.count) }],
+      chart: { type: "bar", height: 320, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: "55%", borderRadius: 4, borderRadiusApplication: "end", distributed: true } },
+      xaxis: { categories, labels: { style: { fontSize: "10px", colors: "#64748b" } } },
+      colors: this.blueGradientColors,
+      dataLabels: { enabled: true, style: { fontSize: "10px", colors: ["#fff"], fontWeight: "600" }, offsetX: -6 },
+      legend: { show: false },
+      tooltip: { y: { formatter: (v) => `${v} views` } }
     };
   }
   // ── Helpers ──────────────────────────────────────────────────────
   clearDetail() {
     this.userMetrics = {};
     this.userWorkspacePieChartOptions = null;
-    this.userConsumptionChartOptions = null;
     this.userReportViewsChartOptions = null;
-    this.activityTimelineChartOptions = null;
     this.userReportViews = [];
     this.userConsumptionMethods = [];
     this.userTabTimeSpent = [];
   }
   filterUsers() {
+    let list = [...this.allUsers];
+    if (this.selectedDept !== "All") {
+      list = list.filter((u) => u.department === this.selectedDept);
+    }
     const q = this.userSearchQuery.toLowerCase();
-    this.filteredUsers = q ? this.allUsers.filter((u) => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)) : [...this.allUsers];
+    if (q)
+      list = list.filter((u) => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q));
+    this.filteredUsers = list;
     this.currentPage = 1;
+  }
+  selectDept(dept) {
+    this.selectedDept = dept;
+    this.filterUsers();
   }
   getPaginatedUsers() {
     const start = (this.currentPage - 1) * this.usersPerPage;
@@ -61625,44 +62268,29 @@ var UsersOverviewComponent = class _UsersOverviewComponent {
       return `${minutes}m`;
     return `${(seconds / 3600).toFixed(1)}h`;
   }
-  getMethodDisplayName(method) {
-    const map3 = {
-      "Microsoft Teams": "Teams",
-      "EmbeddingForYourOrganization": "Embedded",
-      "PowerPointAddIn": "PowerPoint",
-      "Web": "Web Browser",
-      "Mobile": "Mobile",
-      "Desktop": "Desktop"
-    };
-    return map3[method] || method;
+  getPeriodLabel() {
+    return this.timePeriods.find((t) => t.days === this.selectedPeriod)?.label || `${this.selectedPeriod}D`;
   }
   get selectedUser() {
     return this.allUsers.find((u) => u.id === this.selectedUserId);
   }
   get groupedTabTimeSpent() {
-    if (!this.userTabTimeSpent || this.userTabTimeSpent.length === 0)
+    if (!this.userTabTimeSpent?.length)
       return [];
     const groups = {};
     this.userTabTimeSpent.forEach((item) => {
-      const wsName = item.workspaceName || "Personal Workspace";
-      if (!groups[wsName]) {
-        groups[wsName] = {
-          workspaceName: wsName,
-          totalSeconds: 0,
-          items: []
-        };
-      }
-      groups[wsName].totalSeconds += item.totalSeconds;
-      groups[wsName].items.push(item);
+      const ws = item.workspaceName || "Personal Workspace";
+      if (!groups[ws])
+        groups[ws] = { workspaceName: ws, totalSeconds: 0, items: [] };
+      groups[ws].totalSeconds += item.totalSeconds;
+      groups[ws].items.push(item);
     });
     return Object.values(groups).sort((a, b) => b.totalSeconds - a.totalSeconds);
   }
   transformDisplayName(name) {
     if (!name)
       return "Unknown";
-    let transformed = name.replace(/^HGU\s*-\s*/i, "").replace(/^HGU/i, "");
-    transformed = transformed.replace(/\s*-\s*Dashboard$/i, "").replace(/Dashboard$/i, "");
-    return transformed.trim() || "Unknown";
+    return name.replace(/^HGU\s*-\s*/i, "").replace(/^HGU/i, "").replace(/\s*-\s*Dashboard$/i, "").replace(/Dashboard$/i, "").trim() || "Unknown";
   }
   normalizeDashName(s) {
     return (s || "").toLowerCase().trim().replace(/^hgu\s*[-–]\s*/i, "").replace(/\s*[-–]\s*dashboard$/i, "").replace(/dashboard$/i, "").trim();
@@ -61696,312 +62324,635 @@ var UsersOverviewComponent = class _UsersOverviewComponent {
       return 0;
     return Math.round(data.filter((d) => d.isUsed).length / data.length * 100);
   }
+  selectReport(report) {
+    return __async(this, null, function* () {
+      const reportId = report.reportId;
+      if (this.selectedReportId === reportId) {
+        this.selectedReportId = null;
+        this.reportViewers = [];
+        return;
+      }
+      this.selectedReportId = reportId;
+      this.reportViewers = [];
+      this.reportViewersLoading = true;
+      const { startDate, endDate } = this.getDateRange(this.selectedPeriod);
+      try {
+        const viewers = yield this.powerBIMetricsService.getTopUsers(startDate, endDate, 50, void 0, reportId).toPromise().catch(() => []);
+        const userIds = (viewers || []).map((v) => v.userId).filter(Boolean);
+        let names2 = {};
+        let depts = {};
+        if (userIds.length > 0) {
+          const mapping = yield this.powerBIMetricsService.getUserNameMappings(userIds).toPromise().catch(() => ({ names: {}, departments: {} }));
+          names2 = mapping?.names || {};
+          depts = mapping?.departments || {};
+        }
+        this.reportViewers = (viewers || []).map((v) => ({
+          userId: v.userId,
+          name: names2[v.userId] || v.userId.split("@")[0],
+          department: depts[v.userId] || "\u2014",
+          count: v.count || 0
+        }));
+        this.cdr.detectChanges();
+      } finally {
+        this.reportViewersLoading = false;
+      }
+    });
+  }
+  // ── Insights computed properties ─────────────────────────────────
+  get insightsTopUsers() {
+    return this.allUsers.filter((u) => !u.isZeroView).slice(0, 10);
+  }
+  get insightsZeroViewUsers() {
+    return this.allUsers.filter((u) => u.isZeroView);
+  }
+  get insightsLowestActiveReports() {
+    return [...this.topReports].reverse().slice(0, 10);
+  }
   static \u0275fac = function UsersOverviewComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _UsersOverviewComponent)(\u0275\u0275directiveInject(PowerBIMetricsService), \u0275\u0275directiveInject(ChangeDetectorRef));
+    return new (__ngFactoryType__ || _UsersOverviewComponent)(\u0275\u0275directiveInject(PowerBIMetricsService), \u0275\u0275directiveInject(UserService), \u0275\u0275directiveInject(ChangeDetectorRef));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UsersOverviewComponent, selectors: [["app-users-overview"]], decls: 12, vars: 5, consts: [["noData", ""], ["noReports", ""], ["noTimeline", ""], [1, "uo-wrap"], [1, "uo-header"], [1, "uo-header-left"], [1, "uo-title"], [1, "uo-subtitle"], ["class", "refresh-badge", 4, "ngIf"], [1, "pill-row"], ["class", "pill", 3, "pill--on", "click", 4, "ngFor", "ngForOf"], ["class", "state-loader", 4, "ngIf"], ["class", "state-error", 4, "ngIf"], ["class", "two-col", 4, "ngIf"], [1, "refresh-badge"], [1, "live-dot"], [1, "pill", 3, "click"], [1, "state-loader"], [1, "spinner"], [1, "state-error"], [1, "pi", "pi-exclamation-triangle"], [1, "two-col"], [1, "user-list-panel"], [1, "panel-header"], [1, "panel-title"], [1, "user-count"], [1, "search-wrap"], [1, "pi", "pi-search", "search-icon"], ["type", "text", "placeholder", "Search\u2026", 1, "search-input", 3, "ngModelChange", "input", "ngModel"], [1, "user-list-scroll"], ["class", "user-row", 3, "user-row--active", "click", 4, "ngFor", "ngForOf"], ["class", "empty-state", 4, "ngIf"], ["class", "pagination", 4, "ngIf"], [1, "detail-panel"], ["class", "no-selection", 4, "ngIf"], ["class", "detail-loader", 4, "ngIf"], [4, "ngIf"], [1, "user-row", 3, "click"], [1, "avatar-sm", 3, "name"], [1, "user-row-info"], [1, "user-row-name"], [1, "user-row-dept"], [1, "user-row-views"], [1, "views-badge"], [1, "views-label"], [1, "empty-state"], [1, "pi", "pi-inbox"], [1, "pagination"], ["class", "page-btn", 3, "page-btn--active", "click", 4, "ngFor", "ngForOf"], [1, "page-btn", 3, "click"], [1, "no-selection"], [1, "pi", "pi-user", "no-selection-icon"], [1, "detail-loader"], [1, "spinner", "spinner--sm"], [1, "detail-header"], [1, "detail-identity"], [1, "avatar-lg", 3, "name"], [1, "detail-identity-text"], [1, "detail-username"], [1, "detail-email"], ["class", "dept-tag", 4, "ngIf"], [1, "kpi-grid"], [1, "kpi-tile", "kpi-tile--blue"], [1, "kpi-label"], [1, "kpi-value"], [1, "kpi-tile"], [1, "kpi-value", "kpi-value--indigo"], [1, "kpi-value", "kpi-value--violet"], [1, "kpi-value", "kpi-value--teal"], [1, "kpi-value", "kpi-value--amber"], ["class", "util-section", 4, "ngIf"], ["class", "ws-time-section", 4, "ngIf"], [1, "chart-grid"], [1, "chart-card"], [1, "chart-title"], [3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip", 4, "ngIf", "ngIfElse"], [3, "series", "chart", "plotOptions", "xaxis", "colors", "dataLabels", "tooltip", 4, "ngIf", "ngIfElse"], [1, "chart-card", "chart-card--wide"], [3, "series", "chart", "xaxis", "colors", "dataLabels", "tooltip", 4, "ngIf", "ngIfElse"], [1, "dept-tag"], [1, "util-section"], [1, "util-header"], [1, "util-title"], [1, "pi", "pi-chart-bar", "util-icon"], [1, "util-rate"], [1, "util-tags"], ["class", "util-tag", 3, "util-tag--used", "util-tag--unused", "title", 4, "ngFor", "ngForOf"], [1, "util-tag", 3, "title"], [1, "util-tag-icon"], ["class", "util-tag-meta", 4, "ngIf"], [1, "util-tag-meta"], [1, "ws-time-section"], [1, "section-title"], [1, "pi", "pi-clock", "section-title-icon"], [1, "ws-list"], ["class", "ws-block", 4, "ngFor", "ngForOf"], [1, "ws-block"], [1, "ws-block-head"], [1, "ws-block-name"], [1, "pi", "pi-folder", "ws-folder-icon"], [1, "ws-block-total"], [1, "ws-block-rows"], ["class", "ws-block-row", 4, "ngFor", "ngForOf"], [1, "ws-block-row"], [1, "ws-block-row-left"], [1, "ws-block-report"], ["class", "ws-block-tab", 4, "ngIf"], [1, "ws-block-time"], [1, "ws-block-tab"], [3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip"], [1, "no-chart-data"], [3, "series", "chart", "plotOptions", "xaxis", "colors", "dataLabels", "tooltip"], [3, "series", "chart", "xaxis", "colors", "dataLabels", "tooltip"]], template: function UsersOverviewComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UsersOverviewComponent, selectors: [["app-users-overview"]], decls: 20, vars: 10, consts: [["noTopReports", ""], [1, "uo-wrap"], [1, "uo-header"], [1, "uo-header-left"], [1, "uo-title"], ["class", "uo-subtitle", 4, "ngIf"], [1, "uo-header-right"], [1, "view-tabs"], [1, "view-tab", 3, "click"], [1, "pi", "pi-users"], [1, "pi", "pi-chart-bar"], [1, "pill-row"], ["class", "pill", 3, "pill--on", "click", 4, "ngFor", "ngForOf"], ["class", "state-loader", 4, "ngIf"], ["class", "state-error", 4, "ngIf"], [4, "ngIf"], [1, "uo-subtitle"], [1, "live-dot"], [1, "pill", 3, "click"], [1, "state-loader"], [1, "spinner"], [1, "state-error"], [1, "pi", "pi-exclamation-triangle"], ["class", "dept-filter", 4, "ngIf"], [1, "two-col"], [1, "user-list-panel"], [1, "panel-header"], [1, "panel-title"], [1, "user-count"], [1, "search-wrap"], [1, "pi", "pi-search", "search-icon"], ["type", "text", "placeholder", "Search\u2026", 1, "search-input", 3, "ngModelChange", "input", "ngModel"], [1, "user-list-scroll"], ["class", "user-row", 3, "user-row--active", "user-row--zero", "click", 4, "ngFor", "ngForOf"], ["class", "empty-state", 4, "ngIf"], ["class", "pagination", 4, "ngIf"], [1, "detail-panel"], ["class", "no-selection", 4, "ngIf"], ["class", "detail-loader", 4, "ngIf"], [1, "dept-filter"], ["class", "dept-pill", 3, "dept-pill--on", "click", 4, "ngFor", "ngForOf"], [1, "dept-pill", 3, "click"], [1, "user-row", 3, "click"], [1, "avatar-sm", 3, "name"], [1, "user-row-info"], [1, "user-row-name"], [1, "user-row-dept"], [1, "user-row-views"], [1, "views-badge"], [1, "views-label"], [1, "empty-state"], [1, "pi", "pi-inbox"], [1, "pagination"], ["class", "page-btn", 3, "page-btn--active", "click", 4, "ngFor", "ngForOf"], [1, "page-btn", 3, "click"], [1, "no-selection"], [1, "pi", "pi-user", "no-selection-icon"], [1, "detail-loader"], [1, "spinner", "spinner--sm"], [1, "detail-header"], [1, "detail-identity"], [1, "avatar-lg", 3, "name"], [1, "detail-identity-text"], [1, "detail-username"], [1, "detail-email"], [1, "detail-tags"], ["class", "dept-tag", 4, "ngIf"], ["class", "zero-tag", 4, "ngIf"], ["class", "zero-notice", 4, "ngIf"], [1, "kpi-grid"], [1, "kpi-tile", "kpi-tile--blue"], [1, "pi", "pi-eye", "kpi-icon"], [1, "kpi-label"], [1, "kpi-value"], [1, "kpi-tile"], [1, "pi", "pi-file", "kpi-icon"], [1, "kpi-value", "kpi-value--indigo"], [1, "pi", "pi-th-large", "kpi-icon"], [1, "kpi-value", "kpi-value--violet"], [1, "pi", "pi-calendar", "kpi-icon"], [1, "kpi-value", "kpi-value--teal"], [1, "pi", "pi-clock", "kpi-icon"], [1, "kpi-value", "kpi-value--amber"], ["class", "chart-grid", 4, "ngIf"], ["class", "util-section", 4, "ngIf"], ["class", "ws-time-section", 4, "ngIf"], [1, "dept-tag"], [1, "zero-tag"], [1, "zero-notice"], [1, "zero-notice-row"], [1, "pi", "pi-eye-slash", "zero-notice-icon"], ["class", "zero-assigned", 4, "ngIf"], [1, "zero-assigned"], [1, "zero-assigned-label"], [1, "zero-report-tags"], ["class", "zero-report-tag", 4, "ngFor", "ngForOf"], [1, "zero-report-tag"], [1, "chart-grid"], ["class", "chart-card", 4, "ngIf"], [1, "chart-card"], [1, "chart-title"], [3, "series", "chart", "labels", "colors", "dataLabels", "legend", "tooltip"], [3, "series", "chart", "plotOptions", "xaxis", "colors", "dataLabels", "tooltip"], [1, "util-section"], [1, "util-header"], [1, "util-title"], [1, "util-rate"], [1, "util-tags"], ["class", "util-tag", 3, "util-tag--used", "util-tag--unused", "title", 4, "ngFor", "ngForOf"], [1, "util-tag", 3, "title"], [1, "util-tag-icon"], ["class", "util-tag-meta", 4, "ngIf"], [1, "util-tag-meta"], [1, "ws-time-section"], [1, "section-title", 2, "justify-content", "space-between"], [2, "display", "flex", "align-items", "center", "gap", ".4rem"], [1, "pi", "pi-clock", "section-title-icon"], ["style", "font-size:.68rem;font-weight:600;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;", 3, "click", 4, "ngIf"], [1, "ws-list"], ["class", "ws-block", 4, "ngFor", "ngForOf"], [2, "font-size", ".68rem", "font-weight", "600", "color", "#2563eb", "background", "none", "border", "none", "cursor", "pointer", "padding", "0", 3, "click"], [1, "ws-block"], [1, "ws-block-head"], [1, "ws-block-name"], [1, "pi", "pi-folder", "ws-folder-icon"], [1, "ws-block-total"], [1, "ws-block-rows"], ["class", "ws-block-row", 4, "ngFor", "ngForOf"], ["style", "grid-column:span 2;padding:.25rem 0.75rem;font-size:.63rem;color:#94a3b8;border-top:1px solid #f1f5f9;", 4, "ngIf"], [1, "ws-block-row"], [1, "ws-block-row-left"], [1, "ws-block-report", 3, "title"], ["class", "ws-block-tab", 4, "ngIf"], [1, "ws-block-time"], [1, "ws-block-tab"], [2, "grid-column", "span 2", "padding", ".25rem 0.75rem", "font-size", ".63rem", "color", "#94a3b8", "border-top", "1px solid #f1f5f9"], [1, "insights-kpi"], [1, "ikpi-tile"], [1, "ikpi-icon", "ikpi-icon--navy"], [1, "ikpi-body"], [1, "ikpi-label"], [1, "ikpi-value"], [1, "ikpi-icon", "ikpi-icon--green"], [1, "pi", "pi-check-circle"], [1, "ikpi-sub"], [1, "ikpi-icon", "ikpi-icon--amber"], [1, "pi", "pi-eye-slash"], [1, "ikpi-icon", "ikpi-icon--red"], [1, "pi", "pi-ban"], [1, "insights-grid"], [1, "insights-card"], [1, "insights-card-head"], [1, "insights-card-title"], [1, "insights-card-sub"], [1, "insights-badge", "insights-badge--blue"], [1, "chart-pad"], [3, "series", "chart", "plotOptions", "xaxis", "colors", "dataLabels", "legend", "tooltip", 4, "ngIf", "ngIfElse"], [1, "rank-list"], ["class", "rank-row", 3, "click", 4, "ngFor", "ngForOf"], ["class", "no-data", 4, "ngIf"], [1, "insights-badge", "insights-badge--red"], ["class", "rank-row rank-row--inactive", 3, "click", 4, "ngFor", "ngForOf"], ["class", "no-data no-data--green", 4, "ngIf"], ["class", "rank-more", 4, "ngIf"], ["class", "unused-wrap", "style", "max-height:280px;overflow-y:auto;", 4, "ngIf"], ["class", "insights-card insights-card--full", 4, "ngIf"], [3, "series", "chart", "plotOptions", "xaxis", "colors", "dataLabels", "legend", "tooltip"], [1, "no-data"], [1, "rank-row", 3, "click"], [1, "rank-num"], [1, "rank-info"], [1, "rank-name"], ["class", "rank-dept", 4, "ngIf"], [1, "rank-stat"], [1, "rank-views"], [1, "rank-views-label"], [1, "rank-dept"], [1, "rank-row", "rank-row--inactive", 3, "click"], [1, "rank-zero"], [1, "no-data", "no-data--green"], [1, "rank-more"], [1, "rank-more-link", 3, "click"], [1, "unused-wrap", 2, "max-height", "280px", "overflow-y", "auto"], [1, "unused-table"], [1, "unused-th", "unused-th--num"], [1, "unused-th"], [1, "unused-th", "unused-th--center"], ["class", "unused-row", 4, "ngFor", "ngForOf"], [1, "unused-row"], [1, "unused-td", "unused-td--num"], [1, "unused-td"], [1, "unused-td", "unused-td--center"], [1, "unused-badge"], [1, "insights-card", "insights-card--full"], [1, "insights-badge", "insights-badge--amber"], [1, "unused-wrap", 2, "max-height", "260px", "overflow-y", "auto"], [4, "ngFor", "ngForOf"], [1, "unused-row", "lr-row", 3, "click"], [1, "unused-td", "lr-name-cell"], [1, "pi", "lr-chevron"], [1, "low-views-badge"], ["class", "lr-hint", 4, "ngIf"], ["class", "lr-hint lr-hint--open", 4, "ngIf"], ["class", "lr-detail-row", 4, "ngIf"], [1, "lr-hint"], [1, "lr-hint", "lr-hint--open"], [1, "lr-detail-row"], ["colspan", "4", 1, "lr-detail-cell"], ["class", "lr-loading", 4, "ngIf"], [1, "lr-loading"], ["class", "lr-no-viewers", 4, "ngIf"], [1, "lr-viewers-label"], [1, "lr-viewer-grid"], ["class", "lr-viewer-card", 3, "click", 4, "ngFor", "ngForOf"], [1, "lr-viewer-card", 3, "click"], [1, "lr-viewer-info"], [1, "lr-viewer-name"], ["class", "lr-viewer-dept", 4, "ngIf"], [1, "lr-viewer-count"], [1, "lr-viewer-count-label"], [1, "lr-viewer-dept"], [1, "lr-no-viewers"]], template: function UsersOverviewComponent_Template(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275elementStart(0, "div", 3)(1, "div", 4)(2, "div", 5)(3, "h1", 6);
-      \u0275\u0275text(4, "User Activity Overview");
+      \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "div", 3)(3, "h1", 4);
+      \u0275\u0275text(4, "Power BI Access & Usage");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(5, "p", 7);
-      \u0275\u0275template(6, UsersOverviewComponent_span_6_Template, 4, 4, "span", 8);
+      \u0275\u0275template(5, UsersOverviewComponent_p_5_Template, 4, 4, "p", 5);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(6, "div", 6)(7, "div", 7)(8, "button", 8);
+      \u0275\u0275listener("click", function UsersOverviewComponent_Template_button_click_8_listener() {
+        return ctx.switchView("users");
+      });
+      \u0275\u0275element(9, "i", 9);
+      \u0275\u0275text(10, " Users ");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(11, "button", 8);
+      \u0275\u0275listener("click", function UsersOverviewComponent_Template_button_click_11_listener() {
+        return ctx.switchView("insights");
+      });
+      \u0275\u0275element(12, "i", 10);
+      \u0275\u0275text(13, " Insights ");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(7, "div", 9);
-      \u0275\u0275template(8, UsersOverviewComponent_button_8_Template, 2, 3, "button", 10);
-      \u0275\u0275elementEnd()();
-      \u0275\u0275template(9, UsersOverviewComponent_div_9_Template, 4, 0, "div", 11)(10, UsersOverviewComponent_div_10_Template, 3, 1, "div", 12)(11, UsersOverviewComponent_div_11_Template, 18, 8, "div", 13);
+      \u0275\u0275elementStart(14, "div", 11);
+      \u0275\u0275template(15, UsersOverviewComponent_button_15_Template, 2, 3, "button", 12);
+      \u0275\u0275elementEnd()()();
+      \u0275\u0275template(16, UsersOverviewComponent_div_16_Template, 4, 0, "div", 13)(17, UsersOverviewComponent_div_17_Template, 3, 1, "div", 14)(18, UsersOverviewComponent_ng_container_18_Template, 20, 9, "ng-container", 15)(19, UsersOverviewComponent_ng_container_19_Template, 3, 2, "ng-container", 15);
       \u0275\u0275elementEnd();
     }
     if (rf & 2) {
-      \u0275\u0275advance(6);
+      \u0275\u0275advance(5);
       \u0275\u0275property("ngIf", ctx.lastRefreshedAt);
-      \u0275\u0275advance(2);
+      \u0275\u0275advance(3);
+      \u0275\u0275classProp("view-tab--on", ctx.activeView === "users");
+      \u0275\u0275advance(3);
+      \u0275\u0275classProp("view-tab--on", ctx.activeView === "insights");
+      \u0275\u0275advance(4);
       \u0275\u0275property("ngForOf", ctx.timePeriods);
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.loading);
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.error && !ctx.loading);
       \u0275\u0275advance();
-      \u0275\u0275property("ngIf", !ctx.loading && !ctx.error);
+      \u0275\u0275property("ngIf", !ctx.loading && !ctx.error && ctx.activeView === "users");
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", !ctx.loading && !ctx.error && ctx.activeView === "insights");
     }
-  }, dependencies: [CommonModule, NgForOf, NgIf, DatePipe, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel, NgApexchartsModule, ChartComponent, DropdownModule, AvatarComponent], styles: ["\n\n.uo-wrap[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.5rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n.uo-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.5rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #dbeafe;\n}\n.uo-header-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n}\n.uo-title[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.uo-subtitle[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  color: #64748b;\n  margin: 0;\n  font-weight: 500;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.refresh-badge[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.35rem;\n  color: #94a3b8;\n  font-weight: 400;\n}\n.live-dot[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #10b981;\n  flex-shrink: 0;\n}\n.pill-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n  flex-wrap: wrap;\n}\n.pill[_ngcontent-%COMP%] {\n  padding: 0.4rem 1rem;\n  border-radius: 99px;\n  font-size: 0.75rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1;\n  background: #ffffff;\n  color: #1e293b;\n  cursor: pointer;\n  transition: all 0.18s;\n}\n.pill[_ngcontent-%COMP%]:hover {\n  background: #f8fafc;\n  border-color: #94a3b8;\n}\n.pill--on[_ngcontent-%COMP%] {\n  background: #1e3a8a;\n  color: #ffffff;\n  border-color: #1e3a8a;\n}\n.state-loader[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 30vh;\n  gap: 1rem;\n  color: #64748b;\n  font-size: 0.875rem;\n}\n.spinner[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #2563eb;\n  animation: _ngcontent-%COMP%_spin 0.8s linear infinite;\n}\n.spinner--sm[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n  border-width: 2.5px;\n}\n@keyframes _ngcontent-%COMP%_spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.state-error[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 12px;\n  padding: 1rem 1.5rem;\n  font-size: 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n}\n.two-col[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 320px 1fr;\n  gap: 1.25rem;\n  align-items: start;\n}\n@media (max-width: 900px) {\n  .two-col[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.user-list-panel[_ngcontent-%COMP%] {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: sticky;\n  top: 5rem;\n  max-height: calc(100vh - 9rem);\n}\n.panel-header[_ngcontent-%COMP%] {\n  padding: 1rem 1rem 0.75rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #f8faff;\n}\n.panel-title[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 0.72rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: #64748b;\n  margin-bottom: 0.6rem;\n}\n.user-count[_ngcontent-%COMP%] {\n  background: #dbeafe;\n  color: #1d4ed8;\n  border-radius: 99px;\n  padding: 0.1rem 0.5rem;\n  font-size: 0.68rem;\n  font-weight: 700;\n  margin-left: 0.35rem;\n}\n.search-wrap[_ngcontent-%COMP%] {\n  position: relative;\n}\n.search-icon[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 0.625rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #93c5fd;\n  font-size: 0.75rem;\n  pointer-events: none;\n}\n.search-input[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.5rem 0.75rem 0.5rem 2rem !important;\n  border: 1.5px solid #bfdbfe !important;\n  border-radius: 10px !important;\n  font-size: 0.8rem !important;\n  color: #1e3a8a !important;\n  background: #ffffff !important;\n  outline: none;\n  transition: border-color 0.15s;\n}\n.search-input[_ngcontent-%COMP%]:focus {\n  border-color: #2563eb !important;\n  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;\n}\n.user-list-scroll[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow-y: auto;\n  padding: 0.5rem;\n}\n.user-list-scroll[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 4px;\n}\n.user-list-scroll[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: #bfdbfe;\n  border-radius: 4px;\n}\n.user-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.625rem;\n  padding: 0.6rem 0.75rem;\n  border-radius: 10px;\n  cursor: pointer;\n  transition: background 0.14s;\n  margin-bottom: 2px;\n}\n.user-row[_ngcontent-%COMP%]:hover {\n  background: #f0f5ff;\n}\n.user-row--active[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      #eff6ff,\n      #dbeafe) !important;\n  border-left: 3px solid #2563eb;\n  padding-left: calc(0.75rem - 3px);\n}\n.avatar-sm[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.user-row-info[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 0.1rem;\n}\n.user-row-name[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-dept[_ngcontent-%COMP%] {\n  font-size: 0.67rem;\n  color: #64748b;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-views[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex-shrink: 0;\n}\n.views-badge[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  font-weight: 800;\n  color: #1d4ed8;\n  line-height: 1;\n}\n.views-label[_ngcontent-%COMP%] {\n  font-size: 0.58rem;\n  color: #93c5fd;\n  font-weight: 600;\n  text-transform: uppercase;\n}\n.empty-state[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 2rem 1rem;\n  color: #94a3b8;\n  font-size: 0.85rem;\n  gap: 0.5rem;\n}\n.empty-state[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.pagination[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  gap: 0.3rem;\n  padding: 0.7rem;\n  border-top: 1px solid #eff6ff;\n  flex-wrap: wrap;\n}\n.page-btn[_ngcontent-%COMP%] {\n  width: 28px;\n  height: 28px;\n  border-radius: 7px;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #ffffff !important;\n  color: #1e293b !important;\n  font-size: 0.7rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  min-height: unset;\n}\n.page-btn[_ngcontent-%COMP%]:hover {\n  background: #f8fafc !important;\n  border-color: #94a3b8 !important;\n}\n.page-btn--active[_ngcontent-%COMP%] {\n  background: #1e3a8a !important;\n  color: #ffffff !important;\n  border-color: #1e3a8a !important;\n}\n.detail-panel[_ngcontent-%COMP%] {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  min-height: 600px;\n  overflow: hidden;\n}\n.no-selection[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  min-height: 400px;\n  color: #94a3b8;\n  gap: 1rem;\n  font-size: 0.875rem;\n  text-align: center;\n  padding: 2rem;\n}\n.no-selection-icon[_ngcontent-%COMP%] {\n  font-size: 3.5rem;\n  color: #dbeafe;\n}\n.detail-loader[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 300px;\n}\n.detail-header[_ngcontent-%COMP%] {\n  background: #ffffff;\n  padding: 1.25rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n}\n.detail-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.detail-identity-text[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.15rem;\n}\n.detail-username[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.detail-email[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  color: #64748b;\n  margin: 0;\n}\n.dept-tag[_ngcontent-%COMP%] {\n  display: inline-block;\n  margin-top: 0.25rem;\n  background: #f1f5f9;\n  color: #334155;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 600;\n  padding: 0.15rem 0.55rem;\n}\n.kpi-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(5, 1fr);\n  border-bottom: 1px solid #eff6ff;\n}\n@media (max-width: 1100px) {\n  .kpi-grid[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-grid[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n.kpi-tile[_ngcontent-%COMP%] {\n  padding: 1rem;\n  text-align: center;\n  border-right: 1px solid #eff6ff;\n  background: #ffffff;\n}\n.kpi-tile[_ngcontent-%COMP%]:last-child {\n  border-right: none;\n}\n.kpi-tile--blue[_ngcontent-%COMP%] {\n  background: #f8faff;\n}\n.kpi-label[_ngcontent-%COMP%] {\n  font-size: 0.62rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  color: #64748b;\n  margin-bottom: 0.3rem;\n}\n.kpi-value[_ngcontent-%COMP%] {\n  font-size: 1.6rem;\n  font-weight: 900;\n  color: #0f172a;\n  line-height: 1;\n}\n.kpi-value--indigo[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.kpi-value--violet[_ngcontent-%COMP%] {\n  color: #6366f1;\n}\n.kpi-value--teal[_ngcontent-%COMP%] {\n  color: #0d9488;\n}\n.kpi-value--amber[_ngcontent-%COMP%] {\n  color: #d97706;\n}\n.util-section[_ngcontent-%COMP%] {\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #fafbff;\n}\n.util-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  margin-bottom: 0.75rem;\n}\n.util-title[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.util-icon[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.util-rate[_ngcontent-%COMP%] {\n  font-size: 0.8rem;\n  font-weight: 800;\n  display: flex;\n  align-items: center;\n  gap: 0.35rem;\n}\n.util-rate--green[_ngcontent-%COMP%] {\n  color: #059669;\n}\n.util-rate--amber[_ngcontent-%COMP%] {\n  color: #d97706;\n}\n.util-rate--red[_ngcontent-%COMP%] {\n  color: #dc2626;\n}\n.util-tags[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.util-tag[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.3rem 0.65rem;\n  border-radius: 8px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  cursor: default;\n}\n.util-tag--used[_ngcontent-%COMP%] {\n  background: #ecfdf5;\n  color: #059669;\n  border: 1px solid #d1fae5;\n}\n.util-tag--unused[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fee2e2;\n}\n.util-tag-icon[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  flex-shrink: 0;\n}\n.util-tag-meta[_ngcontent-%COMP%] {\n  opacity: 0.75;\n  font-weight: 500;\n  font-size: 0.65rem;\n}\n.ws-time-section[_ngcontent-%COMP%] {\n  padding: 1.25rem 1.5rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #ffffff;\n}\n.section-title[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e293b;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  margin: 0 0 1rem;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.section-title-icon[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.ws-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.875rem;\n}\n.ws-block[_ngcontent-%COMP%] {\n  border: 1px solid #e2e8f0;\n  border-radius: 12px;\n  background: #ffffff;\n}\n.ws-block-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.7rem 1rem;\n  background: #f0f6ff;\n  border-bottom: 1px solid #dbeafe;\n  border-radius: 12px 12px 0 0;\n}\n.ws-block-name[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  min-width: 0;\n  flex: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-folder-icon[_ngcontent-%COMP%] {\n  color: #2563eb;\n  flex-shrink: 0;\n}\n.ws-block-total[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #bfdbfe;\n  border-radius: 99px;\n  padding: 0.18rem 0.6rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-block-rows[_ngcontent-%COMP%] {\n  padding: 0.25rem 0;\n}\n.ws-block-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.55rem 1rem;\n  border-bottom: 1px solid #f1f5f9;\n  transition: background 0.1s;\n}\n.ws-block-row[_ngcontent-%COMP%]:last-child {\n  border-bottom: none;\n}\n.ws-block-row[_ngcontent-%COMP%]:hover {\n  background: #f8fbff;\n}\n.ws-block-row-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.15rem;\n  min-width: 0;\n  flex: 1;\n}\n.ws-block-report[_ngcontent-%COMP%] {\n  font-size: 0.8rem;\n  font-weight: 600;\n  color: #1e293b;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-block-tab[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  color: #3b82f6;\n  font-weight: 600;\n  background: #eff6ff;\n  border-radius: 4px;\n  padding: 0.05rem 0.35rem;\n  display: inline-block;\n  width: fit-content;\n}\n.ws-block-time[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: #059669;\n  background: #ecfdf5;\n  border: 1px solid #a7f3d0;\n  border-radius: 99px;\n  padding: 0.18rem 0.65rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.chart-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 1px;\n  background: #eff6ff;\n}\n.chart-card[_ngcontent-%COMP%] {\n  background: #ffffff;\n  padding: 1.25rem 1.5rem;\n  overflow: hidden;\n}\n.chart-card--wide[_ngcontent-%COMP%] {\n  grid-column: span 2;\n}\n@media (max-width: 768px) {\n  .chart-grid[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .chart-card--wide[_ngcontent-%COMP%] {\n    grid-column: span 1;\n  }\n}\n.chart-title[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  margin: 0 0 0.75rem;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n.no-chart-data[_ngcontent-%COMP%] {\n  height: 120px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #94a3b8;\n  font-size: 0.8rem;\n  font-style: italic;\n}\n/*# sourceMappingURL=users-overview.component.css.map */"] });
+  }, dependencies: [CommonModule, NgForOf, NgIf, DatePipe, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel, NgApexchartsModule, ChartComponent, AvatarComponent], styles: ["\n\n.uo-wrap[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.5rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n.uo-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #dbeafe;\n}\n.uo-header-left[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n}\n.uo-title[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.uo-subtitle[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  color: #94a3b8;\n  margin: 0;\n  font-weight: 400;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.live-dot[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #10b981;\n  flex-shrink: 0;\n}\n.uo-header-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.view-tabs[_ngcontent-%COMP%] {\n  display: flex;\n  background: #e2e8f0;\n  border-radius: 10px;\n  padding: 3px;\n  gap: 2px;\n}\n.view-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 1.1rem;\n  border-radius: 8px;\n  border: none;\n  background: transparent;\n  color: #64748b;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n}\n.view-tab[_ngcontent-%COMP%]:hover {\n  color: #1e3a8a;\n  background: rgba(255, 255, 255, .6);\n}\n.view-tab--on[_ngcontent-%COMP%] {\n  background: #ffffff;\n  color: #1e3a8a;\n  box-shadow: 0 1px 4px rgba(30, 58, 138, .14);\n}\n.pill-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.4rem;\n  flex-wrap: wrap;\n}\n.pill[_ngcontent-%COMP%] {\n  padding: 0.38rem 0.875rem;\n  border-radius: 99px;\n  font-size: 0.72rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1;\n  background: #ffffff;\n  color: #1e293b;\n  cursor: pointer;\n  transition: all 0.15s;\n}\n.pill[_ngcontent-%COMP%]:hover {\n  background: #f8fafc;\n  border-color: #94a3b8;\n}\n.pill--on[_ngcontent-%COMP%] {\n  background: #1e3a8a;\n  color: #ffffff;\n  border-color: #1e3a8a;\n}\n.dept-filter[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  margin-bottom: 1rem;\n}\n.dept-pill[_ngcontent-%COMP%] {\n  padding: 0.28rem 0.875rem;\n  border-radius: 99px;\n  font-size: 0.72rem;\n  font-weight: 600;\n  border: 1.5px solid #e2e8f0;\n  background: #ffffff;\n  color: #64748b;\n  cursor: pointer;\n  transition: all 0.15s;\n}\n.dept-pill[_ngcontent-%COMP%]:hover {\n  border-color: #93c5fd;\n  color: #1e3a8a;\n}\n.dept-pill--on[_ngcontent-%COMP%] {\n  background: #1e3a8a;\n  color: #ffffff;\n  border-color: #1e3a8a;\n}\n.state-loader[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 30vh;\n  gap: 1rem;\n  color: #64748b;\n  font-size: 0.875rem;\n}\n.spinner[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #2563eb;\n  animation: _ngcontent-%COMP%_spin 0.8s linear infinite;\n}\n.spinner--sm[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n  border-width: 2.5px;\n}\n@keyframes _ngcontent-%COMP%_spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.state-error[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 12px;\n  padding: 1rem 1.5rem;\n  font-size: 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n}\n.two-col[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 300px 1fr;\n  gap: 1.25rem;\n  align-items: start;\n}\n@media (max-width: 900px) {\n  .two-col[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.user-list-panel[_ngcontent-%COMP%] {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: sticky;\n  top: 5rem;\n  max-height: calc(100vh - 9rem);\n}\n.panel-header[_ngcontent-%COMP%] {\n  padding: 0.875rem 1rem 0.75rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #f8faff;\n}\n.panel-title[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 0.68rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: #64748b;\n  margin-bottom: 0.5rem;\n}\n.user-count[_ngcontent-%COMP%] {\n  background: #dbeafe;\n  color: #1d4ed8;\n  border-radius: 99px;\n  padding: 0.08rem 0.45rem;\n  font-size: 0.65rem;\n  font-weight: 700;\n  margin-left: 0.3rem;\n}\n.search-wrap[_ngcontent-%COMP%] {\n  position: relative;\n}\n.search-icon[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 0.625rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #93c5fd;\n  font-size: 0.72rem;\n  pointer-events: none;\n}\n.search-input[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.45rem 0.75rem 0.45rem 1.9rem !important;\n  border: 1.5px solid #bfdbfe !important;\n  border-radius: 8px !important;\n  font-size: 0.78rem !important;\n  color: #1e3a8a !important;\n  background: #ffffff !important;\n  outline: none;\n  transition: border-color 0.15s;\n}\n.search-input[_ngcontent-%COMP%]:focus {\n  border-color: #2563eb !important;\n  box-shadow: 0 0 0 3px rgba(37, 99, 235, .1) !important;\n}\n.user-list-scroll[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow-y: auto;\n  padding: 0.4rem;\n}\n.user-list-scroll[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 4px;\n}\n.user-list-scroll[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: #bfdbfe;\n  border-radius: 4px;\n}\n.user-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  padding: 0.55rem 0.7rem;\n  border-radius: 10px;\n  cursor: pointer;\n  transition: background 0.12s;\n  margin-bottom: 2px;\n}\n.user-row[_ngcontent-%COMP%]:hover {\n  background: #f0f5ff;\n}\n.user-row--active[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      #eff6ff,\n      #dbeafe) !important;\n  border-left: 3px solid #2563eb;\n  padding-left: calc(0.7rem - 3px);\n}\n.user-row--zero[_ngcontent-%COMP%] {\n  opacity: 0.7;\n}\n.user-row--zero[_ngcontent-%COMP%]   .user-row-name[_ngcontent-%COMP%] {\n  color: #64748b;\n}\n.avatar-sm[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.user-row-info[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 0.08rem;\n}\n.user-row-name[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-dept[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  color: #64748b;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-views[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex-shrink: 0;\n}\n.views-badge[_ngcontent-%COMP%] {\n  font-size: 0.82rem;\n  font-weight: 800;\n  color: #1d4ed8;\n  line-height: 1;\n}\n.views-badge--zero[_ngcontent-%COMP%] {\n  color: #94a3b8;\n}\n.views-label[_ngcontent-%COMP%] {\n  font-size: 0.58rem;\n  color: #93c5fd;\n  font-weight: 600;\n  text-transform: uppercase;\n}\n.empty-state[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 2rem 1rem;\n  color: #94a3b8;\n  font-size: 0.82rem;\n  gap: 0.5rem;\n}\n.empty-state[_ngcontent-%COMP%]   .pi[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.pagination[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  gap: 0.3rem;\n  padding: 0.65rem;\n  border-top: 1px solid #eff6ff;\n  flex-wrap: wrap;\n}\n.page-btn[_ngcontent-%COMP%] {\n  width: 26px;\n  height: 26px;\n  border-radius: 6px;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #ffffff !important;\n  color: #1e293b !important;\n  font-size: 0.68rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  min-height: unset;\n}\n.page-btn[_ngcontent-%COMP%]:hover {\n  background: #f8fafc !important;\n  border-color: #94a3b8 !important;\n}\n.page-btn--active[_ngcontent-%COMP%] {\n  background: #1e3a8a !important;\n  color: #ffffff !important;\n  border-color: #1e3a8a !important;\n}\n.detail-panel[_ngcontent-%COMP%] {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  min-height: 600px;\n  overflow: hidden;\n}\n.no-selection[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  min-height: 400px;\n  color: #94a3b8;\n  gap: 1rem;\n  font-size: 0.875rem;\n  text-align: center;\n  padding: 2rem;\n}\n.no-selection-icon[_ngcontent-%COMP%] {\n  font-size: 3.5rem;\n  color: #dbeafe;\n}\n.detail-loader[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 300px;\n}\n.detail-header[_ngcontent-%COMP%] {\n  padding: 1.25rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n}\n.detail-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.detail-identity-text[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.1rem;\n}\n.detail-username[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.detail-email[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  color: #64748b;\n  margin: 0;\n}\n.detail-tags[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n  margin-top: 0.3rem;\n}\n.dept-tag[_ngcontent-%COMP%] {\n  display: inline-block;\n  background: #f1f5f9;\n  color: #334155;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 600;\n  padding: 0.15rem 0.55rem;\n}\n.zero-tag[_ngcontent-%COMP%] {\n  display: inline-block;\n  background: #fef3c7;\n  color: #92400e;\n  border: 1.5px solid #fde68a;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 700;\n  padding: 0.15rem 0.55rem;\n}\n.zero-notice[_ngcontent-%COMP%] {\n  padding: 0.875rem 1.5rem;\n  background: #fffbeb;\n  border-bottom: 1px solid #fde68a;\n  display: flex;\n  flex-direction: column;\n  gap: 0.6rem;\n}\n.zero-notice-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.5rem;\n  font-size: 0.8rem;\n  color: #92400e;\n  line-height: 1.5;\n}\n.zero-notice-icon[_ngcontent-%COMP%] {\n  color: #d97706;\n  flex-shrink: 0;\n  margin-top: 0.1rem;\n}\n.zero-assigned[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.5rem;\n  flex-wrap: wrap;\n}\n.zero-assigned-label[_ngcontent-%COMP%] {\n  font-size: 0.66rem;\n  font-weight: 700;\n  color: #64748b;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  white-space: nowrap;\n  margin-top: 0.2rem;\n}\n.zero-report-tags[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n}\n.zero-report-tag[_ngcontent-%COMP%] {\n  background: #f1f5f9;\n  color: #334155;\n  border: 1px solid #cbd5e1;\n  border-radius: 6px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  padding: 0.15rem 0.5rem;\n}\n.kpi-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(5, 1fr);\n  border-bottom: 1px solid #eff6ff;\n}\n@media (max-width: 1100px) {\n  .kpi-grid[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-grid[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n.kpi-tile[_ngcontent-%COMP%] {\n  padding: 0.5rem 0.6rem;\n  text-align: center;\n  border-right: 1px solid #eff6ff;\n  background: #ffffff;\n}\n.kpi-tile[_ngcontent-%COMP%]:last-child {\n  border-right: none;\n}\n.kpi-tile--blue[_ngcontent-%COMP%] {\n  background: #f8faff;\n}\n.kpi-icon[_ngcontent-%COMP%] {\n  font-size: 0.95rem;\n  color: #93c5fd;\n  margin-bottom: 0.3rem;\n  display: block;\n}\n.kpi-label[_ngcontent-%COMP%] {\n  font-size: 0.6rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  color: #64748b;\n  margin-bottom: 0.25rem;\n}\n.kpi-value[_ngcontent-%COMP%] {\n  font-size: 1.1rem;\n  font-weight: 900;\n  color: #0f172a;\n  line-height: 1;\n}\n.kpi-value--indigo[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.kpi-value--violet[_ngcontent-%COMP%] {\n  color: #6366f1;\n}\n.kpi-value--teal[_ngcontent-%COMP%] {\n  color: #0d9488;\n}\n.kpi-value--amber[_ngcontent-%COMP%] {\n  color: #d97706;\n}\n.chart-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 1px;\n  background: #eff6ff;\n  border-bottom: 1px solid #eff6ff;\n}\n@media (max-width: 768px) {\n  .chart-grid[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.chart-card[_ngcontent-%COMP%] {\n  background: #ffffff;\n  padding: 1.1rem 1.25rem 1rem;\n  overflow: hidden;\n}\n.chart-title[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  margin: 0 0 0.625rem;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n.util-section[_ngcontent-%COMP%] {\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #fafbff;\n}\n.util-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  margin-bottom: 0.75rem;\n}\n.util-title[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n.util-rate[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  font-weight: 800;\n}\n.util-rate--green[_ngcontent-%COMP%] {\n  color: #059669;\n}\n.util-rate--amber[_ngcontent-%COMP%] {\n  color: #d97706;\n}\n.util-rate--red[_ngcontent-%COMP%] {\n  color: #dc2626;\n}\n.util-tags[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.util-tag[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.3rem;\n  padding: 0.28rem 0.6rem;\n  border-radius: 8px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  cursor: default;\n}\n.util-tag--used[_ngcontent-%COMP%] {\n  background: #ecfdf5;\n  color: #059669;\n  border: 1px solid #d1fae5;\n}\n.util-tag--unused[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fee2e2;\n}\n.util-tag-icon[_ngcontent-%COMP%] {\n  font-size: 0.62rem;\n  flex-shrink: 0;\n}\n.util-tag-meta[_ngcontent-%COMP%] {\n  opacity: 0.7;\n  font-weight: 500;\n  font-size: 0.63rem;\n}\n.ws-time-section[_ngcontent-%COMP%] {\n  padding: 0.75rem 1rem 1rem;\n  background: #ffffff;\n}\n.section-title[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  font-weight: 700;\n  color: #1e293b;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  margin: 0 0 0.5rem;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.section-title-icon[_ngcontent-%COMP%] {\n  color: #3b82f6;\n}\n.ws-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.4rem;\n}\n.ws-block[_ngcontent-%COMP%] {\n  border: 1px solid #e2e8f0;\n  border-radius: 8px;\n  background: #ffffff;\n}\n.ws-block-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n  padding: 0.35rem 0.75rem;\n  background: #f0f6ff;\n  border-bottom: 1px solid #dbeafe;\n  border-radius: 8px 8px 0 0;\n}\n.ws-block-name[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.3rem;\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  min-width: 0;\n  flex: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-folder-icon[_ngcontent-%COMP%] {\n  color: #2563eb;\n  flex-shrink: 0;\n  font-size: 0.7rem;\n}\n.ws-block-total[_ngcontent-%COMP%] {\n  font-size: 0.63rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #bfdbfe;\n  border-radius: 99px;\n  padding: 0.08rem 0.45rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-block-rows[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 0;\n}\n.ws-block-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n  padding: 0.28rem 0.75rem;\n  border-bottom: 1px solid #f1f5f9;\n  border-right: 1px solid #f1f5f9;\n  transition: background 0.1s;\n}\n.ws-block-row[_ngcontent-%COMP%]:nth-child(even) {\n  border-right: none;\n}\n.ws-block-row[_ngcontent-%COMP%]:hover {\n  background: #f8fbff;\n}\n.ws-block-row-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: baseline;\n  gap: 0.3rem;\n  min-width: 0;\n  flex: 1;\n  overflow: hidden;\n}\n.ws-block-report[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  font-weight: 600;\n  color: #1e293b;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  flex-shrink: 1;\n  min-width: 0;\n}\n.ws-block-tab[_ngcontent-%COMP%] {\n  font-size: 0.58rem;\n  color: #3b82f6;\n  font-weight: 600;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-block-time[_ngcontent-%COMP%] {\n  font-size: 0.63rem;\n  font-weight: 700;\n  color: #059669;\n  background: #ecfdf5;\n  border: 1px solid #a7f3d0;\n  border-radius: 99px;\n  padding: 0.08rem 0.4rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.insights-kpi[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n}\n@media (max-width: 900px) {\n  .insights-kpi[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n@media (max-width: 500px) {\n  .insights-kpi[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.ikpi-tile[_ngcontent-%COMP%] {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 14px;\n  padding: 0.6rem 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: 0.625rem;\n  box-shadow: 0 1px 8px rgba(30, 58, 138, .05);\n}\n.ikpi-icon[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.9rem;\n  flex-shrink: 0;\n}\n.ikpi-icon--navy[_ngcontent-%COMP%] {\n  background: #eff6ff;\n  color: #1e3a8a;\n}\n.ikpi-icon--green[_ngcontent-%COMP%] {\n  background: #ecfdf5;\n  color: #059669;\n}\n.ikpi-icon--amber[_ngcontent-%COMP%] {\n  background: #fffbeb;\n  color: #d97706;\n}\n.ikpi-icon--red[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  color: #dc2626;\n}\n.ikpi-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.08rem;\n  min-width: 0;\n}\n.ikpi-label[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  color: #64748b;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.ikpi-value[_ngcontent-%COMP%] {\n  font-size: 1.25rem;\n  font-weight: 900;\n  color: #0f172a;\n  line-height: 1.1;\n}\n.ikpi-sub[_ngcontent-%COMP%] {\n  font-size: 0.63rem;\n  color: #94a3b8;\n  font-weight: 500;\n}\n.insights-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 0.75rem;\n  align-items: start;\n}\n@media (max-width: 900px) {\n  .insights-grid[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.insights-card[_ngcontent-%COMP%] {\n  background: #ffffff;\n  border: 1px solid #e2e8f0;\n  border-radius: 12px;\n  box-shadow: 0 1px 4px rgba(30, 58, 138, .04);\n  overflow: hidden;\n}\n.insights-card--full[_ngcontent-%COMP%] {\n  grid-column: span 2;\n}\n@media (max-width: 900px) {\n  .insights-card--full[_ngcontent-%COMP%] {\n    grid-column: span 1;\n  }\n}\n.insights-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.55rem 0.875rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8faff;\n}\n.insights-card-title[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  font-weight: 700;\n  color: #0f172a;\n  margin: 0;\n}\n.insights-card-sub[_ngcontent-%COMP%] {\n  font-size: 0.63rem;\n  color: #94a3b8;\n  margin: 0;\n}\n.insights-badge[_ngcontent-%COMP%] {\n  padding: 0.15rem 0.5rem;\n  border-radius: 99px;\n  font-size: 0.63rem;\n  font-weight: 700;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.insights-badge--blue[_ngcontent-%COMP%] {\n  background: #eff6ff;\n  color: #1d4ed8;\n  border: 1px solid #bfdbfe;\n}\n.insights-badge--red[_ngcontent-%COMP%] {\n  background: #fef2f2;\n  color: #b91c1c;\n  border: 1px solid #fecaca;\n}\n.insights-badge--amber[_ngcontent-%COMP%] {\n  background: #fffbeb;\n  color: #92400e;\n  border: 1px solid #fde68a;\n}\n.chart-pad[_ngcontent-%COMP%] {\n  padding: 0.5rem 0.75rem 0.75rem;\n}\n.rank-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  overflow-y: auto;\n  padding: 0.2rem 0;\n}\n.rank-list[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 4px;\n}\n.rank-list[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: #bfdbfe;\n  border-radius: 4px;\n}\n.rank-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.28rem 0.875rem;\n  border-bottom: 1px solid #f8fafc;\n  cursor: pointer;\n  transition: background 0.1s;\n}\n.rank-row[_ngcontent-%COMP%]:last-child {\n  border-bottom: none;\n}\n.rank-row[_ngcontent-%COMP%]:hover {\n  background: #f0f5ff;\n}\n.rank-row--inactive[_ngcontent-%COMP%]:hover {\n  background: #fef9f0;\n}\n.rank-num[_ngcontent-%COMP%] {\n  width: 18px;\n  height: 18px;\n  border-radius: 50%;\n  background: #f1f5f9;\n  color: #64748b;\n  font-size: 0.6rem;\n  font-weight: 800;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.rank-num--gold[_ngcontent-%COMP%] {\n  background: #fef9c3;\n  color: #854d0e;\n}\n.rank-num--silver[_ngcontent-%COMP%] {\n  background: #f1f5f9;\n  color: #475569;\n}\n.rank-num--bronze[_ngcontent-%COMP%] {\n  background: #fff7ed;\n  color: #9a3412;\n}\n.rank-info[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  align-items: baseline;\n  gap: 0.35rem;\n}\n.rank-name[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rank-dept[_ngcontent-%COMP%] {\n  font-size: 0.62rem;\n  color: #94a3b8;\n  white-space: nowrap;\n}\n.rank-stat[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.2rem;\n  flex-shrink: 0;\n}\n.rank-views[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  font-weight: 800;\n  color: #1d4ed8;\n  line-height: 1;\n}\n.rank-views-label[_ngcontent-%COMP%] {\n  font-size: 0.55rem;\n  color: #93c5fd;\n  font-weight: 600;\n  text-transform: uppercase;\n}\n.rank-zero[_ngcontent-%COMP%] {\n  font-size: 0.63rem;\n  font-weight: 700;\n  color: #b45309;\n  background: #fef3c7;\n  border: 1px solid #fde68a;\n  border-radius: 99px;\n  padding: 0.1rem 0.4rem;\n  white-space: nowrap;\n}\n.rank-more[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 0.68rem;\n  color: #64748b;\n  padding: 0.4rem;\n  border-top: 1px solid #f1f5f9;\n}\n.rank-more-link[_ngcontent-%COMP%] {\n  color: #2563eb;\n  font-weight: 600;\n  cursor: pointer;\n}\n.rank-more-link[_ngcontent-%COMP%]:hover {\n  text-decoration: underline;\n}\n.avatar-xs[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n}\n.no-data[_ngcontent-%COMP%] {\n  padding: 0.875rem 1rem;\n  text-align: center;\n  color: #94a3b8;\n  font-size: 0.75rem;\n  font-style: italic;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.4rem;\n}\n.no-data--green[_ngcontent-%COMP%] {\n  color: #059669;\n  font-style: normal;\n  font-weight: 600;\n}\n.unused-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.unused-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: separate;\n  border-spacing: 0;\n}\n.unused-th[_ngcontent-%COMP%] {\n  background: #f8faff;\n  color: #64748b;\n  font-size: 0.62rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.07em;\n  padding: 0.4rem 0.75rem;\n  border-bottom: 1.5px solid #dbeafe;\n  white-space: nowrap;\n  text-align: left;\n}\n.unused-th--num[_ngcontent-%COMP%] {\n  width: 50px;\n  text-align: center;\n}\n.unused-th--center[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.unused-row[_ngcontent-%COMP%] {\n  transition: background 0.12s;\n}\n.unused-row[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: #f8fbff;\n}\n.unused-td[_ngcontent-%COMP%] {\n  padding: 0.35rem 0.75rem;\n  border-bottom: 1px solid #f1f5f9;\n  font-size: 0.75rem;\n  color: #1e293b;\n  vertical-align: middle;\n}\n.unused-td--num[_ngcontent-%COMP%] {\n  text-align: center;\n  color: #94a3b8;\n  font-size: 0.72rem;\n}\n.unused-td--center[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.unused-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  background: #fef2f2;\n  color: #b91c1c;\n  border: 1px solid #fecaca;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 700;\n  padding: 0.16rem 0.6rem;\n}\n.low-views-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  background: #fffbeb;\n  color: #92400e;\n  border: 1px solid #fde68a;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 700;\n  padding: 0.16rem 0.6rem;\n}\n.lr-row[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: background 0.12s;\n}\n.lr-row[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: #fafbff;\n}\n.lr-row--open[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  background: #f0f6ff !important;\n}\n.lr-name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.45rem;\n}\n.lr-chevron[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  color: #3b82f6;\n  flex-shrink: 0;\n  transition: transform 0.15s;\n}\n.lr-expand-hint[_ngcontent-%COMP%] {\n  white-space: nowrap;\n}\n.lr-hint[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  color: #94a3b8;\n  font-style: italic;\n}\n.lr-hint--open[_ngcontent-%COMP%] {\n  color: #3b82f6;\n  font-style: normal;\n  font-weight: 600;\n}\n.lr-detail-row[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: 0 !important;\n  border-bottom: 2px solid #bfdbfe !important;\n}\n.lr-detail-cell[_ngcontent-%COMP%] {\n  background: #f8fbff;\n  padding: 1rem 1.25rem !important;\n}\n.lr-loading[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  padding: 0.5rem 0;\n  color: #64748b;\n  font-size: 0.78rem;\n}\n.lr-viewers-label[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  color: #64748b;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  margin-bottom: 0.4rem;\n  display: flex;\n  align-items: center;\n  gap: 0.35rem;\n}\n.lr-viewer-grid[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0;\n  border: 1px solid #e2e8f0;\n  border-radius: 8px;\n  overflow: hidden;\n}\n.lr-viewer-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.3rem 0.75rem;\n  background: #ffffff;\n  border-bottom: 1px solid #f1f5f9;\n  cursor: pointer;\n  transition: background 0.1s;\n}\n.lr-viewer-card[_ngcontent-%COMP%]:last-child {\n  border-bottom: none;\n}\n.lr-viewer-card[_ngcontent-%COMP%]:hover {\n  background: #f0f5ff;\n}\n.lr-viewer-info[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  align-items: baseline;\n  gap: 0.3rem;\n}\n.lr-viewer-name[_ngcontent-%COMP%] {\n  font-size: 0.73rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.lr-viewer-dept[_ngcontent-%COMP%] {\n  font-size: 0.62rem;\n  color: #94a3b8;\n  white-space: nowrap;\n}\n.lr-viewer-count[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.2rem;\n  flex-shrink: 0;\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1d4ed8;\n}\n.lr-viewer-count-label[_ngcontent-%COMP%] {\n  font-size: 0.6rem;\n  color: #93c5fd;\n  font-weight: 500;\n}\n.lr-no-viewers[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n  font-size: 0.72rem;\n  color: #94a3b8;\n  font-style: italic;\n  padding: 0.25rem 0;\n}\n/*# sourceMappingURL=users-overview.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(UsersOverviewComponent, [{
     type: Component,
-    args: [{ selector: "app-users-overview", standalone: true, imports: [CommonModule, FormsModule, NgApexchartsModule, DropdownModule, AvatarComponent], template: `<div class="uo-wrap">
+    args: [{ selector: "app-users-overview", standalone: true, imports: [CommonModule, FormsModule, NgApexchartsModule, AvatarComponent], template: `<div class="uo-wrap">
 
-  <!-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 PAGE HEADER \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 -->
+  <!-- \u2550\u2550\u2550 HEADER \u2550\u2550\u2550 -->
   <div class="uo-header">
     <div class="uo-header-left">
-      <h1 class="uo-title">User Activity Overview</h1>
-      <p class="uo-subtitle">
-        <span *ngIf="lastRefreshedAt" class="refresh-badge">
-          <span class="live-dot"></span>
-          Data refreshed on {{ lastRefreshedAt | date:'medium' }}
-        </span>
+      <h1 class="uo-title">Power BI Access & Usage</h1>
+      <p class="uo-subtitle" *ngIf="lastRefreshedAt">
+        <span class="live-dot"></span>
+        Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
       </p>
     </div>
-    <div class="pill-row">
-      <button
-        *ngFor="let p of timePeriods"
-        (click)="loadUsers(p.days)"
-        class="pill"
-        [class.pill--on]="selectedPeriod === p.days"
-      >{{ p.label }}</button>
+    <div class="uo-header-right">
+      <div class="view-tabs">
+        <button class="view-tab" [class.view-tab--on]="activeView === 'users'" (click)="switchView('users')">
+          <i class="pi pi-users"></i> Users
+        </button>
+        <button class="view-tab" [class.view-tab--on]="activeView === 'insights'" (click)="switchView('insights')">
+          <i class="pi pi-chart-bar"></i> Insights
+        </button>
+      </div>
+      <div class="pill-row">
+        <button *ngFor="let p of timePeriods" (click)="loadAll(p.days)" class="pill" [class.pill--on]="selectedPeriod === p.days">{{ p.label }}</button>
+      </div>
     </div>
   </div>
 
-  <!-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 LOADING / ERROR \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 -->
+  <!-- Loading / Error -->
   <div *ngIf="loading" class="state-loader">
     <div class="spinner"></div>
-    <p>Loading user data\u2026</p>
+    <p>Loading data\u2026</p>
   </div>
-
   <div *ngIf="error && !loading" class="state-error">
     <i class="pi pi-exclamation-triangle"></i> {{ error }}
   </div>
 
-  <!-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 TWO-COLUMN LAYOUT \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 -->
-  <div *ngIf="!loading && !error" class="two-col">
+  <!-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+       USERS VIEW
+  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 -->
+  <ng-container *ngIf="!loading && !error && activeView === 'users'">
 
-    <!-- \u2500\u2500\u2500 LEFT: User List \u2500\u2500\u2500 -->
-    <aside class="user-list-panel">
-      <div class="panel-header">
-        <span class="panel-title">
-          Users <span class="user-count">{{ filteredUsers.length }}</span>
-        </span>
-        <div class="search-wrap">
-          <i class="pi pi-search search-icon"></i>
-          <input
-            type="text"
-            placeholder="Search\u2026"
-            class="search-input"
-            [(ngModel)]="userSearchQuery"
-            (input)="filterUsers()"
-          />
-        </div>
-      </div>
+    <!-- Department filter (only if multiple depts exist) -->
+    <div *ngIf="availableDepts.length > 1" class="dept-filter">
+      <button
+        *ngFor="let d of availableDepts"
+        class="dept-pill"
+        [class.dept-pill--on]="selectedDept === d"
+        (click)="selectDept(d)"
+      >{{ d }}</button>
+    </div>
 
-      <div class="user-list-scroll">
-        <div
-          *ngFor="let user of getPaginatedUsers()"
-          class="user-row"
-          [class.user-row--active]="selectedUserId === user.id"
-          (click)="selectUser(user.id)"
-        >
-          <app-avatar [name]="user.name" class="avatar-sm"></app-avatar>
-          <div class="user-row-info">
-            <span class="user-row-name">{{ user.name }}</span>
-            <span class="user-row-dept">{{ user.department }}</span>
-          </div>
-          <div class="user-row-views">
-            <span class="views-badge">{{ user.totalViews }}</span>
-            <span class="views-label">views</span>
+    <div class="two-col">
+
+      <!-- LEFT: User list -->
+      <aside class="user-list-panel">
+        <div class="panel-header">
+          <span class="panel-title">
+            Users <span class="user-count">{{ filteredUsers.length }}</span>
+          </span>
+          <div class="search-wrap">
+            <i class="pi pi-search search-icon"></i>
+            <input
+              type="text"
+              placeholder="Search\u2026"
+              class="search-input"
+              [(ngModel)]="userSearchQuery"
+              (input)="filterUsers()"
+            />
           </div>
         </div>
 
-        <div *ngIf="filteredUsers.length === 0" class="empty-state">
-          <i class="pi pi-inbox"></i>
-          <p>No users found</p>
-        </div>
-      </div>
-
-      <div *ngIf="getPageNumbers().length > 1" class="pagination">
-        <button
-          *ngFor="let page of getPageNumbers()"
-          (click)="changePage(page)"
-          class="page-btn"
-          [class.page-btn--active]="currentPage === page"
-        >{{ page }}</button>
-      </div>
-    </aside>
-
-    <!-- \u2500\u2500\u2500 RIGHT: Detail Panel \u2500\u2500\u2500 -->
-    <section class="detail-panel">
-
-      <!-- Nothing selected -->
-      <div *ngIf="!selectedUserId" class="no-selection">
-        <i class="pi pi-user no-selection-icon"></i>
-        <p>Select a user from the list to view their activity summary</p>
-      </div>
-
-      <!-- Loading -->
-      <div *ngIf="selectedUserId && detailLoading" class="detail-loader">
-        <div class="spinner spinner--sm"></div>
-      </div>
-
-      <!-- Detail content -->
-      <ng-container *ngIf="selectedUserId && !detailLoading">
-
-        <!-- User header -->
-        <div class="detail-header">
-          <div class="detail-identity">
-            <app-avatar [name]="selectedUser?.name || selectedUserId!" class="avatar-lg"></app-avatar>
-            <div class="detail-identity-text">
-              <h2 class="detail-username">{{ selectedUser?.name || selectedUserId }}</h2>
-              <p class="detail-email">{{ selectedUserId }}</p>
-              <span class="dept-tag" *ngIf="selectedUser?.department && selectedUser?.department !== '\u2014'">
-                {{ selectedUser?.department }}
-              </span>
+        <div class="user-list-scroll">
+          <div
+            *ngFor="let user of getPaginatedUsers()"
+            class="user-row"
+            [class.user-row--active]="selectedUserId === user.id"
+            [class.user-row--zero]="user.isZeroView"
+            (click)="selectUser(user.id)"
+          >
+            <app-avatar [name]="user.name" class="avatar-sm"></app-avatar>
+            <div class="user-row-info">
+              <span class="user-row-name">{{ user.name }}</span>
+              <span class="user-row-dept">{{ user.department }}</span>
+            </div>
+            <div class="user-row-views">
+              <span class="views-badge" [class.views-badge--zero]="user.isZeroView">{{ user.totalViews }}</span>
+              <span class="views-label">views</span>
             </div>
           </div>
-        </div>
 
-        <!-- KPI tiles -->
-        <div class="kpi-grid">
-          <div class="kpi-tile kpi-tile--blue">
-            <div class="kpi-label">Total Views</div>
-            <div class="kpi-value">{{ userMetrics.totalViews || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Reports Viewed</div>
-            <div class="kpi-value kpi-value--indigo">{{ userMetrics.reports?.length || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Workspaces</div>
-            <div class="kpi-value kpi-value--violet">{{ userMetrics.workspaces?.length || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Active Days</div>
-            <div class="kpi-value kpi-value--teal">{{ userMetrics.activityByDate?.length || 0 }}</div>
-          </div>
-          <div class="kpi-tile">
-            <div class="kpi-label">Time Spent</div>
-            <div class="kpi-value kpi-value--amber">{{ formatTime(userMetrics.estimatedTimeSpent) }}</div>
+          <div *ngIf="filteredUsers.length === 0" class="empty-state">
+            <i class="pi pi-inbox"></i>
+            <p>No users found</p>
           </div>
         </div>
 
-        <!-- Access Utilization -->
-        <div *ngIf="assignedVsUsed.length > 0" class="util-section">
-          <div class="util-header">
-            <span class="util-title">
-              <i class="pi pi-chart-bar util-icon"></i> Access Utilization
-            </span>
-            <span class="util-rate"
-              [class.util-rate--green]="utilizationRate >= 70"
-              [class.util-rate--amber]="utilizationRate >= 40 && utilizationRate < 70"
-              [class.util-rate--red]="utilizationRate < 40"
-            >
-              <i [class]="utilizationRate >= 70 ? 'pi pi-check-circle' : utilizationRate >= 40 ? 'pi pi-exclamation-circle' : 'pi pi-times-circle'"></i>
-              {{ utilizationRate }}% of assigned reports accessed
-            </span>
-          </div>
-          <div class="util-tags">
-            <div
-              *ngFor="let item of assignedVsUsed"
-              class="util-tag"
-              [class.util-tag--used]="item.isUsed"
-              [class.util-tag--unused]="!item.isUsed"
-              [title]="item.isUsed
-                ? 'Used \u2014 ' + (item.timeSpent > 0 ? formatTime(item.timeSpent) : '') + (item.views > 0 ? ' \xB7 ' + item.views + ' views' : '')
-                : 'Not accessed in selected period'"
-            >
-              <i [class]="item.isUsed ? 'pi pi-check-circle' : 'pi pi-minus-circle'" class="util-tag-icon"></i>
-              {{ item.displayName }}
-              <span *ngIf="item.timeSpent > 0" class="util-tag-meta">({{ formatTime(item.timeSpent) }})</span>
-              <span *ngIf="item.views > 0 && item.timeSpent === 0" class="util-tag-meta">({{ item.views }} views)</span>
-            </div>
-          </div>
+        <div *ngIf="getPageNumbers().length > 1" class="pagination">
+          <button
+            *ngFor="let page of getPageNumbers()"
+            (click)="changePage(page)"
+            class="page-btn"
+            [class.page-btn--active]="currentPage === page"
+          >{{ page }}</button>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Detail panel -->
+      <section class="detail-panel">
+
+        <div *ngIf="!selectedUserId" class="no-selection">
+          <i class="pi pi-user no-selection-icon"></i>
+          <p>Select a user to view their activity</p>
         </div>
 
-        <!-- Workspace & Tab Time Breakdown -->
-        <div *ngIf="groupedTabTimeSpent && groupedTabTimeSpent.length > 0" class="ws-time-section">
-          <h3 class="section-title">
-            <i class="pi pi-clock section-title-icon"></i> Time Spent by Report &amp; Tab
-          </h3>
-          <div class="ws-list">
-            <div *ngFor="let group of groupedTabTimeSpent" class="ws-block">
-              <!-- Workspace header row -->
-              <div class="ws-block-head">
-                <span class="ws-block-name">
-                  <i class="pi pi-folder ws-folder-icon"></i>
-                  {{ transformDisplayName(group.workspaceName) }}
-                </span>
-                <span class="ws-block-total">{{ formatTime(group.totalSeconds) }}</span>
-              </div>
-              <!-- Report / tab rows -->
-              <div class="ws-block-rows">
-                <div *ngFor="let item of group.items" class="ws-block-row">
-                  <div class="ws-block-row-left">
-                    <span class="ws-block-report">{{ transformDisplayName(item.reportName) }}</span>
-                    <span class="ws-block-tab" *ngIf="item.tabName">{{ item.tabName }}</span>
-                  </div>
-                  <span class="ws-block-time">{{ formatTime(item.totalSeconds) }}</span>
+        <div *ngIf="selectedUserId && detailLoading" class="detail-loader">
+          <div class="spinner spinner--sm"></div>
+        </div>
+
+        <ng-container *ngIf="selectedUserId && !detailLoading">
+
+          <!-- User header -->
+          <div class="detail-header">
+            <div class="detail-identity">
+              <app-avatar [name]="selectedUser?.name || selectedUserId!" class="avatar-lg"></app-avatar>
+              <div class="detail-identity-text">
+                <h2 class="detail-username">{{ selectedUser?.name || selectedUserId }}</h2>
+                <p class="detail-email">{{ selectedUserId }}</p>
+                <div class="detail-tags">
+                  <span class="dept-tag" *ngIf="selectedUser?.department && selectedUser?.department !== '\u2014'">
+                    {{ selectedUser?.department }}
+                  </span>
+                  <span class="zero-tag" *ngIf="selectedUser?.isZeroView">No Activity This Period</span>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Zero-view notice with assigned reports -->
+          <div *ngIf="selectedUser?.isZeroView" class="zero-notice">
+            <div class="zero-notice-row">
+              <i class="pi pi-eye-slash zero-notice-icon"></i>
+              <span>No activity recorded in the last <strong>{{ getPeriodLabel() }}</strong>. This user's access should be reviewed.</span>
+            </div>
+            <div *ngIf="assignedVsUsed.length > 0" class="zero-assigned">
+              <span class="zero-assigned-label">Assigned Reports:</span>
+              <div class="zero-report-tags">
+                <span *ngFor="let a of assignedVsUsed" class="zero-report-tag">{{ a.displayName }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI tiles -->
+          <div class="kpi-grid">
+            <div class="kpi-tile kpi-tile--blue">
+              <i class="pi pi-eye kpi-icon"></i>
+              <div class="kpi-label">Total Views</div>
+              <div class="kpi-value">{{ userMetrics.totalViews || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-file kpi-icon"></i>
+              <div class="kpi-label">Reports</div>
+              <div class="kpi-value kpi-value--indigo">{{ userMetrics.reports?.length || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-th-large kpi-icon"></i>
+              <div class="kpi-label">Workspaces</div>
+              <div class="kpi-value kpi-value--violet">{{ userMetrics.workspaces?.length || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-calendar kpi-icon"></i>
+              <div class="kpi-label">Active Days</div>
+              <div class="kpi-value kpi-value--teal">{{ userMetrics.activityByDate?.length || 0 }}</div>
+            </div>
+            <div class="kpi-tile">
+              <i class="pi pi-clock kpi-icon"></i>
+              <div class="kpi-label">Time Spent</div>
+              <div class="kpi-value kpi-value--amber">{{ formatTime(userMetrics.estimatedTimeSpent) }}</div>
+            </div>
+          </div>
+
+          <!-- Charts (decision-first \u2014 moved above the drill-down list) -->
+          <div class="chart-grid" *ngIf="userWorkspacePieChartOptions || userReportViewsChartOptions">
+            <div class="chart-card" *ngIf="userWorkspacePieChartOptions">
+              <h3 class="chart-title">Time by Workspace</h3>
+              <apx-chart
+                [series]="userWorkspacePieChartOptions.series"
+                [chart]="userWorkspacePieChartOptions.chart"
+                [labels]="userWorkspacePieChartOptions.labels"
+                [colors]="userWorkspacePieChartOptions.colors"
+                [dataLabels]="userWorkspacePieChartOptions.dataLabels"
+                [legend]="userWorkspacePieChartOptions.legend"
+                [tooltip]="userWorkspacePieChartOptions.tooltip"
+              ></apx-chart>
+            </div>
+            <div class="chart-card" *ngIf="userReportViewsChartOptions">
+              <h3 class="chart-title">Top Reports Accessed</h3>
+              <apx-chart
+                [series]="userReportViewsChartOptions.series"
+                [chart]="userReportViewsChartOptions.chart"
+                [plotOptions]="userReportViewsChartOptions.plotOptions"
+                [xaxis]="userReportViewsChartOptions.xaxis"
+                [colors]="userReportViewsChartOptions.colors"
+                [dataLabels]="userReportViewsChartOptions.dataLabels"
+                [tooltip]="userReportViewsChartOptions.tooltip"
+              ></apx-chart>
+            </div>
+          </div>
+
+          <!-- Access Utilization -->
+          <div *ngIf="assignedVsUsed.length > 0" class="util-section">
+            <div class="util-header">
+              <span class="util-title">Access Utilization</span>
+              <span class="util-rate"
+                [class.util-rate--green]="utilizationRate >= 70"
+                [class.util-rate--amber]="utilizationRate >= 40 && utilizationRate < 70"
+                [class.util-rate--red]="utilizationRate < 40"
+              >{{ utilizationRate }}% reports accessed</span>
+            </div>
+            <div class="util-tags">
+              <div
+                *ngFor="let item of assignedVsUsed"
+                class="util-tag"
+                [class.util-tag--used]="item.isUsed"
+                [class.util-tag--unused]="!item.isUsed"
+                [title]="item.isUsed ? 'Accessed this period' : 'Not accessed in period'"
+              >
+                <i [class]="item.isUsed ? 'pi pi-check-circle' : 'pi pi-minus-circle'" class="util-tag-icon"></i>
+                {{ item.displayName }}
+                <span *ngIf="item.timeSpent > 0" class="util-tag-meta">({{ formatTime(item.timeSpent) }})</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time breakdown: workspace \u2192 report \u2192 tab -->
+          <div *ngIf="groupedTabTimeSpent.length > 0" class="ws-time-section">
+            <h3 class="section-title" style="justify-content:space-between;">
+              <span style="display:flex;align-items:center;gap:.4rem;">
+                <i class="pi pi-clock section-title-icon"></i> Time Spent by Report &amp; Tab
+              </span>
+              <button *ngIf="groupedTabTimeSpent.length > 3"
+                (click)="wsTimeShowAll = !wsTimeShowAll"
+                style="font-size:.68rem;font-weight:600;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;">
+                {{ wsTimeShowAll ? 'Show less' : 'Show all (' + groupedTabTimeSpent.length + ')' }}
+              </button>
+            </h3>
+            <div class="ws-list">
+              <div *ngFor="let group of (wsTimeShowAll ? groupedTabTimeSpent : groupedTabTimeSpent.slice(0,3))" class="ws-block">
+                <div class="ws-block-head">
+                  <span class="ws-block-name">
+                    <i class="pi pi-folder ws-folder-icon"></i>
+                    {{ transformDisplayName(group.workspaceName) }}
+                  </span>
+                  <span class="ws-block-total">{{ formatTime(group.totalSeconds) }}</span>
+                </div>
+                <div class="ws-block-rows">
+                  <div *ngFor="let item of group.items.slice(0, wsTimeShowAll ? 9999 : 6)" class="ws-block-row">
+                    <div class="ws-block-row-left">
+                      <span class="ws-block-report" [title]="transformDisplayName(item.reportName)">{{ transformDisplayName(item.reportName) }}</span>
+                      <span class="ws-block-tab" *ngIf="item.tabName">\xB7 {{ item.tabName }}</span>
+                    </div>
+                    <span class="ws-block-time">{{ formatTime(item.totalSeconds) }}</span>
+                  </div>
+                  <div *ngIf="!wsTimeShowAll && group.items.length > 6"
+                    style="grid-column:span 2;padding:.25rem 0.75rem;font-size:.63rem;color:#94a3b8;border-top:1px solid #f1f5f9;">
+                    +{{ group.items.length - 6 }} more tabs
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ng-container>
+      </section>
+    </div>
+  </ng-container>
+
+  <!-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+       INSIGHTS VIEW
+  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 -->
+  <ng-container *ngIf="!loading && !error && activeView === 'insights'">
+
+    <div *ngIf="insightsLoading" class="state-loader">
+      <div class="spinner"></div>
+      <p>Loading insights\u2026</p>
+    </div>
+
+    <ng-container *ngIf="!insightsLoading">
+
+      <!-- KPI overview row -->
+      <div class="insights-kpi">
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--navy"><i class="pi pi-users"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Total Users with Access</div>
+            <div class="ikpi-value">{{ allUsers.length }}</div>
+          </div>
+        </div>
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--green"><i class="pi pi-check-circle"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Active in Period</div>
+            <div class="ikpi-value">{{ allUsers.length - insightsZeroViewUsers.length }}</div>
+            <div class="ikpi-sub">{{ getPeriodLabel() }}</div>
+          </div>
+        </div>
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--amber"><i class="pi pi-eye-slash"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Zero Activity</div>
+            <div class="ikpi-value">{{ insightsZeroViewUsers.length }}</div>
+            <div class="ikpi-sub">Review access</div>
+          </div>
+        </div>
+        <div class="ikpi-tile">
+          <div class="ikpi-icon ikpi-icon--red"><i class="pi pi-ban"></i></div>
+          <div class="ikpi-body">
+            <div class="ikpi-label">Unused Reports</div>
+            <div class="ikpi-value">{{ unusedReports.length }}</div>
+            <div class="ikpi-sub">Candidates for removal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main insights grid: 2-col with compact scrollable cards -->
+      <div class="insights-grid">
+
+        <!-- Most Accessed Reports \u2014 left col chart -->
+        <div class="insights-card">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Most Accessed Reports</h3>
+              <p class="insights-card-sub">Top views \xB7 {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--blue">Top 10</span>
+          </div>
+          <div class="chart-pad">
+            <apx-chart
+              *ngIf="topReportsChartOptions; else noTopReports"
+              [series]="topReportsChartOptions.series"
+              [chart]="topReportsChartOptions.chart"
+              [plotOptions]="topReportsChartOptions.plotOptions"
+              [xaxis]="topReportsChartOptions.xaxis"
+              [colors]="topReportsChartOptions.colors"
+              [dataLabels]="topReportsChartOptions.dataLabels"
+              [legend]="topReportsChartOptions.legend"
+              [tooltip]="topReportsChartOptions.tooltip"
+            ></apx-chart>
+            <ng-template #noTopReports>
+              <div class="no-data">No report data available for this period</div>
+            </ng-template>
+          </div>
         </div>
 
-        <!-- Charts grid -->
-        <div class="chart-grid">
-
-          <!-- Workspace Time Spent Pie -->
-          <div class="chart-card">
-            <h3 class="chart-title">Workspace Time Spent</h3>
-            <apx-chart
-              *ngIf="userWorkspacePieChartOptions; else noData"
-              [series]="userWorkspacePieChartOptions.series"
-              [chart]="userWorkspacePieChartOptions.chart"
-              [labels]="userWorkspacePieChartOptions.labels"
-              [colors]="userWorkspacePieChartOptions.colors"
-              [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-              [legend]="userWorkspacePieChartOptions.legend"
-              [tooltip]="userWorkspacePieChartOptions.tooltip"
-            ></apx-chart>
-            <ng-template #noData>
-              <div class="no-chart-data">No workspace time spent recorded</div>
-            </ng-template>
+        <!-- Most Active Users \u2014 right col list -->
+        <div class="insights-card">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Most Active Users</h3>
+              <p class="insights-card-sub">Ranked by views \xB7 {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--blue">Top 10</span>
           </div>
-
-          <!-- Top Reports bar -->
-          <div class="chart-card">
-            <h3 class="chart-title">Top Reports</h3>
-            <apx-chart
-              *ngIf="userReportViewsChartOptions; else noReports"
-              [series]="userReportViewsChartOptions.series"
-              [chart]="userReportViewsChartOptions.chart"
-              [plotOptions]="userReportViewsChartOptions.plotOptions"
-              [xaxis]="userReportViewsChartOptions.xaxis"
-              [colors]="userReportViewsChartOptions.colors"
-              [dataLabels]="userReportViewsChartOptions.dataLabels"
-              [tooltip]="userReportViewsChartOptions.tooltip"
-            ></apx-chart>
-            <ng-template #noReports>
-              <div class="no-chart-data">No report data</div>
-            </ng-template>
+          <div class="rank-list">
+            <div
+              *ngFor="let u of insightsTopUsers; let i = index"
+              class="rank-row"
+              (click)="navigateToUser(u.id)"
+            >
+              <span class="rank-num"
+                [class.rank-num--gold]="i === 0"
+                [class.rank-num--silver]="i === 1"
+                [class.rank-num--bronze]="i === 2"
+              >{{ i + 1 }}</span>
+              <div class="rank-info">
+                <span class="rank-name">{{ u.name }}</span>
+                <span class="rank-dept" *ngIf="u.department !== '\u2014'">\xB7 {{ u.department }}</span>
+              </div>
+              <div class="rank-stat">
+                <span class="rank-views">{{ u.totalViews }}</span>
+                <span class="rank-views-label">views</span>
+              </div>
+            </div>
+            <div *ngIf="insightsTopUsers.length === 0" class="no-data">No active users in this period</div>
           </div>
+        </div>
 
-          <!-- Activity Timeline -->
-          <div class="chart-card chart-card--wide">
-            <h3 class="chart-title">Activity Timeline</h3>
-            <apx-chart
-              *ngIf="activityTimelineChartOptions; else noTimeline"
-              [series]="activityTimelineChartOptions.series"
-              [chart]="activityTimelineChartOptions.chart"
-              [xaxis]="activityTimelineChartOptions.xaxis"
-              [colors]="activityTimelineChartOptions.colors"
-              [dataLabels]="activityTimelineChartOptions.dataLabels"
-              [tooltip]="activityTimelineChartOptions.tooltip"
-            ></apx-chart>
-            <ng-template #noTimeline>
-              <div class="no-chart-data">No activity data</div>
-            </ng-template>
+        <!-- Zero Activity Users \u2014 left col -->
+        <div class="insights-card">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Zero Activity Users</h3>
+              <p class="insights-card-sub">No views \xB7 {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--red">{{ insightsZeroViewUsers.length }}</span>
           </div>
+          <div class="rank-list">
+            <div
+              *ngFor="let u of insightsZeroViewUsers.slice(0, 25)"
+              class="rank-row rank-row--inactive"
+              (click)="navigateToUser(u.id)"
+            >
+              <div class="rank-info">
+                <span class="rank-name">{{ u.name }}</span>
+                <span class="rank-dept" *ngIf="u.department !== '\u2014'">\xB7 {{ u.department }}</span>
+              </div>
+              <span class="rank-zero">0 views</span>
+            </div>
+            <div *ngIf="insightsZeroViewUsers.length === 0" class="no-data no-data--green">
+              <i class="pi pi-check-circle"></i> All users are active this period
+            </div>
+            <div *ngIf="insightsZeroViewUsers.length > 25" class="rank-more">
+              +{{ insightsZeroViewUsers.length - 25 }} more \u2014
+              <span class="rank-more-link" (click)="selectDept('All'); switchView('users')">view all</span>
+            </div>
+          </div>
+        </div>
 
-        </div><!-- /chart-grid -->
-      </ng-container>
+        <!-- Reports Not Accessed \u2014 right col scrollable table -->
+        <div class="insights-card">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Reports Not Accessed</h3>
+              <p class="insights-card-sub">Zero views \xB7 last {{ getPeriodLabel() }}</p>
+            </div>
+            <span class="insights-badge insights-badge--red">{{ unusedReports.length }}</span>
+          </div>
+          <div *ngIf="unusedReports.length > 0" class="unused-wrap" style="max-height:280px;overflow-y:auto;">
+            <table class="unused-table">
+              <thead>
+                <tr>
+                  <th class="unused-th unused-th--num">#</th>
+                  <th class="unused-th">Report Name</th>
+                  <th class="unused-th unused-th--center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of unusedReports; let i = index" class="unused-row">
+                  <td class="unused-td unused-td--num">{{ i + 1 }}</td>
+                  <td class="unused-td">{{ transformDisplayName(r.dashboard) }}</td>
+                  <td class="unused-td unused-td--center">
+                    <span class="unused-badge">Not accessed</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="unusedReports.length === 0" class="no-data no-data--green">
+            <i class="pi pi-check-circle"></i> All reports accessed this period
+          </div>
+        </div>
 
-    </section>
-  </div><!-- /two-col -->
+        <!-- Lowest Activity Reports \u2014 full width, scrollable table -->
+        <div *ngIf="insightsLowestActiveReports.length > 0" class="insights-card insights-card--full">
+          <div class="insights-card-head">
+            <div>
+              <h3 class="insights-card-title">Lowest Activity Reports</h3>
+              <p class="insights-card-sub">Fewest views among accessed reports \u2014 click to see who viewed</p>
+            </div>
+            <span class="insights-badge insights-badge--amber">Low usage</span>
+          </div>
+          <div class="unused-wrap" style="max-height:260px;overflow-y:auto;">
+            <table class="unused-table">
+              <thead>
+                <tr>
+                  <th class="unused-th unused-th--num">#</th>
+                  <th class="unused-th">Report Name</th>
+                  <th class="unused-th unused-th--center">Views</th>
+                  <th class="unused-th unused-th--center">Who Viewed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let r of insightsLowestActiveReports; let i = index">
+                  <tr class="unused-row lr-row"
+                      [class.lr-row--open]="selectedReportId === r.reportId"
+                      (click)="selectReport(r)">
+                    <td class="unused-td unused-td--num">{{ i + 1 }}</td>
+                    <td class="unused-td lr-name-cell">
+                      <i class="pi lr-chevron"
+                         [class.pi-chevron-right]="selectedReportId !== r.reportId"
+                         [class.pi-chevron-down]="selectedReportId === r.reportId"></i>
+                      {{ transformDisplayName(r.reportName) }}
+                    </td>
+                    <td class="unused-td unused-td--center">
+                      <span class="low-views-badge">{{ r.count }} views</span>
+                    </td>
+                    <td class="unused-td unused-td--center">
+                      <span *ngIf="selectedReportId !== r.reportId" class="lr-hint">Click to expand</span>
+                      <span *ngIf="selectedReportId === r.reportId" class="lr-hint lr-hint--open">Collapse</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="selectedReportId === r.reportId" class="lr-detail-row">
+                    <td colspan="4" class="lr-detail-cell">
+                      <div *ngIf="reportViewersLoading" class="lr-loading">
+                        <div class="spinner spinner--sm"></div><span>Loading viewers\u2026</span>
+                      </div>
+                      <ng-container *ngIf="!reportViewersLoading">
+                        <div *ngIf="reportViewers.length > 0">
+                          <div class="lr-viewers-label">
+                            <i class="pi pi-users"></i>
+                            {{ reportViewers.length }} user{{ reportViewers.length !== 1 ? 's' : '' }} accessed this report
+                          </div>
+                          <div class="lr-viewer-grid">
+                            <div *ngFor="let v of reportViewers" class="lr-viewer-card" (click)="navigateToUser(v.userId); $event.stopPropagation()">
+                              <div class="lr-viewer-info">
+                                <span class="lr-viewer-name">{{ v.name }}</span>
+                                <span class="lr-viewer-dept" *ngIf="v.department !== '\u2014'">\xB7 {{ v.department }}</span>
+                              </div>
+                              <span class="lr-viewer-count">{{ v.count }} <span class="lr-viewer-count-label">views</span></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div *ngIf="reportViewers.length === 0" class="lr-no-viewers">
+                          <i class="pi pi-eye-slash"></i> No viewer data found for this report
+                        </div>
+                      </ng-container>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /insights-grid -->
+    </ng-container>
+  </ng-container>
+
 </div>
-`, styles: ["/* src/app/users-overview/users-overview.component.css */\n.uo-wrap {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.5rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n.uo-header {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.5rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #dbeafe;\n}\n.uo-header-left {\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n}\n.uo-title {\n  font-size: 1.5rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.uo-subtitle {\n  font-size: 0.75rem;\n  color: #64748b;\n  margin: 0;\n  font-weight: 500;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.refresh-badge {\n  display: flex;\n  align-items: center;\n  gap: 0.35rem;\n  color: #94a3b8;\n  font-weight: 400;\n}\n.live-dot {\n  display: inline-block;\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #10b981;\n  flex-shrink: 0;\n}\n.pill-row {\n  display: flex;\n  gap: 0.5rem;\n  flex-wrap: wrap;\n}\n.pill {\n  padding: 0.4rem 1rem;\n  border-radius: 99px;\n  font-size: 0.75rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1;\n  background: #ffffff;\n  color: #1e293b;\n  cursor: pointer;\n  transition: all 0.18s;\n}\n.pill:hover {\n  background: #f8fafc;\n  border-color: #94a3b8;\n}\n.pill--on {\n  background: #1e3a8a;\n  color: #ffffff;\n  border-color: #1e3a8a;\n}\n.state-loader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 30vh;\n  gap: 1rem;\n  color: #64748b;\n  font-size: 0.875rem;\n}\n.spinner {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #2563eb;\n  animation: spin 0.8s linear infinite;\n}\n.spinner--sm {\n  width: 24px;\n  height: 24px;\n  border-width: 2.5px;\n}\n@keyframes spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.state-error {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 12px;\n  padding: 1rem 1.5rem;\n  font-size: 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n}\n.two-col {\n  display: grid;\n  grid-template-columns: 320px 1fr;\n  gap: 1.25rem;\n  align-items: start;\n}\n@media (max-width: 900px) {\n  .two-col {\n    grid-template-columns: 1fr;\n  }\n}\n.user-list-panel {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: sticky;\n  top: 5rem;\n  max-height: calc(100vh - 9rem);\n}\n.panel-header {\n  padding: 1rem 1rem 0.75rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #f8faff;\n}\n.panel-title {\n  display: block;\n  font-size: 0.72rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: #64748b;\n  margin-bottom: 0.6rem;\n}\n.user-count {\n  background: #dbeafe;\n  color: #1d4ed8;\n  border-radius: 99px;\n  padding: 0.1rem 0.5rem;\n  font-size: 0.68rem;\n  font-weight: 700;\n  margin-left: 0.35rem;\n}\n.search-wrap {\n  position: relative;\n}\n.search-icon {\n  position: absolute;\n  left: 0.625rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #93c5fd;\n  font-size: 0.75rem;\n  pointer-events: none;\n}\n.search-input {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.5rem 0.75rem 0.5rem 2rem !important;\n  border: 1.5px solid #bfdbfe !important;\n  border-radius: 10px !important;\n  font-size: 0.8rem !important;\n  color: #1e3a8a !important;\n  background: #ffffff !important;\n  outline: none;\n  transition: border-color 0.15s;\n}\n.search-input:focus {\n  border-color: #2563eb !important;\n  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;\n}\n.user-list-scroll {\n  flex: 1;\n  overflow-y: auto;\n  padding: 0.5rem;\n}\n.user-list-scroll::-webkit-scrollbar {\n  width: 4px;\n}\n.user-list-scroll::-webkit-scrollbar-thumb {\n  background: #bfdbfe;\n  border-radius: 4px;\n}\n.user-row {\n  display: flex;\n  align-items: center;\n  gap: 0.625rem;\n  padding: 0.6rem 0.75rem;\n  border-radius: 10px;\n  cursor: pointer;\n  transition: background 0.14s;\n  margin-bottom: 2px;\n}\n.user-row:hover {\n  background: #f0f5ff;\n}\n.user-row--active {\n  background:\n    linear-gradient(\n      135deg,\n      #eff6ff,\n      #dbeafe) !important;\n  border-left: 3px solid #2563eb;\n  padding-left: calc(0.75rem - 3px);\n}\n.avatar-sm {\n  flex-shrink: 0;\n}\n.user-row-info {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 0.1rem;\n}\n.user-row-name {\n  font-size: 0.78rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-dept {\n  font-size: 0.67rem;\n  color: #64748b;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-views {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex-shrink: 0;\n}\n.views-badge {\n  font-size: 0.85rem;\n  font-weight: 800;\n  color: #1d4ed8;\n  line-height: 1;\n}\n.views-label {\n  font-size: 0.58rem;\n  color: #93c5fd;\n  font-weight: 600;\n  text-transform: uppercase;\n}\n.empty-state {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 2rem 1rem;\n  color: #94a3b8;\n  font-size: 0.85rem;\n  gap: 0.5rem;\n}\n.empty-state .pi {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.pagination {\n  display: flex;\n  justify-content: center;\n  gap: 0.3rem;\n  padding: 0.7rem;\n  border-top: 1px solid #eff6ff;\n  flex-wrap: wrap;\n}\n.page-btn {\n  width: 28px;\n  height: 28px;\n  border-radius: 7px;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #ffffff !important;\n  color: #1e293b !important;\n  font-size: 0.7rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  min-height: unset;\n}\n.page-btn:hover {\n  background: #f8fafc !important;\n  border-color: #94a3b8 !important;\n}\n.page-btn--active {\n  background: #1e3a8a !important;\n  color: #ffffff !important;\n  border-color: #1e3a8a !important;\n}\n.detail-panel {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  min-height: 600px;\n  overflow: hidden;\n}\n.no-selection {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  min-height: 400px;\n  color: #94a3b8;\n  gap: 1rem;\n  font-size: 0.875rem;\n  text-align: center;\n  padding: 2rem;\n}\n.no-selection-icon {\n  font-size: 3.5rem;\n  color: #dbeafe;\n}\n.detail-loader {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 300px;\n}\n.detail-header {\n  background: #ffffff;\n  padding: 1.25rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n}\n.detail-identity {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg {\n  flex-shrink: 0;\n}\n.detail-identity-text {\n  display: flex;\n  flex-direction: column;\n  gap: 0.15rem;\n}\n.detail-username {\n  font-size: 1.2rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.detail-email {\n  font-size: 0.72rem;\n  color: #64748b;\n  margin: 0;\n}\n.dept-tag {\n  display: inline-block;\n  margin-top: 0.25rem;\n  background: #f1f5f9;\n  color: #334155;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 600;\n  padding: 0.15rem 0.55rem;\n}\n.kpi-grid {\n  display: grid;\n  grid-template-columns: repeat(5, 1fr);\n  border-bottom: 1px solid #eff6ff;\n}\n@media (max-width: 1100px) {\n  .kpi-grid {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-grid {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n.kpi-tile {\n  padding: 1rem;\n  text-align: center;\n  border-right: 1px solid #eff6ff;\n  background: #ffffff;\n}\n.kpi-tile:last-child {\n  border-right: none;\n}\n.kpi-tile--blue {\n  background: #f8faff;\n}\n.kpi-label {\n  font-size: 0.62rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  color: #64748b;\n  margin-bottom: 0.3rem;\n}\n.kpi-value {\n  font-size: 1.6rem;\n  font-weight: 900;\n  color: #0f172a;\n  line-height: 1;\n}\n.kpi-value--indigo {\n  color: #3b82f6;\n}\n.kpi-value--violet {\n  color: #6366f1;\n}\n.kpi-value--teal {\n  color: #0d9488;\n}\n.kpi-value--amber {\n  color: #d97706;\n}\n.util-section {\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #fafbff;\n}\n.util-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  margin-bottom: 0.75rem;\n}\n.util-title {\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.util-icon {\n  color: #3b82f6;\n}\n.util-rate {\n  font-size: 0.8rem;\n  font-weight: 800;\n  display: flex;\n  align-items: center;\n  gap: 0.35rem;\n}\n.util-rate--green {\n  color: #059669;\n}\n.util-rate--amber {\n  color: #d97706;\n}\n.util-rate--red {\n  color: #dc2626;\n}\n.util-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.util-tag {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.3rem 0.65rem;\n  border-radius: 8px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  cursor: default;\n}\n.util-tag--used {\n  background: #ecfdf5;\n  color: #059669;\n  border: 1px solid #d1fae5;\n}\n.util-tag--unused {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fee2e2;\n}\n.util-tag-icon {\n  font-size: 0.65rem;\n  flex-shrink: 0;\n}\n.util-tag-meta {\n  opacity: 0.75;\n  font-weight: 500;\n  font-size: 0.65rem;\n}\n.ws-time-section {\n  padding: 1.25rem 1.5rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #ffffff;\n}\n.section-title {\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e293b;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  margin: 0 0 1rem;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.section-title-icon {\n  color: #3b82f6;\n}\n.ws-list {\n  display: flex;\n  flex-direction: column;\n  gap: 0.875rem;\n}\n.ws-block {\n  border: 1px solid #e2e8f0;\n  border-radius: 12px;\n  background: #ffffff;\n}\n.ws-block-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.7rem 1rem;\n  background: #f0f6ff;\n  border-bottom: 1px solid #dbeafe;\n  border-radius: 12px 12px 0 0;\n}\n.ws-block-name {\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  min-width: 0;\n  flex: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-folder-icon {\n  color: #2563eb;\n  flex-shrink: 0;\n}\n.ws-block-total {\n  font-size: 0.7rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #bfdbfe;\n  border-radius: 99px;\n  padding: 0.18rem 0.6rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-block-rows {\n  padding: 0.25rem 0;\n}\n.ws-block-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.55rem 1rem;\n  border-bottom: 1px solid #f1f5f9;\n  transition: background 0.1s;\n}\n.ws-block-row:last-child {\n  border-bottom: none;\n}\n.ws-block-row:hover {\n  background: #f8fbff;\n}\n.ws-block-row-left {\n  display: flex;\n  flex-direction: column;\n  gap: 0.15rem;\n  min-width: 0;\n  flex: 1;\n}\n.ws-block-report {\n  font-size: 0.8rem;\n  font-weight: 600;\n  color: #1e293b;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-block-tab {\n  font-size: 0.65rem;\n  color: #3b82f6;\n  font-weight: 600;\n  background: #eff6ff;\n  border-radius: 4px;\n  padding: 0.05rem 0.35rem;\n  display: inline-block;\n  width: fit-content;\n}\n.ws-block-time {\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: #059669;\n  background: #ecfdf5;\n  border: 1px solid #a7f3d0;\n  border-radius: 99px;\n  padding: 0.18rem 0.65rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.chart-grid {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 1px;\n  background: #eff6ff;\n}\n.chart-card {\n  background: #ffffff;\n  padding: 1.25rem 1.5rem;\n  overflow: hidden;\n}\n.chart-card--wide {\n  grid-column: span 2;\n}\n@media (max-width: 768px) {\n  .chart-grid {\n    grid-template-columns: 1fr;\n  }\n  .chart-card--wide {\n    grid-column: span 1;\n  }\n}\n.chart-title {\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  margin: 0 0 0.75rem;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n.no-chart-data {\n  height: 120px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #94a3b8;\n  font-size: 0.8rem;\n  font-style: italic;\n}\n/*# sourceMappingURL=users-overview.component.css.map */\n"] }]
-  }], () => [{ type: PowerBIMetricsService }, { type: ChangeDetectorRef }], null);
+`, styles: ["/* src/app/users-overview/users-overview.component.css */\n.uo-wrap {\n  min-height: 100vh;\n  background: #f1f5f9;\n  padding: 1.5rem 2rem 3rem;\n  box-sizing: border-box;\n  overflow-x: hidden;\n}\n.uo-header {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n  padding-bottom: 1.25rem;\n  border-bottom: 1px solid #dbeafe;\n}\n.uo-header-left {\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n}\n.uo-title {\n  font-size: 1.5rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.uo-subtitle {\n  font-size: 0.75rem;\n  color: #94a3b8;\n  margin: 0;\n  font-weight: 400;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.live-dot {\n  display: inline-block;\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #10b981;\n  flex-shrink: 0;\n}\n.uo-header-right {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.view-tabs {\n  display: flex;\n  background: #e2e8f0;\n  border-radius: 10px;\n  padding: 3px;\n  gap: 2px;\n}\n.view-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 1.1rem;\n  border-radius: 8px;\n  border: none;\n  background: transparent;\n  color: #64748b;\n  font-size: 0.8rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n}\n.view-tab:hover {\n  color: #1e3a8a;\n  background: rgba(255, 255, 255, .6);\n}\n.view-tab--on {\n  background: #ffffff;\n  color: #1e3a8a;\n  box-shadow: 0 1px 4px rgba(30, 58, 138, .14);\n}\n.pill-row {\n  display: flex;\n  gap: 0.4rem;\n  flex-wrap: wrap;\n}\n.pill {\n  padding: 0.38rem 0.875rem;\n  border-radius: 99px;\n  font-size: 0.72rem;\n  font-weight: 600;\n  border: 1.5px solid #cbd5e1;\n  background: #ffffff;\n  color: #1e293b;\n  cursor: pointer;\n  transition: all 0.15s;\n}\n.pill:hover {\n  background: #f8fafc;\n  border-color: #94a3b8;\n}\n.pill--on {\n  background: #1e3a8a;\n  color: #ffffff;\n  border-color: #1e3a8a;\n}\n.dept-filter {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  margin-bottom: 1rem;\n}\n.dept-pill {\n  padding: 0.28rem 0.875rem;\n  border-radius: 99px;\n  font-size: 0.72rem;\n  font-weight: 600;\n  border: 1.5px solid #e2e8f0;\n  background: #ffffff;\n  color: #64748b;\n  cursor: pointer;\n  transition: all 0.15s;\n}\n.dept-pill:hover {\n  border-color: #93c5fd;\n  color: #1e3a8a;\n}\n.dept-pill--on {\n  background: #1e3a8a;\n  color: #ffffff;\n  border-color: #1e3a8a;\n}\n.state-loader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 30vh;\n  gap: 1rem;\n  color: #64748b;\n  font-size: 0.875rem;\n}\n.spinner {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  border: 3px solid #dbeafe;\n  border-top-color: #2563eb;\n  animation: spin 0.8s linear infinite;\n}\n.spinner--sm {\n  width: 24px;\n  height: 24px;\n  border-width: 2.5px;\n}\n@keyframes spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.state-error {\n  background: #fef2f2;\n  border: 1px solid #fecaca;\n  color: #b91c1c;\n  border-radius: 12px;\n  padding: 1rem 1.5rem;\n  font-size: 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n}\n.two-col {\n  display: grid;\n  grid-template-columns: 300px 1fr;\n  gap: 1.25rem;\n  align-items: start;\n}\n@media (max-width: 900px) {\n  .two-col {\n    grid-template-columns: 1fr;\n  }\n}\n.user-list-panel {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: sticky;\n  top: 5rem;\n  max-height: calc(100vh - 9rem);\n}\n.panel-header {\n  padding: 0.875rem 1rem 0.75rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #f8faff;\n}\n.panel-title {\n  display: block;\n  font-size: 0.68rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: #64748b;\n  margin-bottom: 0.5rem;\n}\n.user-count {\n  background: #dbeafe;\n  color: #1d4ed8;\n  border-radius: 99px;\n  padding: 0.08rem 0.45rem;\n  font-size: 0.65rem;\n  font-weight: 700;\n  margin-left: 0.3rem;\n}\n.search-wrap {\n  position: relative;\n}\n.search-icon {\n  position: absolute;\n  left: 0.625rem;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #93c5fd;\n  font-size: 0.72rem;\n  pointer-events: none;\n}\n.search-input {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.45rem 0.75rem 0.45rem 1.9rem !important;\n  border: 1.5px solid #bfdbfe !important;\n  border-radius: 8px !important;\n  font-size: 0.78rem !important;\n  color: #1e3a8a !important;\n  background: #ffffff !important;\n  outline: none;\n  transition: border-color 0.15s;\n}\n.search-input:focus {\n  border-color: #2563eb !important;\n  box-shadow: 0 0 0 3px rgba(37, 99, 235, .1) !important;\n}\n.user-list-scroll {\n  flex: 1;\n  overflow-y: auto;\n  padding: 0.4rem;\n}\n.user-list-scroll::-webkit-scrollbar {\n  width: 4px;\n}\n.user-list-scroll::-webkit-scrollbar-thumb {\n  background: #bfdbfe;\n  border-radius: 4px;\n}\n.user-row {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  padding: 0.55rem 0.7rem;\n  border-radius: 10px;\n  cursor: pointer;\n  transition: background 0.12s;\n  margin-bottom: 2px;\n}\n.user-row:hover {\n  background: #f0f5ff;\n}\n.user-row--active {\n  background:\n    linear-gradient(\n      135deg,\n      #eff6ff,\n      #dbeafe) !important;\n  border-left: 3px solid #2563eb;\n  padding-left: calc(0.7rem - 3px);\n}\n.user-row--zero {\n  opacity: 0.7;\n}\n.user-row--zero .user-row-name {\n  color: #64748b;\n}\n.avatar-sm {\n  flex-shrink: 0;\n}\n.user-row-info {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 0.08rem;\n}\n.user-row-name {\n  font-size: 0.78rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-dept {\n  font-size: 0.65rem;\n  color: #64748b;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.user-row-views {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex-shrink: 0;\n}\n.views-badge {\n  font-size: 0.82rem;\n  font-weight: 800;\n  color: #1d4ed8;\n  line-height: 1;\n}\n.views-badge--zero {\n  color: #94a3b8;\n}\n.views-label {\n  font-size: 0.58rem;\n  color: #93c5fd;\n  font-weight: 600;\n  text-transform: uppercase;\n}\n.empty-state {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 2rem 1rem;\n  color: #94a3b8;\n  font-size: 0.82rem;\n  gap: 0.5rem;\n}\n.empty-state .pi {\n  font-size: 2rem;\n  color: #dbeafe;\n}\n.pagination {\n  display: flex;\n  justify-content: center;\n  gap: 0.3rem;\n  padding: 0.65rem;\n  border-top: 1px solid #eff6ff;\n  flex-wrap: wrap;\n}\n.page-btn {\n  width: 26px;\n  height: 26px;\n  border-radius: 6px;\n  border: 1.5px solid #cbd5e1 !important;\n  background: #ffffff !important;\n  color: #1e293b !important;\n  font-size: 0.68rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0 !important;\n  min-height: unset;\n}\n.page-btn:hover {\n  background: #f8fafc !important;\n  border-color: #94a3b8 !important;\n}\n.page-btn--active {\n  background: #1e3a8a !important;\n  color: #ffffff !important;\n  border-color: #1e3a8a !important;\n}\n.detail-panel {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 16px;\n  box-shadow: 0 2px 16px rgba(30, 58, 138, .06);\n  min-height: 600px;\n  overflow: hidden;\n}\n.no-selection {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  min-height: 400px;\n  color: #94a3b8;\n  gap: 1rem;\n  font-size: 0.875rem;\n  text-align: center;\n  padding: 2rem;\n}\n.no-selection-icon {\n  font-size: 3.5rem;\n  color: #dbeafe;\n}\n.detail-loader {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 300px;\n}\n.detail-header {\n  padding: 1.25rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n}\n.detail-identity {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.avatar-lg {\n  flex-shrink: 0;\n}\n.detail-identity-text {\n  display: flex;\n  flex-direction: column;\n  gap: 0.1rem;\n}\n.detail-username {\n  font-size: 1.2rem;\n  font-weight: 800;\n  color: #0f172a;\n  margin: 0;\n}\n.detail-email {\n  font-size: 0.72rem;\n  color: #64748b;\n  margin: 0;\n}\n.detail-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n  margin-top: 0.3rem;\n}\n.dept-tag {\n  display: inline-block;\n  background: #f1f5f9;\n  color: #334155;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 600;\n  padding: 0.15rem 0.55rem;\n}\n.zero-tag {\n  display: inline-block;\n  background: #fef3c7;\n  color: #92400e;\n  border: 1.5px solid #fde68a;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 700;\n  padding: 0.15rem 0.55rem;\n}\n.zero-notice {\n  padding: 0.875rem 1.5rem;\n  background: #fffbeb;\n  border-bottom: 1px solid #fde68a;\n  display: flex;\n  flex-direction: column;\n  gap: 0.6rem;\n}\n.zero-notice-row {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.5rem;\n  font-size: 0.8rem;\n  color: #92400e;\n  line-height: 1.5;\n}\n.zero-notice-icon {\n  color: #d97706;\n  flex-shrink: 0;\n  margin-top: 0.1rem;\n}\n.zero-assigned {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.5rem;\n  flex-wrap: wrap;\n}\n.zero-assigned-label {\n  font-size: 0.66rem;\n  font-weight: 700;\n  color: #64748b;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  white-space: nowrap;\n  margin-top: 0.2rem;\n}\n.zero-report-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n}\n.zero-report-tag {\n  background: #f1f5f9;\n  color: #334155;\n  border: 1px solid #cbd5e1;\n  border-radius: 6px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  padding: 0.15rem 0.5rem;\n}\n.kpi-grid {\n  display: grid;\n  grid-template-columns: repeat(5, 1fr);\n  border-bottom: 1px solid #eff6ff;\n}\n@media (max-width: 1100px) {\n  .kpi-grid {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n@media (max-width: 640px) {\n  .kpi-grid {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n.kpi-tile {\n  padding: 0.5rem 0.6rem;\n  text-align: center;\n  border-right: 1px solid #eff6ff;\n  background: #ffffff;\n}\n.kpi-tile:last-child {\n  border-right: none;\n}\n.kpi-tile--blue {\n  background: #f8faff;\n}\n.kpi-icon {\n  font-size: 0.95rem;\n  color: #93c5fd;\n  margin-bottom: 0.3rem;\n  display: block;\n}\n.kpi-label {\n  font-size: 0.6rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  color: #64748b;\n  margin-bottom: 0.25rem;\n}\n.kpi-value {\n  font-size: 1.1rem;\n  font-weight: 900;\n  color: #0f172a;\n  line-height: 1;\n}\n.kpi-value--indigo {\n  color: #3b82f6;\n}\n.kpi-value--violet {\n  color: #6366f1;\n}\n.kpi-value--teal {\n  color: #0d9488;\n}\n.kpi-value--amber {\n  color: #d97706;\n}\n.chart-grid {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 1px;\n  background: #eff6ff;\n  border-bottom: 1px solid #eff6ff;\n}\n@media (max-width: 768px) {\n  .chart-grid {\n    grid-template-columns: 1fr;\n  }\n}\n.chart-card {\n  background: #ffffff;\n  padding: 1.1rem 1.25rem 1rem;\n  overflow: hidden;\n}\n.chart-title {\n  font-size: 0.68rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  margin: 0 0 0.625rem;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n.util-section {\n  padding: 1rem 1.5rem;\n  border-bottom: 1px solid #eff6ff;\n  background: #fafbff;\n}\n.util-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  margin-bottom: 0.75rem;\n}\n.util-title {\n  font-size: 0.68rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n.util-rate {\n  font-size: 0.78rem;\n  font-weight: 800;\n}\n.util-rate--green {\n  color: #059669;\n}\n.util-rate--amber {\n  color: #d97706;\n}\n.util-rate--red {\n  color: #dc2626;\n}\n.util-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.util-tag {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.3rem;\n  padding: 0.28rem 0.6rem;\n  border-radius: 8px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  cursor: default;\n}\n.util-tag--used {\n  background: #ecfdf5;\n  color: #059669;\n  border: 1px solid #d1fae5;\n}\n.util-tag--unused {\n  background: #fef2f2;\n  color: #dc2626;\n  border: 1px solid #fee2e2;\n}\n.util-tag-icon {\n  font-size: 0.62rem;\n  flex-shrink: 0;\n}\n.util-tag-meta {\n  opacity: 0.7;\n  font-weight: 500;\n  font-size: 0.63rem;\n}\n.ws-time-section {\n  padding: 0.75rem 1rem 1rem;\n  background: #ffffff;\n}\n.section-title {\n  font-size: 0.68rem;\n  font-weight: 700;\n  color: #1e293b;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n  margin: 0 0 0.5rem;\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n}\n.section-title-icon {\n  color: #3b82f6;\n}\n.ws-list {\n  display: flex;\n  flex-direction: column;\n  gap: 0.4rem;\n}\n.ws-block {\n  border: 1px solid #e2e8f0;\n  border-radius: 8px;\n  background: #ffffff;\n}\n.ws-block-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n  padding: 0.35rem 0.75rem;\n  background: #f0f6ff;\n  border-bottom: 1px solid #dbeafe;\n  border-radius: 8px 8px 0 0;\n}\n.ws-block-name {\n  display: flex;\n  align-items: center;\n  gap: 0.3rem;\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1e3a8a;\n  min-width: 0;\n  flex: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.ws-folder-icon {\n  color: #2563eb;\n  flex-shrink: 0;\n  font-size: 0.7rem;\n}\n.ws-block-total {\n  font-size: 0.63rem;\n  font-weight: 800;\n  color: #2563eb;\n  background: #eff6ff;\n  border: 1px solid #bfdbfe;\n  border-radius: 99px;\n  padding: 0.08rem 0.45rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-block-rows {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 0;\n}\n.ws-block-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n  padding: 0.28rem 0.75rem;\n  border-bottom: 1px solid #f1f5f9;\n  border-right: 1px solid #f1f5f9;\n  transition: background 0.1s;\n}\n.ws-block-row:nth-child(even) {\n  border-right: none;\n}\n.ws-block-row:hover {\n  background: #f8fbff;\n}\n.ws-block-row-left {\n  display: flex;\n  align-items: baseline;\n  gap: 0.3rem;\n  min-width: 0;\n  flex: 1;\n  overflow: hidden;\n}\n.ws-block-report {\n  font-size: 0.72rem;\n  font-weight: 600;\n  color: #1e293b;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  flex-shrink: 1;\n  min-width: 0;\n}\n.ws-block-tab {\n  font-size: 0.58rem;\n  color: #3b82f6;\n  font-weight: 600;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.ws-block-time {\n  font-size: 0.63rem;\n  font-weight: 700;\n  color: #059669;\n  background: #ecfdf5;\n  border: 1px solid #a7f3d0;\n  border-radius: 99px;\n  padding: 0.08rem 0.4rem;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.insights-kpi {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 1rem;\n  margin-bottom: 1.25rem;\n}\n@media (max-width: 900px) {\n  .insights-kpi {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n@media (max-width: 500px) {\n  .insights-kpi {\n    grid-template-columns: 1fr;\n  }\n}\n.ikpi-tile {\n  background: #ffffff;\n  border: 1px solid #dbeafe;\n  border-radius: 14px;\n  padding: 0.6rem 0.875rem;\n  display: flex;\n  align-items: center;\n  gap: 0.625rem;\n  box-shadow: 0 1px 8px rgba(30, 58, 138, .05);\n}\n.ikpi-icon {\n  width: 34px;\n  height: 34px;\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.9rem;\n  flex-shrink: 0;\n}\n.ikpi-icon--navy {\n  background: #eff6ff;\n  color: #1e3a8a;\n}\n.ikpi-icon--green {\n  background: #ecfdf5;\n  color: #059669;\n}\n.ikpi-icon--amber {\n  background: #fffbeb;\n  color: #d97706;\n}\n.ikpi-icon--red {\n  background: #fef2f2;\n  color: #dc2626;\n}\n.ikpi-body {\n  display: flex;\n  flex-direction: column;\n  gap: 0.08rem;\n  min-width: 0;\n}\n.ikpi-label {\n  font-size: 0.65rem;\n  font-weight: 700;\n  color: #64748b;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.ikpi-value {\n  font-size: 1.25rem;\n  font-weight: 900;\n  color: #0f172a;\n  line-height: 1.1;\n}\n.ikpi-sub {\n  font-size: 0.63rem;\n  color: #94a3b8;\n  font-weight: 500;\n}\n.insights-grid {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 0.75rem;\n  align-items: start;\n}\n@media (max-width: 900px) {\n  .insights-grid {\n    grid-template-columns: 1fr;\n  }\n}\n.insights-card {\n  background: #ffffff;\n  border: 1px solid #e2e8f0;\n  border-radius: 12px;\n  box-shadow: 0 1px 4px rgba(30, 58, 138, .04);\n  overflow: hidden;\n}\n.insights-card--full {\n  grid-column: span 2;\n}\n@media (max-width: 900px) {\n  .insights-card--full {\n    grid-column: span 1;\n  }\n}\n.insights-card-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.55rem 0.875rem;\n  border-bottom: 1px solid #f1f5f9;\n  background: #f8faff;\n}\n.insights-card-title {\n  font-size: 0.78rem;\n  font-weight: 700;\n  color: #0f172a;\n  margin: 0;\n}\n.insights-card-sub {\n  font-size: 0.63rem;\n  color: #94a3b8;\n  margin: 0;\n}\n.insights-badge {\n  padding: 0.15rem 0.5rem;\n  border-radius: 99px;\n  font-size: 0.63rem;\n  font-weight: 700;\n  white-space: nowrap;\n  flex-shrink: 0;\n}\n.insights-badge--blue {\n  background: #eff6ff;\n  color: #1d4ed8;\n  border: 1px solid #bfdbfe;\n}\n.insights-badge--red {\n  background: #fef2f2;\n  color: #b91c1c;\n  border: 1px solid #fecaca;\n}\n.insights-badge--amber {\n  background: #fffbeb;\n  color: #92400e;\n  border: 1px solid #fde68a;\n}\n.chart-pad {\n  padding: 0.5rem 0.75rem 0.75rem;\n}\n.rank-list {\n  display: flex;\n  flex-direction: column;\n  overflow-y: auto;\n  padding: 0.2rem 0;\n}\n.rank-list::-webkit-scrollbar {\n  width: 4px;\n}\n.rank-list::-webkit-scrollbar-thumb {\n  background: #bfdbfe;\n  border-radius: 4px;\n}\n.rank-row {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.28rem 0.875rem;\n  border-bottom: 1px solid #f8fafc;\n  cursor: pointer;\n  transition: background 0.1s;\n}\n.rank-row:last-child {\n  border-bottom: none;\n}\n.rank-row:hover {\n  background: #f0f5ff;\n}\n.rank-row--inactive:hover {\n  background: #fef9f0;\n}\n.rank-num {\n  width: 18px;\n  height: 18px;\n  border-radius: 50%;\n  background: #f1f5f9;\n  color: #64748b;\n  font-size: 0.6rem;\n  font-weight: 800;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.rank-num--gold {\n  background: #fef9c3;\n  color: #854d0e;\n}\n.rank-num--silver {\n  background: #f1f5f9;\n  color: #475569;\n}\n.rank-num--bronze {\n  background: #fff7ed;\n  color: #9a3412;\n}\n.rank-info {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  align-items: baseline;\n  gap: 0.35rem;\n}\n.rank-name {\n  font-size: 0.75rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.rank-dept {\n  font-size: 0.62rem;\n  color: #94a3b8;\n  white-space: nowrap;\n}\n.rank-stat {\n  display: flex;\n  align-items: center;\n  gap: 0.2rem;\n  flex-shrink: 0;\n}\n.rank-views {\n  font-size: 0.78rem;\n  font-weight: 800;\n  color: #1d4ed8;\n  line-height: 1;\n}\n.rank-views-label {\n  font-size: 0.55rem;\n  color: #93c5fd;\n  font-weight: 600;\n  text-transform: uppercase;\n}\n.rank-zero {\n  font-size: 0.63rem;\n  font-weight: 700;\n  color: #b45309;\n  background: #fef3c7;\n  border: 1px solid #fde68a;\n  border-radius: 99px;\n  padding: 0.1rem 0.4rem;\n  white-space: nowrap;\n}\n.rank-more {\n  text-align: center;\n  font-size: 0.68rem;\n  color: #64748b;\n  padding: 0.4rem;\n  border-top: 1px solid #f1f5f9;\n}\n.rank-more-link {\n  color: #2563eb;\n  font-weight: 600;\n  cursor: pointer;\n}\n.rank-more-link:hover {\n  text-decoration: underline;\n}\n.avatar-xs {\n  flex-shrink: 0;\n}\n.no-data {\n  padding: 0.875rem 1rem;\n  text-align: center;\n  color: #94a3b8;\n  font-size: 0.75rem;\n  font-style: italic;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.4rem;\n}\n.no-data--green {\n  color: #059669;\n  font-style: normal;\n  font-weight: 600;\n}\n.unused-wrap {\n  overflow-x: auto;\n}\n.unused-table {\n  width: 100%;\n  border-collapse: separate;\n  border-spacing: 0;\n}\n.unused-th {\n  background: #f8faff;\n  color: #64748b;\n  font-size: 0.62rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.07em;\n  padding: 0.4rem 0.75rem;\n  border-bottom: 1.5px solid #dbeafe;\n  white-space: nowrap;\n  text-align: left;\n}\n.unused-th--num {\n  width: 50px;\n  text-align: center;\n}\n.unused-th--center {\n  text-align: center;\n}\n.unused-row {\n  transition: background 0.12s;\n}\n.unused-row:hover td {\n  background: #f8fbff;\n}\n.unused-td {\n  padding: 0.35rem 0.75rem;\n  border-bottom: 1px solid #f1f5f9;\n  font-size: 0.75rem;\n  color: #1e293b;\n  vertical-align: middle;\n}\n.unused-td--num {\n  text-align: center;\n  color: #94a3b8;\n  font-size: 0.72rem;\n}\n.unused-td--center {\n  text-align: center;\n}\n.unused-badge {\n  display: inline-flex;\n  align-items: center;\n  background: #fef2f2;\n  color: #b91c1c;\n  border: 1px solid #fecaca;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 700;\n  padding: 0.16rem 0.6rem;\n}\n.low-views-badge {\n  display: inline-flex;\n  align-items: center;\n  background: #fffbeb;\n  color: #92400e;\n  border: 1px solid #fde68a;\n  border-radius: 99px;\n  font-size: 0.68rem;\n  font-weight: 700;\n  padding: 0.16rem 0.6rem;\n}\n.lr-row {\n  cursor: pointer;\n  transition: background 0.12s;\n}\n.lr-row:hover td {\n  background: #fafbff;\n}\n.lr-row--open td {\n  background: #f0f6ff !important;\n}\n.lr-name-cell {\n  display: flex;\n  align-items: center;\n  gap: 0.45rem;\n}\n.lr-chevron {\n  font-size: 0.65rem;\n  color: #3b82f6;\n  flex-shrink: 0;\n  transition: transform 0.15s;\n}\n.lr-expand-hint {\n  white-space: nowrap;\n}\n.lr-hint {\n  font-size: 0.65rem;\n  color: #94a3b8;\n  font-style: italic;\n}\n.lr-hint--open {\n  color: #3b82f6;\n  font-style: normal;\n  font-weight: 600;\n}\n.lr-detail-row td {\n  padding: 0 !important;\n  border-bottom: 2px solid #bfdbfe !important;\n}\n.lr-detail-cell {\n  background: #f8fbff;\n  padding: 1rem 1.25rem !important;\n}\n.lr-loading {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  padding: 0.5rem 0;\n  color: #64748b;\n  font-size: 0.78rem;\n}\n.lr-viewers-label {\n  font-size: 0.65rem;\n  font-weight: 700;\n  color: #64748b;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  margin-bottom: 0.4rem;\n  display: flex;\n  align-items: center;\n  gap: 0.35rem;\n}\n.lr-viewer-grid {\n  display: flex;\n  flex-direction: column;\n  gap: 0;\n  border: 1px solid #e2e8f0;\n  border-radius: 8px;\n  overflow: hidden;\n}\n.lr-viewer-card {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.3rem 0.75rem;\n  background: #ffffff;\n  border-bottom: 1px solid #f1f5f9;\n  cursor: pointer;\n  transition: background 0.1s;\n}\n.lr-viewer-card:last-child {\n  border-bottom: none;\n}\n.lr-viewer-card:hover {\n  background: #f0f5ff;\n}\n.lr-viewer-info {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  align-items: baseline;\n  gap: 0.3rem;\n}\n.lr-viewer-name {\n  font-size: 0.73rem;\n  font-weight: 600;\n  color: #0f172a;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.lr-viewer-dept {\n  font-size: 0.62rem;\n  color: #94a3b8;\n  white-space: nowrap;\n}\n.lr-viewer-count {\n  display: flex;\n  align-items: center;\n  gap: 0.2rem;\n  flex-shrink: 0;\n  font-size: 0.72rem;\n  font-weight: 700;\n  color: #1d4ed8;\n}\n.lr-viewer-count-label {\n  font-size: 0.6rem;\n  color: #93c5fd;\n  font-weight: 500;\n}\n.lr-no-viewers {\n  display: flex;\n  align-items: center;\n  gap: 0.4rem;\n  font-size: 0.72rem;\n  color: #94a3b8;\n  font-style: italic;\n  padding: 0.25rem 0;\n}\n/*# sourceMappingURL=users-overview.component.css.map */\n"] }]
+  }], () => [{ type: PowerBIMetricsService }, { type: UserService }, { type: ChangeDetectorRef }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UsersOverviewComponent, { className: "UsersOverviewComponent", filePath: "src/app/users-overview/users-overview.component.ts", lineNumber: 24 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UsersOverviewComponent, { className: "UsersOverviewComponent", filePath: "src/app/users-overview/users-overview.component.ts", lineNumber: 25 });
 })();
 
 // src/app/Auth/routes.ts

@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { FilterPipe } from './filter.pipe';
 import { ChangeDetectorRef } from '@angular/core';
 import { HomeService } from '../Services/home.service';
-import { Colors } from 'chart.js';
+import { PowerBIMetricsService } from '../Services/powerbi-metrics.service';
 
 
 interface ReportMetric {
@@ -46,13 +46,18 @@ export class PowerBIUsageDashboardComponent implements OnInit {
   loading = false;      
   error = '';
   dataLoaded = false;
-  activeView: 'workspace' | 'user' = 'workspace';   
-  selectedUserId: string | null = null;        
+  activeView: 'workspace' | 'user' = 'workspace';
+  selectedUserId: string | null = null;
   selectedUser: string | null = null;
   selectedWorkspace: string = 'all';
   selectedReport: string = 'all';
   selectedPeriod = 30;
   isUserListExpanded: boolean = false;
+
+  reportSortOrder: 'most' | 'least' = 'most';
+  userFilterTab: 'active' | 'all' = 'active';
+  unusedReports: any[] = [];
+  userCounts: any = { zeroViewUsers: 0, totalUsers: 0 };
 
   
   // Data Variables
@@ -157,7 +162,12 @@ export class PowerBIUsageDashboardComponent implements OnInit {
 
   // The big boy constructor
 
-  constructor(private powerBIService: PowerBIService, private homeService: HomeService,private cdr: ChangeDetectorRef ) {}
+  constructor(
+    private powerBIService: PowerBIService,
+    private homeService: HomeService,
+    private cdr: ChangeDetectorRef,
+    private powerBIMetricsService: PowerBIMetricsService
+  ) {}
 
   // ngOnInit() {
   //   this.loadWorkspaces();
@@ -242,6 +252,23 @@ export class PowerBIUsageDashboardComponent implements OnInit {
         }
   
       this.dataLoaded = true;
+
+      // Fetch unused reports and user counts from metrics service
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - days);
+      const wsId = this.selectedWorkspace !== 'all' ? this.selectedWorkspace : undefined;
+
+      this.powerBIMetricsService.getUnusedReports(startDate, endDate, wsId).subscribe(reports => {
+        this.unusedReports = reports || [];
+        this.cdr.detectChanges();
+      });
+
+      this.powerBIMetricsService.getUserCounts(startDate, endDate, wsId).subscribe(counts => {
+        this.userCounts = counts || { zeroViewUsers: 0, totalUsers: 0 };
+        this.cdr.detectChanges();
+      });
+
     } catch (err) {
       console.error('Error loading data:', err);
       this.error = `Failed to load data: ${err}`;
@@ -417,7 +444,8 @@ export class PowerBIUsageDashboardComponent implements OnInit {
       }],
       chart: {
         type: 'area',
-        height: 350,
+        height: 220,
+        toolbar: { show: false },
       },
       xaxis: {
         type: 'datetime',
@@ -750,9 +778,22 @@ selectUser(userId: string) {
 }
 filterUsers(query: string): any[] {
   if (!query) return this.allUsers;
-  return this.allUsers.filter(user => 
+  return this.allUsers.filter(user =>
     user.id.toLowerCase().includes(query.toLowerCase())
   );
+}
+
+getSortedReports(): any[] {
+  if (!this.metrics.topReports || this.metrics.topReports.length === 0) return [];
+  return [...this.metrics.topReports];
+}
+
+getDisplayUsers(): any[] {
+  const query = this.userSearchQuery.toLowerCase();
+  const users = query
+    ? this.allUsers.filter(u => u.id.toLowerCase().includes(query))
+    : this.allUsers;
+  return users.slice(0, 50);
 }
 
 updateUserMetrics(selectedUserId?: string) {

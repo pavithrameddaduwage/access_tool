@@ -160,6 +160,7 @@ export class PowerBIDashboardComponent implements OnInit, OnDestroy {
   activeView: 'workspace' | 'user' | 'access' = 'workspace';
   private trackingStarted = false;
   selectedUserId: string | null = null;
+  userWsShowAll = false;
   dashboardAccessData: any[] = [];
   loadingAccessMatrix = false;
   dashboardAccessSearchQuery = '';

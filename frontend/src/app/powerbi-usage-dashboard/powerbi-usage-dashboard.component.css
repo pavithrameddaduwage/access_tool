@@ -1,147 +1,24 @@
-.view-toggle-container button {
-    transition: all 0.2s ease;
-  }
-  
-  .metric-card {
-    @apply bg-gray-50 p-4 rounded-lg text-center;
-    
-    h3 {
-      @apply text-sm text-gray-600 mb-1;
-    }
-    
-    p {
-      @apply text-2xl font-bold text-blue-600;
-    }
-  }
-  
-  .user-list {
-    scrollbar-width: thin;
-    scrollbar-color: #3b82f6 #f1f5f9;
-  
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-  
-    &::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-  
-    &::-webkit-scrollbar-thumb {
-      background-color: #3b82f6;
-      border-radius: 3px;
-    }
-  }
-
-/* Ensure charts and other elements stretch to full width */
 apx-chart {
   width: 100%;
+  display: block;
 }
 
-/* Add to your component's CSS */
-.user-selection {
-  margin-top: 2rem; /* Add space between charts and user list */
+/* Thin scrollbar for the tables */
+.overflow-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
 }
 
-.pagination-controls {
-  margin-top: 1rem; /* Add space between user list and pagination */
+.overflow-auto::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-.pagination-controls button {
-  transition: background-color 0.2s ease;
+.overflow-auto::-webkit-scrollbar-track {
+  background: #f8fafc;
 }
 
-.pagination-controls button.bg-blue-500 {
-  background-color: #3b82f6;
-  color: white;
-}
-
-.pagination-controls button:hover {
-  background-color: #f1f5f9;
-}
-
-
-/* Add to your component's CSS or global styles */
-.min-h-screen {
-  padding: 0 16px; /* Add padding to the sides for coherence */
-}
-
-/* Time Controls Styling */
-.time-controls button {
-  transition: all 0.2s ease;
-}
-
-.time-controls button.bg-blue-500 {
-  background-color: #3b82f6;
-  color: white;
-  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
-}
-
-.time-controls button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Heading Size */
-h1 {
-  font-size: 1.5rem; /* Adjusted to 24px */
-}
-
-/* Content Margins */
-.mx-4 {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.accordion-content.open {
-  max-height: 1000px; /* Adjust based on your content size */
-}
-.metric-tile {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.metric-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-.apexcharts-xaxis-label {
-  white-space: pre-line; /* Allow line breaks */
-  text-align: center; /* Center-align the text */
-  line-height: 1.5; /* Adjust line height for better readability */
-}
-/* Table Styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-  border: 1px solid #e5e7eb; /* Gray border */
-}
-
-th {
-  background-color: #f3f4f6; /* Light gray background for headers */
-  font-weight: 600;
-  color: #374151; /* Dark gray text */
-}
-
-tr:hover {
-  background-color: #f9fafb; /* Light hover effect */
-}
-
-/* Export Icon Styling */
-button:hover {
-  background-color: #f3f4f6; /* Light hover effect */
-  border-radius: 50%;
-}
-
-.apexcharts-xaxis text {
-  white-space: pre-line;
+.overflow-auto::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 2px;
 }

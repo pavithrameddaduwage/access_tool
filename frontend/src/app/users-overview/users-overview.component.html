@@ -232,11 +232,18 @@
 
           <!-- Time breakdown: workspace → report → tab -->
           <div *ngIf="groupedTabTimeSpent.length > 0" class="ws-time-section">
-            <h3 class="section-title">
-              <i class="pi pi-clock section-title-icon"></i> Time Spent by Report &amp; Tab
+            <h3 class="section-title" style="justify-content:space-between;">
+              <span style="display:flex;align-items:center;gap:.4rem;">
+                <i class="pi pi-clock section-title-icon"></i> Time Spent by Report &amp; Tab
+              </span>
+              <button *ngIf="groupedTabTimeSpent.length > 3"
+                (click)="wsTimeShowAll = !wsTimeShowAll"
+                style="font-size:.68rem;font-weight:600;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;">
+                {{ wsTimeShowAll ? 'Show less' : 'Show all (' + groupedTabTimeSpent.length + ')' }}
+              </button>
             </h3>
             <div class="ws-list">
-              <div *ngFor="let group of groupedTabTimeSpent" class="ws-block">
+              <div *ngFor="let group of (wsTimeShowAll ? groupedTabTimeSpent : groupedTabTimeSpent.slice(0,3))" class="ws-block">
                 <div class="ws-block-head">
                   <span class="ws-block-name">
                     <i class="pi pi-folder ws-folder-icon"></i>
@@ -245,12 +252,16 @@
                   <span class="ws-block-total">{{ formatTime(group.totalSeconds) }}</span>
                 </div>
                 <div class="ws-block-rows">
-                  <div *ngFor="let item of group.items" class="ws-block-row">
+                  <div *ngFor="let item of group.items.slice(0, wsTimeShowAll ? 9999 : 6)" class="ws-block-row">
                     <div class="ws-block-row-left">
-                      <span class="ws-block-report">{{ transformDisplayName(item.reportName) }}</span>
-                      <span class="ws-block-tab" *ngIf="item.tabName">{{ item.tabName }}</span>
+                      <span class="ws-block-report" [title]="transformDisplayName(item.reportName)">{{ transformDisplayName(item.reportName) }}</span>
+                      <span class="ws-block-tab" *ngIf="item.tabName">· {{ item.tabName }}</span>
                     </div>
                     <span class="ws-block-time">{{ formatTime(item.totalSeconds) }}</span>
+                  </div>
+                  <div *ngIf="!wsTimeShowAll && group.items.length > 6"
+                    style="grid-column:span 2;padding:.25rem 0.75rem;font-size:.63rem;color:#94a3b8;border-top:1px solid #f1f5f9;">
+                    +{{ group.items.length - 6 }} more tabs
                   </div>
                 </div>
               </div>
@@ -309,17 +320,17 @@
         </div>
       </div>
 
-      <!-- Main insights grid -->
+      <!-- Main insights grid: 2-col with compact scrollable cards -->
       <div class="insights-grid">
 
-        <!-- Most Accessed Reports — full width bar chart -->
-        <div class="insights-card insights-card--full">
+        <!-- Most Accessed Reports — left col chart -->
+        <div class="insights-card">
           <div class="insights-card-head">
             <div>
               <h3 class="insights-card-title">Most Accessed Reports</h3>
-              <p class="insights-card-sub">Ranked by total views in the last {{ getPeriodLabel() }}</p>
+              <p class="insights-card-sub">Top views · {{ getPeriodLabel() }}</p>
             </div>
-            <span class="insights-badge insights-badge--blue">Top 15</span>
+            <span class="insights-badge insights-badge--blue">Top 10</span>
           </div>
           <div class="chart-pad">
             <apx-chart
@@ -339,12 +350,12 @@
           </div>
         </div>
 
-        <!-- Most Active Users -->
+        <!-- Most Active Users — right col list -->
         <div class="insights-card">
           <div class="insights-card-head">
             <div>
               <h3 class="insights-card-title">Most Active Users</h3>
-              <p class="insights-card-sub">Ranked by total views in {{ getPeriodLabel() }}</p>
+              <p class="insights-card-sub">Ranked by views · {{ getPeriodLabel() }}</p>
             </div>
             <span class="insights-badge insights-badge--blue">Top 10</span>
           </div>
@@ -353,17 +364,15 @@
               *ngFor="let u of insightsTopUsers; let i = index"
               class="rank-row"
               (click)="navigateToUser(u.id)"
-              title="Click to view user details"
             >
               <span class="rank-num"
                 [class.rank-num--gold]="i === 0"
                 [class.rank-num--silver]="i === 1"
                 [class.rank-num--bronze]="i === 2"
               >{{ i + 1 }}</span>
-              <app-avatar [name]="u.name" class="avatar-xs"></app-avatar>
               <div class="rank-info">
                 <span class="rank-name">{{ u.name }}</span>
-                <span class="rank-dept" *ngIf="u.department !== '—'">{{ u.department }}</span>
+                <span class="rank-dept" *ngIf="u.department !== '—'">· {{ u.department }}</span>
               </div>
               <div class="rank-stat">
                 <span class="rank-views">{{ u.totalViews }}</span>
@@ -374,49 +383,47 @@
           </div>
         </div>
 
-        <!-- Zero Activity Users -->
+        <!-- Zero Activity Users — left col -->
         <div class="insights-card">
           <div class="insights-card-head">
             <div>
               <h3 class="insights-card-title">Zero Activity Users</h3>
-              <p class="insights-card-sub">Have access but no views in {{ getPeriodLabel() }}</p>
+              <p class="insights-card-sub">No views · {{ getPeriodLabel() }}</p>
             </div>
-            <span class="insights-badge insights-badge--red">Review Access</span>
+            <span class="insights-badge insights-badge--red">{{ insightsZeroViewUsers.length }}</span>
           </div>
           <div class="rank-list">
             <div
-              *ngFor="let u of insightsZeroViewUsers.slice(0, 15)"
+              *ngFor="let u of insightsZeroViewUsers.slice(0, 25)"
               class="rank-row rank-row--inactive"
               (click)="navigateToUser(u.id)"
-              title="Click to view user details"
             >
-              <app-avatar [name]="u.name" class="avatar-xs"></app-avatar>
               <div class="rank-info">
                 <span class="rank-name">{{ u.name }}</span>
-                <span class="rank-dept" *ngIf="u.department !== '—'">{{ u.department }}</span>
+                <span class="rank-dept" *ngIf="u.department !== '—'">· {{ u.department }}</span>
               </div>
               <span class="rank-zero">0 views</span>
             </div>
             <div *ngIf="insightsZeroViewUsers.length === 0" class="no-data no-data--green">
               <i class="pi pi-check-circle"></i> All users are active this period
             </div>
-            <div *ngIf="insightsZeroViewUsers.length > 15" class="rank-more">
-              +{{ insightsZeroViewUsers.length - 15 }} more —
+            <div *ngIf="insightsZeroViewUsers.length > 25" class="rank-more">
+              +{{ insightsZeroViewUsers.length - 25 }} more —
               <span class="rank-more-link" (click)="selectDept('All'); switchView('users')">view all</span>
             </div>
           </div>
         </div>
 
-        <!-- Reports Not Accessed — full width table -->
-        <div class="insights-card insights-card--full">
+        <!-- Reports Not Accessed — right col scrollable table -->
+        <div class="insights-card">
           <div class="insights-card-head">
             <div>
-              <h3 class="insights-card-title">Reports Not Accessed This Period</h3>
-              <p class="insights-card-sub">Zero views in the last {{ getPeriodLabel() }} — consider removing access or retiring</p>
+              <h3 class="insights-card-title">Reports Not Accessed</h3>
+              <p class="insights-card-sub">Zero views · last {{ getPeriodLabel() }}</p>
             </div>
-            <span class="insights-badge insights-badge--red">{{ unusedReports.length }} reports</span>
+            <span class="insights-badge insights-badge--red">{{ unusedReports.length }}</span>
           </div>
-          <div *ngIf="unusedReports.length > 0" class="unused-wrap">
+          <div *ngIf="unusedReports.length > 0" class="unused-wrap" style="max-height:280px;overflow-y:auto;">
             <table class="unused-table">
               <thead>
                 <tr>
@@ -437,32 +444,31 @@
             </table>
           </div>
           <div *ngIf="unusedReports.length === 0" class="no-data no-data--green">
-            <i class="pi pi-check-circle"></i> All reports have been accessed in this period
+            <i class="pi pi-check-circle"></i> All reports accessed this period
           </div>
         </div>
 
-        <!-- Lowest Activity Reports (bottom 10 of top-100) — click to see who viewed -->
+        <!-- Lowest Activity Reports — full width, scrollable table -->
         <div *ngIf="insightsLowestActiveReports.length > 0" class="insights-card insights-card--full">
           <div class="insights-card-head">
             <div>
               <h3 class="insights-card-title">Lowest Activity Reports</h3>
-              <p class="insights-card-sub">Fewest views among accessed reports — click a row to see who viewed it</p>
+              <p class="insights-card-sub">Fewest views among accessed reports — click to see who viewed</p>
             </div>
             <span class="insights-badge insights-badge--amber">Low usage</span>
           </div>
-          <div class="unused-wrap">
+          <div class="unused-wrap" style="max-height:260px;overflow-y:auto;">
             <table class="unused-table">
               <thead>
                 <tr>
                   <th class="unused-th unused-th--num">#</th>
                   <th class="unused-th">Report Name</th>
                   <th class="unused-th unused-th--center">Views</th>
-                  <th class="unused-th unused-th--center">Viewers</th>
+                  <th class="unused-th unused-th--center">Who Viewed</th>
                 </tr>
               </thead>
               <tbody>
                 <ng-container *ngFor="let r of insightsLowestActiveReports; let i = index">
-                  <!-- Report row -->
                   <tr class="unused-row lr-row"
                       [class.lr-row--open]="selectedReportId === r.reportId"
                       (click)="selectReport(r)">
@@ -476,37 +482,29 @@
                     <td class="unused-td unused-td--center">
                       <span class="low-views-badge">{{ r.count }} views</span>
                     </td>
-                    <td class="unused-td unused-td--center lr-expand-hint">
+                    <td class="unused-td unused-td--center">
                       <span *ngIf="selectedReportId !== r.reportId" class="lr-hint">Click to expand</span>
                       <span *ngIf="selectedReportId === r.reportId" class="lr-hint lr-hint--open">Collapse</span>
                     </td>
                   </tr>
-
-                  <!-- Expanded viewer list -->
                   <tr *ngIf="selectedReportId === r.reportId" class="lr-detail-row">
                     <td colspan="4" class="lr-detail-cell">
-
-                      <!-- Loading -->
                       <div *ngIf="reportViewersLoading" class="lr-loading">
-                        <div class="spinner spinner--sm"></div>
-                        <span>Loading viewers…</span>
+                        <div class="spinner spinner--sm"></div><span>Loading viewers…</span>
                       </div>
-
-                      <!-- Viewers -->
                       <ng-container *ngIf="!reportViewersLoading">
-                        <div *ngIf="reportViewers.length > 0" class="lr-viewers">
+                        <div *ngIf="reportViewers.length > 0">
                           <div class="lr-viewers-label">
                             <i class="pi pi-users"></i>
                             {{ reportViewers.length }} user{{ reportViewers.length !== 1 ? 's' : '' }} accessed this report
                           </div>
                           <div class="lr-viewer-grid">
                             <div *ngFor="let v of reportViewers" class="lr-viewer-card" (click)="navigateToUser(v.userId); $event.stopPropagation()">
-                              <app-avatar [name]="v.name" class="avatar-xs"></app-avatar>
                               <div class="lr-viewer-info">
                                 <span class="lr-viewer-name">{{ v.name }}</span>
-                                <span class="lr-viewer-dept" *ngIf="v.department !== '—'">{{ v.department }}</span>
+                                <span class="lr-viewer-dept" *ngIf="v.department !== '—'">· {{ v.department }}</span>
                               </div>
-                              <span class="lr-viewer-count">{{ v.count }}<span class="lr-viewer-count-label">views</span></span>
+                              <span class="lr-viewer-count">{{ v.count }} <span class="lr-viewer-count-label">views</span></span>
                             </div>
                           </div>
                         </div>
@@ -514,7 +512,6 @@
                           <i class="pi pi-eye-slash"></i> No viewer data found for this report
                         </div>
                       </ng-container>
-
                     </td>
                   </tr>
                 </ng-container>
