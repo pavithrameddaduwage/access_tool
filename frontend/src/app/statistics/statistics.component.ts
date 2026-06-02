@@ -7,6 +7,7 @@ import { WebtoolUserService } from '../Services/webtool-user.service';
 import { UserWebtoolService } from '../Services/user-webtool.service';
 import { GroupService } from '../Services/group.service';
 import { LoginAnalyticsService } from '../Services/login-analytics.service';
+import { PowerBIMetricsService } from '../Services/powerbi-metrics.service';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -99,7 +100,8 @@ export class StatisticsComponent implements OnInit {
 @ViewChild("roleMetricsChart") roleMetricsChart!: any;
 @ViewChild("accessTrendChart") accessTrendChart!: any;
 
-  private records: any[] = []; 
+  lastRefreshedAt: string = '';
+  private records: any[] = [];
   private webtoolUserData: any[] = [];
   private loginEvents: any[] = [];
   private recordsLoaded = false;
@@ -361,13 +363,18 @@ export class StatisticsComponent implements OnInit {
     private webtoolService: WebtoolService,
     private webtoolUserService: WebtoolUserService,
     private userWebtoolService: UserWebtoolService,
-    private loginAnalyticsService: LoginAnalyticsService
+    private loginAnalyticsService: LoginAnalyticsService,
+    private powerBIMetricsService: PowerBIMetricsService
   ) {}
 
   ngOnInit() {
     this.loadStatistics();
     this.loadWebtoolStatistics();
     this.loadLoginEvents();
+    this.powerBIMetricsService.getLastRefresh().subscribe({
+      next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
+      error: () => {}
+    });
   }
 
   private loadLoginEvents() {

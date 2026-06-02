@@ -332,4 +332,24 @@ async getUserTimeSpent(
 async getLastRefresh() {
   return this.powerbiMetricsService.getLastRefreshTime();
 }
+
+@Get('dashboard-usage')
+async getDashboardUsage(
+  @Query('dashboardName') dashboardName: string,
+  @Query('startDate', new DefaultValuePipe(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', new DefaultValuePipe(new Date()), ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string
+) {
+  if (!dashboardName) throw new BadRequestException('dashboardName is required');
+  return this.powerbiMetricsService.getDashboardUsage(dashboardName, workspaceId, startDate, endDate);
+}
+
+@Get('time-spent-overview')
+async getTimeSpentOverview(
+  @Query('startDate', new DefaultValuePipe(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), ParseISO8601DatePipe) startDate: Date,
+  @Query('endDate', new DefaultValuePipe(new Date()), ParseISO8601DatePipe) endDate: Date,
+  @Query('workspaceId') workspaceId?: string
+) {
+  return this.powerbiMetricsService.getTimeSpentOverview(startDate, endDate, workspaceId);
+}
 }

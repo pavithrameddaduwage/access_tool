@@ -1363,6 +1363,129 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             return { lastRefreshedAt: new Date() };
         }
     }
+    async getDashboardUsage(dashboardName, workspaceId, startDate, endDate) {
+        const query = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'")
+            .andWhere("(LOWER(log.reportName) LIKE LOWER(:name) OR LOWER(log.artifactName) LIKE LOWER(:name) OR LOWER(log.itemName) LIKE LOWER(:name))", { name: `%${dashboardName.trim()}%` });
+        if (workspaceId && workspaceId !== 'all') {
+            query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
+        }
+        const logs = await query.getMany();
+        const userMap = new Map();
+        const reportMap = new Map();
+        logs.forEach(log => {
+            if (!userMap.has(log.userId)) {
+                userMap.set(log.userId, { userId: log.userId, views: 0, lastSeen: log.creationTime.toISOString(), reports: new Set() });
+            }
+            const user = userMap.get(log.userId);
+            user.views++;
+            if (log.reportName)
+                user.reports.add(log.reportName);
+            if (log.creationTime.toISOString() > user.lastSeen)
+                user.lastSeen = log.creationTime.toISOString();
+            if (log.reportId) {
+                if (!reportMap.has(log.reportId)) {
+                    reportMap.set(log.reportId, { reportId: log.reportId, reportName: log.reportName || 'Unknown', views: 0, viewerSet: new Set() });
+                }
+                const report = reportMap.get(log.reportId);
+                report.views++;
+                report.viewerSet.add(log.userId);
+            }
+        });
+        const pageQuery = this.powerbiTimeSpentRepository
+            .createQueryBuilder('spent')
+            .select('spent.tabName', 'tabName')
+            .addSelect('SUM(spent.durationSeconds)', 'totalSeconds')
+            .addSelect('COUNT(DISTINCT spent.userId)', 'uniqueUsers')
+            .where('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere('LOWER(spent.reportName) LIKE LOWER(:name)', { name: `%${dashboardName.trim()}%` })
+            .groupBy('spent.tabName')
+            .orderBy('SUM(spent.durationSeconds)', 'DESC');
+        if (workspaceId && workspaceId !== 'all') {
+            pageQuery.andWhere('spent.workspaceId = :workspaceId', { workspaceId });
+        }
+        const pageRows = await pageQuery.getRawMany();
+        const viewers = Array.from(userMap.values())
+            .map(u => ({ userId: u.userId, views: u.views, lastSeen: u.lastSeen, reports: Array.from(u.reports) }))
+            .sort((a, b) => b.views - a.views);
+        const topReports = Array.from(reportMap.values())
+            .map(r => ({ reportId: r.reportId, reportName: r.reportName, views: r.views, uniqueViewers: r.viewerSet.size }))
+            .sort((a, b) => b.views - a.views);
+        const pageTimeBreakdown = pageRows.map(r => ({
+            tabName: r.tabName || 'Main Page',
+            totalSeconds: parseInt(r.totalSeconds || '0'),
+            uniqueUsers: parseInt(r.uniqueUsers || '0')
+        }));
+        return { totalViews: logs.length, uniqueViewers: userMap.size, viewers, topReports, pageTimeBreakdown };
+    }
+    async getTimeSpentOverview(startDate, endDate, workspaceId) {
+        const userTimeQuery = this.powerbiTimeSpentRepository
+            .createQueryBuilder('spent')
+            .select('spent.userId', 'userId')
+            .addSelect('SUM(spent.durationSeconds)', 'totalSeconds')
+            .where('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .groupBy('spent.userId')
+            .orderBy('SUM(spent.durationSeconds)', 'DESC')
+            .limit(10);
+        const reportTimeQuery = this.powerbiTimeSpentRepository
+            .createQueryBuilder('spent')
+            .select('spent.reportId', 'reportId')
+            .addSelect('spent.reportName', 'reportName')
+            .addSelect('SUM(spent.durationSeconds)', 'totalSeconds')
+            .where('spent.timestamp BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .groupBy('spent.reportId, spent.reportName')
+            .orderBy('SUM(spent.durationSeconds)', 'DESC')
+            .limit(10);
+        if (workspaceId && workspaceId !== 'all') {
+            userTimeQuery.andWhere('spent.workspaceId = :workspaceId', { workspaceId });
+            reportTimeQuery.andWhere('spent.workspaceId = :workspaceId', { workspaceId });
+        }
+        const [userResults, reportResults] = await Promise.all([
+            userTimeQuery.getRawMany(),
+            reportTimeQuery.getRawMany()
+        ]);
+        if (userResults.length > 0 || reportResults.length > 0) {
+            return {
+                topUsersByTime: userResults.map(r => ({ userId: r.userId, totalSeconds: parseInt(r.totalSeconds || '0') })),
+                topReportsByTime: reportResults.map(r => ({ reportId: r.reportId, reportName: r.reportName || 'Unknown', totalSeconds: parseInt(r.totalSeconds || '0') }))
+            };
+        }
+        const logQuery = this.powerbiLogRepository
+            .createQueryBuilder('log')
+            .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .andWhere("log.operation = 'ViewReport'");
+        if (workspaceId && workspaceId !== 'all') {
+            if (workspaceId === '000000') {
+                logQuery.andWhere("log.workSpaceName = 'PersonalWorkspace'");
+            }
+            else {
+                logQuery.andWhere("log.workspaceId = :workspaceId", { workspaceId });
+            }
+        }
+        const logs = await logQuery.getMany();
+        const userTimeMap = new Map();
+        const reportTimeMap = new Map();
+        logs.forEach(log => {
+            userTimeMap.set(log.userId, (userTimeMap.get(log.userId) || 0) + 120);
+            if (log.reportId) {
+                if (!reportTimeMap.has(log.reportId)) {
+                    reportTimeMap.set(log.reportId, { reportId: log.reportId, reportName: log.reportName || 'Unknown', totalSeconds: 0 });
+                }
+                reportTimeMap.get(log.reportId).totalSeconds += 120;
+            }
+        });
+        return {
+            topUsersByTime: Array.from(userTimeMap.entries())
+                .map(([userId, totalSeconds]) => ({ userId, totalSeconds }))
+                .sort((a, b) => b.totalSeconds - a.totalSeconds)
+                .slice(0, 10),
+            topReportsByTime: Array.from(reportTimeMap.values())
+                .sort((a, b) => b.totalSeconds - a.totalSeconds)
+                .slice(0, 10)
+        };
+    }
 };
 exports.PowerBIMetricsService = PowerBIMetricsService;
 exports.PowerBIMetricsService = PowerBIMetricsService = PowerBIMetricsService_1 = __decorate([

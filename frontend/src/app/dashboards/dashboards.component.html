@@ -1,5 +1,12 @@
 <!-- dashboards.component.html -->
 <div class="container mx-auto px-4 py-8">
+
+  <!-- Refresh Badge -->
+  <p *ngIf="lastRefreshedAt" class="text-xs text-gray-400 mb-3 flex items-center gap-1">
+    <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span>
+    Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
+  </p>
+
   <!-- Search Bar Right Aligned -->
   <div class="flex justify-end -mb-1" *ngIf="viewMode !== 'users'">
     <div class="max-w-md w-full">

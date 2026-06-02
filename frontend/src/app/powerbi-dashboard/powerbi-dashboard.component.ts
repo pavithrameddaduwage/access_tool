@@ -222,6 +222,8 @@ export class PowerBIDashboardComponent implements OnInit, OnDestroy {
 userReportViews: {reportId: string, reportName: string, count: number}[] = [];
 userTabTimeSpent: any[] = [];
 lastRefreshedAt: string = '';
+timeOverview: { topUsersByTime: any[]; topReportsByTime: any[] } | null = null;
+totalTimeAllUsersSeconds = 0;
 
   // Pagination
   currentPage = 1;
@@ -290,65 +292,28 @@ userCounts = {
  
 
     private prepareTopReportsChart() {
-      const reports = this.metrics.topReports || [];
-      
-      // Format report names: clean them up and truncate if too long
+      const reports = (this.timeOverview?.topReportsByTime || []).slice(0, 10);
+      if (!reports.length) { this.topReportsChartOptions = null; return; }
+
       const categories = reports.map(r => {
         const cleanName = this.transformDisplayName(r?.reportName || 'Unknown Report');
-        return cleanName.length > 25 ? cleanName.substring(0, 25) + '...' : cleanName;
+        return cleanName.length > 25 ? cleanName.slice(0, 25) + '...' : cleanName;
       });
 
       this.topReportsChartOptions = {
-        series: [{ 
-          name: 'Views', 
-          data: reports.map(r => r?.count || 0) 
-        }],
-        chart: { 
-          type: 'bar', 
-          height: 280,
-          toolbar: { show: false }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            barHeight: '55%',
-            borderRadius: 4,
-            borderRadiusApplication: 'end'
-          }
-        },
-        xaxis: {
-          categories: categories,
-          labels: {
-            style: {
-              fontSize: '10px',
-              colors: '#64748b' // slate-500
-            }
-          }
-        },
-        yaxis: {
-          labels: {
-            style: {
-              fontSize: '11px',
-              colors: '#334155', // slate-700
-              fontWeight: 500
-            }
-          }
-        },
+        series: [{ name: 'Time Spent (min)', data: reports.map(r => Math.round((r?.totalSeconds || 0) / 60)) }],
+        chart: { type: 'bar', height: 280, toolbar: { show: false } },
+        plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+        xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
+        yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
         dataLabels: {
           enabled: true,
-          style: {
-            fontSize: '10px',
-            colors: ['#ffffff'],
-            fontWeight: '600'
-          },
-          offsetX: -6 // shift slightly inside the bar
+          style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
+          offsetX: -6,
+          formatter: (v: number) => v > 0 ? `${v}m` : ''
         },
-        colors: ['#3b82f6'], // premium blue
-        tooltip: {
-          y: {
-            formatter: (val: number) => `${val} views`
-          }
-        }
+        colors: ['#f59e0b'],
+        tooltip: { y: { formatter: (v: number) => `${v} min` } }
       };
     }
 
@@ -446,74 +411,52 @@ userCounts = {
 
 
   private prepareTopUsersChart() {
-    // Get name mappings for top users
+    const users = (this.timeOverview?.topUsersByTime || []).slice(0, 10);
+    if (!users.length) { this.topUsersChartOptions = null; return; }
+
     const nameMappings = this.allRegularUsers.reduce((acc, user) => {
       acc[user.id] = user.name;
       return acc;
     }, {} as {[email: string]: string});
-  
-    const categories = this.metrics.topUsers.map(u => {
+
+    const categories = users.map(u => {
       const name = nameMappings[u.userId] || u.userId.split('@')[0];
-      return name.length > 20 ? name.substring(0, 20) + '...' : name;
+      return name.length > 20 ? name.slice(0, 20) + '...' : name;
     });
 
     this.topUsersChartOptions = {
-      series: [{ 
-        name: 'Views', 
-        data: this.metrics.topUsers.map(u => u.count) 
-      }],
+      series: [{ name: 'Time Spent (min)', data: users.map(u => Math.round((u.totalSeconds || 0) / 60)) }],
       chart: {
         type: 'bar',
         height: 300,
         toolbar: { show: false },
         events: {
-          dataPointSelection: (event: any, chartContext: any, config: { dataPointIndex: number }) => {
-            this.onTopUserChartClick(config.dataPointIndex);
+          dataPointSelection: (_: any, __: any, config: { dataPointIndex: number }) => {
+            const uid = users[config.dataPointIndex]?.userId;
+            if (uid) this.onTopUserChartClick(config.dataPointIndex);
           }
         }
       },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-          barHeight: '55%',
-          borderRadius: 4,
-          borderRadiusApplication: 'end'
-        }
-      },
-      xaxis: {
-        categories: categories,
-        labels: {
-          style: {
-            fontSize: '10px',
-            colors: '#64748b' // slate-500
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            fontSize: '11px',
-            colors: '#334155', // slate-700
-            fontWeight: 500
-          }
-        }
-      },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
       dataLabels: {
         enabled: true,
-        style: {
-          fontSize: '10px',
-          colors: ['#ffffff'],
-          fontWeight: '600'
-        },
-        offsetX: -6 // shift slightly inside the bar
+        style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
+        offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}m` : ''
       },
-      colors: ["#6366f1"], // beautiful premium indigo
-      tooltip: {
-        y: {
-          formatter: (val: number) => `${val} views`
-        }
-      }
+      colors: ['#6366f1'],
+      tooltip: { y: { formatter: (v: number) => `${v} min` } }
     };
+  }
+
+  formatSecondsLabel(s: number): string {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    if (h > 0) return `${h}h ${m}m`;
+    if (m > 0) return `${m}m`;
+    return '<1m';
   }
 
   private prepareActivityTimelineChart() {
@@ -1065,7 +1008,16 @@ async loadData(days: number): Promise<void> {
           return acc;
         }, {} as Record<string, number>)
       };
-  
+
+      // Load time-spent overview for Top Reports & Top Users charts
+      try {
+        const timeData = await this.powerBIMetricsService.getTimeSpentOverview(startDate, endDate, workspaceId).toPromise();
+        this.timeOverview = timeData || { topUsersByTime: [], topReportsByTime: [] };
+        this.totalTimeAllUsersSeconds = (this.timeOverview.topUsersByTime || []).reduce((s, u) => s + (u.totalSeconds || 0), 0);
+      } catch {
+        this.timeOverview = { topUsersByTime: [], topReportsByTime: [] };
+      }
+
       // Process users and workspaces
       await this.processUsers(startDate, endDate, workspaceId, reportId);
       

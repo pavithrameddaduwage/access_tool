@@ -2,7 +2,11 @@
   <!-- Header -->
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">Overview</h1>
-    <p class="text-gray-600 mt-2">Overview of dashboard and webtool usage and metrics</p>
+    <p class="text-gray-600 mt-1">Overview of dashboard and webtool usage and metrics</p>
+    <p *ngIf="lastRefreshedAt" class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+      <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span>
+      Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
+    </p>
   </div>
 
   <!-- Key Metrics Cards -->

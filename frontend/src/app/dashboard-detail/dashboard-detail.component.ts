@@ -5,7 +5,9 @@ import { ActivatedRoute } from '@angular/router';
 import { HomeService } from '../Services/home.service';
 import { UserService } from '../Services/user.service';
 import { DashboardService } from '../Services/dashboard.service';
+import { PowerBIMetricsService } from '../Services/powerbi-metrics.service';
 import { FormsModule } from '@angular/forms';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { catchError, debounceTime, distinctUntilChanged, finalize, of, Subject, switchMap, tap, timeout } from 'rxjs';
 import { ToastService } from '../Services/toast.service';
 
@@ -25,7 +27,7 @@ interface UserOption {
 @Component({
   selector: 'app-dashboard-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgApexchartsModule],
   templateUrl: './dashboard-detail.component.html'
 })
 export class DashboardDetailComponent implements OnInit {
@@ -33,11 +35,31 @@ export class DashboardDetailComponent implements OnInit {
   users: UserRecord[] = [];
   showForm: boolean = false;
   userOptions: UserOption[] = [];
-  
 
   searchTerm$ = new Subject<string>();
   adUsers: any[] = [];
   isSearching = false;
+
+  lastRefreshedAt: string = '';
+
+  // Usage analytics
+  activeTab: 'access' | 'usage' = 'access';
+  usagePeriod = 30;
+  usageLoading = false;
+  usageData: {
+    totalViews: number;
+    uniqueViewers: number;
+    viewers: { userId: string; views: number; lastSeen: string; reports: string[] }[];
+    topReports: { reportId: string; reportName: string; views: number; uniqueViewers: number }[];
+    pageTimeBreakdown: { tabName: string; totalSeconds: number; uniqueUsers: number }[];
+  } | null = null;
+  viewersChartOptions: any = null;
+  pageTimeChartOptions: any = null;
+  usagePeriods = [
+    { label: '7 Days', days: 7 },
+    { label: '30 Days', days: 30 },
+    { label: '90 Days', days: 90 },
+  ];
 
   
   formData = {
@@ -60,7 +82,8 @@ export class DashboardDetailComponent implements OnInit {
     private homeService: HomeService,
     private userService: UserService,
     private dashboardService: DashboardService,
-    private toastService: ToastService 
+    private toastService: ToastService,
+    private powerBIMetricsService: PowerBIMetricsService
   ) {
     let currentSearchTerm = '';
   
@@ -149,6 +172,10 @@ export class DashboardDetailComponent implements OnInit {
     this.dashboardName = this.route.snapshot.paramMap.get('name') || '';
     this.loadUsersForDashboard();
     this.loadAvailableUsers();
+    this.powerBIMetricsService.getLastRefresh().subscribe({
+      next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
+      error: () => {}
+    });
   }
 
   loadAvailableUsers() {
@@ -320,6 +347,85 @@ confirmDelete() {
     this.showConfirmDialog = false;
     this.userToDelete = null;
   }
+}
+
+switchTab(tab: 'access' | 'usage') {
+  this.activeTab = tab;
+  if (tab === 'usage' && !this.usageData) {
+    this.loadUsageData();
+  }
+}
+
+loadUsageData(days?: number) {
+  if (days !== undefined) this.usagePeriod = days;
+  this.usageLoading = true;
+  this.usageData = null;
+
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - this.usagePeriod);
+
+  this.powerBIMetricsService.getDashboardUsage(this.dashboardName, startDate, endDate).subscribe({
+    next: (data) => {
+      this.usageData = data;
+      this.prepareUsageCharts(data);
+      this.usageLoading = false;
+    },
+    error: () => { this.usageLoading = false; }
+  });
+}
+
+private prepareUsageCharts(data: typeof this.usageData) {
+  if (!data) return;
+
+  // Who Viewed — top 10 viewers by view count
+  const topViewers = data.viewers.slice(0, 10);
+  this.viewersChartOptions = {
+    series: [{ name: 'Views', data: topViewers.map(v => v.views) }],
+    chart: { type: 'bar', height: 280, toolbar: { show: false } },
+    plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+    xaxis: {
+      categories: topViewers.map(v => { const n = v.userId.split('@')[0]; return n.length > 22 ? n.slice(0, 22) + '…' : n; }),
+      labels: { style: { fontSize: '10px', colors: '#64748b' } }
+    },
+    yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+    dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6 },
+    colors: ['#0077B6'],
+    tooltip: { y: { formatter: (v: number) => `${v} views` } }
+  };
+
+  // Page-wise Time Spent chart
+  const pages = (data.pageTimeBreakdown || []).slice(0, 10);
+  if (pages.length > 0) {
+    this.pageTimeChartOptions = {
+      series: [{ name: 'Time Spent (min)', data: pages.map(p => Math.round(p.totalSeconds / 60)) }],
+      chart: { type: 'bar', height: 280, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      xaxis: {
+        categories: pages.map(p => { const n = p.tabName || 'Main'; return n.length > 22 ? n.slice(0, 22) + '…' : n; }),
+        labels: { style: { fontSize: '10px', colors: '#64748b' } }
+      },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}m` : '' },
+      colors: ['#ffb703'],
+      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+    };
+  }
+}
+
+formatSeconds(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m`;
+  return '<1m';
+}
+
+formatDate(dateStr: string): string {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 }

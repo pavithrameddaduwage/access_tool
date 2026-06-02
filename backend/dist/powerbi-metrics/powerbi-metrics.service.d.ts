@@ -231,4 +231,36 @@ export declare class PowerBIMetricsService {
     getLastRefreshTime(): Promise<{
         lastRefreshedAt: Date;
     }>;
+    getDashboardUsage(dashboardName: string, workspaceId: string | undefined, startDate: Date, endDate: Date): Promise<{
+        totalViews: number;
+        uniqueViewers: number;
+        viewers: {
+            userId: string;
+            views: number;
+            lastSeen: string;
+            reports: string[];
+        }[];
+        topReports: {
+            reportId: string;
+            reportName: string;
+            views: number;
+            uniqueViewers: number;
+        }[];
+        pageTimeBreakdown: {
+            tabName: string;
+            totalSeconds: number;
+            uniqueUsers: number;
+        }[];
+    }>;
+    getTimeSpentOverview(startDate: Date, endDate: Date, workspaceId?: string): Promise<{
+        topUsersByTime: {
+            userId: string;
+            totalSeconds: number;
+        }[];
+        topReportsByTime: {
+            reportId: string;
+            reportName: string;
+            totalSeconds: number;
+        }[];
+    }>;
 }

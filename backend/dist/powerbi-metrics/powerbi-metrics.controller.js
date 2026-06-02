@@ -148,6 +148,14 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getLastRefresh() {
         return this.powerbiMetricsService.getLastRefreshTime();
     }
+    async getDashboardUsage(dashboardName, startDate, endDate, workspaceId) {
+        if (!dashboardName)
+            throw new common_1.BadRequestException('dashboardName is required');
+        return this.powerbiMetricsService.getDashboardUsage(dashboardName, workspaceId, startDate, endDate);
+    }
+    async getTimeSpentOverview(startDate, endDate, workspaceId) {
+        return this.powerbiMetricsService.getTimeSpentOverview(startDate, endDate, workspaceId);
+    }
 };
 exports.PowerBIMetricsController = PowerBIMetricsController;
 __decorate([
@@ -396,6 +404,27 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getLastRefresh", null);
+__decorate([
+    (0, common_1.Get)('dashboard-usage'),
+    __param(0, (0, common_1.Query)('dashboardName')),
+    __param(1, (0, common_1.Query)('startDate', new common_1.DefaultValuePipe(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('endDate', new common_1.DefaultValuePipe(new Date()), parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(3, (0, common_1.Query)('workspaceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getDashboardUsage", null);
+__decorate([
+    (0, common_1.Get)('time-spent-overview'),
+    __param(0, (0, common_1.Query)('startDate', new common_1.DefaultValuePipe(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(1, (0, common_1.Query)('endDate', new common_1.DefaultValuePipe(new Date()), parse_date_pipe_1.ParseISO8601DatePipe)),
+    __param(2, (0, common_1.Query)('workspaceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getTimeSpentOverview", null);
 exports.PowerBIMetricsController = PowerBIMetricsController = __decorate([
     (0, common_1.Controller)('powerbi-metrics'),
     __metadata("design:paramtypes", [powerbi_metrics_service_1.PowerBIMetricsService])

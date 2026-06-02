@@ -1,59 +1,43 @@
-<div class=" min-h-screen bg-gray-50">
-  <!-- Header Section -->
+<div class="min-h-screen bg-gray-50">
+
+  <!-- ── HEADER ──────────────────────────────────────────────── -->
   <div class="bg-white p-6 shadow-md">
     <div class="container mx-auto">
-      <!-- Heading and Toggle Buttons -->
-      <div class="flex flex-col md:flex-row justify-center items-center mb-6">
-        <!-- Heading -->
-        <h1 class="text-xl font-bold text-gray-800 mb-4 mr-10 md:mb-0">Power BI Usage Analytics</h1>
-
+      <div class="flex flex-col md:flex-row justify-between items-start mb-6">
+        <div>
+          <h1 class="text-xl font-bold text-gray-800">Power BI Usage Analytics</h1>
+          <p *ngIf="lastRefreshedAt" class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400"></span>
+            Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
+          </p>
+          <p class="text-xs text-gray-400 mt-1">Time-based metrics · Views only in user detail</p>
+        </div>
       </div>
 
-      <!-- Filters Section -->
+      <!-- FILTERS -->
       <div class="flex flex-col md:flex-row gap-4 items-center">
-        <!-- Workspace Dropdown -->
         <div class="w-full md:w-1/3">
           <label class="block text-sm font-medium text-gray-700 mb-2">Workspace</label>
-          <p-dropdown appendTo="body"
-            [options]="workspaces" 
-            optionLabel="name" 
-            optionValue="id" 
-            [(ngModel)]="selectedWorkspace" 
-            (onChange)="selectedReport = 'all'; loadData(selectedPeriod)" 
-            [filter]="true" 
-            filterBy="name" 
-            styleClass="w-full border-gray-300 rounded-md shadow-sm">
+          <p-dropdown appendTo="body" [options]="workspaces" optionLabel="name" optionValue="id"
+            [(ngModel)]="selectedWorkspace" (onChange)="selectedReport = 'all'; loadData(selectedPeriod)"
+            [filter]="true" filterBy="name" styleClass="w-full border-gray-300 rounded-md shadow-sm">
           </p-dropdown>
         </div>
-
-        <!-- Report Dropdown -->
         <div class="w-full md:w-1/3">
           <label class="block text-sm font-medium text-gray-700 mb-2">Report</label>
-          <p-dropdown appendTo="body"
-            [options]="reports" 
-            optionLabel="name" 
-            optionValue="id" 
-            [(ngModel)]="selectedReport" 
-            (onChange)="loadData(selectedPeriod)" 
-            [filter]="true" 
-            filterBy="name" 
-            styleClass="w-full border-gray-300 rounded-md shadow-sm">
+          <p-dropdown appendTo="body" [options]="reports" optionLabel="name" optionValue="id"
+            [(ngModel)]="selectedReport" (onChange)="loadData(selectedPeriod)"
+            [filter]="true" filterBy="name" styleClass="w-full border-gray-300 rounded-md shadow-sm">
           </p-dropdown>
         </div>
-
-        <!-- Time Duration Buttons -->
         <div class="w-full md:w-1/3">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Time Duration</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
           <div class="flex gap-2">
-            <button
-              *ngFor="let period of timePeriods"
-              (click)="loadData(period.days)"
+            <button *ngFor="let period of timePeriods" (click)="loadData(period.days)"
               class="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200"
-              [ngClass]="{
-                'bg-[#556FB5] text-white hover:bg-blue-600 shadow-lg': selectedPeriod === period.days,
-                'bg-white text-gray-700 hover:bg-gray-50 shadow-sm': selectedPeriod !== period.days
-              }"
-            >
+              [ngClass]="selectedPeriod === period.days
+                ? 'bg-amber-500 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'">
               {{ period.label }}
             </button>
           </div>
@@ -62,269 +46,260 @@
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════════════════════════
+       USER DETAIL — when a user is clicked
+  ════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="selectedUserId">
+    <div class="mx-9 mt-6 space-y-6">
 
-  <!-- Workspace View -->
-  <ng-container *ngIf="activeView === 'workspace'">
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3  mt-8 mb-8 mx-9">
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Views</h3>
-        <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.totalViews || 0 }}</p>
-      </div>
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Unique Users</h3>
-        <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueUsersCount || 0 }}</p>
-      </div>
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">Unique Reports</h3>
-        <p class="text-3xl font-bold" style="color: #0077B6;">{{ metrics.uniqueReportsCount || 0 }}</p>
-      </div>
-    </div>
-
-    <!-- Main Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2  mx-9">
-      <!-- Views Over Time -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Views Over Time</h3>
-        <apx-chart
-          *ngIf="viewsChartOptions"
-          [series]="viewsChartOptions.series"
-          [chart]="viewsChartOptions.chart"
-          [xaxis]="viewsChartOptions.xaxis"
-          [yaxis]="viewsChartOptions.yaxis"
-          [colors]="viewsChartOptions.colors"
-          [stroke]="viewsChartOptions.stroke"
-        ></apx-chart>
-      </div>
-
-      <!-- Top Reports -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Top Reports</h3>
-        <apx-chart
-          *ngIf="topReportsChartOptions"
-          [series]="topReportsChartOptions.series"
-          [chart]="topReportsChartOptions.chart"
-          [xaxis]="topReportsChartOptions.xaxis"
-          [yaxis]="topReportsChartOptions.yaxis"
-          [colors]="topReportsChartOptions.colors"
-          [plotOptions]="topReportsChartOptions.plotOptions"
-          [dataLabels]="topReportsChartOptions.dataLabels"
-          [tooltip]="topReportsChartOptions.tooltip"
-        ></apx-chart>
-      </div>
-<!-- Top Users Chart -->
-<div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-  <h3 class="text-center font-semibold text-gray-700 mb-4">Top Users</h3>
-  <apx-chart
-    *ngIf="topUsersChartOptions"
-    [series]="topUsersChartOptions.series"
-    [chart]="topUsersChartOptions.chart"
-    [xaxis]="topUsersChartOptions.xaxis"
-    [yaxis]="topUsersChartOptions.yaxis"
-    [plotOptions]="topUsersChartOptions.plotOptions"
-    [dataLabels]="topUsersChartOptions.dataLabels"
-    [colors]="topUsersChartOptions.colors"
-    [tooltip]="topUsersChartOptions.tooltip"
-  ></apx-chart>
-</div>
-      <!-- User Views for Selected Report -->
-      <div *ngIf="selectedReport !== 'all'" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">User Views for Selected Report</h3>
-        <apx-chart
-          *ngIf="userReportViewsChartOptions"
-          [series]="userReportViewsChartOptions.series"
-          [chart]="userReportViewsChartOptions.chart"
-          [xaxis]="userReportViewsChartOptions.xaxis"
-          [yaxis]="userReportViewsChartOptions.yaxis"
-          [plotOptions]="userReportViewsChartOptions.plotOptions"
-        ></apx-chart>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- User View -->
-  <ng-container *ngIf="activeView === 'user'">
-    <!-- User Selection -->
-<!-- User List Section -->
-<div class="mb-8 bg-white p-6 rounded-lg shadow-md mx-9 mt-5">
-  <!-- Accordion Header -->
-  <div class="flex justify-between items-center cursor-pointer" (click)="toggleUserListAccordion()">
-    <h3 class="text-lg font-semibold text-gray-700">User List</h3>
-    <span class="text-gray-600">
-      {{ isUserListExpanded ? '▼' : '▶' }}
-    </span>
-  </div>
-
-  <!-- Accordion Content -->
-  <div *ngIf="isUserListExpanded" class="mt-4">
-    <!-- Search and Export Section -->
-    <div class="flex justify-between items-center mb-4">
-      <!-- Search Input -->
-      <input
-        type="text"
-        placeholder="Search users..."
-        class="w-full p-2 border rounded-lg mr-4"
-        [(ngModel)]="userSearchQuery"
-      />
-
-      <!-- Export Icon -->
-      <button
-        class="p-2 text-gray-600 hover:text-blue-600 transition-colors"
-        (click)="exportUserListToCSV()"
-        title="Export to CSV"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- User Table -->
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse">
-        <!-- Table Headers -->
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="p-3 text-left border border-gray-300">Name</th>
-            <th class="p-3 text-left border border-gray-300">Views</th>
-            <th class="p-3 text-left border border-gray-300">Last Seen</th>
-          </tr>
-        </thead>
-
-        <!-- Table Body -->
-        <tbody>
-          <tr
-            *ngFor="let user of getPaginatedUsers()"
-            class="hover:bg-gray-50 cursor-pointer"
-            [class.bg-blue-50]="selectedUserId === user.id"
-            (click)="selectUser(user.id)"
-          >
-            <td class="p-3 border border-gray-300">{{ user.id }}</td>
-            <td class="p-3 border border-gray-300">{{ user.totalViews }}</td>
-            <td class="p-3 border border-gray-300">{{ user.lastActivity }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pagination Controls -->
-    <div class="pagination-controls mt-4 flex justify-center gap-2">
-      <button
-        *ngFor="let page of getPageNumbers()"
-        (click)="changePage(page)"
-        class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50"
-        [class.bg-blue-500.text-white]="currentPage === page"
-      >
-        {{ page }}
-      </button>
-    </div>
-  </div>
-</div>
-
-    <!-- User Metrics -->
-    <div *ngIf="selectedUserId; else userOverview" class="user-metrics space-y-6 mx-9">
-      <!-- Selected User Header -->
-      <div class="bg-white p-6 rounded-lg shadow-md">
-        <div class="flex justify-between items-center mb-4">
+      <!-- HEADER + BACK -->
+      <div class="flex justify-between items-center">
+        <div>
           <h2 class="text-2xl font-bold text-gray-800">{{ selectedUserId }}</h2>
-          <button 
-            class="text-blue-600 hover:text-blue-800 font-medium"
-            (click)="selectedUserId = null"
-          >
-            ← Back to all users
+          <p class="text-sm text-gray-500">User activity breakdown</p>
+        </div>
+        <button (click)="selectedUserId = null"
+          class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+          ← Back to Overview
+        </button>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div *ngIf="userDetailLoading" class="flex justify-center py-20">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        <span class="ml-3 text-gray-500">Loading user data…</span>
+      </div>
+
+      <ng-container *ngIf="!userDetailLoading">
+
+        <!-- SUMMARY CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white p-5 rounded-lg shadow-sm text-center border border-gray-100">
+            <p class="text-xs text-gray-500 mb-1">Time Spent</p>
+            <p class="text-2xl font-bold text-amber-600">{{ formatSeconds(userTotalTimeSeconds) }}</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow-sm text-center border border-gray-100">
+            <p class="text-xs text-gray-500 mb-1">Total Views</p>
+            <p class="text-2xl font-bold text-blue-600">{{ userTotalViewsCount || 0 }}</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow-sm text-center border border-gray-100">
+            <p class="text-xs text-gray-500 mb-1">Reports</p>
+            <p class="text-2xl font-bold text-teal-600">{{ userMetrics?.reports?.size || 0 }}</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow-sm text-center border border-gray-100">
+            <p class="text-xs text-gray-500 mb-1">Active Days</p>
+            <p class="text-2xl font-bold text-purple-600">{{ userMetrics?.activityByDate?.size || 0 }}</p>
+          </div>
+        </div>
+
+        <!-- TAB TOGGLE -->
+        <div class="flex gap-2 mb-6">
+          <button (click)="userDetailTab = 'time'"
+            [class]="userDetailTab === 'time' ? 'px-4 py-2 bg-amber-100 text-amber-700 font-semibold rounded-md border-b-2 border-amber-600' : 'px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md'">
+            ⏱️ Time Breakdown
+          </button>
+          <button (click)="userDetailTab = 'views'"
+            [class]="userDetailTab === 'views' ? 'px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-md border-b-2 border-blue-600' : 'px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md'">
+            👁️ Views Breakdown
           </button>
         </div>
 
-        <!-- Metrics Tiles -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-gray-50 p-4 rounded-lg text-center">
-        <h3 class="text-sm text-gray-600">Total Views</h3>
-        <p class="text-2xl font-bold text-blue-600">{{ userMetrics.totalViews || 0 }}</p>
-      </div>
-      <div class="bg-gray-50 p-4 rounded-lg text-center">
-        <h3 class="text-sm text-gray-600">Reports Viewed</h3>
-        <p class="text-2xl font-bold text-green-600">{{ userMetrics.reports?.size || 0 }}</p>
-      </div>
-      <div class="bg-gray-50 p-4 rounded-lg text-center">
-        <h3 class="text-sm text-gray-600">Workspaces</h3>
-        <p class="text-2xl font-bold text-purple-600">{{ userMetrics.workspaces?.size || 0 }}</p>
-      </div>
-      <div class="bg-gray-50 p-4 rounded-lg text-center">
-        <h3 class="text-sm text-gray-600">Active Days</h3>
-        <p class="text-2xl font-bold text-yellow-600">{{ userMetrics.activityByDate?.size || 0 }}</p>
-      </div>
+        <!-- TIME TAB CONTENT -->
+        <ng-container *ngIf="userDetailTab === 'time'">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Time per Report -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <h3 class="text-base font-semibold text-gray-700 mb-4">Time Spent per Report</h3>
+              <div *ngIf="!userTimeSpentChartOptions" class="text-center py-12 text-gray-400">
+                No time data
+              </div>
+              <apx-chart *ngIf="userTimeSpentChartOptions"
+                [series]="userTimeSpentChartOptions.series"
+                [chart]="userTimeSpentChartOptions.chart"
+                [plotOptions]="userTimeSpentChartOptions.plotOptions"
+                [xaxis]="userTimeSpentChartOptions.xaxis"
+                [yaxis]="userTimeSpentChartOptions.yaxis"
+                [dataLabels]="userTimeSpentChartOptions.dataLabels"
+                [colors]="userTimeSpentChartOptions.colors"
+                [tooltip]="userTimeSpentChartOptions.tooltip">
+              </apx-chart>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <h3 class="text-base font-semibold text-gray-700 mb-4">Daily Activity</h3>
+              <div *ngIf="!userViewsChartOptions" class="text-center py-12 text-gray-400">
+                No activity
+              </div>
+              <apx-chart *ngIf="userViewsChartOptions"
+                [series]="userViewsChartOptions.series"
+                [chart]="userViewsChartOptions.chart"
+                [xaxis]="userViewsChartOptions.xaxis"
+                [colors]="userViewsChartOptions.colors"
+                [plotOptions]="userViewsChartOptions.plotOptions"
+                [tooltip]="userViewsChartOptions.tooltip">
+              </apx-chart>
+            </div>
+          </div>
+
+          <!-- Time Details Table -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100" *ngIf="userTimeSpentDetail.length">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Time per Page/Tab</h3>
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="p-3 text-left text-gray-600">Report</th>
+                  <th class="p-3 text-left text-gray-600">Page</th>
+                  <th class="p-3 text-left text-gray-600">Workspace</th>
+                  <th class="p-3 text-right text-gray-600">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of userTimeSpentDetail" class="border-b hover:bg-amber-50">
+                  <td class="p-3">{{ r.reportName }}</td>
+                  <td class="p-3 text-gray-600">{{ r.tabName }}</td>
+                  <td class="p-3 text-gray-600">{{ r.workspaceName }}</td>
+                  <td class="p-3 text-right font-bold text-amber-600">{{ formatSeconds(r.totalSeconds) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+
+        <!-- VIEWS TAB CONTENT -->
+        <ng-container *ngIf="userDetailTab === 'views'">
+          <div class="grid grid-cols-1 gap-6 mb-6">
+            <!-- Views per Report -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <h3 class="text-base font-semibold text-gray-700 mb-4">Views per Report</h3>
+              <div *ngIf="!userViewsByReportChartOptions" class="text-center py-12 text-gray-400">
+                No view data
+              </div>
+              <apx-chart *ngIf="userViewsByReportChartOptions"
+                [series]="userViewsByReportChartOptions.series"
+                [chart]="userViewsByReportChartOptions.chart"
+                [plotOptions]="userViewsByReportChartOptions.plotOptions"
+                [xaxis]="userViewsByReportChartOptions.xaxis"
+                [yaxis]="userViewsByReportChartOptions.yaxis"
+                [dataLabels]="userViewsByReportChartOptions.dataLabels"
+                [colors]="userViewsByReportChartOptions.colors"
+                [tooltip]="userViewsByReportChartOptions.tooltip">
+              </apx-chart>
+            </div>
+          </div>
+
+          <!-- Views Timeline -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Views Timeline</h3>
+            <div *ngIf="!userViewsChartOptions" class="text-center py-12 text-gray-400">
+              No views
+            </div>
+            <apx-chart *ngIf="userViewsChartOptions"
+              [series]="userViewsChartOptions.series"
+              [chart]="userViewsChartOptions.chart"
+              [xaxis]="userViewsChartOptions.xaxis"
+              [colors]="userViewsChartOptions.colors"
+              [plotOptions]="userViewsChartOptions.plotOptions"
+              [tooltip]="userViewsChartOptions.tooltip">
+            </apx-chart>
+          </div>
+        </ng-container>
+
+      </ng-container><!-- end !loading -->
+    </div>
+  </ng-container>
+
+  <!-- ════════════════════════════════════════════════════════════
+       OVERVIEW — when no user selected
+  ════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!selectedUserId">
+
+    <div *ngIf="timeOverviewLoading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      <span class="ml-3 text-gray-500">Loading…</span>
     </div>
 
-<!-- Workspace Views Pie Chart -->
-<div class="bg-gray-50 p-4 rounded-lg">
-  <h3 class="text-lg font-semibold mb-4">Workspace Views</h3>
-  <apx-chart
-    *ngIf="userWorkspacePieChartOptions"
-    [series]="userWorkspacePieChartOptions.series"
-    [chart]="userWorkspacePieChartOptions.chart"
-    [labels]="userWorkspacePieChartOptions.labels"
-    [colors]="userWorkspacePieChartOptions.colors"
-    [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-    [tooltip]="userWorkspacePieChartOptions.tooltip"
-  ></apx-chart>
-</div>
-        <!-- Activity Chart -->
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <h3 class="text-lg font-semibold mb-4">Activity Timeline</h3>
-          <apx-chart
-            *ngIf="userMetrics.activityChartData?.length"
-            [series]="[{ name: 'Views', data: userMetrics.activityChartData }]"
-            [chart]="{ type: 'bar', height: 350 }"
-            [xaxis]="{ type: 'datetime' }"
-            [colors]="['#0077B6']"
-          ></apx-chart>
+    <ng-container *ngIf="!timeOverviewLoading && timeOverview">
+
+      <!-- OVERVIEW CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mx-9 mt-8 mb-6">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <p class="text-sm text-gray-500 mb-1">Total Time Spent</p>
+          <p class="text-3xl font-bold text-amber-600">{{ formatSeconds(totalTimeAllUsers) }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <p class="text-sm text-gray-500 mb-1">Unique Users</p>
+          <p class="text-3xl font-bold text-blue-600">{{ metrics?.uniqueUsersCount || 0 }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <p class="text-sm text-gray-500 mb-1">Reports</p>
+          <p class="text-3xl font-bold text-teal-600">{{ metrics?.uniqueReportsCount || 0 }}</p>
         </div>
       </div>
-    </div>
-<div>
-  
-</div>
-    <!-- Aggregate User Metrics -->
-    <ng-template #userOverview>
-      <div class="grid grid-cols-1 md:grid-cols-2  mx-9">
-        <!-- User Activity Trend Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">User Activity Trend</h3>
-          <apx-chart
-            *ngIf="metrics.activityTrend?.length"
-            [series]="activityTrendChartOptions.series"
-            [chart]="activityTrendChartOptions.chart"
-            [xaxis]="activityTrendChartOptions.xaxis"
-            [stroke]="activityTrendChartOptions.stroke"
-            [colors]="activityTrendChartOptions.colors"
-          ></apx-chart>
+
+      <!-- CHARTS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-9 mb-6">
+        <!-- Top Reports -->
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-4">Top Reports by Time</h3>
+          <div *ngIf="!topReportsByTimeChartOptions" class="text-center py-12 text-gray-400">No data</div>
+          <apx-chart *ngIf="topReportsByTimeChartOptions"
+            [series]="topReportsByTimeChartOptions.series"
+            [chart]="topReportsByTimeChartOptions.chart"
+            [plotOptions]="topReportsByTimeChartOptions.plotOptions"
+            [xaxis]="topReportsByTimeChartOptions.xaxis"
+            [yaxis]="topReportsByTimeChartOptions.yaxis"
+            [dataLabels]="topReportsByTimeChartOptions.dataLabels"
+            [colors]="topReportsByTimeChartOptions.colors"
+            [tooltip]="topReportsByTimeChartOptions.tooltip">
+          </apx-chart>
         </div>
-    
-        <!-- Top Users Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">Top Users</h3>
-          <apx-chart
-            *ngIf="metrics.topUsers?.length"
-            [series]="topUsersChartOptions.series"
-            [chart]="topUsersChartOptions.chart"
-            [xaxis]="topUsersChartOptions.xaxis"
-            [plotOptions]="topUsersChartOptions.plotOptions"
-            [dataLabels]="topUsersChartOptions.dataLabels"
-            [colors]="topUsersChartOptions.colors"
-          ></apx-chart>
+
+        <!-- Top Users (clickable) -->
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-4">Top Users by Time · Click to view details</h3>
+          <div *ngIf="!topUsersByTimeChartOptions" class="text-center py-12 text-gray-400">No data</div>
+          <apx-chart *ngIf="topUsersByTimeChartOptions"
+            [series]="topUsersByTimeChartOptions.series"
+            [chart]="topUsersByTimeChartOptions.chart"
+            [plotOptions]="topUsersByTimeChartOptions.plotOptions"
+            [xaxis]="topUsersByTimeChartOptions.xaxis"
+            [yaxis]="topUsersByTimeChartOptions.yaxis"
+            [dataLabels]="topUsersByTimeChartOptions.dataLabels"
+            [colors]="topUsersByTimeChartOptions.colors"
+            [tooltip]="topUsersByTimeChartOptions.tooltip">
+          </apx-chart>
         </div>
       </div>
-    </ng-template>
+
+      <!-- USERS TABLE -->
+      <div class="bg-white mx-9 mb-8 p-6 rounded-lg shadow-sm border border-gray-100">
+        <h3 class="font-semibold text-gray-700 mb-4">All Users — Click to view details</h3>
+        <div *ngIf="timeOverview?.topUsersByTime?.length" class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="p-3 text-left text-gray-600">User</th>
+                <th class="p-3 text-right text-gray-600">Time Spent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of timeOverview.topUsersByTime"
+                (click)="openUserDetail(u.userId)"
+                class="border-b hover:bg-amber-50 cursor-pointer">
+                <td class="p-3">
+                  <div class="font-medium text-gray-800">{{ u.userId.split('@')[0] }}</div>
+                  <div class="text-xs text-gray-400">{{ u.userId }}</div>
+                </td>
+                <td class="p-3 text-right font-bold text-amber-600">{{ formatSeconds(u.totalSeconds) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </ng-container>
+
   </ng-container>
+
 </div>

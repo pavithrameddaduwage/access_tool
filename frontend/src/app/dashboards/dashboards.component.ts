@@ -6,6 +6,7 @@ import { HomeService } from '../Services/home.service';
 import { GroupService } from '../Services/group.service';
 import { UserService } from '../Services/user.service';
 import { WorkspaceService } from '../Services/workspace.service';
+import { PowerBIMetricsService } from '../Services/powerbi-metrics.service';
 import { FormsModule } from '@angular/forms';
 import { SelectWithSearchComponent } from '../components/select_with_search/select_with_search.component';
 import { catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap, tap } from 'rxjs';
@@ -116,6 +117,8 @@ import { AvatarComponent } from '../components/avatar/avatar.component';
   styleUrls: ['./dashboards.component.css']
 })
 export class DashboardsComponent implements OnInit {
+  lastRefreshedAt: string = '';
+
   // Dashboard View Properties
   dashboards: Dashboard[] = [];
   filteredDashboards: Dashboard[] = [];
@@ -286,7 +289,8 @@ sortRecords(column: string) {
     private userService: UserService,
     private workspaceService: WorkspaceService,
     private toastService: ToastService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private powerBIMetricsService: PowerBIMetricsService
   ) {
     let currentSearchTerm = '';
 
@@ -440,10 +444,13 @@ selectADUser(user: any): void {
   }
   ngOnInit() {
     this.loadDashboards();
-   // this.loadUsers();
     this.loadWorkspaces();
     this.loadRecords();
-    this.loadAllDashboards();  
+    this.loadAllDashboards();
+    this.powerBIMetricsService.getLastRefresh().subscribe({
+      next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
+      error: () => {}
+    });
   }
 
   filterDashboards() {

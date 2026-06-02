@@ -6,7 +6,7 @@
       <h1 class="pg-title">Power BI Usage Analytics</h1>
       <span *ngIf="lastRefreshedAt" class="pg-refresh">
         <span class="pg-live-dot"></span>
-        Refreshed {{ lastRefreshedAt | date:'mediumDate' }}
+        Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
       </span>
     </div>
     <div class="pg-header-right">
@@ -50,10 +50,10 @@
 
     <div class="kpi-row">
       <div class="kpi-card kpi--blue">
-        <i class="pi pi-eye kpi-icon"></i>
+        <i class="pi pi-clock kpi-icon"></i>
         <div class="kpi-body">
-          <span class="kpi-label">Total Views</span>
-          <span class="kpi-value">{{ metrics.totalViews || 0 | number }}</span>
+          <span class="kpi-label">Total Time Spent</span>
+          <span class="kpi-value">{{ formatSecondsLabel(totalTimeAllUsersSeconds) }}</span>
         </div>
       </div>
       <div class="kpi-card kpi--indigo">
@@ -73,31 +73,21 @@
       <div class="kpi-card kpi--slate" (click)="openUserListModal('zero')" style="cursor:pointer" title="Click to view">
         <i class="pi pi-user-minus kpi-icon"></i>
         <div class="kpi-body">
-          <span class="kpi-label">Zero-View Users</span>
+          <span class="kpi-label">No Activity Users</span>
           <span class="kpi-value">{{ userCounts.zeroViewUsers || 0 }}</span>
         </div>
       </div>
     </div>
 
+    <!-- ════ SECTION 1: TIME-BASED METRICS ════ -->
+    <div style="margin-top:2rem; margin-bottom:2rem;">
+      <h2 style="font-size:1.25rem; font-weight:600; color:#1f2937; margin-bottom:1rem;">⏱️ Time-Based Metrics</h2>
+    </div>
+
     <div class="chart-grid chart-grid--2">
       <div class="card">
         <div class="card-header">
-          <span class="card-title"><i class="pi pi-chart-line"></i> Views Over Time</span>
-        </div>
-        <div class="chart-body">
-          <apx-chart *ngIf="viewsChartOptions; else noData"
-            [series]="viewsChartOptions.series" [chart]="viewsChartOptions.chart"
-            [xaxis]="viewsChartOptions.xaxis" [yaxis]="viewsChartOptions.yaxis"
-            [colors]="viewsChartOptions.colors" [stroke]="viewsChartOptions.stroke"
-            [fill]="viewsChartOptions.fill" [tooltip]="viewsChartOptions.tooltip"
-            [grid]="viewsChartOptions.grid" height="260"></apx-chart>
-          <ng-template #noData><div class="chart-empty"><i class="pi pi-chart-line"></i><span>No data</span></div></ng-template>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="pi pi-sort-amount-down"></i> Top Reports</span>
+          <span class="card-title"><i class="pi pi-sort-amount-down"></i> Top Reports by Time Spent</span>
         </div>
         <div class="chart-body">
           <apx-chart *ngIf="topReportsChartOptions; else noRpt"
@@ -106,14 +96,14 @@
             [colors]="topReportsChartOptions.colors"
             [plotOptions]="topReportsChartOptions.plotOptions"
             [dataLabels]="topReportsChartOptions.dataLabels"
-            [tooltip]="topReportsChartOptions.tooltip" height="260"></apx-chart>
+            [tooltip]="topReportsChartOptions.tooltip" height="280"></apx-chart>
           <ng-template #noRpt><div class="chart-empty"><i class="pi pi-file"></i><span>No data</span></div></ng-template>
         </div>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <span class="card-title"><i class="pi pi-users"></i> Top Users</span>
+          <span class="card-title"><i class="pi pi-users"></i> Top Users by Time Spent</span>
         </div>
         <div class="chart-body">
           <apx-chart *ngIf="topUsersChartOptions; else noUsers"
@@ -122,8 +112,23 @@
             [plotOptions]="topUsersChartOptions.plotOptions"
             [dataLabels]="topUsersChartOptions.dataLabels"
             [colors]="topUsersChartOptions.colors"
-            [tooltip]="topUsersChartOptions.tooltip" height="260"></apx-chart>
+            [tooltip]="topUsersChartOptions.tooltip" height="280"></apx-chart>
           <ng-template #noUsers><div class="chart-empty"><i class="pi pi-users"></i><span>No data</span></div></ng-template>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-chart-line"></i> Activity Timeline</span>
+        </div>
+        <div class="chart-body">
+          <apx-chart *ngIf="viewsChartOptions; else noData"
+            [series]="viewsChartOptions.series" [chart]="viewsChartOptions.chart"
+            [xaxis]="viewsChartOptions.xaxis" [yaxis]="viewsChartOptions.yaxis"
+            [colors]="viewsChartOptions.colors" [stroke]="viewsChartOptions.stroke"
+            [fill]="viewsChartOptions.fill" [tooltip]="viewsChartOptions.tooltip"
+            [grid]="viewsChartOptions.grid" height="280"></apx-chart>
+          <ng-template #noData><div class="chart-empty"><i class="pi pi-chart-line"></i><span>No data</span></div></ng-template>
         </div>
       </div>
 
@@ -136,7 +141,7 @@
             [series]="activityTrendChartOptions.series" [chart]="activityTrendChartOptions.chart"
             [xaxis]="activityTrendChartOptions.xaxis"
             [stroke]="activityTrendChartOptions.stroke"
-            [colors]="activityTrendChartOptions.colors" height="260"></apx-chart>
+            [colors]="activityTrendChartOptions.colors" height="280"></apx-chart>
           <ng-template #noTrend><div class="chart-empty"><i class="pi pi-calendar"></i><span>No data</span></div></ng-template>
         </div>
       </div>
@@ -170,7 +175,7 @@
                 <tr>
                   <th>User</th>
                   <th>Department</th>
-                  <th>Views</th>
+                  <th>View Count</th>
                   <th>Last Active</th>
                 </tr>
               </thead>

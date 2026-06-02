@@ -511,4 +511,41 @@ export class PowerBIMetricsService {
   getLastRefresh(): Observable<{ lastRefreshedAt: string }> {
     return this.http.get<{ lastRefreshedAt: string }>(`${this.apiUrl}/last-refresh`);
   }
+
+  getDashboardUsage(
+    dashboardName: string,
+    startDate: Date,
+    endDate: Date,
+    workspaceId?: string
+  ): Observable<{
+    totalViews: number;
+    uniqueViewers: number;
+    viewers: { userId: string; views: number; lastSeen: string; reports: string[] }[];
+    topReports: { reportId: string; reportName: string; views: number; uniqueViewers: number }[];
+    pageTimeBreakdown: { tabName: string; totalSeconds: number; uniqueUsers: number }[];
+  }> {
+    const params: any = {
+      dashboardName,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    if (workspaceId) params.workspaceId = workspaceId;
+    return this.http.get<any>(`${this.apiUrl}/dashboard-usage`, { params });
+  }
+
+  getTimeSpentOverview(
+    startDate: Date,
+    endDate: Date,
+    workspaceId?: string
+  ): Observable<{
+    topUsersByTime: { userId: string; totalSeconds: number }[];
+    topReportsByTime: { reportId: string; reportName: string; totalSeconds: number }[];
+  }> {
+    const params: any = {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    if (workspaceId) params.workspaceId = workspaceId;
+    return this.http.get<any>(`${this.apiUrl}/time-spent-overview`, { params });
+  }
 }

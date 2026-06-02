@@ -41,18 +41,33 @@ import { DropdownModule } from 'primeng/dropdown';
 })
 export class PowerBIUsageDashboardComponent implements OnInit {
 
-  // State variables
-
-  loading = false;      
+  // State
+  loading = false;
   error = '';
   dataLoaded = false;
-  activeView: 'workspace' | 'user' = 'workspace';
+  lastRefreshedAt: string = '';
   selectedUserId: string | null = null;
-  selectedUser: string | null = null;
   selectedWorkspace: string = 'all';
   selectedReport: string = 'all';
   selectedPeriod = 30;
-  isUserListExpanded: boolean = false;
+  isUserListExpanded = false;
+
+  // Overview — time-based
+  timeOverview: { topUsersByTime: any[]; topReportsByTime: any[] } | null = null;
+  timeOverviewLoading = false;
+  topUsersByTimeChartOptions: any = null;
+  topReportsByTimeChartOptions: any = null;
+  totalTimeAllUsers = 0; // sum of all users' time in minutes
+
+  // User detail — loaded when a user is clicked
+  userDetailLoading = false;
+  userDetailTab: 'time' | 'views' = 'time';
+  userTimeSpentDetail: any[] = [];   // per-report time breakdown
+  userTotalTimeSeconds = 0;
+  userTotalViewsCount = 0;
+  userTimeSpentChartOptions: any = null;
+  userViewsChartOptions: any = null; // views activity timeline
+  userViewsByReportChartOptions: any = null; // views per report
 
   reportSortOrder: 'most' | 'least' = 'most';
   userFilterTab: 'active' | 'all' = 'active';
@@ -181,11 +196,14 @@ export class PowerBIUsageDashboardComponent implements OnInit {
   //   this.fetchWorkspaceNames();
   // }
   ngOnInit() {
-    this.loadCacheFromLocalStorage(); 
+    this.loadCacheFromLocalStorage();
     this.loadWorkspaces();
     this.loadData(this.selectedPeriod);
-    this.prepareTopUsersChart(); // Prepare the top users chart with real names
     this.fetchWorkspaceNames();
+    this.powerBIMetricsService.getLastRefresh().subscribe({
+      next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
+      error: () => {}
+    });
   }
 
   loadCacheFromLocalStorage() {
@@ -200,10 +218,12 @@ export class PowerBIUsageDashboardComponent implements OnInit {
     this.workspaces = [{ id: 'all', name: 'All Workspaces' }, ...(response || [])];
   }
 
-  async loadData(days: number) {                     
+  async loadData(days: number) {
     this.loading = true;
     this.error = '';
     this.selectedPeriod = days;
+    this.timeOverview = null;
+    this.loadTimeOverview();
   
     try {
       if (this.allData.length === 0) {
@@ -752,29 +772,7 @@ private getActivityTrend(userData: Record<string, {
 
 
 selectUser(userId: string) {
-  this.selectedUserId = userId;
-
-  // Find the selected user
-  const user = this.allUsers.find(u => u.id === userId);
-  if (!user) return;
-
-  // Explicitly type the entries array
-  const entries: [string, number][] = Array.from(user.activityByDate.entries());
-
-  // Update user metrics
-  this.userMetrics = {
-    ...user,
-    activityChartData: entries
-      .sort((a: [string, number], b: [string, number]) => a[0].localeCompare(b[0]))
-      .map(([date, views]: [string, number]) => ({ x: date, y: views })),
-  };
-
-  // Prepare the pie chart
-  const workspaceViews = this.getUserWorkspaceViews(userId);
-  this.prepareUserWorkspacePieChart(workspaceViews);
-
-  // Force change detection
-  this.cdr.detectChanges();
+  this.openUserDetail(userId);
 }
 filterUsers(query: string): any[] {
   if (!query) return this.allUsers;
@@ -1220,24 +1218,8 @@ async prepareTopUsersChart() {
   };
 }
 onTopUserChartClick(dataPointIndex: number) {
-  const selectedUserId = this.metrics.topUsers[dataPointIndex]?.id;
-  
-  if (!selectedUserId) {
-    console.error('No user ID found for the selected bar');
-    return;
-  }
-
-  // console.log('Selected User ID:', selectedUserId);
-  
-  // Update view state
-  this.activeView = 'user';
-  this.selectedUserId = selectedUserId;
-
-  // Force update the view
-  this.cdr.detectChanges();
-
-  // Load user metrics
-  this.updateUserMetrics(selectedUserId);
+  const uid = this.metrics.topUsers[dataPointIndex]?.id;
+  if (uid) this.openUserDetail(uid);
 }
 
 
@@ -1459,22 +1441,195 @@ async fetchRealNamesForEmails(emails: string[]): Promise<void> {
   }
 
   exportUserListToCSV() {
-    const headers = ['Name', 'Views', 'Last Seen'];
-    const rows = this.allUsers.map(user => [
-      user.id,
-      user.totalViews,
-      user.lastActivity,
-    ]);
-  
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(',')), 
-    ].join('\n');
-  
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const rows = (this.timeOverview?.topUsersByTime || []).map(u => [u.userId, this.formatSeconds(u.totalSeconds)]);
+    const csv = [['User', 'Time Spent'], ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'user_list.csv';
+    link.download = 'users_time_spent.csv';
     link.click();
+  }
+
+  // ─── Time Overview (loaded on startup / filter change) ────────────────────
+
+  loadTimeOverview() {
+    this.timeOverviewLoading = true;
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - this.selectedPeriod);
+    const wsId = this.selectedWorkspace !== 'all' ? this.selectedWorkspace : undefined;
+
+    this.powerBIMetricsService.getTimeSpentOverview(startDate, endDate, wsId).subscribe({
+      next: (data) => {
+        this.timeOverview = data;
+        this.totalTimeAllUsers = data.topUsersByTime.reduce((s, u) => s + u.totalSeconds, 0);
+        this.buildOverviewCharts(data);
+        this.timeOverviewLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.timeOverviewLoading = false; }
+    });
+  }
+
+  private buildOverviewCharts(data: { topUsersByTime: any[]; topReportsByTime: any[] }) {
+    const users = data.topUsersByTime.slice(0, 10);
+    const reports = data.topReportsByTime.slice(0, 10);
+
+    const barBase = {
+      chart: { type: 'bar', height: 320, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}m` : '' },
+      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+    };
+
+    this.topUsersByTimeChartOptions = {
+      ...barBase,
+      series: [{ name: 'Time Spent (min)', data: users.map(u => Math.round(u.totalSeconds / 60)) }],
+      xaxis: {
+        categories: users.map(u => { const n = u.userId.split('@')[0]; return n.length > 22 ? n.slice(0, 22) + '…' : n; }),
+        labels: { style: { fontSize: '10px', colors: '#64748b' } }
+      },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      colors: ['#0077B6'],
+      chart: {
+        ...barBase.chart,
+        events: {
+          dataPointSelection: (_: any, __: any, cfg: { dataPointIndex: number }) => {
+            this.openUserDetail(users[cfg.dataPointIndex]?.userId);
+          }
+        }
+      }
+    };
+
+    this.topReportsByTimeChartOptions = {
+      ...barBase,
+      series: [{ name: 'Time Spent (min)', data: reports.map(r => Math.round(r.totalSeconds / 60)) }],
+      xaxis: {
+        categories: reports.map(r => {
+          let n = (r.reportName || '').replace(/^HGU\s*-\s*/i, '').replace(/\s*-\s*Dashboard$/i, '').trim() || 'Unknown';
+          return n.length > 22 ? n.slice(0, 22) + '…' : n;
+        }),
+        labels: { style: { fontSize: '10px', colors: '#64748b' } }
+      },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      colors: ['#00B4D8']
+    };
+  }
+
+  // ─── User Detail (click a user → both time + views) ───────────────────────
+
+  openUserDetail(userId: string) {
+    if (!userId) return;
+    this.selectedUserId = userId;
+    this.userDetailTab = 'time'; // reset to time tab
+    this.userDetailLoading = true;
+    this.userTimeSpentDetail = [];
+    this.userTimeSpentChartOptions = null;
+    this.userViewsChartOptions = null;
+    this.userViewsByReportChartOptions = null;
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - this.selectedPeriod);
+
+    // Load time spent for this user
+    this.powerBIMetricsService.getUserTimeSpent(userId, startDate, endDate).subscribe({
+      next: (timeData) => {
+        this.userTimeSpentDetail = timeData;
+        this.userTotalTimeSeconds = timeData.reduce((s: number, r: any) => s + (r.totalSeconds || 0), 0);
+        this.buildUserTimeChart(timeData);
+
+        // Also load view activity from existing data
+        this.updateUserMetrics(userId);
+        this.buildUserViewsChart();
+        this.buildUserViewsByReportChart();
+        this.userDetailLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.updateUserMetrics(userId);
+        this.buildUserViewsChart();
+        this.buildUserViewsByReportChart();
+        this.userDetailLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  switchUserDetailTab(tab: 'time' | 'views') {
+    this.userDetailTab = tab;
+  }
+
+  private buildUserTimeChart(data: any[]) {
+    const top = data.slice(0, 10);
+    this.userTimeSpentChartOptions = {
+      series: [{ name: 'Time Spent (min)', data: top.map(r => Math.round((r.totalSeconds || 0) / 60)) }],
+      chart: { type: 'bar', height: 300, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      xaxis: {
+        categories: top.map(r => {
+          let n = (r.reportName || '').replace(/^HGU\s*-\s*/i, '').trim() || 'Unknown';
+          return n.length > 24 ? n.slice(0, 24) + '…' : n;
+        }),
+        labels: { style: { fontSize: '10px', colors: '#64748b' } }
+      },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155' } } },
+      dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'] }, offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}m` : '' },
+      colors: ['#ffb703'],
+      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+    };
+  }
+
+  private buildUserViewsChart() {
+    if (!this.userMetrics?.activityChartData?.length) return;
+    const data = this.userMetrics.activityChartData;
+    const totalViews = data.reduce((s: number, d: any) => s + (d?.y || 0), 0);
+    this.userTotalViewsCount = totalViews;
+
+    this.userViewsChartOptions = {
+      series: [{ name: 'Views', data }],
+      chart: { type: 'bar', height: 220, toolbar: { show: false } },
+      xaxis: { type: 'datetime', labels: { datetimeUTC: false, style: { fontSize: '10px' } } },
+      colors: ['#0077B6'],
+      tooltip: { x: { format: 'dd MMM yyyy' }, y: { formatter: (v: number) => `${v} views` } },
+      plotOptions: { bar: { columnWidth: '60%', borderRadius: 2 } },
+      dataLabels: { enabled: false }
+    };
+  }
+
+  private buildUserViewsByReportChart() {
+    if (!this.userMetrics?.reports?.size) return;
+    const reports = Array.from(this.userMetrics.reports || []).slice(0, 10) as any[];
+    if (!reports.length) return;
+
+    this.userViewsByReportChartOptions = {
+      series: [{ name: 'Views', data: reports.map((r: any) => r.views || 0) }],
+      chart: { type: 'bar', height: 300, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      xaxis: {
+        categories: reports.map((r: any) => {
+          const n = (r.name || '').replace(/^HGU\s*-\s*/i, '').trim() || 'Unknown';
+          return n.length > 24 ? n.slice(0, 24) + '…' : n;
+        }),
+        labels: { style: { fontSize: '10px', colors: '#64748b' } }
+      },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6 },
+      colors: ['#06b6d4'],
+      tooltip: { y: { formatter: (v: number) => `${v} views` } }
+    };
+  }
+
+  // Override selectUser to use openUserDetail
+  override_selectUser(userId: string) { this.openUserDetail(userId); }
+
+  formatSeconds(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (h > 0) return `${h}h ${m}m`;
+    if (m > 0) return `${m}m`;
+    return '<1m';
   }
 }
