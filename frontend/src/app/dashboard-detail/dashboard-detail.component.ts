@@ -398,7 +398,7 @@ private prepareUsageCharts(data: typeof this.usageData) {
   const pages = (data.pageTimeBreakdown || []).slice(0, 10);
   if (pages.length > 0) {
     this.pageTimeChartOptions = {
-      series: [{ name: 'Time Spent (min)', data: pages.map(p => Math.round(p.totalSeconds / 60)) }],
+      series: [{ name: 'Time Spent (h)', data: pages.map(p => parseFloat(((p.totalSeconds || 0) / 3600).toFixed(1))) }],
       chart: { type: 'bar', height: 280, toolbar: { show: false } },
       plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
       xaxis: {
@@ -407,9 +407,9 @@ private prepareUsageCharts(data: typeof this.usageData) {
       },
       yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
       dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6,
-        formatter: (v: number) => v > 0 ? `${v}m` : '' },
+        formatter: (v: number) => v > 0 ? `${v}h` : '' },
       colors: ['#ffb703'],
-      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+      tooltip: { y: { formatter: (v: number) => `${v}h` } }
     };
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { UsersService } from '../../Services/users.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { ToastService } from '../../Services/toast.service';
@@ -33,7 +34,7 @@ interface CreateUserDto {
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './user-management.component.html',
   encapsulation: ViewEncapsulation.None
 
@@ -49,6 +50,21 @@ export class UserManagementComponent implements OnInit {
   searchTerm$ = new Subject<string>();
   adUsers: any[] = [];
   isSearching = false;
+  // Local UI filters
+  userFilterQuery: string = '';
+  showOnlyActive: boolean = false;
+
+  get filteredUsers(): User[] {
+    let list = this.users || [];
+    const q = this.userFilterQuery?.trim().toLowerCase();
+    if (q) {
+      list = list.filter(u => (u.email || '').toLowerCase().includes(q) || (u.name || '').toLowerCase().includes(q));
+    }
+    if (this.showOnlyActive) {
+      list = list.filter(u => !!u.is_active);
+    }
+    return list;
+  }
 
   constructor(
     private usersService: UsersService,

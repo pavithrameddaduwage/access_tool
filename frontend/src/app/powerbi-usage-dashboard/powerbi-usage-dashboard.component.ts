@@ -57,7 +57,7 @@ export class PowerBIUsageDashboardComponent implements OnInit {
   timeOverviewLoading = false;
   topUsersByTimeChartOptions: any = null;
   topReportsByTimeChartOptions: any = null;
-  totalTimeAllUsers = 0; // sum of all users' time in minutes
+  totalTimeAllUsers = 0; // sum of all users' time in seconds
 
   // User detail — loaded when a user is clicked
   userDetailLoading = false;
@@ -1479,18 +1479,25 @@ async fetchRealNamesForEmails(emails: string[]): Promise<void> {
       chart: { type: 'bar', height: 320, toolbar: { show: false } },
       plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
       dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'], fontWeight: '600' }, offsetX: -6,
-        formatter: (v: number) => v > 0 ? `${v}m` : '' },
-      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+        formatter: (v: number) => v > 0 ? `${v}h` : '' },
+      tooltip: { y: { formatter: (v: number) => `${v}h` } }
     };
 
     this.topUsersByTimeChartOptions = {
       ...barBase,
-      series: [{ name: 'Time Spent (min)', data: users.map(u => Math.round(u.totalSeconds / 60)) }],
+      series: [{ name: 'Time Spent (h)', data: users.map(u => parseFloat(((u.totalSeconds || 0) / 3600).toFixed(1))) }],
       xaxis: {
         categories: users.map(u => { const n = u.userId.split('@')[0]; return n.length > 22 ? n.slice(0, 22) + '…' : n; }),
         labels: { style: { fontSize: '10px', colors: '#64748b' } }
       },
       yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      dataLabels: {
+        enabled: true,
+        style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
+        offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}h` : ''
+      },
+      tooltip: { y: { formatter: (v: number) => `${v}h` } },
       colors: ['#0077B6'],
       chart: {
         ...barBase.chart,
@@ -1504,7 +1511,7 @@ async fetchRealNamesForEmails(emails: string[]): Promise<void> {
 
     this.topReportsByTimeChartOptions = {
       ...barBase,
-      series: [{ name: 'Time Spent (min)', data: reports.map(r => Math.round(r.totalSeconds / 60)) }],
+      series: [{ name: 'Time Spent (h)', data: reports.map(r => parseFloat(((r.totalSeconds || 0) / 3600).toFixed(1))) }],
       xaxis: {
         categories: reports.map(r => {
           let n = (r.reportName || '').replace(/^HGU\s*-\s*/i, '').replace(/\s*-\s*Dashboard$/i, '').trim() || 'Unknown';
@@ -1513,6 +1520,13 @@ async fetchRealNamesForEmails(emails: string[]): Promise<void> {
         labels: { style: { fontSize: '10px', colors: '#64748b' } }
       },
       yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      dataLabels: {
+        enabled: true,
+        style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
+        offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}h` : ''
+      },
+      tooltip: { y: { formatter: (v: number) => `${v}h` } },
       colors: ['#00B4D8']
     };
   }
@@ -1564,7 +1578,7 @@ async fetchRealNamesForEmails(emails: string[]): Promise<void> {
   private buildUserTimeChart(data: any[]) {
     const top = data.slice(0, 10);
     this.userTimeSpentChartOptions = {
-      series: [{ name: 'Time Spent (min)', data: top.map(r => Math.round((r.totalSeconds || 0) / 60)) }],
+      series: [{ name: 'Time Spent (h)', data: top.map(r => parseFloat(((r.totalSeconds || 0) / 3600).toFixed(1))) }],
       chart: { type: 'bar', height: 300, toolbar: { show: false } },
       plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
       xaxis: {
@@ -1576,9 +1590,9 @@ async fetchRealNamesForEmails(emails: string[]): Promise<void> {
       },
       yaxis: { labels: { style: { fontSize: '11px', colors: '#334155' } } },
       dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'] }, offsetX: -6,
-        formatter: (v: number) => v > 0 ? `${v}m` : '' },
+        formatter: (v: number) => v > 0 ? `${v}h` : '' },
       colors: ['#ffb703'],
-      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+      tooltip: { y: { formatter: (v: number) => `${v}h` } }
     };
   }
 

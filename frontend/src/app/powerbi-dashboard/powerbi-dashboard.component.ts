@@ -301,7 +301,7 @@ userCounts = {
       });
 
       this.topReportsChartOptions = {
-        series: [{ name: 'Time Spent (min)', data: reports.map(r => Math.round((r?.totalSeconds || 0) / 60)) }],
+        series: [{ name: 'Time Spent (h)', data: reports.map(r => parseFloat(((r?.totalSeconds || 0) / 3600).toFixed(1))) }],
         chart: { type: 'bar', height: 280, toolbar: { show: false } },
         plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
         xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
@@ -310,10 +310,10 @@ userCounts = {
           enabled: true,
           style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
           offsetX: -6,
-          formatter: (v: number) => v > 0 ? `${v}m` : ''
+          formatter: (v: number) => v > 0 ? `${v}h` : ''
         },
-        colors: ['#f59e0b'],
-        tooltip: { y: { formatter: (v: number) => `${v} min` } }
+        tooltip: { y: { formatter: (v: number) => `${v}h` } },
+        colors: ['#f59e0b']
       };
     }
 
@@ -425,7 +425,7 @@ userCounts = {
     });
 
     this.topUsersChartOptions = {
-      series: [{ name: 'Time Spent (min)', data: users.map(u => Math.round((u.totalSeconds || 0) / 60)) }],
+      series: [{ name: 'Time Spent (h)', data: users.map(u => parseFloat(((u.totalSeconds || 0) / 3600).toFixed(1))) }],
       chart: {
         type: 'bar',
         height: 300,
@@ -444,10 +444,10 @@ userCounts = {
         enabled: true,
         style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
         offsetX: -6,
-        formatter: (v: number) => v > 0 ? `${v}m` : ''
+        formatter: (v: number) => v > 0 ? `${v}h` : ''
       },
       colors: ['#6366f1'],
-      tooltip: { y: { formatter: (v: number) => `${v} min` } }
+      tooltip: { y: { formatter: (v: number) => `${v}h` } }
     };
   }
 

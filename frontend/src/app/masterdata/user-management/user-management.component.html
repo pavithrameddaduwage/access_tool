@@ -14,6 +14,18 @@
     </button>
   </div>
 
+  <!-- Controls: search + filter -->
+  <div class="um-controls">
+    <div class="um-controls-left">
+      <input type="text" placeholder="Filter users by email or name" class="um-table-search" [(ngModel)]="userFilterQuery" />
+      <label class="um-controls-switch">
+        <input type="checkbox" [(ngModel)]="showOnlyActive" />
+        <span>Active only</span>
+      </label>
+    </div>
+    <div class="um-controls-right">&nbsp;</div>
+  </div>
+
   <!-- ── Users Table ── -->
   <div class="um-card">
     <div class="um-table-wrap">
@@ -28,7 +40,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of users; let odd = odd" class="um-row" [class.um-row--stripe]="odd">
+          <tr *ngFor="let user of filteredUsers; let odd = odd" class="um-row" [class.um-row--stripe]="odd">
             <td class="um-td um-td--email">{{ user?.email }}</td>
             <td class="um-td um-td--name">{{ user?.name }}</td>
             <td class="um-td">

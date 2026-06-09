@@ -67,7 +67,7 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 680px;
+  min-width: 640px;
 }
 
 .um-th {
@@ -163,6 +163,26 @@
 
 /* Action buttons */
 .um-actions { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+/* Controls row */
+.um-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.75rem 0 1rem 0;
+}
+.um-controls-left { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+.um-table-search {
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  min-width: 220px;
+}
+.um-controls-switch { display: inline-flex; align-items: center; gap: 0.5rem; color: #475569; font-weight: 600; }
+
+/* Narrow actions column */
+.um-td.actions, .um-th.actions { width: 110px; max-width: 110px; }
 
 .um-icon-btn {
   display: flex;
