@@ -1,0 +1,5 @@
+.container { max-width: 1140px; }
+
+button { transition: background-color 0.15s ease, color 0.15s ease; }
+
+.apexcharts-toolbar { display: none !important; }

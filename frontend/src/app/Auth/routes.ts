@@ -25,6 +25,7 @@ import { PowerBIDashboardComponent } from '../powerbi-dashboard/powerbi-dashboar
 import { AnalyticsComponent } from '../analytics/analytics.component';
 import { WAnalyticsComponent } from '../w-analytics/w-analytics.component';
 import { UsersOverviewComponent } from '../users-overview/users-overview.component';
+import { DashboardTabUsageComponent } from '../dashboard-tab-usage/dashboard-tab-usage.component';
 
 const routeConfig: Routes = [
   {
@@ -135,6 +136,18 @@ const routeConfig: Routes = [
     path: 'dashboard-detail/:name',
     component: DashboardDetailComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'dashboard-tab-usage',
+    component: DashboardTabUsageComponent,
+    canActivate: [authGuard],
+    title: 'Dashboard Tab Usage'
+  },
+  {
+    path: 'dashboard-tab-usage/:name',
+    component: DashboardTabUsageComponent,
+    canActivate: [authGuard],
+    title: 'Dashboard Tab Usage'
   },
   {
     path: 'home',

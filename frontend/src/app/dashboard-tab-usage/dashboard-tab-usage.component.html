@@ -1,0 +1,180 @@
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">{{ dashboardName ? (dashboardName + ' – Tab Usage') : 'Dashboard Tab Usage' }}</h1>
+      <p class="text-gray-500 text-sm mt-1">
+        {{ dashboardName ? 'Time spent per dashboard page/tab and viewer activity.' : 'Select a dashboard to view tab time spent details.' }}
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button *ngIf="dashboardName" (click)="goBack()" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50">Back to Dashboard</button>
+      <button
+        class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+        (click)="loadUsageData(7)"
+      >7 Days</button>
+      <button
+        class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+        (click)="loadUsageData(30)"
+      >30 Days</button>
+      <button
+        class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+        (click)="loadUsageData(90)"
+      >90 Days</button>
+    </div>
+  </div>
+
+<div *ngIf="!dashboardName" class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+      <div *ngIf="dashboardListLoading" class="flex items-center gap-3 text-gray-600">
+        <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></span>
+        Loading dashboards...
+      </div>
+      <div *ngIf="!dashboardListLoading" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2">Search dashboards</label>
+          <input
+            type="text"
+            [(ngModel)]="dashboardSearch"
+            (input)="onDashboardSearch(dashboardSearch)"
+            placeholder="Search dashboards..."
+            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700 shadow-sm outline-none transition focus:border-sky-400 focus:ring-1 focus:ring-sky-200"
+          />
+        </div>
+        <p class="text-sm text-gray-600">Select a dashboard to view tab-level usage details.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <button
+            *ngFor="let dashboard of filteredDashboards"
+            (click)="navigateToDashboardUsage(dashboard.dashboard || dashboard.name)"
+            class="text-left rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 hover:border-sky-300 hover:bg-sky-50"
+          >
+            {{ dashboard.dashboard || dashboard.name || 'Unnamed Dashboard' }}
+          </button>
+        </div>
+        <div *ngIf="filteredDashboards.length === 0" class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+          No dashboards match your search.
+        </div>
+      </div>
+    </div>
+
+  <div *ngIf="usageLoading" class="flex items-center justify-center rounded-xl border border-dashed border-blue-300 bg-blue-50 p-10 text-blue-700">
+    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mr-4"></div>
+    Loading tab usage data...
+  </div>
+
+  <div *ngIf="!usageLoading && usageData" class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="text-sm text-gray-500">Total Views</div>
+        <div class="mt-2 text-3xl font-bold text-blue-600">{{ usageData.totalViews }}</div>
+      </div>
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="text-sm text-gray-500">Unique Viewers</div>
+        <div class="mt-2 text-3xl font-bold text-teal-600">{{ usageData.uniqueViewers }}</div>
+      </div>
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="text-sm text-gray-500">Tabs Tracked</div>
+        <div class="mt-2 text-3xl font-bold text-amber-600">{{ usageData.pageTimeBreakdown.length || 0 }}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Tab Time Distribution</h2>
+        <p class="text-sm text-gray-500 mb-4">How much time users spent on each tab/page.</p>
+        <div *ngIf="pageTimeChartOptions">
+          <apx-chart
+            [series]="pageTimeChartOptions.series"
+            [chart]="pageTimeChartOptions.chart"
+            [plotOptions]="pageTimeChartOptions.plotOptions"
+            [xaxis]="pageTimeChartOptions.xaxis"
+            [yaxis]="pageTimeChartOptions.yaxis"
+            [dataLabels]="pageTimeChartOptions.dataLabels"
+            [colors]="pageTimeChartOptions.colors"
+            [tooltip]="pageTimeChartOptions.tooltip"
+          ></apx-chart>
+        </div>
+        <div *ngIf="!pageTimeChartOptions" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No tab usage chart available.
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Top Viewers</h2>
+        <p class="text-sm text-gray-500 mb-4">Most active users in this dashboard.</p>
+        <div *ngIf="viewersChartOptions">
+          <apx-chart
+            [series]="viewersChartOptions.series"
+            [chart]="viewersChartOptions.chart"
+            [plotOptions]="viewersChartOptions.plotOptions"
+            [xaxis]="viewersChartOptions.xaxis"
+            [yaxis]="viewersChartOptions.yaxis"
+            [dataLabels]="viewersChartOptions.dataLabels"
+            [colors]="viewersChartOptions.colors"
+            [tooltip]="viewersChartOptions.tooltip"
+          ></apx-chart>
+        </div>
+        <div *ngIf="!viewersChartOptions" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No viewer activity chart available.
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">Tab Usage Breakdown</h2>
+      <p class="text-sm text-gray-500 mb-4">Each tab/page with total engagement time and unique viewers.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-700 border-collapse">
+          <thead class="bg-slate-100 text-slate-700">
+            <tr>
+              <th class="px-4 py-3 border border-slate-200">Page / Tab</th>
+              <th class="px-4 py-3 border border-slate-200">Time Spent</th>
+              <th class="px-4 py-3 border border-slate-200">Unique Users</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of usageData.pageTimeBreakdown" class="hover:bg-gray-50">
+              <td class="px-4 py-3 border border-gray-200 font-medium">{{ item.tabName || 'Main Page' }}</td>
+              <td class="px-4 py-3 border border-gray-200">{{ formatSeconds(item.totalSeconds) }}</td>
+              <td class="px-4 py-3 border border-gray-200">{{ item.uniqueUsers }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">Viewer Activity</h2>
+      <p class="text-sm text-gray-500 mb-4">User names, views and which reports they opened.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-700 border-collapse">
+          <thead class="bg-slate-100 text-slate-700">
+            <tr>
+              <th class="px-4 py-3 border border-slate-200">User</th>
+              <th class="px-4 py-3 border border-slate-200">Views</th>
+              <th class="px-4 py-3 border border-slate-200">Last Seen</th>
+              <th class="px-4 py-3 border border-slate-200">Reports Viewed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let viewer of usageData.viewers" class="hover:bg-gray-50">
+              <td class="px-4 py-3 border border-gray-200">
+                <div class="font-semibold text-gray-800">{{ viewer.userId.split('@')[0] }}</div>
+                <div class="text-xs text-gray-500">{{ viewer.userId }}</div>
+              </td>
+              <td class="px-4 py-3 border border-gray-200 font-semibold text-blue-600">{{ viewer.views }}</td>
+              <td class="px-4 py-3 border border-gray-200 text-gray-500">{{ formatDate(viewer.lastSeen) }}</td>
+              <td class="px-4 py-3 border border-gray-200">
+                <div class="flex flex-wrap gap-2">
+                  <span *ngFor="let report of viewer.reports" class="rounded-full border border-blue-100 bg-blue-50 px-2 py-1 text-xs text-blue-700">{{ report }}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!usageLoading && !usageData" class="rounded-xl border border-gray-200 bg-white p-8 text-center text-gray-500">
+    No tab usage information is available for this dashboard.
+  </div>
+</div>

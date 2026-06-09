@@ -649,6 +649,74 @@ export class PowerBIMetricsService {
     });
   
     await this.powerbiLogRepository.save(entities);
+    // After saving raw logs, infer time-spent per user/report/tab and persist to PowerBITimeSpent
+    try {
+      const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+      const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
+
+      // Group logs by userId + reportId
+      const grouped: Record<string, PowerBILogEntry[]> = {};
+      for (const l of filteredLogs) {
+        const userId = (l.UserId || '').toLowerCase();
+        const reportId = l.ReportId || '';
+        if (!userId || !reportId) continue; // require both to attribute time
+        const key = `${userId}::${reportId}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(l);
+      }
+
+      const aggregated: Record<string, { userId: string; reportId: string; reportName?: string; workspaceId?: string; workspaceName?: string; tabName: string; seconds: number; }> = {};
+
+      for (const key of Object.keys(grouped)) {
+        const logsForKey = grouped[key].sort((a, b) => new Date(a.CreationTime).getTime() - new Date(b.CreationTime).getTime());
+        for (let i = 0; i < logsForKey.length; i++) {
+          const cur = logsForKey[i];
+          const next = logsForKey[i + 1];
+          let durationMs = DEFAULT_PAGE_VIEW_MS;
+          if (next) {
+            const diff = new Date(next.CreationTime).getTime() - new Date(cur.CreationTime).getTime();
+            if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
+              durationMs = diff;
+            }
+          }
+
+          const tabName = cur.ArtifactName || cur.ItemName || cur.ReportName || 'Main Page';
+          const aggKey = `${(cur.UserId || '').toLowerCase()}::${cur.ReportId || ''}::${tabName}`;
+          if (!aggregated[aggKey]) {
+            aggregated[aggKey] = {
+              userId: (cur.UserId || '').toLowerCase(),
+              reportId: cur.ReportId || '',
+              reportName: cur.ReportName,
+              workspaceId: cur.WorkspaceId,
+              workspaceName: cur.WorkSpaceName,
+              tabName,
+              seconds: 0
+            };
+          }
+          aggregated[aggKey].seconds += Math.round(durationMs / 1000);
+        }
+      }
+
+      const timeSpentEntries = Object.values(aggregated).filter(a => a.reportId && a.userId && a.seconds > 0);
+      for (const entry of timeSpentEntries) {
+        try {
+          await this.saveTimeSpent({
+            userId: entry.userId,
+            reportId: entry.reportId,
+            reportName: entry.reportName || 'Unknown Report',
+            workspaceId: entry.workspaceId,
+            workspaceName: entry.workspaceName,
+            tabName: entry.tabName,
+            durationSeconds: entry.seconds,
+          });
+        } catch (err) {
+          this.logger.error('Failed to save inferred time-spent entry', err.stack);
+        }
+      }
+      this.logger.log(`Persisted ${timeSpentEntries.length} inferred time-spent entries from logs.`);
+    } catch (err) {
+      this.logger.error('Failed to process raw logs into time-spent entries', err.stack);
+    }
   }
   
 

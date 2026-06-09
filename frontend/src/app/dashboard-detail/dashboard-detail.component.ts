@@ -1,7 +1,7 @@
 // dashboard-detail.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HomeService } from '../Services/home.service';
 import { UserService } from '../Services/user.service';
 import { DashboardService } from '../Services/dashboard.service';
@@ -53,6 +53,10 @@ export class DashboardDetailComponent implements OnInit {
     topReports: { reportId: string; reportName: string; views: number; uniqueViewers: number }[];
     pageTimeBreakdown: { tabName: string; totalSeconds: number; uniqueUsers: number }[];
   } | null = null;
+  selectedViewerId: string | null = null;
+  selectedViewerDisplayName = '';
+  viewerTabUsage: { reportId: string; reportName: string; tabName: string; totalSeconds: number }[] = [];
+  viewerTabUsageLoading = false;
   viewersChartOptions: any = null;
   pageTimeChartOptions: any = null;
   usagePeriods = [
@@ -79,6 +83,7 @@ export class DashboardDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private homeService: HomeService,
     private userService: UserService,
     private dashboardService: DashboardService,
@@ -172,6 +177,7 @@ export class DashboardDetailComponent implements OnInit {
     this.dashboardName = this.route.snapshot.paramMap.get('name') || '';
     this.loadUsersForDashboard();
     this.loadAvailableUsers();
+    this.loadUsageData();
     this.powerBIMetricsService.getLastRefresh().subscribe({
       next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
       error: () => {}
@@ -360,18 +366,63 @@ loadUsageData(days?: number) {
   if (days !== undefined) this.usagePeriod = days;
   this.usageLoading = true;
   this.usageData = null;
+    this.selectedViewerId = null;
+    this.selectedViewerDisplayName = '';
+    this.viewerTabUsage = [];
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - this.usagePeriod);
+
+    this.powerBIMetricsService.getDashboardUsage(this.dashboardName, startDate, endDate).subscribe({
+      next: (data) => {
+        this.usageData = data;
+        this.prepareUsageCharts(data);
+        this.usageLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load dashboard usage data:', error);
+        this.usageLoading = false;
+      }
+    });
+  }
+
+  openTabUsagePage() {
+    this.router.navigate(['/dashboard-tab-usage', this.dashboardName]);
+  }
+
+  loadViewerTabUsage(userId: string) {
+  this.selectedViewerId = userId;
+  this.selectedViewerDisplayName = userId.split('@')[0] || userId;
+  this.viewerTabUsage = [];
+  this.viewerTabUsageLoading = true;
 
   const endDate = new Date();
   const startDate = new Date();
   startDate.setDate(endDate.getDate() - this.usagePeriod);
 
-  this.powerBIMetricsService.getDashboardUsage(this.dashboardName, startDate, endDate).subscribe({
+  this.powerBIMetricsService.getUserTimeSpent(userId, startDate, endDate).subscribe({
     next: (data) => {
-      this.usageData = data;
-      this.prepareUsageCharts(data);
-      this.usageLoading = false;
+      const dashboardReportIds = new Set((this.usageData?.topReports || []).map(r => r.reportId));
+      const filtered = dashboardReportIds.size > 0
+        ? data.filter((row: any) => dashboardReportIds.has(row.reportId))
+        : data;
+
+      this.viewerTabUsage = filtered
+        .sort((a: any, b: any) => (b.totalSeconds || 0) - (a.totalSeconds || 0))
+        .map((r: any) => ({
+          reportId: r.reportId,
+          reportName: r.reportName || 'Unknown Report',
+          tabName: r.tabName || 'Overview',
+          totalSeconds: r.totalSeconds || 0
+        }));
+      this.viewerTabUsageLoading = false;
     },
-    error: () => { this.usageLoading = false; }
+    error: (error) => {
+      console.error('Error loading viewer tab usage:', error);
+      this.viewerTabUsage = [];
+      this.viewerTabUsageLoading = false;
+    }
   });
 }
 
