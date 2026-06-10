@@ -45,10 +45,11 @@
     <i class="pi pi-exclamation-triangle"></i> {{ error }}
   </div>
 
-  <!-- ══ WORKSPACE VIEW ════════════════════════════════════════ -->
-  <ng-container *ngIf="activeView === 'workspace' && dataLoaded && !loading">
+  <!-- ══ MAIN DASHBOARD BODY ══════════════════════════════════ -->
+  <ng-container *ngIf="dataLoaded && !loading">
 
     <div class="kpi-row">
+      <!-- KPI 1: Total Time Spent -->
       <div class="kpi-card kpi--blue">
         <i class="pi pi-clock kpi-icon"></i>
         <div class="kpi-body">
@@ -56,13 +57,17 @@
           <span class="kpi-value">{{ formatSecondsLabel(totalTimeAllUsersSeconds) }}</span>
         </div>
       </div>
-      <div class="kpi-card kpi--indigo">
+      
+      <!-- KPI 2: Total Users -->
+      <div class="kpi-card kpi--indigo" (click)="openUserListModal('all')" style="cursor:pointer" title="Click to view all users">
         <i class="pi pi-users kpi-icon"></i>
         <div class="kpi-body">
           <span class="kpi-label">Total Users</span>
           <span class="kpi-value">{{ (metrics.uniqueUsers + userCounts.zeroViewUsers) | number }}</span>
         </div>
       </div>
+      
+      <!-- KPI 3: Active Reports -->
       <div class="kpi-card kpi--teal">
         <i class="pi pi-file kpi-icon"></i>
         <div class="kpi-body">
@@ -70,7 +75,9 @@
           <span class="kpi-value">{{ metrics.uniqueReports || 0 }}</span>
         </div>
       </div>
-      <div class="kpi-card kpi--slate" (click)="openUserListModal('zero')" style="cursor:pointer" title="Click to view">
+      
+      <!-- KPI 4: No Activity Users -->
+      <div class="kpi-card kpi--slate" (click)="openUserListModal('zero')" style="cursor:pointer" title="Click to view users with no activity">
         <i class="pi pi-user-minus kpi-icon"></i>
         <div class="kpi-body">
           <span class="kpi-label">No Activity Users</span>
@@ -79,31 +86,51 @@
       </div>
     </div>
 
-    <!-- ════ SECTION 1: TIME-BASED METRICS ════ -->
-    <div style="margin-top:2rem; margin-bottom:2rem;">
-      <h2 style="font-size:1.25rem; font-weight:600; color:#1f2937; margin-bottom:1rem;">⏱️ Time-Based Metrics</h2>
-    </div>
-
+    <!-- ══ CHARTS GRID ═════════════════════════════════════════ -->
     <div class="chart-grid chart-grid--2">
+      
+      <!-- Chart 1: Top Reports by Views -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="pi pi-eye"></i> Top Reports by Views</span>
+        </div>
+        <div class="chart-body">
+          <apx-chart *ngIf="topReportsByViewsChartOptions; else noRptViews"
+            [series]="topReportsByViewsChartOptions.series" [chart]="topReportsByViewsChartOptions.chart"
+            [xaxis]="topReportsByViewsChartOptions.xaxis" [yaxis]="topReportsByViewsChartOptions.yaxis"
+            [colors]="topReportsByViewsChartOptions.colors"
+            [plotOptions]="topReportsByViewsChartOptions.plotOptions"
+            [dataLabels]="topReportsByViewsChartOptions.dataLabels"
+            [tooltip]="topReportsByViewsChartOptions.tooltip" height="280"></apx-chart>
+          <ng-template #noRptViews>
+            <div class="chart-empty"><i class="pi pi-file"></i><span>No view data available</span></div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Chart 2: Top Reports by Time Spent -->
       <div class="card">
         <div class="card-header">
           <span class="card-title"><i class="pi pi-sort-amount-down"></i> Top Reports by Time Spent</span>
         </div>
         <div class="chart-body">
-          <apx-chart *ngIf="topReportsChartOptions; else noRpt"
+          <apx-chart *ngIf="topReportsChartOptions; else noRptTime"
             [series]="topReportsChartOptions.series" [chart]="topReportsChartOptions.chart"
             [xaxis]="topReportsChartOptions.xaxis" [yaxis]="topReportsChartOptions.yaxis"
             [colors]="topReportsChartOptions.colors"
             [plotOptions]="topReportsChartOptions.plotOptions"
             [dataLabels]="topReportsChartOptions.dataLabels"
             [tooltip]="topReportsChartOptions.tooltip" height="280"></apx-chart>
-          <ng-template #noRpt><div class="chart-empty"><i class="pi pi-file"></i><span>No data</span></div></ng-template>
+          <ng-template #noRptTime>
+            <div class="chart-empty"><i class="pi pi-file"></i><span>No time spent data</span></div>
+          </ng-template>
         </div>
       </div>
 
+      <!-- Chart 3: Users Based on Time -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title"><i class="pi pi-users"></i> Top Users by Time Spent</span>
+          <span class="card-title"><i class="pi pi-users"></i> Users Based on Time</span>
         </div>
         <div class="chart-body">
           <apx-chart *ngIf="topUsersChartOptions; else noUsers"
@@ -113,10 +140,13 @@
             [dataLabels]="topUsersChartOptions.dataLabels"
             [colors]="topUsersChartOptions.colors"
             [tooltip]="topUsersChartOptions.tooltip" height="280"></apx-chart>
-          <ng-template #noUsers><div class="chart-empty"><i class="pi pi-users"></i><span>No data</span></div></ng-template>
+          <ng-template #noUsers>
+            <div class="chart-empty"><i class="pi pi-users"></i><span>No user time data</span></div>
+          </ng-template>
         </div>
       </div>
 
+      <!-- Chart 4: Activity Timeline -->
       <div class="card">
         <div class="card-header">
           <span class="card-title"><i class="pi pi-chart-line"></i> Activity Timeline</span>
@@ -128,343 +158,17 @@
             [colors]="viewsChartOptions.colors" [stroke]="viewsChartOptions.stroke"
             [fill]="viewsChartOptions.fill" [tooltip]="viewsChartOptions.tooltip"
             [grid]="viewsChartOptions.grid" height="280"></apx-chart>
-          <ng-template #noData><div class="chart-empty"><i class="pi pi-chart-line"></i><span>No data</span></div></ng-template>
+          <ng-template #noData>
+            <div class="chart-empty"><i class="pi pi-chart-line"></i><span>No timeline data</span></div>
+          </ng-template>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="pi pi-chart-bar"></i> User Activity Trend</span>
-        </div>
-        <div class="chart-body">
-          <apx-chart *ngIf="activityTrendChartOptions; else noTrend"
-            [series]="activityTrendChartOptions.series" [chart]="activityTrendChartOptions.chart"
-            [xaxis]="activityTrendChartOptions.xaxis"
-            [stroke]="activityTrendChartOptions.stroke"
-            [colors]="activityTrendChartOptions.colors" height="280"></apx-chart>
-          <ng-template #noTrend><div class="chart-empty"><i class="pi pi-calendar"></i><span>No data</span></div></ng-template>
-        </div>
-      </div>
     </div>
 
   </ng-container>
 
-  <!-- ══ USER VIEW ═════════════════════════════════════════════ -->
-  <ng-container *ngIf="activeView === 'user' && dataLoaded && !loading">
-
-    <!-- ─ No user selected ─ -->
-    <div *ngIf="!selectedUserId">
-      <div class="user-split">
-
-        <!-- User table -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title"><i class="pi pi-users"></i> Users</span>
-            <button class="icon-btn" (click)="exportUserListToCSV()" title="Export CSV">
-              <i class="pi pi-download"></i>
-            </button>
-          </div>
-          <div class="search-wrap">
-            <i class="pi pi-search search-icon"></i>
-            <input class="search-input" type="text" placeholder="Search users…"
-              [(ngModel)]="userSearchQuery" (input)="filterUsers()" />
-          </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Department</th>
-                  <th>View Count</th>
-                  <th>Last Active</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let user of getPaginatedUsers()"
-                  (click)="selectUser(user.id)"
-                  class="tbl-row" [class.tbl-row--sel]="selectedUserId === user.id">
-                  <td>
-                    <div class="user-cell">
-                      <app-avatar [name]="user.name"></app-avatar>
-                      <span class="user-name">{{ user.name }}</span>
-                    </div>
-                  </td>
-                  <td class="t-muted">{{ user.department }}</td>
-                  <td class="t-bold">{{ user.totalViews }}</td>
-                  <td class="t-muted">{{ user.lastActivity === 'Never' ? '—' : (user.lastActivity | date:'shortDate') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div *ngIf="getPageNumbers().length > 1" class="pagination">
-            <button *ngFor="let page of getPageNumbers()" (click)="changePage(page)"
-              class="pg-btn" [class.pg-btn--on]="currentPage === page">{{ page }}</button>
-          </div>
-        </div>
-
-        <!-- Promo card -->
-        <div class="promo-card">
-          <div class="promo-icon-wrap"><i class="pi pi-chart-scatter"></i></div>
-          <h3 class="promo-title">Deep User Insights</h3>
-          <p class="promo-body">Per-user workspace views, time spent per dashboard, consumption methods, and full activity timeline — all in one dedicated page.</p>
-          <a routerLink="/users" class="promo-btn">
-            <i class="pi pi-arrow-right"></i> Open User Activity
-          </a>
-        </div>
-      </div>
-
-      <!-- Mini charts -->
-      <div class="chart-grid chart-grid--2" style="margin-top:1.25rem">
-        <div class="card">
-          <div class="card-header"><span class="card-title"><i class="pi pi-chart-bar"></i> User Activity Trend</span></div>
-          <div class="chart-body">
-            <apx-chart *ngIf="activityTrendChartOptions"
-              [series]="activityTrendChartOptions.series" [chart]="activityTrendChartOptions.chart"
-              [xaxis]="activityTrendChartOptions.xaxis" [stroke]="activityTrendChartOptions.stroke"
-              [colors]="activityTrendChartOptions.colors" height="240"></apx-chart>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title"><i class="pi pi-users"></i> Top Users</span></div>
-          <div class="chart-body">
-            <apx-chart *ngIf="topUsersChartOptions"
-              [series]="topUsersChartOptions.series" [chart]="topUsersChartOptions.chart"
-              [xaxis]="topUsersChartOptions.xaxis"
-              [plotOptions]="topUsersChartOptions.plotOptions"
-              [dataLabels]="topUsersChartOptions.dataLabels"
-              [colors]="topUsersChartOptions.colors" height="240"></apx-chart>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─ User detail ─ -->
-    <div *ngIf="selectedUserId">
-
-      <!-- Detail header card -->
-      <div class="card detail-header-card">
-        <div class="detail-user-id">
-          <app-avatar [name]="getUserDisplayName(selectedUserId)" class="avatar-lg"></app-avatar>
-          <div>
-            <h2 class="detail-name">{{ getUserDisplayName(selectedUserId) }}</h2>
-            <p class="detail-email">{{ selectedUserId }}</p>
-          </div>
-        </div>
-        <button class="back-btn" (click)="selectedUserId = null">
-          <i class="pi pi-arrow-left"></i> All Users
-        </button>
-      </div>
-
-      <!-- KPIs -->
-      <div class="kpi-row kpi-row--5">
-        <div class="kpi-card kpi--blue">
-          <i class="pi pi-eye kpi-icon"></i>
-          <div class="kpi-body"><span class="kpi-label">Total Views</span><span class="kpi-value">{{ userMetrics.totalViews || 0 }}</span></div>
-        </div>
-        <div class="kpi-card kpi--indigo">
-          <i class="pi pi-file kpi-icon"></i>
-          <div class="kpi-body"><span class="kpi-label">Reports</span><span class="kpi-value">{{ userMetrics.reports?.length || 0 }}</span></div>
-        </div>
-        <div class="kpi-card kpi--teal">
-          <i class="pi pi-server kpi-icon"></i>
-          <div class="kpi-body"><span class="kpi-label">Workspaces</span><span class="kpi-value">{{ userMetrics.workspaces?.length || 0 }}</span></div>
-        </div>
-        <div class="kpi-card kpi--violet">
-          <i class="pi pi-calendar kpi-icon"></i>
-          <div class="kpi-body"><span class="kpi-label">Active Days</span><span class="kpi-value">{{ userMetrics.activityByDate?.length || 0 }}</span></div>
-        </div>
-        <div class="kpi-card kpi--amber">
-          <i class="pi pi-clock kpi-icon"></i>
-          <div class="kpi-body"><span class="kpi-label">Time Spent</span><span class="kpi-value">{{ formatTimeSpent(userMetrics.estimatedTimeSpent) }}</span></div>
-        </div>
-      </div>
-
-      <!-- Time by workspace -->
-      <div *ngIf="groupedTabTimeSpent?.length" class="card time-card">
-        <div class="card-header">
-          <span class="card-title"><i class="pi pi-clock"></i> Time by Workspace & Report</span>
-        </div>
-        <div class="ws-grid">
-          <div *ngFor="let group of groupedTabTimeSpent" class="ws-box">
-            <div class="ws-box-header">
-              <span class="ws-name" [title]="group.workspaceName">
-                <i class="pi pi-folder"></i>{{ transformDisplayName(group.workspaceName) }}
-              </span>
-              <span class="ws-total">{{ formatTimeSpent(group.totalSeconds) }}</span>
-            </div>
-            <div class="ws-items">
-              <div *ngFor="let item of group.items" class="ws-item">
-                <div class="ws-item-left">
-                  <span class="ws-item-report" [title]="item.reportName">{{ transformDisplayName(item.reportName) }}</span>
-                  <span class="ws-item-tab">{{ item.tabName || 'Overview' }}</span>
-                </div>
-                <span class="time-badge">{{ formatTimeSpent(item.totalSeconds) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts: pie + wide timeline -->
-      <div class="chart-grid chart-grid--2">
-        <div class="card">
-          <div class="card-header"><span class="card-title"><i class="pi pi-chart-pie"></i> Workspace Time</span></div>
-          <div class="chart-body">
-            <apx-chart *ngIf="userWorkspacePieChartOptions; else noWs"
-              [series]="userWorkspacePieChartOptions.series" [chart]="userWorkspacePieChartOptions.chart"
-              [labels]="userWorkspacePieChartOptions.labels" [colors]="userWorkspacePieChartOptions.colors"
-              [dataLabels]="userWorkspacePieChartOptions.dataLabels"
-              [legend]="userWorkspacePieChartOptions.legend"
-              [tooltip]="userWorkspacePieChartOptions.tooltip" height="300"></apx-chart>
-            <ng-template #noWs><div class="chart-empty"><i class="pi pi-chart-pie"></i><span>No time data</span></div></ng-template>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><span class="card-title"><i class="pi pi-sort-amount-down"></i> Top Reports</span></div>
-          <div class="chart-body">
-            <apx-chart *ngIf="userReportViewsChartOptions; else noRpts"
-              [series]="userReportViewsChartOptions.series" [chart]="userReportViewsChartOptions.chart"
-              [labels]="userReportViewsChartOptions.labels" [colors]="userReportViewsChartOptions.colors"
-              [dataLabels]="userReportViewsChartOptions.dataLabels"
-              [legend]="userReportViewsChartOptions.legend"
-              [tooltip]="userReportViewsChartOptions.tooltip" height="300"></apx-chart>
-            <ng-template #noRpts><div class="chart-empty"><i class="pi pi-file"></i><span>No report data</span></div></ng-template>
-          </div>
-        </div>
-
-        <div class="card card--wide">
-          <div class="card-header"><span class="card-title"><i class="pi pi-calendar"></i> Activity Timeline</span></div>
-          <div class="chart-body">
-            <apx-chart *ngIf="activityTimelineChartOptions; else noAct"
-              [series]="activityTimelineChartOptions.series" [chart]="activityTimelineChartOptions.chart"
-              [xaxis]="activityTimelineChartOptions.xaxis"
-              [colors]="activityTimelineChartOptions.colors" height="240"></apx-chart>
-            <ng-template #noAct><div class="chart-empty"><i class="pi pi-calendar-times"></i><span>No activity data</span></div></ng-template>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /selectedUserId -->
-  </ng-container>
-
-  <!-- ══ ACCESS VIEW ═══════════════════════════════════════════ -->
-  <ng-container *ngIf="activeView === 'access' && dataLoaded && !loading">
-
-    <div *ngIf="loadingAccessMatrix" class="state-loader">
-      <span class="spinner"></span>
-      <p>Building access matrix…</p>
-    </div>
-
-    <div *ngIf="!loadingAccessMatrix">
-      <div class="search-wrap search-wrap--lg">
-        <i class="pi pi-search search-icon"></i>
-        <input class="search-input" type="text"
-          placeholder="Search dashboards…" [(ngModel)]="dashboardAccessSearchQuery" />
-      </div>
-
-      <div *ngIf="getFilteredAccessDashboards().length === 0" class="empty-state">
-        <i class="pi pi-search"></i>
-        <h4>No dashboards found</h4>
-        <p>No match for "{{ dashboardAccessSearchQuery }}"</p>
-      </div>
-
-      <div *ngIf="getFilteredAccessDashboards().length > 0" class="access-list">
-
-        <div *ngFor="let report of getFilteredAccessDashboards()" class="card access-card">
-
-          <div class="access-card-head">
-            <div>
-              <span class="badge badge--slate">Power BI Report</span>
-              <h3 class="access-report-name">{{ transformDisplayName(report.reportName) }}</h3>
-            </div>
-            <div class="access-stats">
-              <span class="stat-chip">Assigned <strong>{{ report.assignedUsersCount }}</strong></span>
-              <span class="stat-chip stat-chip--blue">Active <strong>{{ report.activeUsersCount }}</strong></span>
-            </div>
-          </div>
-
-          <div class="access-card-body">
-            <div *ngIf="report.users.length === 0" class="empty-state empty-state--sm">
-              <i class="pi pi-users"></i><p>No users found</p>
-            </div>
-
-            <div *ngIf="report.users.length > 0">
-              <div class="access-controls">
-                <div class="search-wrap">
-                  <i class="pi pi-search search-icon"></i>
-                  <input class="search-input" type="text" placeholder="Search users…"
-                    [(ngModel)]="report.searchQuery" (input)="report.currentPage = 1" />
-                </div>
-                <select class="native-select" [(ngModel)]="report.accessFilter" (change)="report.currentPage = 1">
-                  <option value="all">All Users</option>
-                  <option value="assigned">Assigned Only</option>
-                  <option value="external">External Only</option>
-                </select>
-              </div>
-
-              <div *ngIf="getReportUsersTotalCount(report) === 0" class="empty-state empty-state--sm">
-                <i class="pi pi-filter-slash"></i><p>No users match filters</p>
-              </div>
-
-              <div *ngIf="getReportUsersTotalCount(report) > 0" class="table-wrap">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Department</th>
-                      <th>Access</th>
-                      <th>Views</th>
-                      <th>Last Viewed</th>
-                      <th>Time Spent</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let user of getPaginatedReportUsers(report)" class="tbl-row">
-                      <td>
-                        <div class="user-cell">
-                          <app-avatar [name]="user.name"></app-avatar>
-                          <div>
-                            <div class="user-name">{{ user.name }}</div>
-                            <div class="user-email">{{ user.email }}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="t-muted">{{ user.department }}</td>
-                      <td>
-                        <span *ngIf="user.hasAccess" class="badge badge--blue">Assigned</span>
-                        <span *ngIf="!user.hasAccess" class="badge badge--slate">External</span>
-                      </td>
-                      <td class="t-bold">{{ user.totalViews }}</td>
-                      <td class="t-muted">{{ user.lastActivity === 'Never' ? '—' : (user.lastActivity | date:'shortDate') }}</td>
-                      <td class="t-bold">{{ formatTimeSpent(user.estimatedTimeSpent) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <div *ngIf="getReportPageNumbers(report).length > 1" class="pagination">
-                  <button [disabled]="report.currentPage === 1"
-                    (click)="changeReportPage(report, report.currentPage - 1)"
-                    class="pg-btn"><i class="pi pi-chevron-left"></i></button>
-                  <button *ngFor="let page of getReportPageNumbers(report)"
-                    (click)="changeReportPage(report, page)"
-                    class="pg-btn" [class.pg-btn--on]="report.currentPage === page">{{ page }}</button>
-                  <button [disabled]="report.currentPage === getReportPageNumbers(report).length"
-                    (click)="changeReportPage(report, report.currentPage + 1)"
-                    class="pg-btn"><i class="pi pi-chevron-right"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /access-card -->
-      </div><!-- /access-list -->
-    </div>
-
-  </ng-container>
-
-</div><!-- /pg-wrap -->
-
+</div>
 
 <!-- ══ DATE POPUP ════════════════════════════════════════════════ -->
 <div *ngIf="showDatePopup" class="modal-backdrop" (click)="closeDatePopup()">

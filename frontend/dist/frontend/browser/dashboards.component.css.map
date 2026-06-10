@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/dashboards/dashboards.component.css"],
-  "sourcesContent": [".hide-scrollbar {\r\n  scrollbar-width: none;\r\n  -ms-overflow-style: none;\r\n}\r\n.hide-scrollbar::-webkit-scrollbar {\r\n  display: none;\r\n}\r\n.inactive-user {\r\n  opacity: 0.7;\r\n  color: #6b7280;\r\n}\r\n\r\n.inactive-user:hover {\r\n  opacity: 1;\r\n}"],
-  "mappings": ";AAAA,CAAC;AACC,mBAAiB;AACjB,sBAAoB;AACtB;AACA,CAJC,cAIc;AACb,WAAS;AACX;AACA,CAAC;AACC,WAAS;AACT,SAAO;AACT;AAEA,CALC,aAKa;AACZ,WAAS;AACX;",
-  "names": []
-}

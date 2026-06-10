@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
       height: 28px;
       border-radius: 50%;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 500;
       text-transform: uppercase;
     }
   `]
@@ -27,12 +27,13 @@ import { CommonModule } from '@angular/common';
 export class AvatarComponent implements OnInit {
   @Input() name: string = '';
 
-  private readonly blueShades = [
-    { solid: '#1e3a8a', bg: 'rgba(30, 58, 138, 0.12)' },
-    { solid: '#1d4ed8', bg: 'rgba(29, 78, 216, 0.12)' },
-    { solid: '#2563eb', bg: 'rgba(37, 99, 235, 0.12)' },
-    { solid: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
-    { solid: '#60a5fa', bg: 'rgba(96, 165, 250, 0.15)' }
+  private readonly pastelThemes = [
+    { solid: '#1a73e8', bg: '#e8f0fe' }, // Soft Blue
+    { solid: '#137333', bg: '#e6f4ea' }, // Soft Green
+    { solid: '#9333ea', bg: '#f3e8fd' }, // Soft Lavender
+    { solid: '#b06000', bg: '#fef7e0' }, // Soft Amber
+    { solid: '#c5221f', bg: '#fce8e6' }, // Soft Rose
+    { solid: '#007b83', bg: '#e4f7fb' }  // Soft Teal
   ];
 
   constructor() {}
@@ -51,8 +52,8 @@ export class AvatarComponent implements OnInit {
     for (let i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const index = Math.abs(hash) % this.blueShades.length;
-    const colorTheme = this.blueShades[index];
+    const index = Math.abs(hash) % this.pastelThemes.length;
+    const colorTheme = this.pastelThemes[index];
     
     return {
       'background-color': colorTheme.bg,

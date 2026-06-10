@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/components/select_with_search/select_with_search.component.css"],
-  "sourcesContent": ["\r\n\r\n.relative .absolute > * {\r\n  overflow: visible !important; /* Ensure dropdown contents are visible */\r\n}\r\n"],
-  "mappings": ";AAEA,CAAC,SAAS,CAAC,SAAS,EAAE;AACpB,YAAU;AACZ;",
-  "names": []
-}

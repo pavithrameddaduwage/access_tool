@@ -201,6 +201,7 @@ export class PowerBIDashboardComponent implements OnInit, OnDestroy {
   // Chart options
   viewsChartOptions: any;
   topReportsChartOptions: any;
+  topReportsByViewsChartOptions: any;
   topUsersChartOptions: any;
   userReportViewsChartOptions: any;
   activityTrendChartOptions: any;
@@ -308,12 +309,12 @@ userCounts = {
         yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
         dataLabels: {
           enabled: true,
-          style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
+          style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '500' },
           offsetX: -6,
           formatter: (v: number) => v > 0 ? `${v}h` : ''
         },
         tooltip: { y: { formatter: (v: number) => `${v}h` } },
-        colors: ['#f59e0b']
+        colors: ['#f6ad55']
       };
     }
 
@@ -324,7 +325,7 @@ userCounts = {
     this.prepareViewsChart();
     this.prepareTopReportsChart();
     this.prepareTopUsersChart();
-    this.prepareActivityTrendChart();
+    this.prepareTopReportsByViewsChart();
   }
 
   private prepareViewsChart() {
@@ -383,7 +384,7 @@ userCounts = {
           format: 'dd MMM yyyy'
         }
       },
-      colors: ['#2563eb'],
+      colors: ['#63b3ed'],
       fill: {
         type: 'gradient',
         gradient: {
@@ -429,25 +430,45 @@ userCounts = {
       chart: {
         type: 'bar',
         height: 300,
-        toolbar: { show: false },
-        events: {
-          dataPointSelection: (_: any, __: any, config: { dataPointIndex: number }) => {
-            const uid = users[config.dataPointIndex]?.userId;
-            if (uid) this.onTopUserChartClick(config.dataPointIndex);
-          }
-        }
+        toolbar: { show: false }
       },
       plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
       xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
       yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
       dataLabels: {
         enabled: true,
-        style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '600' },
+        style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '500' },
         offsetX: -6,
         formatter: (v: number) => v > 0 ? `${v}h` : ''
       },
-      colors: ['#6366f1'],
+      colors: ['#b794f4'],
       tooltip: { y: { formatter: (v: number) => `${v}h` } }
+    };
+  }
+
+  private prepareTopReportsByViewsChart() {
+    const reports = (this.metrics?.topReports || []).slice(0, 10);
+    if (!reports.length) { this.topReportsByViewsChartOptions = null; return; }
+
+    const categories = reports.map(r => {
+      const cleanName = this.transformDisplayName(r?.reportName || 'Unknown Report');
+      return cleanName.length > 25 ? cleanName.slice(0, 25) + '...' : cleanName;
+    });
+
+    this.topReportsByViewsChartOptions = {
+      series: [{ name: 'Views', data: reports.map(r => r.count) }],
+      chart: { type: 'bar', height: 280, toolbar: { show: false } },
+      plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
+      xaxis: { categories, labels: { style: { fontSize: '10px', colors: '#64748b' } } },
+      yaxis: { labels: { style: { fontSize: '11px', colors: '#334155', fontWeight: 500 } } },
+      dataLabels: {
+        enabled: true,
+        style: { fontSize: '10px', colors: ['#ffffff'], fontWeight: '500' },
+        offsetX: -6,
+        formatter: (v: number) => v > 0 ? `${v}` : ''
+      },
+      tooltip: { y: { formatter: (v: number) => `${v} views` } },
+      colors: ['#4fd1c5']
     };
   }
 
