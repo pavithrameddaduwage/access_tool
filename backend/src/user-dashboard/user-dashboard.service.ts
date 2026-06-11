@@ -64,8 +64,8 @@ async findOne(email: string) {
     email: assignments[0].email,
     userName: assignments[0].userName,
     department: assignments[0].department,
-    isActive: assignments[0].isActive,      // Add this
-    lastActiveAt: assignments[0].lastActiveAt, // Add this
+    isActive: assignments[0].isActive,      
+    lastActiveAt: assignments[0].lastActiveAt,  
     dashboards: assignments.map(a => a.dashboard.dashboard)
   };
 }

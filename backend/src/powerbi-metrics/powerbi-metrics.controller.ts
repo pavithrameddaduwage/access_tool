@@ -14,11 +14,11 @@ export class PowerBIMetricsController {
     @Query('startDate', new DefaultValuePipe(new Date(Date.now() - 24 * 60 * 60 * 1000)), ParseISO8601DatePipe) startDate: Date,
     @Query('endDate', new DefaultValuePipe(new Date()), ParseISO8601DatePipe) endDate: Date,
   ) {
-    // Convert to UTC and remove milliseconds
+ 
     const utcStart = new Date(startDate.toISOString().replace(/\.\d{3}Z$/, 'Z'));
     const utcEnd = new Date(endDate.toISOString().replace(/\.\d{3}Z$/, 'Z'));
     
-    // Validate 24-hour window
+    
     const hoursDiff = Math.abs(utcEnd.getTime() - utcStart.getTime()) / (1000 * 60 * 60);
     if (hoursDiff > 24) {
       throw new BadRequestException({

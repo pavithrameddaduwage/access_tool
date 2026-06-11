@@ -2558,7 +2558,7 @@ public async syncUsersFromLogs(): Promise<void> {
       viewerRoleId = insertRole[0].id;
     }
 
-    // 3. Insert users that don't exist
+ 
     let newUsersCount = 0;
     for (const email of emails) {
       const userRes = await manager.query('SELECT id FROM "user" WHERE email = $1', [email]);
@@ -2628,14 +2628,14 @@ public async getUserTimeSpentDistribution(
   const results = await query.getRawMany();
   
   if (results.length === 0) {
-    // FALLBACK: Heuristically estimate from views logs!
+   
     const logQuery = this.powerbiLogRepository
       .createQueryBuilder('log')
       .select('log.reportId', 'reportId')
       .addSelect('log.reportName', 'reportName')
       .addSelect('log.workspaceId', 'workspaceId')
       .addSelect('log.workSpaceName', 'workspaceName')
-      .addSelect('COUNT(log.id) * 120', 'totalSeconds') // 2 mins per view
+      .addSelect('COUNT(log.id) * 120', 'totalSeconds')  
       .where('LOWER(log.userId) = LOWER(:userId)', { userId })
       .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
       .andWhere("log.operation = 'ViewReport'")
@@ -2738,8 +2738,7 @@ async getDashboardUsage(
       report.viewerSet.add(log.userId);
     }
   });
-
-  // Page-wise time spent (from PowerBITimeSpent table)
+ 
   const pageQuery = this.powerbiTimeSpentRepository
     .createQueryBuilder('spent')
     .select('spent.tabName', 'tabName')
