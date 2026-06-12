@@ -40,6 +40,13 @@ const routeConfig: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'engagement-analytics',
+    loadChildren: () =>
+      import('../features/analytics/analytics.routes').then((m) => m.ANALYTICS_ROUTES),
+    canActivate: [authGuard],
+    title: 'Engagement Analytics'
+  },
+  {
     path: 'masterdata',
     component: FrameComponent,
     canActivate: [authGuard, roleGuard],
