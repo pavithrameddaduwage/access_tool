@@ -1,0 +1,53 @@
+-- ============================================================================
+-- 003_powerbi_activity_events.reference.sql
+-- ----------------------------------------------------------------------------
+-- ⚠️  DO NOT RUN. THIS TABLE ALREADY EXISTS.
+--
+-- Per the agreed plan, the Power BI audit sync REUSES the existing
+-- `activity_events` table instead of creating a new `powerbi_activity_events`.
+-- The live schema is owned by the existing entity (maintained via
+-- TypeORM synchronize:true):
+--     backend/src/activity/entities/pbi-activity-event.entity.ts
+--
+-- This file documents that existing schema so the migrations folder reflects
+-- the full data model. The existing table is a SUPERSET of the spec's
+-- `powerbi_activity_events` (it already has operation/workspace/dataset/raw_json
+-- and dedup on event_id), which is why we reuse it.
+--
+-- Spec -> existing column mapping:
+--   activity_type  -> operation
+--   activity_at    -> creation_time
+--   raw_event      -> raw_json
+--   request_id     -> request_id
+-- ============================================================================
+
+-- Existing table definition (informational only — created by the entity above):
+--
+-- CREATE TABLE activity_events (
+--   id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--   event_id             VARCHAR UNIQUE NOT NULL,   -- Microsoft Id (dedup key)
+--   user_id              VARCHAR NOT NULL,
+--   user_email           VARCHAR,
+--   operation            VARCHAR NOT NULL,          -- ViewReport, ExportReport, ...
+--   activity             VARCHAR,
+--   workspace_id         VARCHAR,
+--   workspace_name       VARCHAR,
+--   report_id            VARCHAR,
+--   report_name          VARCHAR,
+--   report_type          VARCHAR,
+--   dashboard_id         VARCHAR,
+--   dashboard_name       VARCHAR,
+--   dataset_id           VARCHAR,
+--   dataset_name         VARCHAR,
+--   client_ip            VARCHAR,
+--   user_agent           TEXT,
+--   is_success           BOOLEAN DEFAULT TRUE,
+--   distribution_method  VARCHAR,
+--   consumption_method   VARCHAR,
+--   creation_time        TIMESTAMP NOT NULL,        -- Microsoft CreationTime
+--   request_id           VARCHAR,
+--   raw_json             JSONB,                     -- full raw event
+--   pulled_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+-- Indexes: (user_id), (operation), (report_id), (workspace_id),
+--          (creation_time), (user_id, creation_time)

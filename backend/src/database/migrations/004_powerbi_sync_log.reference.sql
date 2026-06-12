@@ -1,0 +1,41 @@
+-- ============================================================================
+-- 004_powerbi_sync_log.reference.sql
+-- ----------------------------------------------------------------------------
+-- ⚠️  DO NOT RUN. THIS TABLE ALREADY EXISTS.
+--
+-- Per the agreed plan, the Power BI sync REUSES the existing `sync_log` table
+-- instead of creating a new `powerbi_sync_log`. The live schema is owned by:
+--     backend/src/sync-log/entities/pbi-sync-log.entity.ts
+-- (maintained via TypeORM synchronize:true)
+--
+-- IMPORTANT difference from the spec: the existing `sync_log` is multi-purpose
+-- (sync_type IN ('activity','workspaces','reports')), so `sync_date` is NOT
+-- globally UNIQUE the way the spec's `powerbi_sync_log` assumed. Per-day
+-- uniqueness for the activity sync must therefore be enforced on the pair
+-- (sync_type, sync_date), not on sync_date alone. See Step 4 sync service.
+--
+-- Spec -> existing column mapping:
+--   events_fetched  -> events_pulled
+--   events_inserted -> (not stored separately; folded into events_pulled / logs)
+--   pages_fetched   -> (not stored on existing table)
+--   started_at      -> started_at
+--   completed_at    -> completed_at
+--   status          -> status (success | failed | partial)
+--
+-- If Step 4 needs events_inserted / pages_fetched, those columns will be ADDED
+-- to the entity (additive, nullable) — flagged for approval before doing so,
+-- since it alters an existing table.
+-- ============================================================================
+
+-- Existing table definition (informational only — created by the entity above):
+--
+-- CREATE TABLE sync_log (
+--   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--   sync_type      VARCHAR NOT NULL,        -- activity | workspaces | reports
+--   sync_date      DATE,                    -- YYYY-MM-DD
+--   status         VARCHAR NOT NULL,        -- success | failed | partial
+--   events_pulled  INTEGER DEFAULT 0,
+--   error_message  TEXT,
+--   started_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   completed_at   TIMESTAMP
+-- );

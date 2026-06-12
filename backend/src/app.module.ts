@@ -22,7 +22,6 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './http-exception.filter';
-// import { PowerBIAnalyticsModule } from './powerbi-analytics/powerbi-analytics.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserMappingsModule } from './user-mappings/user-mappings.module';
 import { PowerBIMetricsModule } from './powerbi-metrics/powerbi-metrics.module';
@@ -30,10 +29,22 @@ import { WorkspaceMappingModule } from './workspace-mapping/workspace-mapping.mo
 import { ReportMappingModule } from './report-mapping/report-mapping.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 
+// Power BI Tracker Module Imports
+import { ScheduleModule } from '@nestjs/schedule';
+import { PowerBIModule } from './powerbi/powerbi.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
+import { ActivityModule } from './activity/activity.module';
+import { SyncLogModule } from './sync-log/sync-log.module';
+import { PbiSchedulerModule } from './scheduler/pbi-scheduler.module';
+import { TrackingModule } from './tracking/tracking.module';
+import { PowerBiSyncModule } from './powerbi/powerbi-sync.module';
+import { EngagementAnalyticsModule } from './analytics/engagement-analytics.module';
+
 @Module({
   imports: [ ConfigModule.forRoot({
     isGlobal: true,
   }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -52,7 +63,6 @@ import { AnalyticsModule } from './analytics/analytics.module';
         synchronize: true,
         logging: false,
         extra: {
-          // Set timezone for all database connections
           timezone: 'America/New_York'
         }
       }),
@@ -75,6 +85,14 @@ import { AnalyticsModule } from './analytics/analytics.module';
     WorkspaceMappingModule,
     ReportMappingModule,
     AnalyticsModule,
+    PowerBIModule,
+    WorkspacesModule,
+    ActivityModule,
+    SyncLogModule,
+    PbiSchedulerModule,
+    TrackingModule,
+    PowerBiSyncModule,
+    EngagementAnalyticsModule,
     ],
   controllers: [AppController],
   providers: [
