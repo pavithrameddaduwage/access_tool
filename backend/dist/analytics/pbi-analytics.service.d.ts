@@ -1,0 +1,30 @@
+import { Repository } from 'typeorm';
+import { PbiSession } from './entities/pbi-session.entity';
+import { PbiUsageSummary } from './entities/pbi-usage-summary.entity';
+import { PbiActivityEvent } from '../activity/entities/pbi-activity-event.entity';
+import { PbiWorkspace } from '../workspaces/entities/pbi-workspace.entity';
+import { PbiReport } from '../workspaces/entities/pbi-report.entity';
+import { PbiUser } from '../users/entities/pbi-user.entity';
+import { ConfigService } from '@nestjs/config';
+export declare class PbiAnalyticsService {
+    private sessionRepository;
+    private usageSummaryRepository;
+    private activityEventRepository;
+    private workspaceRepository;
+    private reportRepository;
+    private userRepository;
+    private configService;
+    private readonly logger;
+    constructor(sessionRepository: Repository<PbiSession>, usageSummaryRepository: Repository<PbiUsageSummary>, activityEventRepository: Repository<PbiActivityEvent>, workspaceRepository: Repository<PbiWorkspace>, reportRepository: Repository<PbiReport>, userRepository: Repository<PbiUser>, configService: ConfigService);
+    calculateSessionsForDate(dateStr: string): Promise<void>;
+    private createSessionFromEvents;
+    private aggregateSummaryForDate;
+    getOverview(from?: string, to?: string): Promise<any>;
+    getViews(workspaceId?: string, from?: string, to?: string): Promise<any[]>;
+    getTopReports(workspaceId?: string, from?: string, to?: string, limit?: number): Promise<any[]>;
+    getTopUsers(workspaceId?: string, from?: string, to?: string, limit?: number): Promise<any[]>;
+    getDuration(userId?: string, reportId?: string, from?: string, to?: string): Promise<any[]>;
+    getUserTimeline(userId: string, from?: string, to?: string): Promise<PbiActivityEvent[]>;
+    getReportDetail(reportId: string, from?: string, to?: string): Promise<any[]>;
+    getWorkspaceSummary(from?: string, to?: string): Promise<any[]>;
+}

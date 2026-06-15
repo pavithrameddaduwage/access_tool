@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -13,16 +13,24 @@ import { AuthService } from '../Auth/services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   formGroup: FormGroup = new FormGroup({
-    email: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required]),
+    email: new FormControl('admin', [Validators.required]),
+    password: new FormControl('admin', [Validators.required]),
   });
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router
   ) {}
+
+  ngOnInit() {
+    // Pre-populate with admin credentials
+    this.formGroup.patchValue({
+      email: 'admin',
+      password: 'admin'
+    });
+  }
 
   // handleSubmit() {
   //   if (this.formGroup.valid) {

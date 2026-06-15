@@ -1,4 +1,5 @@
 <div class="uo-wrap">
+  <div class="uo-shell">
 
   <!-- ═══ HEADER ═══ -->
   <div class="uo-header">
@@ -8,18 +9,25 @@
         <span class="live-dot"></span>
         Refreshed {{ lastRefreshedAt | date:'dd MMM yyyy, HH:mm' }}
       </p>
+      <p class="uo-intro">Track access, identify inactive users, and review under-used reports from one organized dashboard.</p>
     </div>
     <div class="uo-header-right">
-      <div class="view-tabs">
-        <button class="view-tab" [class.view-tab--on]="activeView === 'users'" (click)="switchView('users')">
-          <i class="pi pi-users"></i> Users
-        </button>
-        <button class="view-tab" [class.view-tab--on]="activeView === 'insights'" (click)="switchView('insights')">
-          <i class="pi pi-chart-bar"></i> Insights
-        </button>
+      <div class="control-group">
+        <span class="control-label">View</span>
+        <div class="view-tabs">
+          <button class="view-tab" [class.view-tab--on]="activeView === 'users'" (click)="switchView('users')">
+            <i class="pi pi-users"></i> Users
+          </button>
+          <button class="view-tab" [class.view-tab--on]="activeView === 'insights'" (click)="switchView('insights')">
+            <i class="pi pi-chart-bar"></i> Insights
+          </button>
+        </div>
       </div>
-      <div class="pill-row">
-        <button *ngFor="let p of timePeriods" (click)="loadAll(p.days)" class="pill" [class.pill--on]="selectedPeriod === p.days">{{ p.label }}</button>
+      <div class="control-group">
+        <span class="control-label">Window</span>
+        <div class="pill-row">
+          <button *ngFor="let p of timePeriods" (click)="loadAll(p.days)" class="pill" [class.pill--on]="selectedPeriod === p.days">{{ p.label }}</button>
+        </div>
       </div>
     </div>
   </div>
@@ -523,5 +531,7 @@
       </div><!-- /insights-grid -->
     </ng-container>
   </ng-container>
+
+  </div>
 
 </div>

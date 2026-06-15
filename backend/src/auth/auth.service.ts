@@ -190,7 +190,7 @@ async signIn(username: string, pass: string): Promise<any> {
     email: email,
     name: dbUser.name,
     userid: dbUser.id,
-    roles: dbUser.user_roles.map(role => role.role.role),
+    roles: dbUser.user_roles.map(role => role.role.role.toLowerCase()),
     department: aduser.department,
     location: aduser.location
   };

@@ -37,6 +37,16 @@ const powerbi_metrics_module_1 = require("./powerbi-metrics/powerbi-metrics.modu
 const workspace_mapping_module_1 = require("./workspace-mapping/workspace-mapping.module");
 const report_mapping_module_1 = require("./report-mapping/report-mapping.module");
 const analytics_module_1 = require("./analytics/analytics.module");
+const schedule_1 = require("@nestjs/schedule");
+const powerbi_module_1 = require("./powerbi/powerbi.module");
+const workspaces_module_1 = require("./workspaces/workspaces.module");
+const activity_module_1 = require("./activity/activity.module");
+const sync_log_module_1 = require("./sync-log/sync-log.module");
+const pbi_scheduler_module_1 = require("./scheduler/pbi-scheduler.module");
+const tracking_module_1 = require("./tracking/tracking.module");
+const powerbi_sync_module_1 = require("./powerbi/powerbi-sync.module");
+const engagement_analytics_module_1 = require("./analytics/engagement-analytics.module");
+const qa_agent_module_1 = require("./modules/qa-agent/qa-agent.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -45,6 +55,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
+            schedule_1.ScheduleModule.forRoot(),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -84,7 +95,16 @@ exports.AppModule = AppModule = __decorate([
             powerbi_metrics_module_1.PowerBIMetricsModule,
             workspace_mapping_module_1.WorkspaceMappingModule,
             report_mapping_module_1.ReportMappingModule,
-            analytics_module_1.AnalyticsModule,],
+            analytics_module_1.AnalyticsModule,
+            powerbi_module_1.PowerBIModule,
+            workspaces_module_1.WorkspacesModule,
+            activity_module_1.ActivityModule,
+            sync_log_module_1.SyncLogModule,
+            pbi_scheduler_module_1.PbiSchedulerModule,
+            tracking_module_1.TrackingModule,
+            powerbi_sync_module_1.PowerBiSyncModule,
+            engagement_analytics_module_1.EngagementAnalyticsModule,
+            qa_agent_module_1.QaAgentModule,],
         controllers: [app_controller_1.AppController],
         providers: [
             app_service_1.AppService,

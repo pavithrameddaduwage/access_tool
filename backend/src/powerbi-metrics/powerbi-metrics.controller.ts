@@ -89,7 +89,7 @@ async collectRawData(
   );
   
   const powerBILogs = allLogs.flat().filter(
-    entry => entry && entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport'
+    entry => entry && entry.Workload === 'PowerBI' && entry.Operation
   );
   
   await this.powerbiMetricsService.saveRawLogs(powerBILogs);

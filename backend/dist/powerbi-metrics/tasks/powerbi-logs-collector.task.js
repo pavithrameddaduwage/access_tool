@@ -27,6 +27,10 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
         this.logger = new common_1.Logger(PowerBILogsCollectorTask_1.name);
     }
     async onApplicationBootstrap() {
+        if (process.env.POWER_BI_BOOTSTRAP_SYNC !== 'true') {
+            this.logger.log('Startup Power BI metrics sync is disabled. Set POWER_BI_BOOTSTRAP_SYNC=true to enable it.');
+            return;
+        }
         this.logger.log('Application bootstrap: triggering Workspace/Dashboard mappings sync to Master Data');
         await this.powerbiMetricsService.syncMappingsToMasterData();
         this.logger.log('Application bootstrap: triggering User roster sync from Power BI logs');
@@ -58,10 +62,10 @@ let PowerBILogsCollectorTask = PowerBILogsCollectorTask_1 = class PowerBILogsCol
                 this.logger.error(`Failed to process URI ${uri}: ${e.message}`);
                 return [];
             })));
-            const powerBILogs = allLogs.flat().filter(entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport');
+            const powerBILogs = allLogs.flat().filter(entry => entry.Workload === 'PowerBI' && entry.Operation);
             this.logger.debug(`Fetched ${powerBILogs.length} raw Power BI logs`);
             if (powerBILogs.length === 0) {
-                this.logger.log('No Power BI ViewReport logs found');
+                this.logger.log('No Power BI logs found');
                 return;
             }
             const newLogs = await this.filterExistingLogs(powerBILogs);

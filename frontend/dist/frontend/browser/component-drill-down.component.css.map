@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;48285a034546a7812d5604f71f8a7b7f717d52a64da674a896f1e6b732fd76fd;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/component-drill-down/component-drill-down.component.ts"],
+  "sourcesContent": ["\n      .back { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; padding: 0; margin-bottom: 12px; }\n      h2 { margin: 0 0 4px; font-size: 18px; }\n      h3 { margin: 20px 0 8px; font-size: 14px; color: #344054; }\n      .meta { font-size: 13px; color: #667085; }\n    "],
+  "mappings": ";AACM,CAAC;AAAO,cAAY;AAAM,UAAQ;AAAM,SAAO;AAAS,UAAQ;AAAS,aAAW;AAAM,WAAS;AAAG,iBAAe;AAAM;AAC3H;AAAK,UAAQ,EAAE,EAAE;AAAK,aAAW;AAAM;AACvC;AAAK,UAAQ,KAAK,EAAE;AAAK,aAAW;AAAM,SAAO;AAAS;AAC1D,CAAC;AAAO,aAAW;AAAM,SAAO;AAAS;",
+  "names": []
+}

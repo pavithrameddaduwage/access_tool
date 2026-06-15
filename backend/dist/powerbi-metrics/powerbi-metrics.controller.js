@@ -68,7 +68,7 @@ let PowerBIMetricsController = class PowerBIMetricsController {
                 return [];
             }
         }));
-        const powerBILogs = allLogs.flat().filter(entry => entry && entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport');
+        const powerBILogs = allLogs.flat().filter(entry => entry && entry.Workload === 'PowerBI' && entry.Operation);
         await this.powerbiMetricsService.saveRawLogs(powerBILogs);
         return {
             message: `Saved ${powerBILogs.length} raw logs${wasClamped ? ' (Start date clamped to 7-day limit: ' + adjustedStart.toISOString() + ')' : ''}`,

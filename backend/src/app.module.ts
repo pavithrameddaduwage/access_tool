@@ -39,6 +39,7 @@ import { PbiSchedulerModule } from './scheduler/pbi-scheduler.module';
 import { TrackingModule } from './tracking/tracking.module';
 import { PowerBiSyncModule } from './powerbi/powerbi-sync.module';
 import { EngagementAnalyticsModule } from './analytics/engagement-analytics.module';
+import { QaAgentModule } from './modules/qa-agent/qa-agent.module';
 
 @Module({
   imports: [ ConfigModule.forRoot({
@@ -93,6 +94,7 @@ import { EngagementAnalyticsModule } from './analytics/engagement-analytics.modu
     TrackingModule,
     PowerBiSyncModule,
     EngagementAnalyticsModule,
+    QaAgentModule,
     ],
   controllers: [AppController],
   providers: [

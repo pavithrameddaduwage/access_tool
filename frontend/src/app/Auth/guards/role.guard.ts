@@ -12,9 +12,12 @@ export const roleGuard: CanActivateFn = (route, state) => {
   }
 
   const decoded: any = jwtDecode(token);
-  const requiredRole = route.data['role'];
+  const requiredRole = String(route.data['role'] ?? '').toLowerCase();
+  const userRoles = Array.isArray(decoded.roles)
+    ? decoded.roles.map((role: string) => String(role).toLowerCase())
+    : [];
   
-  if (decoded.roles.includes(requiredRole)) {
+  if (userRoles.includes(requiredRole)) {
     return true;
   } else {
     alert('You are not authorized to access this page');

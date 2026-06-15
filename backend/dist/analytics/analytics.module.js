@@ -13,15 +13,33 @@ const analytics_controller_1 = require("./analytics.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const login_event_entity_1 = require("./entities/login-event.entity");
 const login_tracking_service_1 = require("./login-tracking.service");
+const pbi_session_entity_1 = require("./entities/pbi-session.entity");
+const pbi_usage_summary_entity_1 = require("./entities/pbi-usage-summary.entity");
+const pbi_activity_event_entity_1 = require("../activity/entities/pbi-activity-event.entity");
+const pbi_workspace_entity_1 = require("../workspaces/entities/pbi-workspace.entity");
+const pbi_report_entity_1 = require("../workspaces/entities/pbi-report.entity");
+const pbi_user_entity_1 = require("../users/entities/pbi-user.entity");
+const pbi_analytics_service_1 = require("./pbi-analytics.service");
+const pbi_analytics_controller_1 = require("./pbi-analytics.controller");
 let AnalyticsModule = class AnalyticsModule {
 };
 exports.AnalyticsModule = AnalyticsModule;
 exports.AnalyticsModule = AnalyticsModule = __decorate([
     (0, common_1.Module)({
-        controllers: [analytics_controller_1.AnalyticsController],
-        providers: [analytics_service_1.AnalyticsService, login_tracking_service_1.LoginTrackingService],
-        imports: [typeorm_1.TypeOrmModule.forFeature([login_event_entity_1.LoginEvent])],
-        exports: [login_tracking_service_1.LoginTrackingService]
+        controllers: [analytics_controller_1.AnalyticsController, pbi_analytics_controller_1.PbiAnalyticsController],
+        providers: [analytics_service_1.AnalyticsService, login_tracking_service_1.LoginTrackingService, pbi_analytics_service_1.PbiAnalyticsService],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([
+                login_event_entity_1.LoginEvent,
+                pbi_session_entity_1.PbiSession,
+                pbi_usage_summary_entity_1.PbiUsageSummary,
+                pbi_activity_event_entity_1.PbiActivityEvent,
+                pbi_workspace_entity_1.PbiWorkspace,
+                pbi_report_entity_1.PbiReport,
+                pbi_user_entity_1.PbiUser,
+            ]),
+        ],
+        exports: [login_tracking_service_1.LoginTrackingService, pbi_analytics_service_1.PbiAnalyticsService]
     })
 ], AnalyticsModule);
 //# sourceMappingURL=analytics.module.js.map

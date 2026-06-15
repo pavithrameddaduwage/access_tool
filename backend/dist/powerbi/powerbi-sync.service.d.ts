@@ -1,0 +1,30 @@
+import { Repository } from 'typeorm';
+import { PowerBIService } from './powerbi.service';
+import { SyncLogService } from '../sync-log/sync-log.service';
+import { PbiAnalyticsService } from '../analytics/pbi-analytics.service';
+import { PbiActivityEvent } from '../activity/entities/pbi-activity-event.entity';
+import { ComponentViewCount } from '../tracking/entities/component-view-count.entity';
+export declare class PowerBiSyncService {
+    private readonly powerBiService;
+    private readonly syncLogService;
+    private readonly analyticsService;
+    private readonly activityRepo;
+    private readonly viewCountRepo;
+    private readonly logger;
+    constructor(powerBiService: PowerBIService, syncLogService: SyncLogService, analyticsService: PbiAnalyticsService, activityRepo: Repository<PbiActivityEvent>, viewCountRepo: Repository<ComponentViewCount>);
+    handleDailySync(): Promise<void>;
+    handleRetryFailedDays(): Promise<void>;
+    private recalculateSessions;
+    syncDay(dateStr: string): Promise<number>;
+    private buildHourUrl;
+    private callWithRetry;
+    private batchUpsert;
+    private updateViewCountsFromAudit;
+    private upsertViewCount;
+    private pickComponentId;
+    private pickComponentName;
+    private getFailedDates;
+    private statusOf;
+    private errMsg;
+    private sleep;
+}

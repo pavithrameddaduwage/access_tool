@@ -467,7 +467,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         const query = this.powerbiLogRepository.createQueryBuilder('log')
             .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
             .andWhere('log.workload = :workload', { workload: 'PowerBI' })
-            .andWhere('log.operation = :operation', { operation: 'ViewReport' })
             .orderBy('log.creationTime', 'ASC');
         if (workspaceId) {
             query.andWhere('log.workspaceId = :workspaceId', { workspaceId });
@@ -522,7 +521,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             }));
             return response.data
                 .filter(entry => entry.Workload === 'PowerBI' &&
-                entry.Operation === 'ViewReport')
+                entry.Operation)
                 .map(entry => ({
                 Id: entry.Id,
                 UserId: entry.UserId,
@@ -581,7 +580,6 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 where: {
                     creationTime: (0, typeorm_2.Between)(startDate, endDate),
                     workload: 'PowerBI',
-                    operation: 'ViewReport',
                 },
             });
             if (existingCount > 0) {
@@ -596,7 +594,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 this.logger.error(`Failed to process URI ${uri}: ${e.message}`);
                 return [];
             })));
-            const powerBILogs = allLogs.flat().filter(entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport');
+            const powerBILogs = allLogs.flat().filter(entry => entry.Workload === 'PowerBI' && entry.Operation);
             const newLogs = await this.filterExistingLogs(powerBILogs);
             if (newLogs.length > 0) {
                 await this.saveRawLogs(newLogs);

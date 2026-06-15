@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;484c91694593a9d004ab7d9ae5fc5d65a0b692b4d572a6f44c3a850c2345ba32;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/user-drill-down/user-drill-down.component.ts"],
+  "sourcesContent": ["\n      .back { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; padding: 0; margin-bottom: 12px; }\n      h2 { margin: 0 0 8px; }\n      h3 { margin: 20px 0 8px; font-size: 14px; color: #344054; }\n      .summary { display: flex; gap: 20px; font-size: 13px; color: #475467; margin-bottom: 8px; }\n      .tbl { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; }\n      th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eaecf0; }\n      th { color: #667085; font-size: 11px; text-transform: uppercase; }\n      .empty { text-align: center; color: #98a2b3; padding: 16px; }\n      .loading { color: #98a2b3; }\n    "],
+  "mappings": ";AACM,CAAC;AAAO,cAAY;AAAM,UAAQ;AAAM,SAAO;AAAS,UAAQ;AAAS,aAAW;AAAM,WAAS;AAAG,iBAAe;AAAM;AAC3H;AAAK,UAAQ,EAAE,EAAE;AAAK;AACtB;AAAK,UAAQ,KAAK,EAAE;AAAK,aAAW;AAAM,SAAO;AAAS;AAC1D,CAAC;AAAU,WAAS;AAAM,OAAK;AAAM,aAAW;AAAM,SAAO;AAAS,iBAAe;AAAK;AAC1F,CAAC;AAAM,SAAO;AAAM,mBAAiB;AAAU,cAAY;AAAM,aAAW;AAAM;AAClF;AAAI;AAAK,cAAY;AAAM,WAAS,IAAI;AAAM,iBAAe,IAAI,MAAM;AAAS;AAChF;AAAK,SAAO;AAAS,aAAW;AAAM,kBAAgB;AAAW;AACjE,CAAC;AAAQ,cAAY;AAAQ,SAAO;AAAS,WAAS;AAAM;AAC5D,CAAC;AAAU,SAAO;AAAS;",
+  "names": []
+}

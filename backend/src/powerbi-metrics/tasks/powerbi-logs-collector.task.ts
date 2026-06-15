@@ -18,6 +18,11 @@ export class PowerBILogsCollectorTask implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
+    if (process.env.POWER_BI_BOOTSTRAP_SYNC !== 'true') {
+      this.logger.log('Startup Power BI metrics sync is disabled. Set POWER_BI_BOOTSTRAP_SYNC=true to enable it.');
+      return;
+    }
+
     this.logger.log('Application bootstrap: triggering Workspace/Dashboard mappings sync to Master Data');
     await this.powerbiMetricsService.syncMappingsToMasterData();
 
@@ -65,13 +70,13 @@ export class PowerBILogsCollectorTask implements OnApplicationBootstrap {
       );
 
       const powerBILogs = allLogs.flat().filter(
-        entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport'
+        entry => entry.Workload === 'PowerBI' && entry.Operation
       );
 
       this.logger.debug(`Fetched ${powerBILogs.length} raw Power BI logs`);
 
       if (powerBILogs.length === 0) {
-        this.logger.log('No Power BI ViewReport logs found');
+        this.logger.log('No Power BI logs found');
         return;
       }
 

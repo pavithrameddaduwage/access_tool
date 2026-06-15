@@ -895,7 +895,6 @@ export class PowerBIMetricsService {
     const query = this.powerbiLogRepository.createQueryBuilder('log')
       .where('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
       .andWhere('log.workload = :workload', { workload: 'PowerBI' })
-      .andWhere('log.operation = :operation', { operation: 'ViewReport' })
       .orderBy('log.creationTime', 'ASC');
 
     if (workspaceId) {
@@ -957,11 +956,11 @@ export class PowerBIMetricsService {
         })
       );
 
-      // Filter for Power BI ViewReport operations
+      // Keep all Power BI operations so downstream metrics can count views, filters, exports, etc.
       return response.data
         .filter(entry => 
           entry.Workload === 'PowerBI' && 
-          entry.Operation === 'ViewReport'
+          entry.Operation
         )
         .map(entry => ({
           Id: entry.Id,
@@ -1043,7 +1042,6 @@ public async collectDailyLogs(): Promise<void> {
       where: {
         creationTime: Between(startDate, endDate),
         workload: 'PowerBI',
-        operation: 'ViewReport',
       },
     });
 
@@ -1067,7 +1065,7 @@ public async collectDailyLogs(): Promise<void> {
     );
 
     const powerBILogs = allLogs.flat().filter(
-      entry => entry.Workload === 'PowerBI' && entry.Operation === 'ViewReport'
+      entry => entry.Workload === 'PowerBI' && entry.Operation
     );
 
     // Additional duplicate check at the record level

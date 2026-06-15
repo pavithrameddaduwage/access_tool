@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/masterdata/roles/roles.component.css"],
+  "sourcesContent": [".modal-wrapper {\r\n    opacity: 0;\r\n    pointer-events: none;\r\n    transition: opacity 0.3s ease-in-out;\r\n  }\r\n  \r\n  .modal-wrapper.active {\r\n    opacity: 1;\r\n    pointer-events: all;\r\n  }"],
+  "mappings": ";AAAA,CAAC;AACG,WAAS;AACT,kBAAgB;AAChB,cAAY,QAAQ,KAAK;AAC3B;AAEA,CAND,aAMe,CAAC;AACb,WAAS;AACT,kBAAgB;AAClB;",
+  "names": []
+}
