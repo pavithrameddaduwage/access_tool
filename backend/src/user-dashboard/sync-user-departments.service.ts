@@ -14,7 +14,7 @@ export class SyncUserDepartmentsService {
     private httpService: HttpService,
   ) {}
 
-  url = `http://localhost:${process.env.PORT || 4006}/auth`;
+  url = `http://localhost:${process.env.PORT || 4019}/auth`;
 
   async syncDepartments() {
     const uniqueEmails = await this.userDashboardRepository

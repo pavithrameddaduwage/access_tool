@@ -16,7 +16,7 @@ async function bootstrap() {
         exposedHeaders: 'Content-Range,X-Content-Range'
     });
     app.useGlobalPipes(new common_1.ValidationPipe());
-    await app.listen(process.env.PORT ?? 4006);
+    await app.listen(process.env.PORT ?? 4019);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
