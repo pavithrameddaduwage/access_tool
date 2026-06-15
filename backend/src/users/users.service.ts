@@ -307,7 +307,7 @@ findUserByEmail(email: string) {
       formatted.push({
         name: u.name || u.email.split('@')[0],
         email: u.email,
-        department: userDash?.department || 'Warehouse Operations'
+        department: userDash?.department || null
       });
     }
     return formatted;

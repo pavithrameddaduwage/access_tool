@@ -98,8 +98,8 @@ async signIn(username: string, pass: string): Promise<any> {
     aduser = {
       mail: dbUser.email,
       cn: dbUser.name,
-      department: 'Management',
-      location: 'Corporate'
+      department: null,
+      location: null
     };
   } else {
     // First authenticate with AD
@@ -125,8 +125,8 @@ async signIn(username: string, pass: string): Promise<any> {
         aduser = {
           mail: dbUser.email,
           cn: dbUser.name || username,
-          department: userDash[0]?.department || 'Warehouse Operations',
-          location: 'Corporate'
+          department: userDash[0]?.department || null,
+          location: null
         };
       } else {
         throw new UnauthorizedException('Active Directory authentication failed - Please check your credentials');
