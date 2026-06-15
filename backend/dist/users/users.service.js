@@ -171,34 +171,10 @@ let UsersService = class UsersService {
             formatted.push({
                 name: u.name || u.email.split('@')[0],
                 email: u.email,
-                department: userDash?.department || 'Warehouse Operations'
+                department: userDash?.department || null
             });
         }
         return formatted;
-    }
-    async seedDummyAdmin() {
-        let adminRole = await this.roleRepository.findOne({ where: { role: 'Admin' } });
-        if (!adminRole) {
-            adminRole = new role_master_entity_1.RoleMaster();
-            adminRole.role = 'Admin';
-            adminRole = await this.roleRepository.save(adminRole);
-        }
-        let adminUser = await this.userRepository.findOne({
-            where: { email: 'admin@hgusa.com' },
-            relations: ['user_roles', 'user_roles.role']
-        });
-        if (!adminUser) {
-            adminUser = new user_entity_1.User();
-            adminUser.email = 'admin@hgusa.com';
-            adminUser.name = 'Admin User';
-            adminUser.is_active = true;
-            adminUser = await this.userRepository.save(adminUser);
-            const userRole = new user_roles_entity_1.UserRoles();
-            userRole.user = adminUser;
-            userRole.role = adminRole;
-            await this.userrolesRepository.save(userRole);
-        }
-        return this.findUserByEmail('admin@hgusa.com');
     }
     async remove(id) {
         const user = await this.userRepository.findOne({ where: { id } });
