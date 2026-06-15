@@ -91,18 +91,8 @@ async signIn(username: string, pass: string): Promise<any> {
   let dbUser: any = null;
   let aduser: any = null;
 
-  if (username === 'admin' && pass === 'admin') {
-    console.log('Bypassing AD authentication for local admin account...');
-    dbUser = await this.usersService.seedDummyAdmin();
-    email = dbUser.email;
-    aduser = {
-      mail: dbUser.email,
-      cn: dbUser.name,
-      department: null,
-      location: null
-    };
-  } else {
-    // First authenticate with AD
+  {
+    // Authenticate with AD
     let adauthentication = await this.authenticateuser(`${username}@hgusa.com`, pass);
     if (!adauthentication) {
       console.log('First domain auth failed, trying second domain...');
@@ -146,8 +136,8 @@ async signIn(username: string, pass: string): Promise<any> {
           aduser = {
             mail: dbUser.email,
             cn: dbUser.name || username,
-            department: userDash[0]?.department || 'Warehouse Operations',
-            location: 'Corporate'
+            department: userDash[0]?.department || null,
+            location: null
           };
           email = dbUser.email;
         } else {
