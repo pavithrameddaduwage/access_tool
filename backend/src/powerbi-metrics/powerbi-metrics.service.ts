@@ -651,8 +651,12 @@ export class PowerBIMetricsService {
     await this.powerbiLogRepository.save(entities);
     // After saving raw logs, infer time-spent per user/report/tab and persist to PowerBITimeSpent
     try {
-      const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
-      const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
+      // Use only real inter-event gaps — no hardcoded fallback durations.
+      // A session boundary is detected when the gap between consecutive events
+      // exceeds the maximum realistic continuous-viewing window (1 hour).
+      // Gaps beyond that threshold or for the final event in a session are skipped
+      // so that only measured time is recorded.
+      const MAX_SESSION_GAP_MS = 60 * 60 * 1000; // 1 hour — sessions reset beyond this
 
       // Group logs by userId + reportId
       const grouped: Record<string, PowerBILogEntry[]> = {};
@@ -672,13 +676,12 @@ export class PowerBIMetricsService {
         for (let i = 0; i < logsForKey.length; i++) {
           const cur = logsForKey[i];
           const next = logsForKey[i + 1];
-          let durationMs = DEFAULT_PAGE_VIEW_MS;
-          if (next) {
-            const diff = new Date(next.CreationTime).getTime() - new Date(cur.CreationTime).getTime();
-            if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
-              durationMs = diff;
-            }
-          }
+
+          // Only record time when we have a real, measurable gap within the session window.
+          // The last event in a session contributes no duration (no fabricated default).
+          if (!next) continue;
+          const diff = new Date(next.CreationTime).getTime() - new Date(cur.CreationTime).getTime();
+          if (diff <= 0 || diff > MAX_SESSION_GAP_MS) continue;
 
           const tabName = cur.ArtifactName || cur.ItemName || cur.ReportName || 'Main Page';
           const aggKey = `${(cur.UserId || '').toLowerCase()}::${cur.ReportId || ''}::${tabName}`;
@@ -693,7 +696,7 @@ export class PowerBIMetricsService {
               seconds: 0
             };
           }
-          aggregated[aggKey].seconds += Math.round(durationMs / 1000);
+          aggregated[aggKey].seconds += Math.round(diff / 1000);
         }
       }
 
@@ -1719,26 +1722,26 @@ private async getUserEstimatedTimeSpent(
     if (logs.length === 0) {
       return 0;
     }
-    if (logs.length === 1) {
-      return 120; // 2 minutes default for 1 page view
-    }
+
+    // Only accumulate real, measured gaps between consecutive events.
+    // A gap exceeding 1 hour indicates the user left and returned — treat it as
+    // a session boundary and skip it (no fabricated duration added).
+    // The final event in each session contributes no duration since there is no
+    // subsequent event to measure against.
+    const MAX_SESSION_GAP_MS = 60 * 60 * 1000; // 1 hour
 
     let totalDurationSeconds = 0;
-    const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
-    const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
 
     for (let i = 0; i < logs.length - 1; i++) {
       const currentLogTime = new Date(logs[i].creationTime).getTime();
       const nextLogTime = new Date(logs[i + 1].creationTime).getTime();
       const diff = nextLogTime - currentLogTime;
 
-      if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
+      if (diff > 0 && diff <= MAX_SESSION_GAP_MS) {
         totalDurationSeconds += diff / 1000;
-      } else {
-        totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
       }
+      // Gaps beyond the session boundary are skipped — no fallback inserted.
     }
-    totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
 
     return Math.round(totalDurationSeconds);
   } catch (error) {
@@ -2626,31 +2629,12 @@ public async getUserTimeSpentDistribution(
     .orderBy('SUM(spent.durationSeconds)', 'DESC');
 
   const results = await query.getRawMany();
-  
-  if (results.length === 0) {
-   
-    const logQuery = this.powerbiLogRepository
-      .createQueryBuilder('log')
-      .select('log.reportId', 'reportId')
-      .addSelect('log.reportName', 'reportName')
-      .addSelect('log.workspaceId', 'workspaceId')
-      .addSelect('log.workSpaceName', 'workspaceName')
-      .addSelect('COUNT(log.id) * 120', 'totalSeconds')  
-      .where('LOWER(log.userId) = LOWER(:userId)', { userId })
-      .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-      .andWhere("log.operation = 'ViewReport'")
-      .groupBy('log.reportId, log.reportName, log.workspaceId, log.workSpaceName')
-      .orderBy('COUNT(log.id)', 'DESC');
 
-    const fallbackLogs = await logQuery.getRawMany();
-    return fallbackLogs.map(r => ({
-      reportId: r.reportId,
-      reportName: r.reportName || 'Unknown Report',
-      workspaceId: r.workspaceId || 'Unknown',
-      workspaceName: r.workspaceName === 'PersonalWorkspace' ? 'Personal Workspace' : (r.workspaceName || 'Personal Workspace'),
-      tabName: 'Overview',
-      totalSeconds: parseInt(r.totalSeconds || '0', 10)
-    }));
+  // No fallback with fabricated durations — if the time-spent table has no
+  // data yet for this user/period, return an empty array so the UI shows
+  // real zeroes rather than invented numbers.
+  if (results.length === 0) {
+    return [];
   }
 
   return results.map(r => ({
