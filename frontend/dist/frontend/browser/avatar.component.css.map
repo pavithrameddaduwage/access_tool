@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;ffe7fdd8a72ddca7b0ecf58d2a3359ddde2990bb7b6fb3cfb153ca8bd2a3e612;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/components/avatar/avatar.component.ts"],
-  "sourcesContent": ["\n    .user-avatar {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      width: 28px;\n      height: 28px;\n      border-radius: 50%;\n      font-size: 11px;\n      font-weight: 500;\n      text-transform: uppercase;\n    }\n  "],
-  "mappings": ";AACI,CAAC;AACC,WAAS;AACT,eAAa;AACb,mBAAiB;AACjB,SAAO;AACP,UAAQ;AACR,iBAAe;AACf,aAAW;AACX,eAAa;AACb,kBAAgB;AAClB;",
-  "names": []
-}

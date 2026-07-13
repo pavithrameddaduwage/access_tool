@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;dc609d96c1a47acf0a3b46ae2f3209ce130cf5e11766724759569bb75fd8db8b;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/analytics-dashboard.component.ts"],
-  "sourcesContent": ["\n      .page { padding: 24px; max-width: 1200px; margin: 0 auto; }\n      .bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }\n      h1 { font-size: 22px; margin: 0; color: #101828; }\n      .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }\n      .content { margin-top: 20px; background: transparent; }\n    "],
-  "mappings": ";AACM,CAAC;AAAO,WAAS;AAAM,aAAW;AAAQ,UAAQ,EAAE;AAAM;AAC1D,CAAC;AAAM,WAAS;AAAM,mBAAiB;AAAe,eAAa;AAAQ,aAAW;AAAM,OAAK;AAAM,iBAAe;AAAM;AAC5H;AAAK,aAAW;AAAM,UAAQ;AAAG,SAAO;AAAS;AACjD,CAAC;AAAW,WAAS;AAAM,OAAK;AAAM,eAAa;AAAQ,aAAW;AAAM;AAC5E,CAAC;AAAU,cAAY;AAAM,cAAY;AAAa;",
-  "names": []
-}

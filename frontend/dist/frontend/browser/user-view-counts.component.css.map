@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;309a0c8292623ab233d075c0d891ece121f7c4d80d830ae7c9416d98142d2723;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/user-view-counts/user-view-counts.component.ts"],
-  "sourcesContent": ["\n      .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }\n      th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eaecf0; }\n      th { color: #667085; font-size: 11px; text-transform: uppercase; }\n      .badge { background: #eff8ff; color: #175cd3; padding: 2px 8px; border-radius: 12px; font-size: 11px; }\n      .empty { text-align: center; color: #98a2b3; padding: 16px; }\n    "],
-  "mappings": ";AACM,CAAC;AAAM,SAAO;AAAM,mBAAiB;AAAU,aAAW;AAAM;AAChE;AAAI;AAAK,cAAY;AAAM,WAAS,IAAI;AAAM,iBAAe,IAAI,MAAM;AAAS;AAChF;AAAK,SAAO;AAAS,aAAW;AAAM,kBAAgB;AAAW;AACjE,CAAC;AAAQ,cAAY;AAAS,SAAO;AAAS,WAAS,IAAI;AAAK,iBAAe;AAAM,aAAW;AAAM;AACtG,CAAC;AAAQ,cAAY;AAAQ,SAAO;AAAS,WAAS;AAAM;",
-  "names": []
-}

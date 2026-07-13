@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;ce0c12f5091cbcccdadfdf46a7728e8b0fa5eaed52b48891ee7011a5698b0702;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/components/header-user/header-user.component.ts"],
-  "sourcesContent": ["\n    :host {\n      display: flex;\n      align-items: center;\n    }\n    .header-user {\n      display: flex;\n      align-items: center;\n      gap: 0.5rem;\n    }\n    .header-welcome {\n      font-size: 0.8125rem;\n      font-weight: 400;\n      color: #9ca3af;\n    }\n    .header-username {\n      font-size: 0.8125rem;\n      font-weight: 500;\n      color: #374151;\n    }\n  "],
-  "mappings": ";AACI;AACE,WAAS;AACT,eAAa;AACf;AACA,CAAC;AACC,WAAS;AACT,eAAa;AACb,OAAK;AACP;AACA,CAAC;AACC,aAAW;AACX,eAAa;AACb,SAAO;AACT;AACA,CAAC;AACC,aAAW;AACX,eAAa;AACb,SAAO;AACT;",
-  "names": []
-}

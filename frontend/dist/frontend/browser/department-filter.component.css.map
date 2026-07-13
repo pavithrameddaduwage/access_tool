@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;c3ca1f7219db2461a22c9245e7f4a720369e48d4250a8ce0b49f06eab2f57163;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/shared/components/department-filter/department-filter.component.ts"],
-  "sourcesContent": ["\n      .dept-filter { padding: 6px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; color: #475467; background: #fff; min-width: 160px; }\n    "],
-  "mappings": ";AACM,CAAC;AAAc,WAAS,IAAI;AAAM,UAAQ,IAAI,MAAM;AAAS,iBAAe;AAAK,aAAW;AAAM,SAAO;AAAS,cAAY;AAAM,aAAW;AAAO;",
-  "names": []
-}

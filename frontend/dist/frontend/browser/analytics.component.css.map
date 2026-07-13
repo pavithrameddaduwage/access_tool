@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/analytics/analytics.component.css"],
-  "sourcesContent": [".animate-fade-in {\r\n    animation: fadeIn 0.3s ease-in-out;\r\n  }\r\n  \r\n  @keyframes fadeIn {\r\n    from { opacity: 0; transform: translateY(5px); }\r\n    to { opacity: 1; transform: translateY(0); }\r\n  }"],
-  "mappings": ";AAAA,CAAC;AACG,aAAW,OAAO,KAAK;AACzB;AAEA,WAHa;AAIX;AAAO,aAAS;AAAG,eAAW,WAAW;AAAM;AAC/C;AAAK,aAAS;AAAG,eAAW,WAAW;AAAI;AAC7C;",
-  "names": []
-}

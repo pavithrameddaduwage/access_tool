@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/navbar/navbar.component.css"],
-  "sourcesContent": [":host {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  width: 220px;\n  background: #ffffff;\n  border-right: 1px solid #e8eaed;\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  z-index: 40;\n  overflow-y: auto;\n}\n\n.sidebar-footer {\n  padding: 0.75rem 1rem;\n  border-top: 1px solid #e8eaed;\n  margin-top: auto;\n}\n\n.sidebar-logout-btn {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  width: 100%;\n  background: none;\n  border: none;\n  padding: 0.4rem 0.25rem;\n  font-size: 0.8125rem;\n  font-weight: 400;\n  color: #6b7280;\n  cursor: pointer;\n  border-radius: 4px;\n  transition: color 0.15s, background 0.15s;\n}\n\n.sidebar-logout-btn:hover {\n  color: #111827;\n  background: #f4f5f7;\n  border: none;\n}\n\n.sidebar-logout-btn i {\n  font-size: 0.875rem;\n}"],
-  "mappings": ";AAAA;AACE,WAAS;AACT,kBAAgB;AAChB,UAAQ;AACR,SAAO;AACP,cAAY;AACZ,gBAAc,IAAI,MAAM;AACxB,YAAU;AACV,OAAK;AACL,QAAM;AACN,UAAQ;AACR,WAAS;AACT,cAAY;AACd;AAEA,CAAC;AACC,WAAS,QAAQ;AACjB,cAAY,IAAI,MAAM;AACtB,cAAY;AACd;AAEA,CAAC;AACC,WAAS;AACT,eAAa;AACb,OAAK;AACL,SAAO;AACP,cAAY;AACZ,UAAQ;AACR,WAAS,OAAO;AAChB,aAAW;AACX,eAAa;AACb,SAAO;AACP,UAAQ;AACR,iBAAe;AACf,cAAY,MAAM,KAAK,EAAE,WAAW;AACtC;AAEA,CAhBC,kBAgBkB;AACjB,SAAO;AACP,cAAY;AACZ,UAAQ;AACV;AAEA,CAtBC,mBAsBmB;AAClB,aAAW;AACb;",
-  "names": []
-}

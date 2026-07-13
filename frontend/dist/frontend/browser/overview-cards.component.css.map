@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;dec40178b6aa75318776f24a6be45156e6b0f5d83ff3d8fe2c4fd3e1b7b1e122;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/overview-cards/overview-cards.component.ts"],
-  "sourcesContent": ["\n      .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }\n      .card { background: #fff; border: 1px solid #eaecf0; border-radius: 12px; padding: 16px; }\n      .label { font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: .03em; }\n      .value { font-size: 28px; font-weight: 700; color: #101828; margin-top: 6px; }\n      .value.sm { font-size: 16px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n      .sub { font-size: 12px; color: #667085; margin-top: 4px; }\n    "],
-  "mappings": ";AACM,CAAC;AAAQ,WAAS;AAAM,yBAAuB,OAAO,QAAQ,EAAE,OAAO,KAAK,EAAE;AAAO,OAAK;AAAM;AAChG,CAAC;AAAO,cAAY;AAAM,UAAQ,IAAI,MAAM;AAAS,iBAAe;AAAM,WAAS;AAAM;AACzF,CAAC;AAAQ,aAAW;AAAM,SAAO;AAAS,kBAAgB;AAAW,kBAAgB;AAAO;AAC5F,CAAC;AAAQ,aAAW;AAAM,eAAa;AAAK,SAAO;AAAS,cAAY;AAAK;AAC7E,CADC,KACK,CAAC;AAAK,aAAW;AAAM,eAAa;AAAK,YAAU;AAAQ,iBAAe;AAAU,eAAa;AAAQ;AAC/G,CAAC;AAAM,aAAW;AAAM,SAAO;AAAS,cAAY;AAAK;",
-  "names": []
-}

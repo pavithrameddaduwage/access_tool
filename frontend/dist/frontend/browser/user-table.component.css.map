@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;053f1bf12914693bbd1b832a7273ea10fe3f8c9ac73eebc92319b44189e01806;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/user-table/user-table.component.ts"],
-  "sourcesContent": ["\n      .tbl { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; }\n      th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eaecf0; }\n      th { color: #667085; font-weight: 600; font-size: 12px; text-transform: uppercase; }\n      .sortable { cursor: pointer; user-select: none; }\n      .row { cursor: pointer; }\n      .row:hover { background: #f9fafb; }\n      .empty { text-align: center; color: #98a2b3; padding: 24px; }\n    "],
-  "mappings": ";AACM,CAAC;AAAM,SAAO;AAAM,mBAAiB;AAAU,cAAY;AAAM,aAAW;AAAM;AAClF;AAAI;AAAK,cAAY;AAAM,WAAS,KAAK;AAAM,iBAAe,IAAI,MAAM;AAAS;AACjF;AAAK,SAAO;AAAS,eAAa;AAAK,aAAW;AAAM,kBAAgB;AAAW;AACnF,CAAC;AAAW,UAAQ;AAAS,uBAAa;AAAb,eAAa;AAAM;AAChD,CAAC;AAAM,UAAQ;AAAS;AACxB,CADC,GACG;AAAS,cAAY;AAAS;AAClC,CAAC;AAAQ,cAAY;AAAQ,SAAO;AAAS,WAAS;AAAM;",
-  "names": []
-}
