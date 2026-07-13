@@ -105,6 +105,15 @@ export declare class PowerBIMetricsController {
             deactivatedAt: Date;
         }[];
     }>;
+    getWorkspaceMembers(groupId: string): Promise<any[]>;
+    addWorkspaceMember(groupId: string, body: {
+        emailAddress: string;
+        accessRight: string;
+    }): Promise<any>;
+    updateWorkspaceMember(groupId: string, userId: string, body: {
+        accessRight: string;
+    }): Promise<any>;
+    removeWorkspaceMember(groupId: string, userId: string): Promise<any>;
     recordTimeSpent(data: {
         userId: string;
         reportId: string;

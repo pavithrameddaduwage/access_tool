@@ -42,12 +42,40 @@ export class PowerBILogsCollectorTask implements OnApplicationBootstrap {
       this.logger.debug(`Time window: ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
       const accessToken = await this.powerbiMetricsService.getAccessToken();
-      this.logger.debug('Access token retrieved successfully');
-      await this.powerbiMetricsService.ensureSubscription(accessToken);
-      this.logger.debug('Subscription checked/ensured');
+      this.logger.debug('Power BI access token retrieved successfully');
+      const managementToken = await this.powerbiMetricsService.getOffice365ManagementApiAccessToken();
+      this.logger.debug('Office 365 Management API access token retrieved successfully');
+
+      try {
+        await this.powerbiMetricsService.ensureSubscription(managementToken);
+        this.logger.debug('Subscription checked/ensured');
+      } catch (subError) {
+        this.logger.warn('Subscription check/ensure failed (may require Office 365 Management API permissions)', {
+          status: subError.response?.status,
+          message: subError.message
+        });
+        // Continue anyway - subscription may already exist
+      }
       
-      const contentUris = await this.powerbiMetricsService.getContentUris(accessToken, startDate, endDate);
-      this.logger.debug(`Found ${contentUris.length} content URIs`);
+      let contentUris: string[] = [];
+      try {
+        contentUris = await this.powerbiMetricsService.getContentUris(managementToken, startDate, endDate);
+        this.logger.debug(`Found ${contentUris.length} content URIs`);
+      } catch (uriError) {
+        if (uriError.response?.status === 401) {
+          this.logger.warn(
+            'Failed to retrieve content URIs: 401 Unauthorized. ' +
+            'This requires Office 365 Management API permissions with Audit.Read scope. ' +
+            'Audit log collection will be disabled until the app has proper Office 365 Management API access.'
+          );
+        } else {
+          this.logger.error('Failed to retrieve content URIs', {
+            status: uriError.response?.status,
+            message: uriError.message
+          });
+        }
+        return;
+      }
 
       if (contentUris.length === 0) {
         this.logger.log('No content URIs found for this period');
@@ -56,7 +84,7 @@ export class PowerBILogsCollectorTask implements OnApplicationBootstrap {
 
       const allLogs = await Promise.all(
         contentUris.map(uri => 
-          this.powerbiMetricsService.getLogEntries(uri, accessToken)
+          this.powerbiMetricsService.getLogEntries(uri, managementToken)
             .catch(e => {
               this.logger.error(`Failed to process URI ${uri}: ${e.message}`);
               return [];

@@ -1,5 +1,5 @@
 // src/powerbi-metrics/powerbi-metrics.service.ts
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Observable, from, forkJoin } from 'rxjs';
 import { map, mergeMap, reduce, tap } from 'rxjs/operators';
@@ -119,17 +119,124 @@ export class PowerBIMetricsService {
     const tenantId = this.configService.get<string>('TENANT_ID');
     const clientId = this.configService.get<string>('CLIENT_ID');
     const clientSecret = this.configService.get<string>('CLIENT_SECRET');
-    
+
+    if (!tenantId || !clientId || !clientSecret) {
+      throw new Error('Power BI credentials are not configured');
+    }
+
     const tokenEndpoint = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
-    
+
+    const params = new URLSearchParams();
+    params.append('client_id', clientId);
+    params.append('scope', 'https://analysis.windows.net/powerbi/api/.default');
+    params.append('client_secret', clientSecret);
+    params.append('grant_type', 'client_credentials');
+
+    const response = await this.httpService.post(tokenEndpoint, params).toPromise();
+    return response.data.access_token;
+  }
+
+  public async getOffice365ManagementApiAccessToken(): Promise<string> {
+    const tenantId = this.configService.get<string>('TENANT_ID');
+    const clientId = this.configService.get<string>('CLIENT_ID');
+    const clientSecret = this.configService.get<string>('CLIENT_SECRET');
+
+    if (!tenantId || !clientId || !clientSecret) {
+      throw new Error('Office 365 Management API credentials are not configured');
+    }
+
+    const tokenEndpoint = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
     const params = new URLSearchParams();
     params.append('client_id', clientId);
     params.append('scope', 'https://manage.office.com/.default');
     params.append('client_secret', clientSecret);
     params.append('grant_type', 'client_credentials');
-    
+
     const response = await this.httpService.post(tokenEndpoint, params).toPromise();
     return response.data.access_token;
+  }
+
+  public async getWorkspaceMembers(groupId: string): Promise<any[]> {
+    if (groupId === '000000') {
+      this.logger.warn(`Skip workspace members lookup for personal workspace placeholder id ${groupId}`);
+      return [];
+    }
+
+    const accessToken = await this.getAccessToken();
+    try {
+      const response = await this.httpService.get(
+        `https://api.powerbi.com/v1.0/myorg/groups/${groupId}/users`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      ).toPromise();
+
+      const responseData = response?.data;
+      if (Array.isArray(responseData)) {
+        return responseData;
+      }
+      return responseData?.value || [];
+    } catch (error: any) {
+      const status = error?.response?.status || 500;
+      const message = error?.response?.data?.error?.message || error?.response?.data?.message || error?.message || 'Failed to load workspace members';
+      this.logger.error(`Failed to load members for workspace ${groupId}: ${message}`, error?.stack);
+      throw new HttpException({ message }, status);
+    }
+  }
+
+  public async addWorkspaceMember(groupId: string, payload: { emailAddress: string; accessRight: string }): Promise<any> {
+    const accessToken = await this.getAccessToken();
+    const response = await this.httpService.post(
+      `https://api.powerbi.com/v1.0/myorg/groups/${groupId}/users`,
+      {
+        emailAddress: payload.emailAddress,
+        accessRight: payload.accessRight || 'Viewer',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    ).toPromise();
+
+    return response?.data || { success: true };
+  }
+
+  public async updateWorkspaceMember(groupId: string, userId: string, payload: { accessRight: string }): Promise<any> {
+    const accessToken = await this.getAccessToken();
+    const response = await this.httpService.patch(
+      `https://api.powerbi.com/v1.0/myorg/groups/${groupId}/users/${userId}`,
+      {
+        accessRight: payload.accessRight,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    ).toPromise();
+
+    return response?.data || { success: true };
+  }
+
+  public async removeWorkspaceMember(groupId: string, userId: string): Promise<any> {
+    const accessToken = await this.getAccessToken();
+    const response = await this.httpService.delete(
+      `https://api.powerbi.com/v1.0/myorg/groups/${groupId}/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    ).toPromise();
+
+    return response?.data || { success: true };
   }
 
   public async ensureSubscription(accessToken: string): Promise<void> {

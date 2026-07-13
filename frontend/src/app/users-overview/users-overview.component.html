@@ -69,7 +69,7 @@
         </div>
 
         <div class="user-list-scroll">
-          <div
+            <div
             *ngFor="let user of getPaginatedUsers()"
             class="user-row"
             [class.user-row--active]="selectedUserId === user.id"
@@ -79,7 +79,7 @@
             <app-avatar [name]="user.name" class="avatar-sm"></app-avatar>
             <div class="user-row-info">
               <span class="user-row-name">{{ user.name }}</span>
-              <span class="user-row-dept">{{ user.department }}</span>
+              <span class="user-row-dept" *ngIf="user.department && user.department !== '—' && user.department !== '-'">{{ user.department }}</span>
             </div>
             <div class="user-row-views">
               <span class="views-badge" [class.views-badge--zero]="user.isZeroView">{{ user.totalViews }}</span>

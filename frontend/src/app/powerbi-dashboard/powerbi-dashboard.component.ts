@@ -164,6 +164,12 @@ export class PowerBIDashboardComponent implements OnInit, OnDestroy {
   dashboardAccessData: any[] = [];
   loadingAccessMatrix = false;
   dashboardAccessSearchQuery = '';
+  selectedWorkspaceGroupId: string | null = null;
+  workspaceMembers: any[] = [];
+  workspaceMemberForm = { emailAddress: '', accessRight: 'Viewer' };
+  workspaceMemberLoading = false;
+  workspaceMemberError = '';
+  selectedWorkspaceMember: any | null = null;
 
   selectedPeriod = 30;
   isUserListExpanded = false;
@@ -1045,6 +1051,10 @@ async loadData(days: number): Promise<void> {
       if (this.activeView === 'access') {
         await this.loadAccessMatrix();
       }
+
+      if (this.selectedWorkspaceGroupId) {
+        await this.loadWorkspaceMembers();
+      }
       
       this.prepareCharts();
       
@@ -1079,6 +1089,83 @@ async loadData(days: number): Promise<void> {
     } finally {
       this.loading = false;
       this.loadingUnusedReports = false;
+    }
+  }
+
+  async loadWorkspaceMembers(): Promise<void> {
+    if (!this.selectedWorkspaceGroupId) {
+      this.workspaceMembers = [];
+      this.workspaceMemberError = '';
+      return;
+    }
+
+    this.workspaceMemberLoading = true;
+    this.workspaceMemberError = '';
+    this.workspaceMembers = [];
+    try {
+      const members: any = await this.powerBIMetricsService.getWorkspaceMembers(this.selectedWorkspaceGroupId).toPromise();
+      this.workspaceMembers = Array.isArray(members?.value)
+        ? members.value
+        : Array.isArray(members)
+          ? members
+          : [];
+    } catch (error: any) {
+      console.error('Error loading workspace members:', error);
+      this.workspaceMemberError = error?.error?.message || error?.message || 'Unable to load workspace members';
+      this.workspaceMembers = [];
+    } finally {
+      this.workspaceMemberLoading = false;
+    }
+  }
+
+  async addWorkspaceMember(): Promise<void> {
+    if (!this.selectedWorkspaceGroupId || !this.workspaceMemberForm.emailAddress.trim()) {
+      this.workspaceMemberError = 'Enter a valid email address';
+      return;
+    }
+
+    this.workspaceMemberLoading = true;
+    this.workspaceMemberError = '';
+    try {
+      const result = await this.powerBIMetricsService.addWorkspaceMember(this.selectedWorkspaceGroupId, {
+        emailAddress: this.workspaceMemberForm.emailAddress.trim(),
+        accessRight: this.workspaceMemberForm.accessRight,
+      }).toPromise();
+
+      if (result?.success === false) {
+        this.workspaceMemberError = 'Unable to add member';
+      } else {
+        this.workspaceMemberForm = { emailAddress: '', accessRight: 'Viewer' };
+        await this.loadWorkspaceMembers();
+      }
+    } catch (error) {
+      this.workspaceMemberError = 'Unable to add member';
+    } finally {
+      this.workspaceMemberLoading = false;
+    }
+  }
+
+  async updateWorkspaceMember(member: any, accessRight: string): Promise<void> {
+    if (!this.selectedWorkspaceGroupId || !member?.id) return;
+
+    this.workspaceMemberLoading = true;
+    try {
+      await this.powerBIMetricsService.updateWorkspaceMember(this.selectedWorkspaceGroupId, member.id, { accessRight }).toPromise();
+      await this.loadWorkspaceMembers();
+    } finally {
+      this.workspaceMemberLoading = false;
+    }
+  }
+
+  async removeWorkspaceMember(member: any): Promise<void> {
+    if (!this.selectedWorkspaceGroupId || !member?.id) return;
+
+    this.workspaceMemberLoading = true;
+    try {
+      await this.powerBIMetricsService.removeWorkspaceMember(this.selectedWorkspaceGroupId, member.id).toPromise();
+      await this.loadWorkspaceMembers();
+    } finally {
+      this.workspaceMemberLoading = false;
     }
   }
 
@@ -1378,10 +1465,27 @@ async updateReports(): Promise<void> {
     this.selectedReport = null;
   }
 }
-onWorkspaceChange() {
+private resolveSelectedWorkspaceGroupId(): string | null {
+  if (!this.selectedWorkspace || this.selectedWorkspace === 'all') {
+    return null;
+  }
+
+  return typeof this.selectedWorkspace === 'string'
+    ? this.selectedWorkspace
+    : (this.selectedWorkspace as any).id || null;
+}
+
+async onWorkspaceChange() {
   this.selectedReport = null;
-  this.updateReports();
-  this.loadData(this.selectedPeriod);
+  this.selectedWorkspaceGroupId = this.resolveSelectedWorkspaceGroupId();
+
+  if (this.selectedWorkspaceGroupId) {
+    await this.loadWorkspaceMembers();
+  } else {
+    this.workspaceMembers = [];
+  }
+
+  await this.loadData(this.selectedPeriod);
   this.startOrSwitchTracking();
 }
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, DefaultValuePipe, BadRequestException, ParseIntPipe, Post, Body } from '@nestjs/common';
+import { Controller, Get, Query, DefaultValuePipe, BadRequestException, ParseIntPipe, Post, Body, Patch, Delete, Param } from '@nestjs/common';
 import { ParseISO8601DatePipe } from './parse-date.pipe';
 import { PowerBIMetricsService } from './powerbi-metrics.service';
 import { Repository } from 'typeorm';
@@ -296,6 +296,36 @@ async getUserCounts(
     workspaceId,
     reportId
   );
+}
+
+@Get('workspace/:groupId/members')
+async getWorkspaceMembers(@Param('groupId') groupId: string) {
+  return this.powerbiMetricsService.getWorkspaceMembers(groupId);
+}
+
+@Post('workspace/:groupId/members')
+async addWorkspaceMember(
+  @Param('groupId') groupId: string,
+  @Body() body: { emailAddress: string; accessRight: string },
+) {
+  return this.powerbiMetricsService.addWorkspaceMember(groupId, body);
+}
+
+@Patch('workspace/:groupId/members/:userId')
+async updateWorkspaceMember(
+  @Param('groupId') groupId: string,
+  @Param('userId') userId: string,
+  @Body() body: { accessRight: string },
+) {
+  return this.powerbiMetricsService.updateWorkspaceMember(groupId, userId, body);
+}
+
+@Delete('workspace/:groupId/members/:userId')
+async removeWorkspaceMember(
+  @Param('groupId') groupId: string,
+  @Param('userId') userId: string,
+) {
+  return this.powerbiMetricsService.removeWorkspaceMember(groupId, userId);
 }
 
 @Post('time-spent')

@@ -42,6 +42,12 @@ export class DashboardDetailComponent implements OnInit {
 
   lastRefreshedAt: string = '';
 
+  // Workspace members for Power BI sync
+  workspaceMembers: any[] = [];
+  workspaceMembersLoading = false;
+  workspaceMembersError = '';
+  groupId: string | null = null;
+
   // Usage analytics
   activeTab: 'access' | 'usage' = 'access';
   usagePeriod = 30;
@@ -88,7 +94,8 @@ export class DashboardDetailComponent implements OnInit {
     private userService: UserService,
     private dashboardService: DashboardService,
     private toastService: ToastService,
-    private powerBIMetricsService: PowerBIMetricsService
+    private powerBIMetricsService: PowerBIMetricsService,
+    private activatedRoute: ActivatedRoute
   ) {
     let currentSearchTerm = '';
   
@@ -181,6 +188,65 @@ export class DashboardDetailComponent implements OnInit {
     this.powerBIMetricsService.getLastRefresh().subscribe({
       next: (res) => { if (res?.lastRefreshedAt) this.lastRefreshedAt = res.lastRefreshedAt; },
       error: () => {}
+    });
+    // Get groupId from route params if available
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.groupId = params['groupId'] || null;
+      if (this.groupId) {
+        this.loadWorkspaceMembers();
+      }
+    });
+  }
+
+  loadWorkspaceMembers(): void {
+    if (!this.groupId) return;
+    
+    this.workspaceMembersLoading = true;
+    this.workspaceMembersError = '';
+    this.powerBIMetricsService.getWorkspaceMembers(this.groupId).subscribe({
+      next: (members: any) => {
+        this.workspaceMembers = Array.isArray(members?.value)
+          ? members.value
+          : Array.isArray(members)
+            ? members
+            : [];
+        this.workspaceMembersLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading workspace members:', error);
+        this.workspaceMembersError = error?.error?.message || error?.message || 'Unable to load workspace members';
+        this.workspaceMembersLoading = false;
+      }
+    });
+  }
+
+  async updateMemberPermission(member: any, newPermission: string): Promise<void> {
+    if (!this.groupId) return;
+
+    this.powerBIMetricsService.updateWorkspaceMember(this.groupId, member.id, { accessRight: newPermission }).subscribe({
+      next: () => {
+        member.accessRight = newPermission;
+        this.toastService.show('Permission updated successfully');
+      },
+      error: (error) => {
+        console.error('Error updating permission:', error);
+        this.toastService.show('Failed to update permission');
+      }
+    });
+  }
+
+  async removeMember(member: any): Promise<void> {
+    if (!this.groupId) return;
+
+    this.powerBIMetricsService.removeWorkspaceMember(this.groupId, member.id).subscribe({
+      next: () => {
+        this.workspaceMembers = this.workspaceMembers.filter(m => m.id !== member.id);
+        this.toastService.show('Member removed successfully');
+      },
+      error: (error) => {
+        console.error('Error removing member:', error);
+        this.toastService.show('Failed to remove member');
+      }
     });
   }
 

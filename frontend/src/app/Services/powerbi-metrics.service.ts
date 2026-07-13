@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, throwError, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface PowerBILog {
@@ -448,6 +448,33 @@ export class PowerBIMetricsService {
       { emails: userEmails }
     ).pipe(
       catchError(() => of({names: {}, departments: {}}))
+    );
+  }
+
+  getWorkspaceMembers(groupId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/workspace/${groupId}/members`).pipe(
+      catchError((error) => {
+        console.error('Failed to load workspace members from backend:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  addWorkspaceMember(groupId: string, payload: { emailAddress: string; accessRight?: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/workspace/${groupId}/members`, payload).pipe(
+      catchError(() => of({ success: false }))
+    );
+  }
+
+  updateWorkspaceMember(groupId: string, userId: string, payload: { accessRight: string }): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/workspace/${groupId}/members/${userId}`, payload).pipe(
+      catchError(() => of({ success: false }))
+    );
+  }
+
+  removeWorkspaceMember(groupId: string, userId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/workspace/${groupId}/members/${userId}`).pipe(
+      catchError(() => of({ success: false }))
     );
   }
   // for user count

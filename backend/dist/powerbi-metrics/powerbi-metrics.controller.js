@@ -133,6 +133,18 @@ let PowerBIMetricsController = class PowerBIMetricsController {
     async getUserCounts(startDate, endDate, workspaceId, reportId) {
         return this.powerbiMetricsService.getUserCounts(startDate, endDate, workspaceId, reportId);
     }
+    async getWorkspaceMembers(groupId) {
+        return this.powerbiMetricsService.getWorkspaceMembers(groupId);
+    }
+    async addWorkspaceMember(groupId, body) {
+        return this.powerbiMetricsService.addWorkspaceMember(groupId, body);
+    }
+    async updateWorkspaceMember(groupId, userId, body) {
+        return this.powerbiMetricsService.updateWorkspaceMember(groupId, userId, body);
+    }
+    async removeWorkspaceMember(groupId, userId) {
+        return this.powerbiMetricsService.removeWorkspaceMember(groupId, userId);
+    }
     async recordTimeSpent(data) {
         if (!data.userId || !data.reportId || !data.tabName || typeof data.durationSeconds !== 'number') {
             throw new common_1.BadRequestException('userId, reportId, tabName, and durationSeconds are required.');
@@ -381,6 +393,38 @@ __decorate([
         Date, String, String]),
     __metadata("design:returntype", Promise)
 ], PowerBIMetricsController.prototype, "getUserCounts", null);
+__decorate([
+    (0, common_1.Get)('workspace/:groupId/members'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "getWorkspaceMembers", null);
+__decorate([
+    (0, common_1.Post)('workspace/:groupId/members'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "addWorkspaceMember", null);
+__decorate([
+    (0, common_1.Patch)('workspace/:groupId/members/:userId'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Param)('userId')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "updateWorkspaceMember", null);
+__decorate([
+    (0, common_1.Delete)('workspace/:groupId/members/:userId'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], PowerBIMetricsController.prototype, "removeWorkspaceMember", null);
 __decorate([
     (0, common_1.Post)('time-spent'),
     __param(0, (0, common_1.Body)()),

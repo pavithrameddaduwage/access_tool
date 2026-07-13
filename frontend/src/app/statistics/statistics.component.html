@@ -125,22 +125,6 @@
   </div>
   <!-- Charts Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Value Types Distribution -->
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Value Types Distribution</h2>
-      <div class="h-96">
-        <apx-chart
-          #valueTypeChart
-          [series]="valueTypeChartOptions.series!"
-          [chart]="valueTypeChartOptions.chart!"
-          [labels]="valueTypeChartOptions.labels!"
-          [colors]="valueTypeChartOptions.colors!"
-          [legend]="valueTypeChartOptions.legend!"
-          [title]="valueTypeChartOptions.title!"
-        ></apx-chart>
-      </div>
-    </div>
-
     <!-- Workspace Distribution -->
     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">Dashboards by Workspace</h2>
@@ -194,21 +178,6 @@
 
   <!-- Additional Charts Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-    <!-- Type-Value Combinations -->
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Type & Value Type Combinations</h2>
-      <div class="h-96">
-        <apx-chart
-          #typeValueComboChart
-          [series]="typeValueComboOptions.series!"
-          [chart]="typeValueComboOptions.chart!"
-          [dataLabels]="typeValueComboOptions.dataLabels!"
-          [xaxis]="typeValueComboOptions.xaxis!"
-          [title]="typeValueComboOptions.title!"
-        ></apx-chart>
-      </div>
-    </div>
-
     <!-- Multi-Workspace Distribution -->
     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">Multi-Workspace Distribution</h2>

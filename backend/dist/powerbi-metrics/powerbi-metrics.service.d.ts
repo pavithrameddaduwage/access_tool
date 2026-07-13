@@ -101,6 +101,16 @@ export declare class PowerBIMetricsService {
     constructor(httpService: HttpService, configService: ConfigService, userDashboardRepository: Repository<UserDashboard>, powerbiLogRepository: Repository<PowerBILog>, dashboardRepository: Repository<Dashboard>, powerbiTimeSpentRepository: Repository<PowerBITimeSpent>, reportMappingService: ReportMappingService, workspaceMappingService: WorkspaceMappingService, userDashboardService: UserDashboardService);
     private readonly logger;
     getAccessToken(): Promise<string>;
+    getOffice365ManagementApiAccessToken(): Promise<string>;
+    getWorkspaceMembers(groupId: string): Promise<any[]>;
+    addWorkspaceMember(groupId: string, payload: {
+        emailAddress: string;
+        accessRight: string;
+    }): Promise<any>;
+    updateWorkspaceMember(groupId: string, userId: string, payload: {
+        accessRight: string;
+    }): Promise<any>;
+    removeWorkspaceMember(groupId: string, userId: string): Promise<any>;
     ensureSubscription(accessToken: string): Promise<void>;
     getLogEntries(contentUri: string, accessToken: string): Promise<PowerBILogEntry[]>;
     getWorkspaceMetrics(workspaceId: string, startDate: Date, endDate: Date): Promise<any>;

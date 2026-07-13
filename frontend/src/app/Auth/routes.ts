@@ -171,14 +171,6 @@ const routeConfig: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'statistics',
-    component: StatisticsComponent,
-    canActivate: [authGuard],
-    title: 'Statistics',
-    pathMatch: 'full'
-  },
-  
-  {
     path: 'webtool-detail/:id',
     component: WebtoolDetailComponent,
     canActivate: [authGuard],

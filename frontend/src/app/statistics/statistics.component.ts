@@ -88,11 +88,9 @@ export interface AccessTrend {
   styleUrls: ['./statistics.component.css']
 })
 export class StatisticsComponent implements OnInit {
-  @ViewChild("valueTypeChart") valueTypeChart!: any;
   @ViewChild("workspaceChart") workspaceChart!: any;
   @ViewChild("groupDistributionChart") groupDistributionChart!: any;
   @ViewChild("departmentChart") departmentChart!: any;
-  @ViewChild("typeValueComboChart") typeValueComboChart!: any;
   @ViewChild("multiWorkspaceChart") multiWorkspaceChart!: any;
   @ViewChild("deptAccessChart") deptAccessChart!: any;
 
@@ -152,24 +150,6 @@ export class StatisticsComponent implements OnInit {
       enabled: true,
       theme: 'light',
       style: { fontSize: '12px' }
-    }
-  };
-
-  public valueTypeChartOptions: Partial<ChartOptions> = {
-    ...this.defaultConfig,
-    series: [] as number[],
-    chart: {
-      ...this.defaultConfig.chart,
-      type: 'pie',
-      height: 350
-    },
-    labels: [] as string[],
-    colors: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
-    legend: {
-      position: 'bottom',
-      formatter: function(val: string, opts) {
-        return val + " - " + opts.w.globals.series[opts.seriesIndex];
-      }
     }
   };
 
@@ -247,63 +227,7 @@ export class StatisticsComponent implements OnInit {
     colors: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
   };
 
-  public typeValueComboOptions: Partial<ChartOptions> = {
-    ...this.defaultConfig,
-    series: [] as ApexAxisChartSeries,
-    chart: {
-      ...this.defaultConfig.chart,
-      type: "heatmap",
-      height: 350,
-      animations: {
-        enabled: false
-      }
-    },
-    xaxis: {
-      type: 'category',
-      categories: [] as string[],
-      labels: {
-        rotate: -45,
-        trim: false
-      }
-    },
-    plotOptions: {
-      heatmap: {
-        shadeIntensity: 0.5,
-        distributed: true,
-        enableShades: true
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        fontSize: '12px'
-      }
-    }
-  };
-
   
-  private updateTypeValueComboChart(data: TypeValueChartData) {
-    // console.log('Type Value Data:', data);
-  
-    this.typeValueComboOptions = {
-      ...this.defaultConfig,
-      chart: {
-        type: 'heatmap',
-        height: 350,
-        animations: { enabled: false }
-      },
-      series: data.series,
-      xaxis: {
-        type: 'category',
-        categories: data.categories
-      },
-      plotOptions: {
-        heatmap: {
-          shadeIntensity: 0.5
-        }
-      }
-    };
-  }
   public multiWorkspaceChartOptions: Partial<ChartOptions> = {
     ...this.defaultConfig,
     series: [{
@@ -410,15 +334,11 @@ export class StatisticsComponent implements OnInit {
         this.statistics.totalDashboards = dashboards.length;
         
         const workspaceData = this.processWorkspaceData(dashboards);
-        const valueTypeData = this.processValueTypeData(dashboards);
         const groupData = this.processGroupData(dashboards);
-        const typeValueData = this.processTypeValueCombinations(dashboards);
         const multiWorkspaceData = this.processMultiWorkspaceDashboards(dashboards);
 
         this.updateWorkspaceChart(workspaceData);
-        this.updateValueTypeChart(valueTypeData);
         this.updateGroupChart(groupData);
-        this.updateTypeValueComboChart(typeValueData);
         this.updateMultiWorkspaceChart(multiWorkspaceData);
       },
       error: (error) => console.error('Error loading dashboards:', error)
@@ -471,19 +391,6 @@ export class StatisticsComponent implements OnInit {
       .sort((a, b) => b.count - a.count);
   }
 
-  private processValueTypeData(dashboards: any[]) {
-    const map = new Map<string, number>();
-    dashboards.forEach(dashboard => {
-      dashboard.dashboardValuetypes.forEach((vt: any) => {
-        const name = String(vt.valuetype.valuetype);
-        map.set(name, (map.get(name) || 0) + 1);
-      });
-    });
-    return Array.from(map.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count);
-  }
-
   private processGroupData(dashboards: any[]) {
     const map = new Map<string, number>();
     dashboards.forEach(dashboard => {
@@ -505,40 +412,6 @@ export class StatisticsComponent implements OnInit {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
   }
-
-  private processTypeValueCombinations(dashboards: any[]) {
-    if (!dashboards?.length) return { series: [], categories: [] };
-  
-    const map = new Map<string, Map<string, number>>();
-    const valueTypes = new Set<string>();
-    
-    dashboards.forEach(dashboard => {
-      dashboard.dashboardTypes.forEach((dt: any) => {
-        const type = String(dt.type.type);
-        if (!map.has(type)) {
-          map.set(type, new Map<string, number>());
-        }
-        
-        dashboard.dashboardValuetypes.forEach((vt: any) => {
-          const valueType = String(vt.valuetype.valuetype);
-          valueTypes.add(valueType);
-          const typeMap = map.get(type)!;
-          typeMap.set(valueType, (typeMap.get(valueType) || 0) + 1);
-        });
-      });
-    });
-
-    const valueTypeArray = Array.from(valueTypes);
-    const result = {
-      categories: valueTypeArray,
-      series: Array.from(map.entries()).map(([type, values]) => ({
-        name: type,
-        data: valueTypeArray.map(vt => values.get(vt) || 0)
-      }))
-    };
-    // console.log('Processed type-value data:', result);
-    return result;
-}
 
   private processMultiWorkspaceDashboards(dashboards: any[]) {
     const workspaceCount = new Map<number, number>();
@@ -615,11 +488,6 @@ export class StatisticsComponent implements OnInit {
         }
       };
     }
-  }
-
-  private updateValueTypeChart(data: any[]) {
-    this.valueTypeChartOptions.series = data.map(item => item.count);
-    this.valueTypeChartOptions.labels = data.map(item => item.name);
   }
 
   private updateGroupChart(data: any[]) {
