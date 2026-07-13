@@ -1,99 +1,75 @@
-<div class="w-full bg-[#0d3159] border-b border-[#1c4775]/50 shadow-lg sticky top-0 z-50">
-  <nav class="max-w-7xl mx-auto flex items-center justify-between py-3 px-6">
-    <!-- Brand / Logo -->
-    <div class="flex items-center space-x-3">
-      <img src="assets/horizontal-blue-hgu-logo.png" class="h-8 md:h-9 object-contain" alt="HGU Logo" />
-      <span class="h-5 w-px bg-slate-700/50 hidden md:block"></span>
-      <a href="/home" class="text-sm md:text-base font-bold text-white hover:text-sky-300 transition duration-200">
-        Power BI Access Governance Portal
-      </a>
-    </div>
+<!-- Sidebar: brand + nav links -->
+<div class="sidebar-brand">
+  <div class="sidebar-brand-label">Workspace</div>
+  <div class="sidebar-brand-name">Access Tool</div>
+</div>
 
-    <!-- Navigation links -->
-    <div class="hidden lg:flex items-center space-x-1">
-      <ng-container *ngIf="isloggedIn">
-        <a
-          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
-          routerLink="/home"
-          routerLinkActive="active-link"
-        >
-          Power BI Analytics
-        </a>
-        <a
-          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
-          routerLink="/users"
-          routerLinkActive="active-link"
-        >
-          Users
-        </a>
-        <a
-          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
-          routerLink="/dashboard-tab-usage"
-          routerLinkActive="active-link"
-        >
-          Tab Usage
-        </a>
-        <a
-          *ngIf="isAdmin"
-          class="text-xs font-normal text-slate-200 hover:text-white transition duration-200 px-3 py-2 rounded-lg hover:bg-[#1a4b7c]"
-          routerLink="/user-management"
-          routerLinkActive="active-link"
-        >
-          User Management
-        </a>
-      </ng-container>
-    </div>
+<nav class="sidebar-nav" *ngIf="isloggedIn">
 
-    <!-- Right-aligned action and welcome message -->
-    <div class="flex items-center space-x-4">
-      <div *ngIf="isloggedIn && user.name" class="hidden md:flex items-center space-x-2">
-        <div class="h-7 w-7 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold text-xs">
-          {{ user.name.charAt(0).toUpperCase() }}
-        </div>
-        <span class="text-xs font-medium text-sky-200">
-          {{ user.name }}
-        </span>
-      </div>
-      
-      <button
-        class="bg-sky-500 hover:bg-sky-600 text-white rounded-lg font-bold px-4 py-1.5 text-xs transition-all duration-200 shadow-sm border border-sky-400/20 active:scale-95"
-        (click)="isloggedIn ? logout() : navigateToLogin()"
-      >
-        {{ isloggedIn ? 'Logout' : 'Login' }}
-      </button>
-    </div>
-  </nav>
+  <!-- Analytics -->
+  <div class="sidebar-section-label">Analytics</div>
 
-  <!-- Mobile navigation submenu for responsive layout -->
-  <div *ngIf="isloggedIn" class="lg:hidden flex items-center justify-center space-x-1 py-2 px-4 bg-[#0a284a] border-t border-[#1c4775]/30 overflow-x-auto">
-    <a
-      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
-      routerLink="/home"
-      routerLinkActive="active-link"
-    >
-      Power BI Analytics
-    </a>
-    <a
-      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
-      routerLink="/users"
-      routerLinkActive="active-link"
-    >
-      Users
-    </a>
-    <a
-      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
-      routerLink="/dashboard-tab-usage"
-      routerLinkActive="active-link"
-    >
-      Tab Usage
-    </a>
-    <a
-      *ngIf="isAdmin"
-      class="text-[10px] font-normal text-slate-300 hover:text-white px-2 py-1 rounded hover:bg-[#1a4b7c] whitespace-nowrap"
-      routerLink="/user-management"
-      routerLinkActive="active-link"
-    >
+  <a class="sidebar-link"
+     routerLink="/home"
+     routerLinkActive="active-link"
+     [routerLinkActiveOptions]="{ exact: true }">
+    <i class="pi pi-chart-bar"></i>
+    Power BI Analytics
+  </a>
+
+  <a class="sidebar-link"
+     routerLink="/users"
+     routerLinkActive="active-link">
+    <i class="pi pi-users"></i>
+    Users
+  </a>
+
+  <a class="sidebar-link"
+     routerLink="/dashboard-tab-usage"
+     routerLinkActive="active-link">
+    <i class="pi pi-table"></i>
+    Tab Usage
+  </a>
+
+  <a class="sidebar-link"
+     routerLink="/statistics"
+     routerLinkActive="active-link">
+    <i class="pi pi-chart-line"></i>
+    Statistics
+  </a>
+
+  <a class="sidebar-link"
+     routerLink="/dashboards"
+     routerLinkActive="active-link">
+    <i class="pi pi-th-large"></i>
+    Dashboards
+  </a>
+
+  <!-- Admin only -->
+  <ng-container *ngIf="isAdmin">
+    <div class="sidebar-section-label" style="margin-top: 0.75rem;">Admin</div>
+
+    <a class="sidebar-link"
+       routerLink="/user-management"
+       routerLinkActive="active-link">
+      <i class="pi pi-user-edit"></i>
       User Management
     </a>
-  </div>
+
+    <a class="sidebar-link"
+       routerLink="/masterdata"
+       routerLinkActive="active-link">
+      <i class="pi pi-database"></i>
+      Master Data
+    </a>
+  </ng-container>
+
+</nav>
+
+<!-- Sidebar bottom: logout -->
+<div class="sidebar-footer" *ngIf="isloggedIn">
+  <button class="sidebar-logout-btn" (click)="logout()">
+    <i class="pi pi-sign-out"></i>
+    Logout
+  </button>
 </div>

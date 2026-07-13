@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;fc093355e444173bad469ab0db7e5ed87f91b28750cfd89c49f0f54caa144b23;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/view-mode-toggle/view-mode-toggle.component.ts"],
+  "sourcesContent": ["\n      .toggle { display: inline-flex; border: 1px solid #d0d5dd; border-radius: 10px; overflow: hidden; }\n      .toggle-btn { padding: 8px 18px; background: #fff; border: none; cursor: pointer; font-size: 14px; color: #475467; }\n      .toggle-btn + .toggle-btn { border-left: 1px solid #d0d5dd; }\n      .toggle-btn.active { background: #111827; color: #fff; font-weight: 600; }\n    "],
+  "mappings": ";AACM,CAAC;AAAS,WAAS;AAAa,UAAQ,IAAI,MAAM;AAAS,iBAAe;AAAM,YAAU;AAAQ;AAClG,CAAC;AAAa,WAAS,IAAI;AAAM,cAAY;AAAM,UAAQ;AAAM,UAAQ;AAAS,aAAW;AAAM,SAAO;AAAS;AACnH,CADC,WACW,EAAE,CADb;AAC2B,eAAa,IAAI,MAAM;AAAS;AAC5D,CAFC,UAEU,CAAC;AAAS,cAAY;AAAS,SAAO;AAAM,eAAa;AAAK;",
+  "names": []
+}

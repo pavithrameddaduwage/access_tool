@@ -1,17 +1,33 @@
 <!-- app.component.html -->
-<div class="flex flex-col h-screen">
-  <!-- Navbar will be sticky within this container -->
-  <div class="fixed top-0 w-full z-50">
-    <app-navbar *ngIf="shouldShowNavbar()"></app-navbar>
+<ng-container *ngIf="!isLoginPage(); else loginLayout">
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" [class.open]="sidebarOpen">
+      <app-navbar></app-navbar>
+    </aside>
+
+    <!-- Right panel -->
+    <div class="app-main">
+      <!-- Top header bar -->
+      <header class="app-header">
+        <button class="mobile-menu-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+          <i class="pi pi-bars"></i>
+        </button>
+        <div class="header-spacer"></div>
+        <app-header-user></app-header-user>
+      </header>
+
+      <!-- Page content -->
+      <main class="app-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   </div>
+</ng-container>
 
-  <!-- Main content with padding-top to account for fixed navbar -->
-  <div class="flex-grow mt-[88px]"> <!-- Adjust 88px to match navbar height and submenu -->
-    <router-outlet></router-outlet>
-  </div>
+<ng-template #loginLayout>
+  <router-outlet></router-outlet>
+</ng-template>
 
-  <app-toast></app-toast>
-  <app-confirmation></app-confirmation>
-
-
-</div>
+<app-toast></app-toast>
+<app-confirmation></app-confirmation>

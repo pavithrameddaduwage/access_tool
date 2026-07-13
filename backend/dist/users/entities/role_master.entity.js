@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleMaster = void 0;
 const typeorm_1 = require("typeorm");
 const user_roles_entity_1 = require("./user_roles.entity");
-const role_access_entity_1 = require("./role_access.entity");
 let RoleMaster = class RoleMaster {
 };
 exports.RoleMaster = RoleMaster;
@@ -28,10 +27,6 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => user_roles_entity_1.UserRoles, userroles => userroles.role),
     __metadata("design:type", Array)
 ], RoleMaster.prototype, "user_roles", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => role_access_entity_1.RoleAccess, roleaccess => roleaccess.master_role),
-    __metadata("design:type", Array)
-], RoleMaster.prototype, "role_access", void 0);
 exports.RoleMaster = RoleMaster = __decorate([
     (0, typeorm_1.Entity)()
 ], RoleMaster);

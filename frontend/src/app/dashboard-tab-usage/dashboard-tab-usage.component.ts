@@ -21,6 +21,7 @@ export class DashboardTabUsageComponent implements OnInit {
   dashboardSearch = '';
   dashboardListLoading = false;
   usagePeriod = 30;
+  activeDays = 30;
   usageLoading = false;
   usageData: {
     totalViews: number;
@@ -89,7 +90,8 @@ export class DashboardTabUsageComponent implements OnInit {
   }
 
   loadUsageData(days?: number) {
-    if (days !== undefined) this.usagePeriod = days;
+    if (days !== undefined) { this.usagePeriod = days; this.activeDays = days; }
+    else { this.activeDays = this.usagePeriod; }
     this.usageLoading = true;
     this.usageData = null;
     this.pageTimeChartOptions = null;

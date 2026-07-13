@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;e3b56eb72f613aeb434f726bd5a60269bd19b5b2e819fd7085dd074491a1c3b3;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/shared/components/period-filter/period-filter.component.ts"],
+  "sourcesContent": ["\n      .period-filter { display: inline-flex; border: 1px solid #d0d5dd; border-radius: 8px; overflow: hidden; }\n      .period-btn { padding: 6px 14px; background: #fff; border: none; cursor: pointer; font-size: 13px; color: #475467; }\n      .period-btn + .period-btn { border-left: 1px solid #d0d5dd; }\n      .period-btn.active { background: #2563eb; color: #fff; font-weight: 600; }\n    "],
+  "mappings": ";AACM,CAAC;AAAgB,WAAS;AAAa,UAAQ,IAAI,MAAM;AAAS,iBAAe;AAAK,YAAU;AAAQ;AACxG,CAAC;AAAa,WAAS,IAAI;AAAM,cAAY;AAAM,UAAQ;AAAM,UAAQ;AAAS,aAAW;AAAM,SAAO;AAAS;AACnH,CADC,WACW,EAAE,CADb;AAC2B,eAAa,IAAI,MAAM;AAAS;AAC5D,CAFC,UAEU,CAAC;AAAS,cAAY;AAAS,SAAO;AAAM,eAAa;AAAK;",
+  "names": []
+}

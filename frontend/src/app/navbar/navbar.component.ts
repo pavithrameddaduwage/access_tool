@@ -1,6 +1,5 @@
-// navbar.component.ts
 import { Component, OnInit } from '@angular/core';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../Auth/services/auth.service';
@@ -14,23 +13,15 @@ import { AuthService } from '../Auth/services/auth.service';
 })
 export class NavbarComponent implements OnInit {
   user: any = {};
-  isloggedIn: boolean = false;
-  isMobileMenuOpen: boolean = false;
+  isloggedIn = false;
 
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.authService.islogged.subscribe(
-      isLogged => {
-        this.isloggedIn = isLogged;
-        if (isLogged) {
-          this.checkLoginStatus();
-        }
-      }
-    );
+    this.authService.islogged.subscribe(isLogged => {
+      this.isloggedIn = isLogged;
+      if (isLogged) this.checkLoginStatus();
+    });
     this.checkLoginStatus();
   }
 
@@ -39,25 +30,17 @@ export class NavbarComponent implements OnInit {
     if (token) {
       try {
         this.user = jwtDecode(token);
-        // console.log('User roles:', this.user.roles);
         this.isloggedIn = true;
-      } catch (error) {
-        console.error('Invalid token:', error);
+      } catch {
         this.logout();
       }
     }
   }
 
-  navigateToLogin(): void {
-    this.router.navigate(['/login']);
-  }
-
-  toggleMobileMenu(): void {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-  }
-
   get isAdmin(): boolean {
-    return this.user && this.user.roles && (this.user.roles.includes('Admin') || this.user.roles.includes('admin'));
+    return this.user?.roles?.some((r: string) =>
+      r.toLowerCase() === 'admin'
+    );
   }
 
   logout(): void {

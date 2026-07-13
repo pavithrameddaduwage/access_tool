@@ -339,8 +339,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
         });
         await this.powerbiLogRepository.save(entities);
         try {
-            const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
-            const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
+            const MAX_SESSION_GAP_MS = 60 * 60 * 1000;
             const grouped = {};
             for (const l of filteredLogs) {
                 const userId = (l.UserId || '').toLowerCase();
@@ -358,13 +357,11 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                 for (let i = 0; i < logsForKey.length; i++) {
                     const cur = logsForKey[i];
                     const next = logsForKey[i + 1];
-                    let durationMs = DEFAULT_PAGE_VIEW_MS;
-                    if (next) {
-                        const diff = new Date(next.CreationTime).getTime() - new Date(cur.CreationTime).getTime();
-                        if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
-                            durationMs = diff;
-                        }
-                    }
+                    if (!next)
+                        continue;
+                    const diff = new Date(next.CreationTime).getTime() - new Date(cur.CreationTime).getTime();
+                    if (diff <= 0 || diff > MAX_SESSION_GAP_MS)
+                        continue;
                     const tabName = cur.ArtifactName || cur.ItemName || cur.ReportName || 'Main Page';
                     const aggKey = `${(cur.UserId || '').toLowerCase()}::${cur.ReportId || ''}::${tabName}`;
                     if (!aggregated[aggKey]) {
@@ -378,7 +375,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
                             seconds: 0
                         };
                     }
-                    aggregated[aggKey].seconds += Math.round(durationMs / 1000);
+                    aggregated[aggKey].seconds += Math.round(diff / 1000);
                 }
             }
             const timeSpentEntries = Object.values(aggregated).filter(a => a.reportId && a.userId && a.seconds > 0);
@@ -884,24 +881,16 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             if (logs.length === 0) {
                 return 0;
             }
-            if (logs.length === 1) {
-                return 120;
-            }
+            const MAX_SESSION_GAP_MS = 60 * 60 * 1000;
             let totalDurationSeconds = 0;
-            const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
-            const DEFAULT_PAGE_VIEW_MS = 2 * 60 * 1000;
             for (let i = 0; i < logs.length - 1; i++) {
                 const currentLogTime = new Date(logs[i].creationTime).getTime();
                 const nextLogTime = new Date(logs[i + 1].creationTime).getTime();
                 const diff = nextLogTime - currentLogTime;
-                if (diff > 0 && diff <= SESSION_TIMEOUT_MS) {
+                if (diff > 0 && diff <= MAX_SESSION_GAP_MS) {
                     totalDurationSeconds += diff / 1000;
                 }
-                else {
-                    totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
-                }
             }
-            totalDurationSeconds += DEFAULT_PAGE_VIEW_MS / 1000;
             return Math.round(totalDurationSeconds);
         }
         catch (error) {
@@ -1376,27 +1365,7 @@ let PowerBIMetricsService = PowerBIMetricsService_1 = class PowerBIMetricsServic
             .orderBy('SUM(spent.durationSeconds)', 'DESC');
         const results = await query.getRawMany();
         if (results.length === 0) {
-            const logQuery = this.powerbiLogRepository
-                .createQueryBuilder('log')
-                .select('log.reportId', 'reportId')
-                .addSelect('log.reportName', 'reportName')
-                .addSelect('log.workspaceId', 'workspaceId')
-                .addSelect('log.workSpaceName', 'workspaceName')
-                .addSelect('COUNT(log.id) * 120', 'totalSeconds')
-                .where('LOWER(log.userId) = LOWER(:userId)', { userId })
-                .andWhere('log.creationTime BETWEEN :startDate AND :endDate', { startDate, endDate })
-                .andWhere("log.operation = 'ViewReport'")
-                .groupBy('log.reportId, log.reportName, log.workspaceId, log.workSpaceName')
-                .orderBy('COUNT(log.id)', 'DESC');
-            const fallbackLogs = await logQuery.getRawMany();
-            return fallbackLogs.map(r => ({
-                reportId: r.reportId,
-                reportName: r.reportName || 'Unknown Report',
-                workspaceId: r.workspaceId || 'Unknown',
-                workspaceName: r.workspaceName === 'PersonalWorkspace' ? 'Personal Workspace' : (r.workspaceName || 'Personal Workspace'),
-                tabName: 'Overview',
-                totalSeconds: parseInt(r.totalSeconds || '0', 10)
-            }));
+            return [];
         }
         return results.map(r => ({
             reportId: r.reportId,

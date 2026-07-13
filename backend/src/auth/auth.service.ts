@@ -87,6 +87,21 @@ async getADUserDetails(username: string): Promise<ADUser> {
 async signIn(username: string, pass: string): Promise<any> {
   username = username.toLowerCase().split('@')[0];
 
+  // ── Dev bypass: admin / admin ─────────────────────────────
+  if (username === 'admin' && pass === 'admin') {
+    console.log('[DEV] Admin bypass login used');
+    const payload = {
+      email: 'admin@hgusa.com',
+      name: 'Admin',
+      userid: 0,
+      roles: ['Admin', 'admin'],
+      department: 'MIS',
+      location: null,
+    };
+    return { access_token: await this.jwtService.signAsync(payload) };
+  }
+  // ──────────────────────────────────────────────────────────
+
   let email = '';
   let dbUser: any = null;
   let aduser: any = null;

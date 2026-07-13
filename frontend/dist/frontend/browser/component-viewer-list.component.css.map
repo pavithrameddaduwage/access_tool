@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;e7a0323f3c14a3e5a1692b9a389c4e0d7ff52cc75cea84d942e6f9400f5c6a24;/Users/pavithrameddaduwage/Downloads/Access Tool/user_access_tool/frontend/src/app/features/analytics/components/component-viewer-list/component-viewer-list.component.ts"],
+  "sourcesContent": ["\n      .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }\n      th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eaecf0; }\n      th { color: #667085; font-size: 11px; text-transform: uppercase; }\n      .empty { text-align: center; color: #98a2b3; padding: 16px; }\n    "],
+  "mappings": ";AACM,CAAC;AAAM,SAAO;AAAM,mBAAiB;AAAU,aAAW;AAAM;AAChE;AAAI;AAAK,cAAY;AAAM,WAAS,IAAI;AAAM,iBAAe,IAAI,MAAM;AAAS;AAChF;AAAK,SAAO;AAAS,aAAW;AAAM,kBAAgB;AAAW;AACjE,CAAC;AAAQ,cAAY;AAAQ,SAAO;AAAS,WAAS;AAAM;",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/dashboard-tab-usage/dashboard-tab-usage.component.css"],
+  "sourcesContent": [".container { max-width: 1140px; }\n\nbutton { transition: background-color 0.15s ease, color 0.15s ease; }\n\n.apexcharts-toolbar { display: none !important; }\n"],
+  "mappings": ";AAAA,CAAC;AAAY,aAAW;AAAQ;AAEhC;AAAS,cAAY,iBAAiB,MAAM,IAAI,EAAE,MAAM,MAAM;AAAM;AAEpE,CAAC;AAAqB,WAAS;AAAiB;",
+  "names": []
+}
